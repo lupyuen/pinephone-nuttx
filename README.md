@@ -133,6 +133,14 @@ Import `Image` as AARCH64:LE:v8A:default...
 -   Endian: little 
 -   Compiler: default
 
+Click Window > Memory Map
+
+Click "ram"
+
+Click the 4-Arrows icon (Move a block to another address)
+
+Change Start Address to 40000000
+
 # TODO
 
 TODO: Verify that NuttX uses similar Startup Code
