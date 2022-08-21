@@ -114,6 +114,8 @@ TODO: Disassemble a PinePhone Image with Ghidra to look at the Startup Code
 
 https://github.com/dreemurrs-embedded/Jumpdrive
 
+https://github.com/dreemurrs-embedded/Jumpdrive/releases/download/0.8/pine64-pinephone.img.xz
+
 TODO: Verify that NuttX uses similar Startup Code
 
 TODO: Build UART Driver in NuttX for Allwinner A64 SoC
