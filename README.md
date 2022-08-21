@@ -19,10 +19,18 @@ TODO
 ```bash
 mkdir nuttx
 cd nuttx
-git clone --recursive --branch arm64 https://github.com/lupyuen/incubator-nuttx nuttx
-git clone --recursive --branch arm64 https://github.com/lupyuen/incubator-nuttx-apps apps
+git clone --recursive --branch arm64 \
+    https://github.com/lupyuen/incubator-nuttx \
+    nuttx
+git clone --recursive --branch arm64 \
+    https://github.com/lupyuen/incubator-nuttx-apps \
+    apps
 cd nuttx
 ```
+
+Install prerequisites, skip the RISC-V Toolchain...
+
+https://lupyuen.github.io/articles/nuttx#install-prerequisites
 
 # Download Toolchain
 
