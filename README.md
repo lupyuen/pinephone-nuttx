@@ -145,6 +145,12 @@ Click the 4-Arrows icon (Move a block to another address)
 
 Change Start Address to 40000000
 
+A64 Boot ROM: https://linux-sunxi.org/BROM#A64
+
+A64 U-Boot SPL: https://linux-sunxi.org/BROM#U-Boot_SPL_limitations
+
+SD Card Layout: https://linux-sunxi.org/Bootable_SD_card#SD_Card_Layout
+
 # TODO
 
 TODO: Verify that NuttX uses similar Startup Code
