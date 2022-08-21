@@ -133,6 +133,10 @@ Import `Image` as AARCH64:LE:v8A:default...
 -   Endian: little 
 -   Compiler: default
 
+`Image` seems to start at 0x40000000, as suggested by this Memory Map...
+
+https://linux-sunxi.org/A64/Memory_map
+
 Click Window > Memory Map
 
 Click "ram"
