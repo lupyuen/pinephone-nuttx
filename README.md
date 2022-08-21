@@ -116,6 +116,13 @@ https://github.com/dreemurrs-embedded/Jumpdrive
 
 https://github.com/dreemurrs-embedded/Jumpdrive/releases/download/0.8/pine64-pinephone.img.xz
 
+Import Image
+AARCH64:LE:v8A:default
+AARCH64 v8A 64 little default
+
+Import initramfd
+Batch
+
 TODO: Verify that NuttX uses similar Startup Code
 
 TODO: Build UART Driver in NuttX for Allwinner A64 SoC
