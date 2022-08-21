@@ -108,20 +108,32 @@ qemu-system-aarch64 -cpu cortex-a53 -smp 4 -nographic \
     -mon chardev=con,mode=readline -kernel ./nuttx
 ```
 
-# TODO
+# Analyse PinePhone Image wit Ghidra
 
 TODO: Disassemble a PinePhone Image with Ghidra to look at the Startup Code
 
 https://github.com/dreemurrs-embedded/Jumpdrive
 
-https://github.com/dreemurrs-embedded/Jumpdrive/releases/download/0.8/pine64-pinephone.img.xz
+Download https://github.com/dreemurrs-embedded/Jumpdrive/releases/download/0.8/pine64-pinephone.img.xz
 
-Import Image
-AARCH64:LE:v8A:default
-AARCH64 v8A 64 little default
+Expand `pine64-pinephone.img.xz`
 
-Import initramfd
-Batch
+Expand the files inside...
+
+```bash
+gunzip Image.gz
+gunzip initramfs.gz
+tar xvf initramfs
+```
+
+Import `Image` as AARCH64:LE:v8A:default...
+-   Processor: AARCH64 
+-   Variant: v8A 
+-   Size: 64 
+-   Endian: little 
+-   Compiler: default
+
+# TODO
 
 TODO: Verify that NuttX uses similar Startup Code
 
