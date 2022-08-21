@@ -1,6 +1,6 @@
 # Apache NuttX RTOS on PinePhone
 
-Apache NuttX RTOS runs on Cortex-A53 with Multi-Core SMP...
+[Apache NuttX RTOS](https://nuttx.apache.org/docs/latest/) now runs on Arm Cortex-A53 with Multi-Core SMP...
 
 https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53
 
