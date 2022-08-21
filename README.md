@@ -112,6 +112,8 @@ qemu-system-aarch64 -cpu cortex-a53 -smp 4 -nographic \
 
 TODO: Disassemble a PinePhone Image with Ghidra to look at the Startup Code
 
+https://github.com/dreemurrs-embedded/Jumpdrive
+
 TODO: Verify that NuttX uses similar Startup Code
 
 TODO: Build UART Driver in NuttX for Allwinner A64 SoC
