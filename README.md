@@ -151,6 +151,10 @@ TODO: Verify that NuttX uses similar Startup Code
 
 TODO: Build UART Driver in NuttX for Allwinner A64 SoC
 
+UART0 Memory Map: https://linux-sunxi.org/A64/Memory_map
+
+More about A64 UART: https://linux-sunxi.org/UART
+
 TODO: Configure NuttX Memory Regions for Allwinner A64 SoC
 
 TODO: Copy NuttX to microSD Card
