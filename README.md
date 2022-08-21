@@ -110,9 +110,7 @@ qemu-system-aarch64 -cpu cortex-a53 -smp 4 -nographic \
 
 # TODO
 
-TODO: Examine Tow-Boot and the Distro Images that it bundles
-
-TODO: Disassemble the Distro Images with Ghidra to look at the Startup Code
+TODO: Disassemble the PinePhone Distro Images with Ghidra to look at the Startup Code
 
 TODO: Verify that NuttX uses similar Startup Code
 
