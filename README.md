@@ -110,7 +110,7 @@ qemu-system-aarch64 -cpu cortex-a53 -smp 4 -nographic \
 
 # TODO
 
-TODO: Disassemble the PinePhone Distro Images with Ghidra to look at the Startup Code
+TODO: Disassemble a PinePhone Image with Ghidra to look at the Startup Code
 
 TODO: Verify that NuttX uses similar Startup Code
 
@@ -118,6 +118,6 @@ TODO: Build UART Driver in NuttX for Allwinner A64 SoC
 
 TODO: Configure NuttX Memory Regions for Allwinner A64 SoC
 
-TODO: Add NuttX to Tow-Boot
+TODO: Copy NuttX to microSD Card
 
 TODO: Boot NuttX on PinePhone and test NuttX Shell
