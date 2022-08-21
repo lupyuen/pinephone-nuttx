@@ -108,7 +108,7 @@ qemu-system-aarch64 -cpu cortex-a53 -smp 4 -nographic \
     -mon chardev=con,mode=readline -kernel ./nuttx
 ```
 
-# Analyse PinePhone Image wit Ghidra
+# Analyse Image with Ghidra
 
 TODO: Disassemble a PinePhone Image with Ghidra to look at the Startup Code
 
