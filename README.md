@@ -145,12 +145,6 @@ Click the 4-Arrows icon (Move a block to another address)
 
 Change Start Address to 40000000
 
-A64 Boot ROM: https://linux-sunxi.org/BROM#A64
-
-A64 U-Boot SPL: https://linux-sunxi.org/BROM#U-Boot_SPL_limitations
-
-SD Card Layout: https://linux-sunxi.org/Bootable_SD_card#SD_Card_Layout
-
 # TODO
 
 TODO: Verify that NuttX uses similar Startup Code
@@ -164,5 +158,11 @@ More about A64 UART: https://linux-sunxi.org/UART
 TODO: Configure NuttX Memory Regions for Allwinner A64 SoC
 
 TODO: Copy NuttX to microSD Card
+
+A64 Boot ROM: https://linux-sunxi.org/BROM#A64
+
+A64 U-Boot SPL: https://linux-sunxi.org/BROM#U-Boot_SPL_limitations
+
+SD Card Layout: https://linux-sunxi.org/Bootable_SD_card#SD_Card_Layout
 
 TODO: Boot NuttX on PinePhone and test NuttX Shell
