@@ -186,7 +186,7 @@ Bottom Part of NuttX Image Header...
 
 ![Bottom Part of NuttX Image Header](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%204.10.04%20PM.png)
 
-When we refer to the NuttX Disassembly `nuttx.S`, we see this...
+When we refer to the NuttX Disassembly `nuttx.S`, we find happiness...
 
 https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L79-L117
 
@@ -250,6 +250,16 @@ u64 res4      = 0;            /* reserved */
 u32 magic     = 0x644d5241;   /* Magic number, little endian, "ARM\x64" */
 u32 res5;                     /* reserved (used for PE COFF offset) */
 ```
+
+Assuming the Start of RAM is 0x4000 000, I wonder if this Image Load Offset might be incorrect...
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L107
+
+```text
+    .quad   0x480000              /* Image load offset from start of RAM */
+```
+
+Because the ELF Header says that the code is actually loaded at 0x4028 0000. (Instead of 0x4048 0000)
 
 # PinePhone Image
 
