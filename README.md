@@ -4,11 +4,11 @@
 
 https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53
 
-Will NuttX run on PinePhone? PinePhone is based on Allwinner A64 SoC with 4 Cores of Arm Cortex-A53...
+PinePhone is based on Allwinner A64 SoC with 4 Cores of Arm Cortex-A53...
 
 https://wiki.pine64.org/index.php/PinePhone
 
-Let's find out!
+Will NuttX run on PinePhone? Let's find out!
 
 _Why NuttX?_
 
