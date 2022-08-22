@@ -2,11 +2,11 @@
 
 [Apache NuttX RTOS](https://nuttx.apache.org/docs/latest/) now runs on Arm Cortex-A53 with Multi-Core SMP...
 
-https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53
+-   [nuttx/boards/arm64/qemu/qemu-a53](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53)
 
 PinePhone is based on Allwinner A64 SoC with 4 Cores of Arm Cortex-A53...
 
-https://wiki.pine64.org/index.php/PinePhone
+-   [PinePhone Wiki](https://wiki.pine64.org/index.php/PinePhone)
 
 Will NuttX run on PinePhone? Let's find out!
 
@@ -20,55 +20,58 @@ Many thanks to [qinwei2004](https://github.com/qinwei2004) and the NuttX Team fo
 
 # Download NuttX
 
-TODO
+Download the Source Code for NuttX Mainline, which supports Arm Cortex-A53...
 
 ```bash
 mkdir nuttx
 cd nuttx
-git clone --recursive --branch arm64 \
+
+git clone \
+    --recursive \
+    --branch arm64 \
     https://github.com/lupyuen/incubator-nuttx \
     nuttx
-git clone --recursive --branch arm64 \
+
+git clone \
+    --recursive \
+    --branch arm64 \
     https://github.com/lupyuen/incubator-nuttx-apps \
     apps
+
 cd nuttx
 ```
 
-Install prerequisites, skip the RISC-V Toolchain...
+Install the Build Prerequisites, skip the RISC-V Toolchain...
 
-https://lupyuen.github.io/articles/nuttx#install-prerequisites
+-   ["Install Prerequisites"](https://lupyuen.github.io/articles/nuttx#install-prerequisites)
 
 # Download Toolchain
 
-TODO
+Download the Arm Toolchain for AArch64 ELF Bare-Metal Target (`aarch64-none-elf`)...
 
-Instructions:
+-   [Arm GNU Toolchain Downloads](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads)
 
-https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53
+For macOS: [arm-gnu-toolchain-11.3.rel1-darwin-x86_64-aarch64-none-elf.pkg](https://developer.arm.com/-/media/Files/downloads/gnu/11.3.rel1/binrel/arm-gnu-toolchain-11.3.rel1-darwin-x86_64-aarch64-none-elf.pkg)
 
-Download toolchain for AArch64 ELF bare-metal target (aarch64-none-elf)
+For Linux x64 and WSL: [gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz](https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz)
 
-https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
+(I don't recommend building NuttX on Plain Old Windows CMD, please use WSL instead)
 
-For macOS:
-
-https://developer.arm.com/-/media/Files/downloads/gnu/11.3.rel1/binrel/arm-gnu-toolchain-11.3.rel1-darwin-x86_64-aarch64-none-elf.pkg
-
-For x64 Linux:
-
-https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz
-
-Add to PATH: /Applications/ArmGNUToolchain/11.3.rel1/aarch64-none-elf/bin
+Add it to the `PATH`. For macOS we do this...
 
 ```bash
 export PATH="$PATH:/Applications/ArmGNUToolchain/11.3.rel1/aarch64-none-elf/bin"
 ```
 
+[(Based on the instructions here)](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53)
+
 # Download QEMU
 
-TODO
+Download and install QEMU...
 
-Download QEMU: https://www.qemu.org/download/
+-   [Download QEMU](https://www.qemu.org/download/)
+
+For macOS we may use `brew`...
 
 ```bash
 brew install qemu
@@ -124,6 +127,16 @@ qemu-system-aarch64 \
     -mon chardev=con,mode=readline \
     -kernel ./nuttx
 ```
+
+# Inside NuttX for Cortex-A53
+
+TODO
+
+https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53
+
+https://github.com/apache/incubator-nuttx/tree/master/arch/arm64/src/qemu
+
+https://github.com/apache/incubator-nuttx/tree/master/arch/arm64/src/common
 
 # Analyse PinePhone Image with Ghidra
 
