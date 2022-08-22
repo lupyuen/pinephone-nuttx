@@ -97,7 +97,7 @@ brew install qemu
 
 # Build NuttX: Single Core
 
-Let's build NuttX for a Single Core of Arm Cortex-A53...
+First we build NuttX for a Single Core of Arm Cortex-A53...
 
 ```bash
 ## Configure NuttX for Single Core
@@ -120,7 +120,7 @@ The NuttX Output Files may be found here...
 
 # Test NuttX with QEMU: Single Core
 
-Let's test NuttX on QEMU with a Single Core of Arm Cortex-A53...
+This is how we test NuttX on QEMU with a Single Core of Arm Cortex-A53...
 
 ```bash
 ## Start QEMU (Single Core) with NuttX
@@ -231,7 +231,7 @@ mount -t vfat /dev/ram2 /tmp
 
 # Build NuttX: Multi Core
 
-Let's build NuttX for 4 Cores of Arm Cortex-A53...
+From Single Core to Multi Core! Now we build NuttX for 4 Cores of Arm Cortex-A53...
 
 ```bash
 ## Configure NuttX for 4 Cores
@@ -254,7 +254,7 @@ The NuttX Output Files may be found here...
 
 # Test NuttX with QEMU: Multi Core
 
-Let's test NuttX on QEMU with 4 Cores of Arm Cortex-A53...
+And this is how we test NuttX on QEMU with 4 Cores of Arm Cortex-A53...
 
 ```bash
 ## Start QEMU (4 Cores) with NuttX
@@ -361,17 +361,37 @@ We see each of the 4 Cores starting NuttX (CPU0 to CPU3). That's so cool!
 
 # Inside NuttX for Cortex-A53
 
-TODO
+Now we browse the Source Files for the implementation of Cortex-A53 on NuttX.
 
-https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53
+NuttX treats QEMU as a Target Board (as though it was a dev board). Here are the Source Files and Build Configuration for the QEMU Board...
 
-https://github.com/apache/incubator-nuttx/tree/master/arch/arm64/src/qemu
+-   [nuttx/boards/arm64/qemu/qemu-a53](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53)
 
-https://github.com/apache/incubator-nuttx/tree/master/arch/arm64/src/common
+(We'll clone this to create a Target Board for PinePhone)
+
+The Board-Specific Drivers for QEMU are started in [qemu-a53/src/qemu_bringup.c](https://github.com/apache/incubator-nuttx/blob/master/boards/arm64/qemu/qemu-a53/src/qemu_bringup.c)
+
+(We'll start the PinePhone Drivers here)
+
+The QEMU Board calls the QEMU Architecture-Specific Drivers at...
+
+-   [nuttx/arch/arm64/src/qemu](https://github.com/apache/incubator-nuttx/tree/master/arch/arm64/src/qemu)
+
+The UART Driver is located at [qemu/qemu_serial.c](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/qemu/qemu_serial.c) and [qemu/qemu_lowputc.S](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/qemu/qemu_lowputc.S)
+
+(For PinePhone we'll create a UART Driver for Allwinner A64 SoC)
+
+The QEMU Functions (Board and Architecture) call the Arm64 Architecture Functions at...
+
+-   [nuttx/arch/arm64/src/common](https://github.com/apache/incubator-nuttx/tree/master/arch/arm64/src/common)
+
+Which has all kinds of Arm64 Functions: [FPU](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_fpu.c), [Interrupts](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_gicv3.c), [MMU](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_mmu.c), [Task Scheduler](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_task_sched.c), ...
+
+(We'll reuse them for PinePhone)
 
 # NuttX Image
 
-Let's analyse the NuttX Image with Ghidra, to understand the NuttX Image Header and Startup Code.
+Next we analyse the NuttX Image with [Ghidra](https://ghidra-sre.org/), to understand the NuttX Image Header and Startup Code.
 
 Here's the [NuttX ELF Image `nuttx`](https://github.com/lupyuen/pinephone-nuttx/releases/download/v1.0.0/nuttx) analysed by Ghidra...
 
@@ -384,7 +404,7 @@ Note that the NuttX Image jumps to `real_start` (to skip the Image Header)...
 40280004 0f 00 00 14     b          real_start
 ```
 
-`real_start` is defined at 0x4028 0040...
+`real_start` is defined at 0x4028 0040, with the Startup Code...
 
 ![Bottom Part of NuttX Image Header](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%204.10.04%20PM.png)
 
@@ -392,9 +412,7 @@ We see the Magic Number `ARM\x64` at offset 0x4028 0038.
 
 Searching the net for this Magic Number reveals that it's actually an Arm64 Linux Kernel Header!
 
-When we refer to the [NuttX Arm64 Disassembly `nuttx.S`](https://github.com/lupyuen/pinephone-nuttx/releases/download/v1.0.0/nuttx.S), we find happiness...
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L79-L117
+When we refer to the [NuttX Arm64 Disassembly `nuttx.S`](https://github.com/lupyuen/pinephone-nuttx/releases/download/v1.0.0/nuttx.S), we find happiness: [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L79-L117)
 
 ```text
     /* Kernel startup entry point.
@@ -457,9 +475,7 @@ u32 magic     = 0x644d5241;   /* Magic number, little endian, "ARM\x64" */
 u32 res5;                     /* reserved (used for PE COFF offset) */
 ```
 
-Start of RAM is 0x4000 0000. The Image Load Offset in our NuttX Image Header is 0x48 0000...
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L107
+Start of RAM is 0x4000 0000. The Image Load Offset in our NuttX Image Header is 0x48 0000 according to [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L107)
 
 ```text
     .quad   0x480000              /* Image load offset from start of RAM */
@@ -471,9 +487,7 @@ I wonder if this Image Load Offset should have been 0x28 0000? (Instead of 0x48 
 
 Remember that Ghidra (and the Arm Disassembly) says that our NuttX Image is actually loaded at 0x4028 0000. (Instead of 0x4048 0000)
 
-RAM Size and RAM Start are defined in the NuttX Configuration...
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig#L47-L48
+RAM Size and RAM Start are defined in the NuttX Configuration: [boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig#L47-L48)
 
 ```text
 CONFIG_RAM_SIZE=134217728
@@ -508,9 +522,7 @@ aarch64-none-elf-ld \
   --end-group
 ```
 
-NuttX Image begins at `__start`, which is defined as 0x4028 0000 in the NuttX Linker Script...
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/scripts/dramboot.ld#L30-L33
+NuttX Image begins at `__start`, which is defined as 0x4028 0000 in the NuttX Linker Script: [boards/arm64/qemu/qemu-a53/scripts/dramboot.ld](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/scripts/dramboot.ld#L30-L33)
 
 ```text
 SECTIONS
@@ -525,7 +537,7 @@ We've seen the NuttX Image (which looks like a Linux Kernel Image), let's compar
 
 # PinePhone Image
 
-Let's analyse a PinePhone Linux Kernel Image with Ghidra, to look at the Linux Kernel Header and Startup Code.
+Will NuttX run on PinePhone? Let's analyse a PinePhone Linux Kernel Image with Ghidra, to look at the Linux Kernel Header and Startup Code.
 
 We'll use the PinePhone Jumpdrive Image, since it's small...
 
@@ -612,9 +624,7 @@ So NuttX could be a drop-in replacement for the PinePhone Linux Kernel! We just 
 
 And NuttX should (theoretically) boot on PinePhone!
 
-As mentioned earlier, we should rebuild NuttX so that `__start` is changed to 0x4000 0000 (from 0x4028 0000), as defined in the NuttX Linker Script...
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/scripts/dramboot.ld#L30-L33
+As mentioned earlier, we should rebuild NuttX so that `__start` is changed to 0x4000 0000 (from 0x4028 0000), as defined in the NuttX Linker Script: [boards/arm64/qemu/qemu-a53/scripts/dramboot.ld](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/scripts/dramboot.ld#L30-L33)
 
 ```text
 SECTIONS
@@ -633,6 +643,14 @@ https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/
     .quad   0x480000              /* Image load offset from start of RAM */
 ```
 
+We'll increase the RAM Size to 2 GB (from 128 MB): [boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig#L47-L48)
+
+```text
+/* TODO: Increase to 2 GB for PinePhone */
+CONFIG_RAM_SIZE=134217728
+CONFIG_RAM_START=0x40000000
+```
+
 _But will we see anything when NuttX boots on PinePhone?_
 
 Not yet. We'll need to implement the UART Driver for NuttX...
@@ -641,7 +659,11 @@ Not yet. We'll need to implement the UART Driver for NuttX...
 
 TODO: Build UART Driver in NuttX for Allwinner A64 SoC
 
-Replace the code here: https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/qemu/qemu_serial.c
+Replace the code here...
+
+https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/qemu/qemu_serial.c
+
+https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/qemu/qemu_lowputc.S
 
 UART0 Memory Map: https://linux-sunxi.org/A64/Memory_map
 
