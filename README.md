@@ -186,6 +186,8 @@ Bottom Part of NuttX Image Header...
 
 ![Bottom Part of NuttX Image Header](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%204.10.04%20PM.png)
 
+We see the Magic Number `ARM\x64` at offset 0x38. Searching the net for this Magic Number shows that it's actually an Arm64 Linux Kernel Header!
+
 When we refer to the NuttX Disassembly `nuttx.S`, we find happiness...
 
 https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L79-L117
@@ -251,7 +253,7 @@ u32 magic     = 0x644d5241;   /* Magic number, little endian, "ARM\x64" */
 u32 res5;                     /* reserved (used for PE COFF offset) */
 ```
 
-Assuming the Start of RAM is 0x4000 000, I wonder if this Image Load Offset might be incorrect...
+Assuming the Start of RAM is 0x4000 0000, I wonder if this Image Load Offset might be incorrect...
 
 https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L107
 
