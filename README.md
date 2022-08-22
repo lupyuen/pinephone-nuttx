@@ -176,19 +176,28 @@ https://github.com/apache/incubator-nuttx/tree/master/arch/arm64/src/common
 
 # NuttX Image
 
-TODO: Analyse NuttX Image with Ghidra and NuttX Disassembly
+Let's analyse the NuttX Image with Ghidra, to understand the NuttX Image Header and Startup Code.
 
-Top Part of NuttX Image Header...
+Here's the NuttX Image in Ghidra...
 
 ![Top Part of NuttX Image Header](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%204.09.55%20PM.png)
 
-Bottom Part of NuttX Image Header...
+Note that the NuttX Image jumps to `real_start` (to skip the Image Header)...
+
+```text
+40280000 4d 5a 00 91     add        x13,x18,#0x16
+40280004 0f 00 00 14     b          real_start
+```
+
+`real_start` is defined at 0x4028 0040...
 
 ![Bottom Part of NuttX Image Header](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%204.10.04%20PM.png)
 
-We see the Magic Number `ARM\x64` at offset 0x38. Searching the net for this Magic Number shows that it's actually an Arm64 Linux Kernel Header!
+We see the Magic Number `ARM\x64` at offset 0x4028 0038.
 
-When we refer to the NuttX Disassembly `nuttx.S`, we find happiness...
+Searching the net for this Magic Number reveals that it's actually an Arm64 Linux Kernel Header!
+
+When we refer to the [NuttX Arm64 Disassembly `nuttx.S`](https://github.com/lupyuen/pinephone-nuttx/releases/download/v1.0.0/nuttx.S), we find happiness...
 
 https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L79-L117
 
@@ -234,11 +243,11 @@ real_start:
     /* Disable all exceptions and interrupts */
 ```
 
-NuttX Image actually follows the Linux Kernel Image Format, as defined here...
+NuttX Image actually follows the Arm64 Linux Kernel Image Format! As defined here...
 
 -   ["Booting AArch64 Linux"](https://www.kernel.org/doc/html/latest/arm64/booting.html)
 
-Linux Kernel Image contains a 64-byte header as follows:
+Arm64 Linux Kernel Image contains a 64-byte header...
 
 ```text
 u32 code0;                    /* Executable code */
@@ -253,7 +262,7 @@ u32 magic     = 0x644d5241;   /* Magic number, little endian, "ARM\x64" */
 u32 res5;                     /* reserved (used for PE COFF offset) */
 ```
 
-Assuming the Start of RAM is 0x4000 0000, I wonder if this Image Load Offset might be incorrect...
+Start of RAM is 0x4000 0000. I wonder if this Image Load Offset in our NuttX Image Header might be incorrect...
 
 https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L107
 
@@ -261,7 +270,7 @@ https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/
     .quad   0x480000              /* Image load offset from start of RAM */
 ```
 
-Because the ELF Header says that the code is actually loaded at 0x4028 0000. (Instead of 0x4048 0000)
+Remember that Ghidra (and the Arm Disassembly) says that our NuttX Image is actually loaded at 0x4028 0000. (Instead of 0x4048 0000)
 
 RAM Size and RAM Start are defined here...
 
@@ -272,9 +281,9 @@ CONFIG_RAM_SIZE=134217728
 CONFIG_RAM_START=0x40000000
 ```
 
-That's 128 MB RAM. Which should work with PinePhone's 2 GB RAM.
+That's 128 MB RAM. Which should work OK with PinePhone's 2 GB RAM.
 
-NuttX was built with this Linker Command, based on `make --trace`...
+The NuttX Image was built with this Linker Command, based on `make --trace`...
 
 ```bash
 aarch64-none-elf-ld \
@@ -313,9 +322,13 @@ SECTIONS
 
 We'll change this to 0x4000 0000 for PinePhone, since Start of RAM is 0x4000 0000 and Image Load Offset is 0. (See below)
 
+We've seen the NuttX Image (which looks like a Linux Kernel Image), let's compare with a PinePhone Linux Kernel Image and see how NuttX needs to be tweaked...
+
 # PinePhone Image
 
-TODO: Disassemble a PinePhone Image with Ghidra to look at the Linux Kernel Header and Startup Code
+Let's analyse a PinePhone Linux Kernel Image with Ghidra, to look at the Linux Kernel Header and Startup Code.
+
+We'll use the PinePhone Jumpdrive Image, since it's small...
 
 https://github.com/dreemurrs-embedded/Jumpdrive
 
@@ -364,7 +377,15 @@ So we shift `Image` in Ghidra to start at 0x4000 0000...
 
 -   Change Start Address to 40000000
 
-TODO: Verify that NuttX uses similar Header and Startup Code as PinePhone
+Note that the first instruction at 0x4000 0000 jumps to 0x4081 0000 (to skip the Linux Kernel Header)...
+
+```text
+40000000 00 40 20 14     b          FUN_40810000
+```
+
+The Linux Kernel Code actually begins at 0x4081 0000...
+
+![Linux Kernel Code actually begins at 0x4081 0000](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%205.53.58%20PM.png)
 
 # TODO
 
