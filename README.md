@@ -541,9 +541,9 @@ https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/
 
 _But will we see anything when NuttX boots on PinePhone?_
 
-TODO: UART Driver
+Not yet. We'll need to implement the UART Driver for NuttX...
 
-# TODO
+# UART Driver for NuttX
 
 TODO: Build UART Driver in NuttX for Allwinner A64 SoC
 
@@ -554,6 +554,8 @@ UART0 Memory Map: https://linux-sunxi.org/A64/Memory_map
 More about A64 UART: https://linux-sunxi.org/UART
 
 Serial Debug Cable: https://wiki.pine64.org/index.php/PinePhone#Serial_console
+
+# TODO
 
 TODO: Configure NuttX Memory Regions for Allwinner A64 SoC
 
