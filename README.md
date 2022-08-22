@@ -114,6 +114,10 @@ aarch64-none-elf-objdump \
   2>&1
 ```
 
+The NuttX Output Files may be found here...
+
+-   [NuttX for Arm Cortex-A53 Single Core](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.0.1)
+
 # Test NuttX with QEMU: Single Core
 
 Let's test NuttX on QEMU with a Single Core of Arm Cortex-A53...
@@ -133,7 +137,97 @@ qemu-system-aarch64 \
 
 Here's NuttX with a Single Core running on QEMU...
 
-TODO
+```text
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+
+nx_start: Entry
+up_allocate_heap: heap_start=0x0x402c4000, heap_size=0x7d3c000
+gic_validate_dist_version: GICv3 version detect
+gic_validate_dist_version: GICD_TYPER = 0x37a0007
+gic_validate_dist_version: 224 SPIs implemented
+gic_validate_dist_version: 0 Extended SPIs implemented
+gic_validate_dist_version: Distributor has no Range Selector support
+gic_validate_redist_version: GICD_TYPER = 0x1000011
+gic_validate_redist_version: 16 PPIs implemented
+gic_validate_redist_version: no VLPI support, no direct LPI support
+up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 62.50MHz, cycle 62500
+uart_register: Registering /dev/console
+uart_register: Registering /dev/ttyS0
+work_start_highpri: Starting high-priority kernel worker thread(s)
+nx_start_application: Starting init thread
+lib_cxx_initialize: _sinit: 0x402a7000 _einit: 0x402a7000 _stext: 0x40280000 _etext: 0x402a8000
+nsh: sysinit: fopen failed: 2
+nsh: mkfatfs: command not found
+
+NuttShell (NSH) NuttX-10.3.0-RC2
+nsh> nx_start: CPU0: Beginning Idle Loop
+
+nsh> help
+help usage:  help [-v] [<cmd>]
+
+  .         cd        dmesg     help      mount     rmdir     true      xd        
+  [         cp        echo      hexdump   mv        set       truncate  
+  ?         cmp       exec      kill      printf    sleep     uname     
+  basename  dirname   exit      ls        ps        source    umount    
+  break     dd        false     mkdir     pwd       test      unset     
+  cat       df        free      mkrd      rm        time      usleep    
+
+Builtin Apps:
+  getprime  hello     nsh       ostest    sh        
+
+nsh> uname -a
+NuttX 10.3.0-RC2 1e8f2a8 Aug 23 2022 07:04:54 arm64 qemu-a53
+
+nsh> hello
+task_spawn: name=hello entry=0x4029b594 file_actions=0x402c9580 attr=0x402c9588 argv=0x402c96d0
+spawn_execattrs: Setting policy=2 priority=100 for pid=3
+Hello, World!!
+
+nsh> ls /
+/:
+ dev/
+ etc/
+ proc/
+
+nsh> ls /dev
+/dev:
+ console
+ null
+ ram0
+ ram2
+ ttyS0
+ zero
+
+nsh> ls /proc
+/proc:
+ 0/
+ 1/
+ 2/
+ meminfo
+ memdump
+ fs/
+ self/
+ uptime
+ version
+
+nsh> ls /etc
+/etc:
+ init.d/
+
+nsh> ls /etc/init.d
+/etc/init.d:
+ rcS
+
+nsh> cat /etc/init.d/rcS
+# Create a RAMDISK and mount it at /tmp
+
+mkrd -m 2 -s 512 1024
+mkfatfs /dev/ram2
+mount -t vfat /dev/ram2 /tmp
+```
 
 # Build NuttX: Multi Core
 
