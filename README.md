@@ -8,7 +8,13 @@ Will NuttX run on PinePhone? PinePhone is based on Allwinner A64 SoC with 4 Core
 
 https://wiki.pine64.org/index.php/PinePhone
 
-NuttX might be a fun way to teach more people about Phone Operating Systems. And someday we might have a cheap, fast and responsive phone running on NuttX!
+Let's find out!
+
+_Why NuttX?_
+
+NuttX might be a fun way to teach more people about the internals of Phone Operating Systems.
+
+Someday we might have a cheap, fast, responsive and tweakable phone running on NuttX!
 
 Many thanks to [qinwei2004](https://github.com/qinwei2004) and the NuttX Team for implementing [Cortex-A53 support](https://github.com/apache/incubator-nuttx/pull/6478)!
 
@@ -82,10 +88,15 @@ make
 Test with qemu...
 
 ```bash
-qemu-system-aarch64 -cpu cortex-a53 -nographic \
+qemu-system-aarch64 \
+    -cpu cortex-a53 \
+    -nographic \
     -machine virt,virtualization=on,gic-version=3 \
-    -net none -chardev stdio,id=con,mux=on -serial chardev:con \
-    -mon chardev=con,mode=readline -kernel ./nuttx
+    -net none \
+    -chardev stdio,id=con,mux=on \
+    -serial chardev:con \
+    -mon chardev=con,mode=readline \
+    -kernel ./nuttx
 ```
 
 # Build NuttX: Multi Core
@@ -102,13 +113,19 @@ make
 Test with qemu...
 
 ```bash
-qemu-system-aarch64 -cpu cortex-a53 -smp 4 -nographic \
+qemu-system-aarch64 \
+    -smp 4 \
+    -cpu cortex-a53 \
+    -nographic \
     -machine virt,virtualization=on,gic-version=3 \
-    -net none -chardev stdio,id=con,mux=on -serial chardev:con \
-    -mon chardev=con,mode=readline -kernel ./nuttx
+    -net none \
+    -chardev stdio,id=con,mux=on \
+    -serial chardev:con \
+    -mon chardev=con,mode=readline \
+    -kernel ./nuttx
 ```
 
-# Analyse Image with Ghidra
+# Analyse PinePhone Image with Ghidra
 
 TODO: Disassemble a PinePhone Image with Ghidra to look at the Startup Code
 
