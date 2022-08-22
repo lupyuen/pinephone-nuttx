@@ -186,7 +186,7 @@ https://github.com/apache/incubator-nuttx/tree/master/arch/arm64/src/common
 
 Let's analyse the NuttX Image with Ghidra, to understand the NuttX Image Header and Startup Code.
 
-Here's the NuttX Image in Ghidra...
+Here's the [NuttX ELF Image `nuttx`](https://github.com/lupyuen/pinephone-nuttx/releases/download/v1.0.0/nuttx) analysed by Ghidra...
 
 ![Top Part of NuttX Image Header](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%204.09.55%20PM.png)
 
