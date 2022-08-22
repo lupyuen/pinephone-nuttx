@@ -437,6 +437,15 @@ SECTIONS
   _start = .;
 ```
 
+Also the Image Load Offset in our NuttX Image Header should be changed to 0x0 (from 0x48 0000)...
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L107
+
+```text
+    /* TODO: Change to 0x0 for PinePhone */
+    .quad   0x480000              /* Image load offset from start of RAM */
+```
+
 TODO: UART Driver
 
 # TODO
