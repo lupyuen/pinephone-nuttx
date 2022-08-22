@@ -12,7 +12,7 @@ Will NuttX run on PinePhone? Let's find out!
 
 _Why NuttX?_
 
-NuttX might be a fun way to teach more people about the internals of Phone Operating Systems.
+NuttX is tiny and might be a fun way to teach more people about the internals of Phone Operating Systems. (Without digging deep into the entire Linux Stack)
 
 Someday we might have a cheap, fast, responsive and tweakable phone running on NuttX!
 
