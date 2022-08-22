@@ -193,3 +193,107 @@ TODO: From [Alan Carvalho de Assis](https://www.linkedin.com/in/acassis/)
 Hi Lup, that is a nice idea! I ran NuttX on PCDuino (ARM Cortex-A9 I think), also NuttX run on iMX6 and BeagleBoneBlack, they boards with processors instead MCU are nice to try evolve NuttX on Desktop direction. There is a Tom Window Manager that Greg ported to NuttX
 
 It is in my TODO to port NanoX (nxlib/microwindows) it could open doors to port X11 graphic applications from Linux
+
+TODO: Boot Files for Manjaro Phosh on PinePhone:
+
+```text
+[manjaro@manjaro-arm ~]$ ls -l /boot
+total 38568
+-rw-r--r-- 1 root root     1476 Jun 22 08:36 boot.scr
+-rw-r--r-- 1 root root     1404 Apr  6 11:51 boot.txt
+drwxr-xr-x 3 root root     4096 Oct 16  2021 dtbs
+-rw-r--r-- 1 root root 20160520 Jul  3 14:56 Image
+-rw-r--r-- 1 root root  8359044 Jul  3 14:56 Image.gz
+-rw-r--r-- 1 root root  7327835 Jul 24 14:33 initramfs-linux.img
+-rw-r--r-- 1 root root   722223 Apr  6 11:51 u-boot-sunxi-with-spl-pinephone-492.bin
+-rw-r--r-- 1 root root   722223 Apr  6 11:51 u-boot-sunxi-with-spl-pinephone-528.bin
+-rw-r--r-- 1 root root   722223 Apr  6 11:51 u-boot-sunxi-with-spl-pinephone-552.bin
+-rw-r--r-- 1 root root   722223 Apr  6 11:51 u-boot-sunxi-with-spl-pinephone-592.bin
+-rw-r--r-- 1 root root   722223 Apr  6 11:51 u-boot-sunxi-with-spl-pinephone-624.bin
+
+[manjaro@manjaro-arm ~]$ ls -l /boot/dtbs
+total 8
+drwxr-xr-x 2 root root 8192 Jul 24 14:30 allwinner
+
+[manjaro@manjaro-arm ~]$ ls -l /boot/dtbs/allwinner
+total 1504
+-rw-r--r-- 1 root root 13440 Jul  3 14:56 sun50i-a100-allwinner-perf1.dtb
+-rw-r--r-- 1 root root 41295 Jul  3 14:56 sun50i-a64-amarula-relic.dtb
+-rw-r--r-- 1 root root 41648 Jul  3 14:56 sun50i-a64-bananapi-m64.dtb
+-rw-r--r-- 1 root root 40512 Jul  3 14:56 sun50i-a64-nanopi-a64.dtb
+-rw-r--r-- 1 root root 39951 Jul  3 14:56 sun50i-a64-oceanic-5205-5inmfd.dtb
+-rw-r--r-- 1 root root 41268 Jul  3 14:56 sun50i-a64-olinuxino.dtb
+-rw-r--r-- 1 root root 41397 Jul  3 14:56 sun50i-a64-olinuxino-emmc.dtb
+-rw-r--r-- 1 root root 42295 Jul  3 14:56 sun50i-a64-orangepi-win.dtb
+-rw-r--r-- 1 root root 40316 Jul  3 14:56 sun50i-a64-pine64.dtb
+-rw-r--r-- 1 root root 40948 Jul  3 14:56 sun50i-a64-pine64-lts.dtb
+-rw-r--r-- 1 root root 40438 Jul  3 14:56 sun50i-a64-pine64-plus.dtb
+-rw-r--r-- 1 root root 42979 Jul  3 14:56 sun50i-a64-pinebook.dtb
+-rw-r--r-- 1 root root 53726 Jul  3 14:56 sun50i-a64-pinephone-1.0.dtb
+-rw-r--r-- 1 root root 53753 Jul  3 14:56 sun50i-a64-pinephone-1.1.dtb
+-rw-r--r-- 1 root root 53718 Jul  3 14:56 sun50i-a64-pinephone-1.2.dtb
+-rw-r--r-- 1 root root 44110 Jul  3 14:56 sun50i-a64-pinetab.dtb
+-rw-r--r-- 1 root root 44150 Jul  3 14:56 sun50i-a64-pinetab-early-adopter.dtb
+-rw-r--r-- 1 root root 40816 Jul  3 14:56 sun50i-a64-sopine-baseboard.dtb
+-rw-r--r-- 1 root root 42234 Jul  3 14:56 sun50i-a64-teres-i.dtb
+-rw-r--r-- 1 root root 31407 Jul  3 14:56 sun50i-h5-bananapi-m2-plus.dtb
+-rw-r--r-- 1 root root 32846 Jul  3 14:56 sun50i-h5-bananapi-m2-plus-v1.2.dtb
+-rw-r--r-- 1 root root 31056 Jul  3 14:56 sun50i-h5-emlid-neutis-n5-devboard.dtb
+-rw-r--r-- 1 root root 31277 Jul  3 14:56 sun50i-h5-libretech-all-h3-cc.dtb
+-rw-r--r-- 1 root root 29939 Jul  3 14:56 sun50i-h5-libretech-all-h3-it.dtb
+-rw-r--r-- 1 root root 31872 Jul  3 14:56 sun50i-h5-libretech-all-h5-cc.dtb
+-rw-r--r-- 1 root root 29013 Jul  3 14:56 sun50i-h5-nanopi-neo2.dtb
+-rw-r--r-- 1 root root 29704 Jul  3 14:56 sun50i-h5-nanopi-neo-plus2.dtb
+-rw-r--r-- 1 root root 31401 Jul  3 14:56 sun50i-h5-nanopi-r1s-h5.dtb
+-rw-r--r-- 1 root root 31082 Jul  3 14:56 sun50i-h5-orangepi-pc2.dtb
+-rw-r--r-- 1 root root 29806 Jul  3 14:56 sun50i-h5-orangepi-prime.dtb
+-rw-r--r-- 1 root root 29044 Jul  3 14:56 sun50i-h5-orangepi-zero-plus2.dtb
+-rw-r--r-- 1 root root 29131 Jul  3 14:56 sun50i-h5-orangepi-zero-plus.dtb
+-rw-r--r-- 1 root root 31911 Jul  3 14:56 sun50i-h6-beelink-gs1.dtb
+-rw-r--r-- 1 root root 33042 Jul  3 14:56 sun50i-h6-orangepi-3.dtb
+-rw-r--r-- 1 root root 30504 Jul  3 14:56 sun50i-h6-orangepi-lite2.dtb
+-rw-r--r-- 1 root root 30287 Jul  3 14:56 sun50i-h6-orangepi-one-plus.dtb
+-rw-r--r-- 1 root root 32368 Jul  3 14:56 sun50i-h6-pine-h64.dtb
+-rw-r--r-- 1 root root 32882 Jul  3 14:56 sun50i-h6-pine-h64-model-b.dtb
+-rw-r--r-- 1 root root 29544 Jul  3 14:56 sun50i-h6-tanix-tx6.dtb
+-rw-r--r-- 1 root root 29305 Jul  3 14:56 sun50i-h6-tanix-tx6-mini.dtb
+
+[manjaro@manjaro-arm ~]$ cat /boot/boot.txt
+#
+# /boot/boot.txt
+# After modifying, run "pp-uboot-mkscr" to re-generate the U-Boot boot script.
+#
+
+#
+# This is the description of the GPIO lines used in this boot script:
+#
+# GPIO #98 is PD2, or A64 ball W19, which controls the vibrator motor
+# GPIO #114 is PD18, or A64 ball AB13, which controls the red part of the multicolor LED
+# GPIO #115 is PD19, or A64 ball AB12, which controls the green part of the multicolor LED
+# GPIO #116 is PD20, or A64 ball AB11, which controls the blue part of the multicolor LED
+#
+
+gpio set 98
+gpio set 114
+
+# Set root partition to the second partition of boot device
+part uuid ${devtype} ${devnum}:1 uuid_boot
+part uuid ${devtype} ${devnum}:2 uuid_root
+
+setenv bootargs loglevel=4 console=tty0 console=${console} earlycon=uart,mmio32,0x01c28000 consoleblank=0 boot=PARTUUID=${uuid_boot} root=PARTUUID=${uuid_root} rw rootwait quiet audit=0 bootsplash.bootfile=bootsplash-themes/manjaro/bootsplash
+
+if load ${devtype} ${devnum}:${distro_bootpart} ${kernel_addr_r} /Image; then
+  gpio clear 98
+  if load ${devtype} ${devnum}:${distro_bootpart} ${fdt_addr_r} /dtbs/${fdtfile}; then
+    if load ${devtype} ${devnum}:${distro_bootpart} ${ramdisk_addr_r} /initramfs-linux.img; then
+      gpio set 115
+      booti ${kernel_addr_r} ${ramdisk_addr_r}:${filesize} ${fdt_addr_r};
+    else
+      gpio set 116
+      booti ${kernel_addr_r} - ${fdt_addr_r};
+    fi;
+  fi;
+fi
+
+# EOF
+```
