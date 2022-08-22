@@ -263,6 +263,56 @@ https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/
 
 Because the ELF Header says that the code is actually loaded at 0x4028 0000. (Instead of 0x4048 0000)
 
+RAM Size and RAM Start are defined here...
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig#L47-L48
+
+```text
+CONFIG_RAM_SIZE=134217728
+CONFIG_RAM_START=0x40000000
+```
+
+That's 128 MB RAM. Which should work with PinePhone's 2 GB RAM.
+
+NuttX was built with this Linker Command, based on `make --trace`...
+
+```bash
+aarch64-none-elf-ld \
+  --entry=__start \
+  -nostdlib \
+  --cref \
+  -Map=nuttx/nuttx/nuttx.map \
+  -Tnuttx/nuttx/boards/arm64/qemu/qemu-a53/scripts/dramboot.ld  \
+  -L nuttx/nuttx/staging \
+  -L nuttx/nuttx/arch/arm64/src/board  \
+  -o nuttx/nuttx/nuttx arm64_head.o  \
+  --start-group \
+  -lsched \
+  -ldrivers \
+  -lboards \
+  -lc \
+  -lmm \
+  -larch \
+  -lapps \
+  -lfs \
+  -lbinfmt \
+  -lboard /Applications/ArmGNUToolchain/11.3.rel1/aarch64-none-elf/bin/../lib/gcc/aarch64-none-elf/11.3.1/libgcc.a /Applications/ArmGNUToolchain/11.3.rel1/aarch64-none-elf/bin/../lib/gcc/aarch64-none-elf/11.3.1/../../../../aarch64-none-elf/lib/libm.a \
+  --end-group
+```
+
+`__start` is defined as 0x4028 0000 here...
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/scripts/dramboot.ld#L30-L33
+
+```text
+SECTIONS
+{
+  . = 0x40280000;  /* uboot load address */
+  _start = .;
+```
+
+We'll change this to 0x4000 0000 for PinePhone, since Image Load Offset is 0. (See below)
+
 # PinePhone Image
 
 TODO: Disassemble a PinePhone Image with Ghidra to look at the Linux Kernel Header and Startup Code
