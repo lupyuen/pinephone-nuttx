@@ -270,7 +270,7 @@ u32 magic     = 0x644d5241;   /* Magic number, little endian, "ARM\x64" */
 u32 res5;                     /* reserved (used for PE COFF offset) */
 ```
 
-Start of RAM is 0x4000 0000. I wonder if this Image Load Offset in our NuttX Image Header might be incorrect...
+Start of RAM is 0x4000 0000. The Image Load Offset in our NuttX Image Header is 0x48 0000...
 
 https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L107
 
@@ -278,9 +278,13 @@ https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/
     .quad   0x480000              /* Image load offset from start of RAM */
 ```
 
+This means that our NuttX Image will be loaded at 0x4048 0000.
+
+I wonder if this Image Load Offset should have been 0x28 0000? (Instead of 0x48 0000)
+
 Remember that Ghidra (and the Arm Disassembly) says that our NuttX Image is actually loaded at 0x4028 0000. (Instead of 0x4048 0000)
 
-RAM Size and RAM Start are defined here...
+RAM Size and RAM Start are defined in the NuttX Configuration...
 
 https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig#L47-L48
 
@@ -289,7 +293,7 @@ CONFIG_RAM_SIZE=134217728
 CONFIG_RAM_START=0x40000000
 ```
 
-That's 128 MB RAM. Which should work OK with PinePhone's 2 GB RAM.
+That's 128 MB RAM. Which should fit inside PinePhone's 2 GB RAM.
 
 The NuttX Image was built with this Linker Command, based on `make --trace`...
 
@@ -317,7 +321,7 @@ aarch64-none-elf-ld \
   --end-group
 ```
 
-NuttX Image begins at `__start`, which is defined as 0x4028 0000 here...
+NuttX Image begins at `__start`, which is defined as 0x4028 0000 in the NuttX Linker Script...
 
 https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/scripts/dramboot.ld#L30-L33
 
@@ -390,6 +394,8 @@ Note that the first instruction at 0x4000 0000 jumps to 0x4081 0000 (to skip the
 ```text
 40000000 00 40 20 14     b          FUN_40810000
 ```
+
+(Note: The magic "MZ" signature is not needed)
 
 The Linux Kernel Code actually begins at 0x4081 0000...
 
