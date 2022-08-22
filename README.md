@@ -161,8 +161,18 @@ TODO: Copy NuttX to microSD Card
 
 A64 Boot ROM: https://linux-sunxi.org/BROM#A64
 
+A64 U-Boot: https://linux-sunxi.org/U-Boot
+
 A64 U-Boot SPL: https://linux-sunxi.org/BROM#U-Boot_SPL_limitations
 
 SD Card Layout: https://linux-sunxi.org/Bootable_SD_card#SD_Card_Layout
 
 TODO: Boot NuttX on PinePhone and test NuttX Shell
+
+TODO: Build NuttX Drivers for PinePhone's LCD Display, Touch Panel, LTE Modem, WiFi, BLE, Power Mgmt, ...
+
+TODO: From [Alan Carvalho de Assis](https://www.linkedin.com/in/acassis/)
+
+Hi Lup, that is a nice idea! I ran NuttX on PCDuino (ARM Cortex-A9 I think), also NuttX run on iMX6 and BeagleBoneBlack, they boards with processors instead MCU are nice to try evolve NuttX on Desktop direction. There is a Tom Window Manager that Greg ported to NuttX
+
+It is in my TODO to port NanoX (nxlib/microwindows) it could open doors to port X11 graphic applications from Linux
