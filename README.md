@@ -192,9 +192,15 @@ TODO: Build NuttX Drivers for PinePhone's LCD Display, Touch Panel, LTE Modem, W
 
 TODO: From [Alan Carvalho de Assis](https://www.linkedin.com/in/acassis/)
 
-Hi Lup, that is a nice idea! I ran NuttX on PCDuino (ARM Cortex-A9 I think), also NuttX run on iMX6 and BeagleBoneBlack, they boards with processors instead MCU are nice to try evolve NuttX on Desktop direction. There is a Tom Window Manager that Greg ported to NuttX
+-   I ran NuttX on PCDuino (ARM Cortex-A9 I think)
 
-It is in my TODO to port NanoX (nxlib/microwindows) it could open doors to port X11 graphic applications from Linux
+-   also NuttX on iMX6 and BeagleBoneBlack
+
+-   nice to try evolve NuttX on Desktop direction
+
+-   Tom Window Manager that Greg ported to NuttX
+
+-   TODO: port NanoX (nxlib/microwindows) it could open doors to port X11 graphic applications from Linux
 
 TODO: Boot Files for Manjaro Phosh on PinePhone:
 
