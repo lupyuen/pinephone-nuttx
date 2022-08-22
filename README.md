@@ -300,7 +300,7 @@ aarch64-none-elf-ld \
   --end-group
 ```
 
-`__start` is defined as 0x4028 0000 here...
+NuttX Image begins at `__start`, which is defined as 0x4028 0000 here...
 
 https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/scripts/dramboot.ld#L30-L33
 
@@ -311,7 +311,7 @@ SECTIONS
   _start = .;
 ```
 
-We'll change this to 0x4000 0000 for PinePhone, since Image Load Offset is 0. (See below)
+We'll change this to 0x4000 0000 for PinePhone, since Start of RAM is 0x4000 0000 and Image Load Offset is 0. (See below)
 
 # PinePhone Image
 
@@ -331,12 +331,16 @@ gunzip initramfs.gz
 tar xvf initramfs
 ```
 
-Import `Image` as AARCH64:LE:v8A:default...
+Import `Image` (Linux Kernel) as AARCH64:LE:v8A:default...
 -   Processor: AARCH64 
 -   Variant: v8A 
 -   Size: 64 
 -   Endian: little 
 -   Compiler: default
+
+Here's the Jumpdrive `Image` (Linux Kernel) in Ghidra...
+
+![Jumpdrive Image in Ghidra](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%205.40.58%20PM.png)
 
 According to the Linux Kernel Header...
 
@@ -344,7 +348,7 @@ According to the Linux Kernel Header...
 
 We see Linux Kernel Magic Number `ARM\x64` at offset 0x38.
 
-Image Load Offset is 0, according to Linux Kernel Header.
+Image Load Offset is 0, according to the header.
 
 Start of RAM is 0x4000 0000 according to this Memory Map...
 
@@ -356,7 +360,7 @@ So we shift `Image` in Ghidra to start at 0x4000 0000...
 
 -   Click "ram"
 
--   Click the 4-Arrows icon (Move a block to another address)
+-   Click the 4-Arrows icon ("Move a block to another address")
 
 -   Change Start Address to 40000000
 
