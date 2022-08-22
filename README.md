@@ -23,21 +23,25 @@ Many thanks to [qinwei2004](https://github.com/qinwei2004) and the NuttX Team fo
 Download the Source Code for NuttX Mainline, which supports Arm Cortex-A53...
 
 ```bash
+## Create NuttX Directory
 mkdir nuttx
 cd nuttx
 
+## Download NuttX OS
 git clone \
     --recursive \
     --branch arm64 \
     https://github.com/lupyuen/incubator-nuttx \
     nuttx
 
+## Download NuttX Apps
 git clone \
     --recursive \
     --branch arm64 \
     https://github.com/lupyuen/incubator-nuttx-apps \
     apps
 
+## We build inside nuttx/nuttx
 cd nuttx
 ```
 
