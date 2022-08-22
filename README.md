@@ -407,6 +407,38 @@ The Linux Kernel Code actually begins at 0x4081 0000...
 
 ![Linux Kernel Code actually begins at 0x4081 0000](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%205.53.58%20PM.png)
 
+# Will NuttX Boot On PinePhone?
+
+_So will NuttX boot on PinePhone?_
+
+It's highly plausible! We discovered (with happiness) that NuttX already generates an Arm64 Linux Kernel Header.
+
+So NuttX could be a drop-in replacement for the PinePhone Linux Kernel! We just need to...
+
+-   Write PinePhone Jumpdrive to a microSD Card (with Etcher, in FAT format)
+
+-   Overwrite `Image.gz` by the (gzipped) NuttX Binary Image `nuttx.bin.gz`
+
+-   Insert the microSD Card into PinePhone
+
+-   Power on PinePhone
+
+And NuttX should (theoretically) boot on PinePhone!
+
+As mentioned earlier, we should rebuild NuttX so that `__start` is changed to 0x4000 0000 (from 0x4028 0000), as defined in the NuttX Linker Script...
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/scripts/dramboot.ld#L30-L33
+
+```text
+SECTIONS
+{
+  /* TODO: Change to 0x4000000 for PinePhone */
+  . = 0x40280000;  /* uboot load address */
+  _start = .;
+```
+
+TODO: UART Driver
+
 # TODO
 
 TODO: Build UART Driver in NuttX for Allwinner A64 SoC
