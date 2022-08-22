@@ -316,6 +316,8 @@ TODO: Verify that NuttX uses similar Header and Startup Code as PinePhone
 
 TODO: Build UART Driver in NuttX for Allwinner A64 SoC
 
+Replace the code here: https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/qemu/qemu_serial.c
+
 UART0 Memory Map: https://linux-sunxi.org/A64/Memory_map
 
 More about A64 UART: https://linux-sunxi.org/UART
