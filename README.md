@@ -172,6 +172,8 @@ UART0 Memory Map: https://linux-sunxi.org/A64/Memory_map
 
 More about A64 UART: https://linux-sunxi.org/UART
 
+Serial Debug Cable: https://wiki.pine64.org/index.php/PinePhone#Serial_console
+
 TODO: Configure NuttX Memory Regions for Allwinner A64 SoC
 
 TODO: Copy NuttX to microSD Card
