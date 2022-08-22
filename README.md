@@ -171,13 +171,17 @@ Import `Image` as AARCH64:LE:v8A:default...
 
 https://linux-sunxi.org/A64/Memory_map
 
-Click Window > Memory Map
+-   Click Window > Memory Map
 
-Click "ram"
+-   Click "ram"
 
-Click the 4-Arrows icon (Move a block to another address)
+-   Click the 4-Arrows icon (Move a block to another address)
 
-Change Start Address to 40000000
+-   Change Start Address to 40000000
+
+Kernel Header Magic Value `ARMd` (`ARM\x64`) is at offset 0x38...
+
+https://github.com/raspberrypi/firmware/issues/1415#issuecomment-649637129
 
 # TODO
 
