@@ -97,9 +97,7 @@ brew install qemu
 
 # Build NuttX: Single Core
 
-TODO
-
-Configure NuttX and compile...
+Let's build NuttX for a Single Core of Arm Cortex-A53...
 
 ```bash
 ## Configure NuttX for Single Core
@@ -116,26 +114,30 @@ aarch64-none-elf-objdump \
   2>&1
 ```
 
-Test with qemu...
+# Test NuttX with QEMU: Single Core
+
+Let's test NuttX on QEMU with a Single Core of Arm Cortex-A53...
 
 ```bash
 ## Start QEMU (Single Core) with NuttX
 qemu-system-aarch64 \
-    -cpu cortex-a53 \
-    -nographic \
-    -machine virt,virtualization=on,gic-version=3 \
-    -net none \
-    -chardev stdio,id=con,mux=on \
-    -serial chardev:con \
-    -mon chardev=con,mode=readline \
-    -kernel ./nuttx
+  -cpu cortex-a53 \
+  -nographic \
+  -machine virt,virtualization=on,gic-version=3 \
+  -net none \
+  -chardev stdio,id=con,mux=on \
+  -serial chardev:con \
+  -mon chardev=con,mode=readline \
+  -kernel ./nuttx
 ```
 
-# Build NuttX: Multi Core
+Here's NuttX with a Single Core running on QEMU...
 
 TODO
 
-Configure NuttX and compile...
+# Build NuttX: Multi Core
+
+Let's build NuttX for 4 Cores of Arm Cortex-A53...
 
 ```bash
 ## Configure NuttX for 4 Cores
@@ -156,21 +158,112 @@ The NuttX Output Files may be found here...
 
 -   [NuttX for Arm Cortex-A53 Multi-Core](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.0.0)
 
-Test with qemu...
+# Test NuttX with QEMU: Multi Core
+
+Let's test NuttX on QEMU with 4 Cores of Arm Cortex-A53...
 
 ```bash
 ## Start QEMU (4 Cores) with NuttX
 qemu-system-aarch64 \
-    -smp 4 \
-    -cpu cortex-a53 \
-    -nographic \
-    -machine virt,virtualization=on,gic-version=3 \
-    -net none \
-    -chardev stdio,id=con,mux=on \
-    -serial chardev:con \
-    -mon chardev=con,mode=readline \
-    -kernel ./nuttx
+  -smp 4 \
+  -cpu cortex-a53 \
+  -nographic \
+  -machine virt,virtualization=on,gic-version=3 \
+  -net none \
+  -chardev stdio,id=con,mux=on \
+  -serial chardev:con \
+  -mon chardev=con,mode=readline \
+  -kernel ./nuttx
 ```
+
+Note that `smp` is set to 4. [(Symmetric Multi-Processing)](https://developer.arm.com/documentation/den0024/a/Multi-core-processors/Multi-processing-systems/Symmetric-multi-processing?lang=en)
+
+Here's NuttX with 4 Cores running on QEMU...
+
+```text
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+
+[CPU0] psci_detect: Detected PSCI v1.1
+[CPU0] nx_start: Entry
+[CPU0] up_allocate_heap: heap_start=0x0x402db000, heap_size=0x7d25000
+[CPU0] gic_validate_dist_version: GICv3 version detect
+[CPU0] gic_validate_dist_version: GICD_TYPER = 0x37a0007
+[CPU0] gic_validate_dist_version: 224 SPIs implemented
+[CPU0] gic_validate_dist_version: 0 Extended SPIs implemented
+[CPU0] gic_validate_dist_version: Distributor has no Range Selector support
+[CPU0] gic_validate_redist_version: GICD_TYPER = 0x1000001
+[CPU0] gic_validate_redist_version: 16 PPIs implemented
+[CPU0] gic_validate_redist_version: no VLPI support, no direct LPI support
+[CPU0] up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 62.50MHz, cycle 62500
+[CPU0] uart_register: Registering /dev/console
+[CPU0] uart_register: Registering /dev/ttyS0
+
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+
+[CPU1] gic_validate_redist_version: GICD_TYPER = 0x101000101
+[CPU1] gic_validate_redist_version: 16 PPIs implemented
+[CPU1] gic_validate_redist_version: no VLPI support, no direct LPI support
+[CPU1] nx_idle_trampoline: CPU1: Beginning Idle Loop
+[CPU0] arm64_start_cpu: Secondary CPU core 1 (MPID:0x1) is up
+
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+
+[CPU2] gic_validate_redist_version: GICD_TYPER = 0x201000201
+[CPU2] gic_validate_redist_version: 16 PPIs implemented
+[CPU2] gic_validate_redist_version: no VLPI support, no direct LPI support
+[CPU2] nx_idle_trampoline: CPU2: Beginning Idle Loop
+[CPU0] arm64_start_cpu: Secondary CPU core 2 (MPID:0x2) is up
+
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+
+[CPU3] gic_validate_redist_version: GICD_TYPER = 0x301000311
+[CPU3] gic_validate_redist_version: 16 PPIs implemented
+[CPU3] gic_validate_redist_version: no VLPI support, no direct LPI support
+[CPU0] arm64_start_cpu: Secondary CPU core 3 (MPID:0x3) is up
+[CPU0] work_start_highpri: Starting high-priority kernel worker thread(s)
+[CPU0] nx_start_application: Starting init thread
+[CPU3] nx_idle_trampoline: CPU3: Beginning Idle Loop
+[CPU0] nx_start: CPU0: Beginning Idle Loop
+
+nsh: sysinit: fopen failed: 2
+nsh: mkfatfs: command not found
+
+NuttShell (NSH) NuttX-10.3.0-RC2
+nsh> help
+help usage:  help [-v] [<cmd>]
+
+  .         cd        dmesg     help      mount     rmdir     true      xd        
+  [         cp        echo      hexdump   mv        set       truncate  
+  ?         cmp       exec      kill      printf    sleep     uname     
+  basename  dirname   exit      ls        ps        source    umount    
+  break     dd        false     mkdir     pwd       test      unset     
+  cat       df        free      mkrd      rm        time      usleep    
+
+Builtin Apps:
+  getprime  hello     nsh       ostest    sh        smp       taskset   
+
+nsh> uname -a
+NuttX 10.3.0-RC2 1e8f2a8 Aug 21 2022 15:57:35 arm64 qemu-a53
+
+nsh> hello
+[CPU0] task_spawn: name=hello entry=0x4029cee4 file_actions=0x402e52b0 attr=0x402e52b8 argv=0x402e5400
+[CPU0] spawn_execattrs: Setting policy=2 priority=100 for pid=6
+Hello, World!
+```
+
+We see each of the 4 Cores starting NuttX (CPU0 to CPU3). That's so cool!
 
 # Inside NuttX for Cortex-A53
 
@@ -445,6 +538,8 @@ https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/
     /* TODO: Change to 0x0 for PinePhone */
     .quad   0x480000              /* Image load offset from start of RAM */
 ```
+
+_But will we see anything when NuttX boots on PinePhone?_
 
 TODO: UART Driver
 
