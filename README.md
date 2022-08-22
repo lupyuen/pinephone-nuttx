@@ -41,7 +41,7 @@ git clone \
     https://github.com/lupyuen/incubator-nuttx-apps \
     apps
 
-## We build inside nuttx/nuttx
+## We'll build NuttX inside nuttx/nuttx
 cd nuttx
 ```
 
@@ -61,10 +61,20 @@ For Linux x64 and WSL: [gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz](htt
 
 (I don't recommend building NuttX on Plain Old Windows CMD, please use WSL instead)
 
-Add it to the `PATH`. For macOS we do this...
+Add it to the `PATH`...
 
 ```bash
+## For Linux:
+export PATH="$PATH:$HOME/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin"
+
+## For macOS:
 export PATH="$PATH:/Applications/ArmGNUToolchain/11.3.rel1/aarch64-none-elf/bin"
+```
+
+Check the toolchain...
+
+```bash
+aarch64-none-elf-gcc -v
 ```
 
 [(Based on the instructions here)](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53)
@@ -88,13 +98,24 @@ TODO
 Configure NuttX and compile...
 
 ```bash
+## Configure NuttX for Single Core
 ./tools/configure.sh -l qemu-a53:nsh
+
+## Build NuttX
 make
+
+## Dump the disassembly to nuttx.S
+aarch64-none-elf-objdump \
+  -t -S --demangle --line-numbers --wide \
+  nuttx \
+  >nuttx.S \
+  2>&1
 ```
 
 Test with qemu...
 
 ```bash
+## Start QEMU (Single Core) with NuttX
 qemu-system-aarch64 \
     -cpu cortex-a53 \
     -nographic \
@@ -113,13 +134,24 @@ TODO
 Configure NuttX and compile...
 
 ```bash
+## Configure NuttX for 4 Cores
 ./tools/configure.sh -l qemu-a53:nsh_smp
+
+## Build NuttX
 make
+
+## Dump the disassembly to nuttx.S
+aarch64-none-elf-objdump \
+  -t -S --demangle --line-numbers --wide \
+  nuttx \
+  >nuttx.S \
+  2>&1
 ```
 
 Test with qemu...
 
 ```bash
+## Start QEMU (4 Cores) with NuttX
 qemu-system-aarch64 \
     -smp 4 \
     -cpu cortex-a53 \
