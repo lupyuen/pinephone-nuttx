@@ -356,12 +356,16 @@ gunzip initramfs.gz
 tar xvf initramfs
 ```
 
-Import `Image` (Linux Kernel) as AARCH64:LE:v8A:default...
+Import the uncompressed `Image` (Linux Kernel) into Ghidra.
+
+For "Language" select AARCH64:LE:v8A:default...
 -   Processor: AARCH64 
 -   Variant: v8A 
 -   Size: 64 
 -   Endian: little 
 -   Compiler: default
+
+![For "Language" select AARCH64:LE:v8A:default](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%203.39.06%20PM.png)
 
 Here's the Jumpdrive `Image` (Linux Kernel) in Ghidra...
 
@@ -387,7 +391,9 @@ So we shift `Image` in Ghidra to start at 0x4000 0000...
 
 -   Click the 4-Arrows icon ("Move a block to another address")
 
--   Change Start Address to 40000000
+-   Change "New Start Address" to 40000000
+
+![Change Start Address to 40000000](https://lupyuen.github.io/images/Screenshot%202022-08-21%20at%207.07.15%20PM.png)
 
 Note that the first instruction at 0x4000 0000 jumps to 0x4081 0000 (to skip the Linux Kernel Header)...
 
