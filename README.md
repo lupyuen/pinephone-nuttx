@@ -286,9 +286,19 @@ Import `Image` as AARCH64:LE:v8A:default...
 -   Endian: little 
 -   Compiler: default
 
-`Image` seems to start at 0x40000000, as suggested by this Memory Map...
+According to the Linux Kernel Header...
+
+-   ["Booting AArch64 Linux"](https://www.kernel.org/doc/html/latest/arm64/booting.html)
+
+We see Linux Kernel Magic Number `ARM\x64` at offset 0x38.
+
+Image Load Offset is 0, according to Linux Kernel Header.
+
+Start of RAM is 0x4000 0000 according to this Memory Map...
 
 https://linux-sunxi.org/A64/Memory_map
+
+So we shift `Image` in Ghidra to start at 0x4000 0000...
 
 -   Click Window > Memory Map
 
@@ -298,15 +308,9 @@ https://linux-sunxi.org/A64/Memory_map
 
 -   Change Start Address to 40000000
 
-According to this doc...
-
--   ["Booting AArch64 Linux"](https://www.kernel.org/doc/html/latest/arm64/booting.html)
-
-Linux Kernel Magic Number `ARM\x64` is at offset 0x38
+TODO: Verify that NuttX uses similar Header and Startup Code as PinePhone
 
 # TODO
-
-TODO: Verify that NuttX uses similar Startup Code
 
 TODO: Build UART Driver in NuttX for Allwinner A64 SoC
 
