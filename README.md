@@ -174,9 +174,86 @@ https://github.com/apache/incubator-nuttx/tree/master/arch/arm64/src/qemu
 
 https://github.com/apache/incubator-nuttx/tree/master/arch/arm64/src/common
 
-# Analyse PinePhone Image with Ghidra
+# NuttX Image
 
-TODO: Disassemble a PinePhone Image with Ghidra to look at the Startup Code
+TODO: Analyse NuttX Image with Ghidra and NuttX Disassembly
+
+Top Part of NuttX Image Header...
+
+![Top Part of NuttX Image Header](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%204.09.55%20PM.png)
+
+Bottom Part of NuttX Image Header...
+
+![Bottom Part of NuttX Image Header](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%204.10.04%20PM.png)
+
+When we refer to the NuttX Disassembly `nuttx.S`, we see this...
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L79-L117
+
+```text
+    /* Kernel startup entry point.
+     * ---------------------------
+     *
+     * The requirements are:
+     *   MMU = off, D-cache = off, I-cache = on or off,
+     *   x0 = physical address to the FDT blob.
+     *       it will be used when NuttX support device tree in the future
+     *
+     * This must be the very first address in the loaded image.
+     * It should be loaded at any 4K-aligned address.
+     */
+    .globl __start;
+__start:
+
+    /* DO NOT MODIFY. Image header expected by Linux boot-loaders.
+     *
+     * This add instruction has no meaningful effect except that
+     * its opcode forms the magic "MZ" signature of a PE/COFF file
+     * that is required for UEFI applications.
+     *
+     * Some bootloader (such imx8 uboot) checking the magic "MZ" to see
+     * if the image is a valid Linux image. but modifying the bootLoader is
+     * unnecessary unless we need to do a customize secure boot.
+     * so just put the ''MZ" in the header to make bootloader happiness
+     */
+
+    add     x13, x18, #0x16      /* the magic "MZ" signature */
+    b       real_start           /* branch to kernel start */
+    .quad   0x480000              /* Image load offset from start of RAM */
+    .quad   _e_initstack - __start         /* Effective size of kernel image, little-endian */
+    .quad   __HEAD_FLAGS         /* Informative flags, little-endian */
+    .quad   0                    /* reserved */
+    .quad   0                    /* reserved */
+    .quad   0                    /* reserved */
+    .ascii  "ARM\x64"            /* Magic number, "ARM\x64" */
+    .long   0                    /* reserved */
+
+real_start:
+    /* Disable all exceptions and interrupts */
+```
+
+NuttX Image actually follows the Linux Kernel Image Format, as defined here...
+
+-   ["Booting AArch64 Linux"](https://www.kernel.org/doc/html/latest/arm64/booting.html)
+
+Linux Kernel Image contains a 64-byte header as follows:
+
+```text
+u32 code0;                    /* Executable code */
+u32 code1;                    /* Executable code */
+u64 text_offset;              /* Image load offset, little endian */
+u64 image_size;               /* Effective Image size, little endian */
+u64 flags;                    /* kernel flags, little endian */
+u64 res2      = 0;            /* reserved */
+u64 res3      = 0;            /* reserved */
+u64 res4      = 0;            /* reserved */
+u32 magic     = 0x644d5241;   /* Magic number, little endian, "ARM\x64" */
+u32 res5;                     /* reserved (used for PE COFF offset) */
+```
+
+# PinePhone Image
+
+TODO: Disassemble a PinePhone Image with Ghidra to look at the Linux Kernel Header and Startup Code
 
 https://github.com/dreemurrs-embedded/Jumpdrive
 
@@ -211,9 +288,11 @@ https://linux-sunxi.org/A64/Memory_map
 
 -   Change Start Address to 40000000
 
-Kernel Header Magic Value `ARMd` (`ARM\x64`) is at offset 0x38...
+According to this doc...
 
-https://github.com/raspberrypi/firmware/issues/1415#issuecomment-649637129
+-   ["Booting AArch64 Linux"](https://www.kernel.org/doc/html/latest/arm64/booting.html)
+
+Linux Kernel Magic Number `ARM\x64` is at offset 0x38
 
 # TODO
 
