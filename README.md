@@ -152,6 +152,10 @@ aarch64-none-elf-objdump \
   2>&1
 ```
 
+The NuttX Output Files may be found here...
+
+-   [NuttX for Arm Cortex-A53 Multi-Core](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.0.0)
+
 Test with qemu...
 
 ```bash
