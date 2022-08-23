@@ -237,7 +237,7 @@ mount -t vfat /dev/ram2 /tmp
 
 NuttX is [POSIX Compliant](https://nuttx.apache.org/docs/latest/introduction/inviolables.html), so the developer experience feels very much like Linux. (But much smaller)
 
-And NuttX everything runs in RAM, no File System needed. (For now)
+And NuttX runs everything in RAM, no File System needed. (For now)
 
 # Build NuttX: Multi Core
 
