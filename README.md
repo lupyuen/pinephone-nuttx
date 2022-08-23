@@ -412,9 +412,9 @@ Note that the NuttX Image jumps to `real_start` (to skip the Image Header)...
 
 `real_start` is defined at 0x4028 0040 with the Startup Code...
 
-![Bottom Part of NuttX Image Header](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%204.10.04%20PM.png)
+![Bottom Part of NuttX Image Header](https://lupyuen.github.io/images/arm-title.png)
 
-We see the Magic Number `ARM\x64` at offset 0x4028 0038.
+We see something interesting: The Magic Number `ARM\x64` appears at address 0x4028 0038.
 
 Searching the net for this Magic Number reveals that it's actually an Arm64 Linux Kernel Header!
 
