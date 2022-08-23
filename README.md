@@ -244,6 +244,9 @@ And NuttX runs everything in RAM, no File System needed. (For now)
 From Single Core to Multi Core! Now we build NuttX for 4 Cores of Arm Cortex-A53...
 
 ```bash
+## Erase the NuttX Configuration
+make distclean
+
 ## Configure NuttX for 4 Cores
 ./tools/configure.sh -l qemu-a53:nsh_smp
 
