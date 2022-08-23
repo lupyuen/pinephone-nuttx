@@ -363,6 +363,8 @@ Hello, World!
 
 We see each of the 4 Cores starting NuttX (CPU0 to CPU3). That's so cool!
 
+(Can we use QEMU to partially emulate PinePhone? That would be extremely helpful!)
+
 # Inside NuttX for Cortex-A53
 
 Now we browse the Source Files for the implementation of Cortex-A53 on NuttX.
