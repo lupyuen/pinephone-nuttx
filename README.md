@@ -385,7 +385,7 @@ The QEMU Board calls the QEMU Architecture-Specific Drivers at...
 
 The UART Driver is located at [qemu/qemu_serial.c](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/qemu/qemu_serial.c) and [qemu/qemu_lowputc.S](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/qemu/qemu_lowputc.S)
 
-(For PinePhone we'll create a UART Driver for Allwinner A64 SoC)
+(For PinePhone we'll create a UART Driver for Allwinner A64 SoC. I2C, SPI and other Low-Level A64 Drivers will be located here too)
 
 The QEMU Functions (Board and Architecture) call the Arm64 Architecture Functions at...
 
