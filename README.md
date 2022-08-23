@@ -4,7 +4,7 @@
 
 -   [nuttx/boards/arm64/qemu/qemu-a53](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53)
 
-PinePhone is based on Allwinner A64 SoC with 4 Cores of Arm Cortex-A53...
+PinePhone is based on [Allwinner A64 SoC](https://linux-sunxi.org/A64) with 4 Cores of Arm Cortex-A53...
 
 -   [PinePhone Wiki](https://wiki.pine64.org/index.php/PinePhone)
 
@@ -55,13 +55,13 @@ Download the Arm Toolchain for AArch64 ELF Bare-Metal Target (`aarch64-none-elf`
 
 -   [Arm GNU Toolchain Downloads](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads)
 
-For macOS:
-
--   [arm-gnu-toolchain-11.3.rel1-darwin-x86_64-aarch64-none-elf.pkg](https://developer.arm.com/-/media/Files/downloads/gnu/11.3.rel1/binrel/arm-gnu-toolchain-11.3.rel1-darwin-x86_64-aarch64-none-elf.pkg)
-
 For Linux x64 and WSL:
 
 -   [gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz](https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz)
+
+For macOS:
+
+-   [arm-gnu-toolchain-11.3.rel1-darwin-x86_64-aarch64-none-elf.pkg](https://developer.arm.com/-/media/Files/downloads/gnu/11.3.rel1/binrel/arm-gnu-toolchain-11.3.rel1-darwin-x86_64-aarch64-none-elf.pkg)
 
 (I don't recommend building NuttX on Plain Old Windows CMD, please use WSL instead)
 
@@ -385,7 +385,7 @@ The QEMU Functions (Board and Architecture) call the Arm64 Architecture Function
 
 -   [nuttx/arch/arm64/src/common](https://github.com/apache/incubator-nuttx/tree/master/arch/arm64/src/common)
 
-Which has all kinds of Arm64 Functions: [FPU](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_fpu.c), [Interrupts](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_gicv3.c), [MMU](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_mmu.c), [Tasks](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_task_sched.c), ...
+Which implements all kinds of Arm64 Features: [FPU](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_fpu.c), [Interrupts](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_gicv3.c), [MMU](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_mmu.c), [Tasks](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_task_sched.c), [Timers](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/common/arm64_arch_timer.c)...
 
 (We'll reuse them for PinePhone)
 
@@ -404,7 +404,7 @@ Note that the NuttX Image jumps to `real_start` (to skip the Image Header)...
 40280004 0f 00 00 14     b          real_start
 ```
 
-`real_start` is defined at 0x4028 0040, with the Startup Code...
+`real_start` is defined at 0x4028 0040 with the Startup Code...
 
 ![Bottom Part of NuttX Image Header](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%204.10.04%20PM.png)
 
@@ -634,9 +634,7 @@ SECTIONS
   _start = .;
 ```
 
-Also the Image Load Offset in our NuttX Image Header should be changed to 0x0 (from 0x48 0000)...
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L107
+Also the Image Load Offset in our NuttX Image Header should be changed to 0x0 (from 0x48 0000): [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L107)
 
 ```text
     /* TODO: Change to 0x0 for PinePhone */
@@ -657,19 +655,29 @@ Not yet. We'll need to implement the UART Driver for NuttX...
 
 # UART Driver for NuttX
 
-TODO: Build UART Driver in NuttX for Allwinner A64 SoC
+We won't see any output from NuttX until we implement the UART Driver for NuttX.
 
-Replace the code here...
+These are the Source Files for the QEMU UART Driver (PL011)...
 
-https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/qemu/qemu_serial.c
+-   [arch/arm64/src/qemu/qemu_serial.c](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/qemu/qemu_serial.c)
 
-https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/qemu/qemu_lowputc.S
+-   [arch/arm64/src/qemu/qemu_lowputc.S](https://github.com/apache/incubator-nuttx/blob/master/arch/arm64/src/qemu/qemu_lowputc.S)
 
-UART0 Memory Map: https://linux-sunxi.org/A64/Memory_map
+    [(More about PL011 UART)](https://krinkinmu.github.io/2020/11/29/PL011.html)
 
-More about A64 UART: https://linux-sunxi.org/UART
+We'll replace the code above with the UART Driver for Allwinner A64 SoC...
 
-Serial Debug Cable: https://wiki.pine64.org/index.php/PinePhone#Serial_console
+-   [UART0 Memory Map](https://linux-sunxi.org/A64/Memory_map)
+
+-   [Allwinner A64 UART](https://linux-sunxi.org/UART)
+
+-   [Allwinner A64 User Manual](https://linux-sunxi.org/File:Allwinner_A64_User_Manual_V1.1.pdf)
+
+-   [Allwinner A64 Info](https://linux-sunxi.org/A64)
+
+To access the UART Port on PinePhone, we'll use this USB Serial Debug Cable...
+
+-   [PinePhone Serial Debug Cable](https://wiki.pine64.org/index.php/PinePhone#Serial_console)
 
 # TODO
 
