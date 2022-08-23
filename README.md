@@ -693,6 +693,12 @@ To access the UART Port on PinePhone, we'll use this USB Serial Debug Cable...
 
 Which connects to the Headphone Port. Genius!
 
+[(Remember to flip the Headphone Switch to OFF)](https://wiki.pine64.org/index.php/PinePhone#Privacy_switch_configuration)
+
+![PinePhone UART Port in disguise](https://lupyuen.github.io/images/arm-uart.jpg)
+
+[_PinePhone UART Port in disguise_](https://wiki.pine64.org/index.php/PinePhone#Serial_console)
+
 # TODO
 
 TODO: Configure NuttX Memory Regions for Allwinner A64 SoC
