@@ -68,7 +68,7 @@ For macOS:
 Add it to the `PATH`...
 
 ```bash
-## For Linux:
+## For Linux x64 and WSL:
 export PATH="$PATH:$HOME/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin"
 
 ## For macOS:
