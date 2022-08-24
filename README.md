@@ -579,7 +579,7 @@ For "Language" select AARCH64:LE:v8A:default...
 -   Endian: little 
 -   Compiler: default
 
-![For "Language" select AARCH64:LE:v8A:default](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%203.39.06%20PM.png)
+![For "Language" select AARCH64:LE:v8A:default](https://lupyuen.github.io/images/arm-ghidra7.png)
 
 Here's the Jumpdrive `Image` (Linux Kernel) in Ghidra...
 
