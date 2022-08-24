@@ -410,7 +410,7 @@ Next we analyse the NuttX Image with [Ghidra](https://ghidra-sre.org/), to under
 
 Here's the [NuttX ELF Image `nuttx`](https://github.com/lupyuen/pinephone-nuttx/releases/download/v1.0.0/nuttx) analysed by Ghidra...
 
-![Top Part of NuttX Image Header](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%204.09.55%20PM.png)
+![Ghidra with Apache NuttX RTOS for Arm Cortex-A53](https://lupyuen.github.io/images/arm-ghidra1.png)
 
 Note that the NuttX Image jumps to `real_start` (to skip the Image Header)...
 
@@ -583,7 +583,7 @@ For "Language" select AARCH64:LE:v8A:default...
 
 Here's the Jumpdrive `Image` (Linux Kernel) in Ghidra...
 
-![Jumpdrive Image in Ghidra](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%205.40.58%20PM.png)
+![Ghidra with PinePhone Linux Image](https://lupyuen.github.io/images/arm-ghidra2.png)
 
 According to the Linux Kernel Header...
 
@@ -619,7 +619,7 @@ Note that the first instruction at 0x4000 0000 jumps to 0x4081 0000 (to skip the
 
 The Linux Kernel Code actually begins at 0x4081 0000...
 
-![Linux Kernel Code actually begins at 0x4081 0000](https://lupyuen.github.io/images/Screenshot%202022-08-22%20at%205.53.58%20PM.png)
+![Ghidra with PinePhone Linux Image](https://lupyuen.github.io/images/arm-ghidra3.png)
 
 # Will NuttX Boot On PinePhone?
 
