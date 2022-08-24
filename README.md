@@ -720,18 +720,6 @@ TODO: Boot NuttX on PinePhone and test NuttX Shell
 
 TODO: Build NuttX Drivers for PinePhone's LCD Display, Touch Panel, LTE Modem, WiFi, BLE, Power Mgmt, ...
 
-TODO: From [Alan Carvalho de Assis](https://www.linkedin.com/in/acassis/)
-
--   I ran NuttX on PCDuino (ARM Cortex-A9 I think)
-
--   also NuttX on iMX6 and BeagleBoneBlack
-
--   nice to try evolve NuttX on Desktop direction
-
--   Tom Window Manager that Greg ported to NuttX
-
--   TODO: port NanoX (nxlib/microwindows) it could open doors to port X11 graphic applications from Linux
-
 TODO: Boot Files for Manjaro Phosh on PinePhone:
 
 ```text
