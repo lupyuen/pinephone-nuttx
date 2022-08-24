@@ -607,7 +607,7 @@ So we shift `Image` in Ghidra to start at 0x4000 0000...
 
 -   Change "New Start Address" to 40000000
 
-![Change Start Address to 40000000](https://lupyuen.github.io/images/Screenshot%202022-08-21%20at%207.07.15%20PM.png)
+![Change Start Address to 40000000](https://lupyuen.github.io/images/arm-ghidra8.png)
 
 Note that the first instruction at 0x4000 0000 jumps to 0x4081 0000 (to skip the Linux Kernel Header)...
 
