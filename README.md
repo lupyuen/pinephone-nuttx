@@ -708,11 +708,14 @@ TODO: Allwinner A64 UART
 
 UART_LCR
 Line Control Register
-Offset 0xC 
+Offset 0x0C 
 Bit 7: DLAB (Divisor Latch Access Bit)
 0x80
 
-Set DLAB to 1 (0x80)
+Set DLAB to 1 (0x80):
+ldr x15, =UART1_BASE_ADDRESS
+mov x0, #0x80
+strh w0, [x15, #0x0C]
 
 Baud Rate = (Serial Clock Frequency) / (16 * Divisor)
 Divisor = (Serial Clock Frequency) / (16 * Baud Rate)
@@ -721,17 +724,23 @@ SCLK Serial Clock Frequency = ???
 
 UART_DLL
 Divisor Latch Low (lower 8 bits of divisor)
-Offset 0x0
+Offset 0x00
 
-Write DLL
+Write UART_DLL:
+mov x0, ??? % 256
+strh w0, [x15, #0x00]
 
 UART_DLH
 Divisor Latch High (upper 8 bits of divisor)
-Offset 0x4
+Offset 0x04
 
-Write DLM
+Write UART_DLH:
+mov x0, ??? / 256
+strh w0, [x15, #0x04]
 
-Set DLAB to 0
+Set DLAB to 0:
+mov x0, #0x00
+strh w0, [x15, #0x0C]
 
 TODO: Configure NuttX Memory Regions for Allwinner A64 SoC
 
