@@ -727,7 +727,7 @@ Divisor Latch Low (lower 8 bits of divisor)
 Offset 0x00
 
 Write UART_DLL:
-mov x0, ??? % 256
+mov x0, divisor % 256
 strh w0, [x15, #0x00]
 
 UART_DLH
@@ -735,7 +735,7 @@ Divisor Latch High (upper 8 bits of divisor)
 Offset 0x04
 
 Write UART_DLH:
-mov x0, ??? / 256
+mov x0, divisor / 256
 strh w0, [x15, #0x04]
 
 Set DLAB to 0:
