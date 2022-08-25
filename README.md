@@ -704,17 +704,11 @@ Which connects to the Headphone Port. Genius!
 
 # TODO
 
+
+
 TODO: Configure NuttX Memory Regions for Allwinner A64 SoC
 
 TODO: Copy NuttX to microSD Card
-
-A64 Boot ROM: https://linux-sunxi.org/BROM#A64
-
-A64 U-Boot: https://linux-sunxi.org/U-Boot
-
-A64 U-Boot SPL: https://linux-sunxi.org/BROM#U-Boot_SPL_limitations
-
-SD Card Layout: https://linux-sunxi.org/Bootable_SD_card#SD_Card_Layout
 
 TODO: Boot NuttX on PinePhone and test NuttX Shell
 
