@@ -704,7 +704,34 @@ Which connects to the Headphone Port. Genius!
 
 # TODO
 
+TODO: Allwinner A64 UART
 
+UART_LCR
+Line Control Register
+Offset 0xC 
+Bit 7: DLAB (Divisor Latch Access Bit)
+0x80
+
+Set DLAB to 1 (0x80)
+
+Baud Rate = (Serial Clock Frequency) / (16 * Divisor)
+Divisor = (Serial Clock Frequency) / (16 * Baud Rate)
+Divisor = (Serial Clock Frequency / 16) / Baud Rate
+SCLK Serial Clock Frequency = ???
+
+UART_DLL
+Divisor Latch Low (lower 8 bits of divisor)
+Offset 0x0
+
+Write DLL
+
+UART_DLH
+Divisor Latch High (upper 8 bits of divisor)
+Offset 0x4
+
+Write DLM
+
+Set DLAB to 0
 
 TODO: Configure NuttX Memory Regions for Allwinner A64 SoC
 
