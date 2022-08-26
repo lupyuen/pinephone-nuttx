@@ -898,6 +898,42 @@ Starting kernel ...
 
 According to the U-Boot Log, the Start of RAM `kernel_addr_r` is 0x4008 0000.
 
+We need to set this in the NuttX Linker Script and the NuttX Header...
+
+# NuttX Boots On PinePhone
+
+In the previous section, U-Boot says that the Start of RAM `kernel_addr_r` is 0x4008 0000.
+
+Let's set this in the NuttX Linker Script and the NuttX Header...
+
+-   Change Image Load Offset in NuttX Header to 0x0 (from 0x48000)
+
+    [(See the changes)](https://github.com/lupyuen/incubator-nuttx/commit/9916b52f9dba17944a35aafd4c21fb9eabb17c0e#diff-a830678a9f1b0773c404196c86ad45d1ef7d7e51a52b935cd08df35f5949aaf8)
+
+-   Change NuttX Linker Script to set the Start Address `_start` to 0x4008 0000 (from 0x4028 0000)
+
+    [(See the changes)](https://github.com/lupyuen/incubator-nuttx/commit/9916b52f9dba17944a35aafd4c21fb9eabb17c0e#diff-d8d987cb5ba644b5f79987e42663217799e03e384552b2e8dbb041f145fa8ad1)
+
+For PinePhone Allwinner A64 UART: We reused the previous code for transmitting output to UART...
+
+https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L87-L94
+
+But we updated the UART Register Address for Allwinner A64 UART...
+
+https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L40-L45
+
+Right now we don't check if UART is ready to transmit, so our UART output will have missing characters. This needs to be fixed...
+
+https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L74-L85
+
+We don't init the UART Port because U-Boot has kindly done it for us. This needs to be fixed...
+
+https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L55-L72
+
+With the above changes, NuttX boots on PinePhone yay!
+
+![NuttX Boots On PinePhone](https://lupyuen.github.io/images/Screenshot_2022-08-26_08-04-34_080626.png)
+
 # TODO
 
 TODO: Allwinner A64 UART
