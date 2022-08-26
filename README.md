@@ -990,6 +990,53 @@ With the above changes, NuttX boots on PinePhone yay!
 
 ![NuttX Boots On PinePhone](https://lupyuen.github.io/images/Screenshot_2022-08-26_08-04-34_080626.png)
 
+# NuttX Boot Log
+
+Here's the UART Log of NuttX booting on PinePhone...
+
+```text
+DRAM: 2048 MiB
+Trying to boot from MMC1
+NOTICE:  BL31: v2.2(release):v2.2-904-gf9ea3a629
+NOTICE:  BL31: Built : 15:32:12, Apr  9 2020
+NOTICE:  BL31: Detected Allwinner A64/H64/R18 SoC (1689)
+NOTICE:  BL31: Found U-Boot DTB at 0x4064410, model: PinePhone
+NOTICE:  PSCI: System suspend is unavailable
+
+U-Boot 2020.07 (Nov 08 2020 - 00:15:12 +0100)
+
+DRAM:  2 GiB
+MMC:   Device 'mmc@1c11000': seq 1 is in use by 'mmc@1c10000'
+mmc@1c0f000: 0, mmc@1c10000: 2, mmc@1c11000: 1
+Loading Environment from FAT... *** Warning - bad CRC, using default environment
+
+starting USB...
+No working controllers found
+Hit any key to stop autoboot:  0 
+switch to partitions #0, OK
+mmc0 is current device
+Scanning mmc 0:1...
+Found U-Boot script /boot.scr
+653 bytes read in 3 ms (211.9 KiB/s)
+## Executing script at 4fc00000
+gpio: pin 114 (gpio 114) value is 1
+99784 bytes read in 8 ms (11.9 MiB/s)
+Uncompressed size: 278528 = 0x44000
+36162 bytes read in 4 ms (8.6 MiB/s)
+1078500 bytes read in 51 ms (20.2 MiB/s)
+## Flattened Device Tree blob at 4fa00000
+   Booting using the fdt blob at 0x4fa00000
+   Loading Ramdisk to 49ef8000, end 49fff4e4 ... OK
+   Loading Device Tree to 0000000049eec000, end 0000000049ef7d41 ... OK
+
+Starting kernel ...
+
+HELLO NUTTX ON PINEPHONE!
+- Ready to Boot CPU
+- Boot from EL2
+f
+```
+
 # TODO
 
 TODO: Allwinner A64 UART
