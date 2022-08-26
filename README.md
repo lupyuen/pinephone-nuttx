@@ -916,19 +916,75 @@ Let's set this in the NuttX Linker Script and the NuttX Header...
 
 For PinePhone Allwinner A64 UART: We reused the previous code for transmitting output to UART...
 
-https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L87-L94
+```text
+/* PL011 UART transmit character
+ * xb: register which contains the UART base address
+ * wt: register which contains the character to transmit
+ */
+
+.macro early_uart_transmit xb, wt
+    strb  \wt, [\xb]             /* -> UARTDR (Data Register) */
+.endm
+```
+
+[(Source)](https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L87-L94)
 
 But we updated the UART Register Address for Allwinner A64 UART...
 
-https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L40-L45
+```text
+ /* 32-bit register definition for qemu pl011 uart */
+
+ /* PinePhone Allwinner A64 UART0 Base Address: */
+ #define UART1_BASE_ADDRESS 0x01C28000
+ /* Previously: #define UART1_BASE_ADDRESS 0x9000000 */
+ #define EARLY_UART_PL011_BAUD_RATE  115200
+```
+
+[(Source)](https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L40-L45)
 
 Right now we don't check if UART is ready to transmit, so our UART output will have missing characters. This needs to be fixed...
 
-https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L74-L85
+```text
+/* PL011 UART wait UART to be ready to transmit
+ * xb: register which contains the UART base address
+ * c: scratch register number
+ */
+
+.macro early_uart_ready xb, wt
+1:
+    # TODO: Wait for PinePhone Allwinner A64 UART
+    # ldrh  \wt, [\xb, #0x18]      /* <- UARTFR (Flag register) */
+    # tst   \wt, #0x8              /* Check BUSY bit */
+    # b.ne  1b                     /* Wait for the UART to be ready */
+.endm
+```
+
+[(Source)](https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L74-L85)
 
 We don't init the UART Port because U-Boot has kindly done it for us. This needs to be fixed...
 
-https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L55-L72
+```text
+/* PL011 UART initialization
+ * xb: register which contains the UART base address
+ * c: scratch register number
+ */
+
+GTEXT(up_earlyserialinit)
+SECTION_FUNC(text, up_earlyserialinit)
+    # TODO: Set PinePhone Allwinner A64 Baud Rate Divisor: UART_LCR (DLAB), UART_DLL, UART_DLH
+    # ldr   x15, =UART1_BASE_ADDRESS
+    # mov   x0, #(7372800 / EARLY_UART_PL011_BAUD_RATE % 16)
+    # strh  w0, [x15, #0x28]      /* -> UARTFBRD (Baud divisor fraction) */
+    # mov   x0, #(7372800 / EARLY_UART_PL011_BAUD_RATE / 16)
+    # strh  w0, [x15, #0x24]      /* -> UARTIBRD (Baud divisor integer) */
+    # mov   x0, #0x60             /* 8n1 */
+    # str   w0, [x15, #0x2C]      /* -> UARTLCR_H (Line control) */
+    # ldr   x0, =0x00000301       /* RXE | TXE | UARTEN */
+    # str   w0, [x15, #0x30]      /* -> UARTCR (Control Register) */
+    ret
+```
+
+[(Source)](https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L55-L72)
 
 With the above changes, NuttX boots on PinePhone yay!
 
