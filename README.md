@@ -927,7 +927,7 @@ For PinePhone Allwinner A64 UART: We reused the previous code for transmitting o
 .endm
 ```
 
-[(Source)](https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L87-L94)
+[(Source)](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_lowputc.S#L87-L94)
 
 But we updated the UART Register Address for Allwinner A64 UART...
 
@@ -940,7 +940,7 @@ But we updated the UART Register Address for Allwinner A64 UART...
  #define EARLY_UART_PL011_BAUD_RATE  115200
 ```
 
-[(Source)](https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L40-L45)
+[(Source)](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_lowputc.S#L40-L45)
 
 Right now we don't check if UART is ready to transmit, so our UART output will have missing characters. This needs to be fixed...
 
@@ -959,7 +959,7 @@ Right now we don't check if UART is ready to transmit, so our UART output will h
 .endm
 ```
 
-[(Source)](https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L74-L85)
+[(Source)](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_lowputc.S#L74-L85)
 
 We don't init the UART Port because U-Boot has kindly done it for us. This needs to be fixed...
 
@@ -984,7 +984,7 @@ SECTION_FUNC(text, up_earlyserialinit)
     ret
 ```
 
-[(Source)](https://github.com/lupyuen/incubator-nuttx/blob/9916b52f9dba17944a35aafd4c21fb9eabb17c0e/arch/arm64/src/qemu/qemu_lowputc.S#L55-L72)
+[(Source)](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_lowputc.S#L55-L72)
 
 With the above changes, NuttX boots on PinePhone yay!
 
