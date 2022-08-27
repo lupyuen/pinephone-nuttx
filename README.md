@@ -1036,7 +1036,8 @@ Starting kernel ...
 HELLO NUTTX ON PINEPHONE!
 - Ready to Boot CPU
 - Boot from EL2
-f
+- Boot from EL1
+- Boot to C runtime for OS Initialize
 ```
 
 # TODO
