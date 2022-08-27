@@ -1068,6 +1068,24 @@ If the FIFOs are enabled:
 this bit is set to "1" whenever the TX FIFO is bempty 
 and it is cleared when at least one byte is written to the TX FIFO.
 
+/* PL011 UART wait UART to be ready to transmit
+ * xb: register which contains the UART base address
+ * c: scratch register number
+ */
+
+.macro early_uart_ready xb, wt
+1:
+    # TODO: Wait for PinePhone Allwinner A64 UART
+    # ldrh  \wt, [\xb, #0x18]      /* <- UARTFR (Flag register) */
+    ldrh  \wt, [\xb, #0x14]      /* <- UART_LSR (UART Line Status Register) */
+
+    # tst   \wt, #0x8              /* Check BUSY bit */
+    tst   \wt, #0x20              /* Check THRE bit (TX Holding Register Empty) */
+
+    # b.ne  1b                     /* Wait for the UART to be ready */
+    b.eq  1b                     /* Wait for the UART to be ready (THRE = 1) */
+.endm
+
 TODO: Boot Files for Manjaro Phosh on PinePhone:
 
 ```text
