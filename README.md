@@ -1043,49 +1043,30 @@ f
 
 TODO: Allwinner A64 UART
 
-UART_LCR
-Line Control Register
-Offset 0x0C 
-Bit 7: DLAB (Divisor Latch Access Bit)
-0x80
+Data should only be written to the THR when the THR Empty (THRE) bit (UART_LSR[5]) is set
 
-Set DLAB to 1 (0x80):
-ldr x15, =UART1_BASE_ADDRESS
-mov x0, #0x80
-strh w0, [x15, #0x0C]
+If in FIFO mode and FIFOs are enabled (UART_FCR[0] = 1) and THRE is set:
+16 number of characters of data may be written to the THR before the FIFO is full.
 
-Baud Rate = (Serial Clock Frequency) / (16 * Divisor)
-Divisor = (Serial Clock Frequency) / (16 * Baud Rate)
-Divisor = (Serial Clock Frequency / 16) / Baud Rate
-SCLK Serial Clock Frequency = ???
+Wait for THRE (THR Empty) bit to be set
 
-UART_DLL
-Divisor Latch Low (lower 8 bits of divisor)
-Offset 0x00
+THRE is UART_LSR Bit 5
+0x20
 
-Write UART_DLL:
-mov x0, divisor % 256
-strh w0, [x15, #0x00]
+UART_LSR
+UART Line Status Register
+Offset: 0x0014
 
-UART_DLH
-Divisor Latch High (upper 8 bits of divisor)
-Offset 0x04
+THRE: TX Holding Register Empty
 
-Write UART_DLH:
-mov x0, divisor / 256
-strh w0, [x15, #0x04]
+If the FIFOs are disabled:
+this bit is set to "1" whenever the TX Holding Register is empty 
+and ready to accept new data 
+and it is cleared when the CPU writes to the TX Holding Register.
 
-Set DLAB to 0:
-mov x0, #0x00
-strh w0, [x15, #0x0C]
-
-TODO: Configure NuttX Memory Regions for Allwinner A64 SoC
-
-TODO: Copy NuttX to microSD Card
-
-TODO: Boot NuttX on PinePhone and test NuttX Shell
-
-TODO: Build NuttX Drivers for PinePhone's LCD Display, Touch Panel, LTE Modem, WiFi, BLE, Power Mgmt, ...
+If the FIFOs are enabled:
+this bit is set to "1" whenever the TX FIFO is bempty 
+and it is cleared when at least one byte is written to the TX FIFO.
 
 TODO: Boot Files for Manjaro Phosh on PinePhone:
 
