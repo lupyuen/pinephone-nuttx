@@ -1060,6 +1060,81 @@ void arm64_boot_primary_c_routine(void)
 }
 ```
 
+TODO: arm64_chip_boot
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_boot.c#L81-L105
+
+```c
+void arm64_chip_boot(void)
+{
+  /* MAP IO and DRAM, enable MMU. */
+
+  arm64_mmu_init(true);
+
+#ifdef CONFIG_SMP
+  arm64_psci_init("smc");
+
+#endif
+
+  /* Perform board-specific device initialization. This would include
+   * configuration of board specific resources such as GPIOs, LEDs, etc.
+   */
+
+  qemu_board_initialize();
+
+#ifdef USE_EARLYSERIALINIT
+  /* Perform early serial initialization if we are going to use the serial
+   * driver.
+   */
+
+  qemu_earlyserialinit();
+#endif
+}
+```
+
+TODO: mmu_regions
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_boot.c#L52-L61
+
+```c
+static const struct arm_mmu_region mmu_regions[] =
+{
+  MMU_REGION_FLAT_ENTRY("DEVICE_REGION",
+                        CONFIG_DEVICEIO_BASEADDR, MB(512),
+                        MT_DEVICE_NGNRNE | MT_RW | MT_SECURE),
+
+  MMU_REGION_FLAT_ENTRY("DRAM0_S0",
+                        CONFIG_RAMBANK1_ADDR, MB(512),
+                        MT_NORMAL | MT_RW | MT_SECURE),
+};
+```
+
+TODO: Memory Map
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/include/qemu/chip.h#L38-L56
+
+```c
+// TODO: PinePhone Interrupt Registers
+#define CONFIG_GICD_BASE          0x8000000
+#define CONFIG_GICR_BASE          0x80a0000
+
+// PinePhone RAM: 0x4000 0000 to 0x4800 0000
+#define CONFIG_RAMBANK1_ADDR      0x40000000
+#define CONFIG_RAMBANK1_SIZE      MB(128)
+
+// PinePhone Device I/O: 0x0 to 0x2000 0000
+#define CONFIG_DEVICEIO_BASEADDR  0x00000000
+#define CONFIG_DEVICEIO_SIZE      MB(512)
+
+// Previously:
+// #define CONFIG_DEVICEIO_BASEADDR  0x7000000
+// #define CONFIG_DEVICEIO_SIZE      MB(512)
+
+// PinePhone uboot load address (kernel_addr_r)
+#define CONFIG_LOAD_BASE          0x40080000
+// Previously: #define CONFIG_LOAD_BASE          0x40280000
+```
+
 TODO: QEMU "virt" generic virtual platform
 
 https://www.qemu.org/docs/master/system/arm/virt.html
