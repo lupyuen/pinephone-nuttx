@@ -1038,6 +1038,11 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL2
 - Boot from EL1
 - Boot to C runtime for OS Initialize
+nx_start: Entry
+up_allocate_heap: heap_start=0x0x400c4000, heap_size=0x7f3c000
+gic_validate_dist_version: No GIC version detect
+arm64_gic_initialize: no distributor detected, giving up ret=-19
+up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
 ```
 
 # TODO
