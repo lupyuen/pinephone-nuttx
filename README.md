@@ -1140,6 +1140,10 @@ https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/include/qem
 // Previously: #define CONFIG_LOAD_BASE          0x40280000
 ```
 
+TODO: GIC
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gicv3.c
+
 TODO: QEMU "virt" generic virtual platform
 
 https://www.qemu.org/docs/master/system/arm/virt.html
