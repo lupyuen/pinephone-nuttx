@@ -548,7 +548,7 @@ SECTIONS
   _start = .;
 ```
 
-We'll change this to 0x4000 0000 for PinePhone, since Start of RAM is 0x4000 0000 and Image Load Offset is 0. (See below)
+We'll change this to 0x4008 0000 for PinePhone, since Kernel Start Address is 0x4008 0000 and Image Load Offset is 0. (See below)
 
 We've seen the NuttX Image (which looks like a Linux Kernel Image), let's compare with a PinePhone Linux Kernel Image and see how NuttX needs to be tweaked...
 
@@ -595,11 +595,9 @@ We see Linux Kernel Magic Number `ARM\x64` at offset 0x38.
 
 Image Load Offset is 0, according to the header.
 
-Start of RAM is 0x4000 0000 according to this Memory Map...
+Kernel Start Address on PinePhone is 0x4008 0000.
 
-https://linux-sunxi.org/A64/Memory_map
-
-So we shift `Image` in Ghidra to start at 0x4000 0000...
+So we shift `Image` in Ghidra to start at 0x4008 0000...
 
 -   Click Window > Memory Map
 
@@ -607,19 +605,7 @@ So we shift `Image` in Ghidra to start at 0x4000 0000...
 
 -   Click the 4-Arrows icon ("Move a block to another address")
 
--   Change "New Start Address" to 40000000
-
-![Change Start Address to 40000000](https://lupyuen.github.io/images/arm-ghidra8.png)
-
-Note that the first instruction at 0x4000 0000 jumps to 0x4081 0000 (to skip the Linux Kernel Header)...
-
-```text
-40000000 00 40 20 14     b          FUN_40810000
-```
-
-(Note: The magic "MZ" signature is not needed)
-
-The Linux Kernel Code actually begins at 0x4081 0000...
+-   Change "New Start Address" to 40080000
 
 ![Ghidra with PinePhone Linux Image](https://lupyuen.github.io/images/arm-ghidra3.png)
 
@@ -641,12 +627,12 @@ So NuttX could be a drop-in replacement for the PinePhone Linux Kernel! We just 
 
 And NuttX should (theoretically) boot on PinePhone!
 
-As mentioned earlier, we should rebuild NuttX so that `__start` is changed to 0x4000 0000 (from 0x4028 0000), as defined in the NuttX Linker Script: [boards/arm64/qemu/qemu-a53/scripts/dramboot.ld](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/scripts/dramboot.ld#L30-L33)
+As mentioned earlier, we should rebuild NuttX so that `__start` is changed to 0x4008 0000 (from 0x4028 0000), as defined in the NuttX Linker Script: [boards/arm64/qemu/qemu-a53/scripts/dramboot.ld](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/scripts/dramboot.ld#L30-L33)
 
 ```text
 SECTIONS
 {
-  /* TODO: Change to 0x4000000 for PinePhone */
+  /* TODO: Change to 0x40080000 for PinePhone */
   . = 0x40280000;  /* uboot load address */
   _start = .;
 ```
@@ -658,13 +644,15 @@ Also the Image Load Offset in our NuttX Image Header should be changed to 0x0 (f
     .quad   0x480000              /* Image load offset from start of RAM */
 ```
 
-We'll increase the RAM Size to 2 GB (from 128 MB): [boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig#L47-L48)
+Later we'll increase the RAM Size to 2 GB (from 128 MB): [boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig#L47-L48)
 
 ```text
 /* TODO: Increase to 2 GB for PinePhone */
 CONFIG_RAM_SIZE=134217728
 CONFIG_RAM_START=0x40000000
 ```
+
+But not right now, because it might clash with the Device Tree and RAM File System.
 
 _But will we see anything when NuttX boots on PinePhone?_
 
@@ -1048,7 +1036,52 @@ work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
 ```
 
-# TODO
+# Memory Map
+
+TODO: Memory Map
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/include/qemu/chip.h#L38-L56
+
+```c
+// TODO: PinePhone Interrupt Registers
+#define CONFIG_GICD_BASE          0x8000000
+#define CONFIG_GICR_BASE          0x80a0000
+
+// PinePhone RAM: 0x4000 0000 to 0x4800 0000
+#define CONFIG_RAMBANK1_ADDR      0x40000000
+#define CONFIG_RAMBANK1_SIZE      MB(128)
+
+// PinePhone Device I/O: 0x0 to 0x2000 0000
+#define CONFIG_DEVICEIO_BASEADDR  0x00000000
+#define CONFIG_DEVICEIO_SIZE      MB(512)
+
+// Previously:
+// #define CONFIG_DEVICEIO_BASEADDR  0x7000000
+// #define CONFIG_DEVICEIO_SIZE      MB(512)
+
+// PinePhone uboot load address (kernel_addr_r)
+#define CONFIG_LOAD_BASE          0x40080000
+// Previously: #define CONFIG_LOAD_BASE          0x40280000
+```
+
+TODO: mmu_regions
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_boot.c#L52-L61
+
+```c
+static const struct arm_mmu_region mmu_regions[] =
+{
+  MMU_REGION_FLAT_ENTRY("DEVICE_REGION",
+                        CONFIG_DEVICEIO_BASEADDR, MB(512),
+                        MT_DEVICE_NGNRNE | MT_RW | MT_SECURE),
+
+  MMU_REGION_FLAT_ENTRY("DRAM0_S0",
+                        CONFIG_RAMBANK1_ADDR, MB(512),
+                        MT_NORMAL | MT_RW | MT_SECURE),
+};
+```
+
+# Boot Sequence
 
 TODO: arm64_boot_primary_c_routine
 
@@ -1100,60 +1133,15 @@ void arm64_chip_boot(void)
 }
 ```
 
-TODO: mmu_regions
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_boot.c#L52-L61
-
-```c
-static const struct arm_mmu_region mmu_regions[] =
-{
-  MMU_REGION_FLAT_ENTRY("DEVICE_REGION",
-                        CONFIG_DEVICEIO_BASEADDR, MB(512),
-                        MT_DEVICE_NGNRNE | MT_RW | MT_SECURE),
-
-  MMU_REGION_FLAT_ENTRY("DRAM0_S0",
-                        CONFIG_RAMBANK1_ADDR, MB(512),
-                        MT_NORMAL | MT_RW | MT_SECURE),
-};
-```
-
-TODO: Memory Map
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/include/qemu/chip.h#L38-L56
-
-```c
-// TODO: PinePhone Interrupt Registers
-#define CONFIG_GICD_BASE          0x8000000
-#define CONFIG_GICR_BASE          0x80a0000
-
-// PinePhone RAM: 0x4000 0000 to 0x4800 0000
-#define CONFIG_RAMBANK1_ADDR      0x40000000
-#define CONFIG_RAMBANK1_SIZE      MB(128)
-
-// PinePhone Device I/O: 0x0 to 0x2000 0000
-#define CONFIG_DEVICEIO_BASEADDR  0x00000000
-#define CONFIG_DEVICEIO_SIZE      MB(512)
-
-// Previously:
-// #define CONFIG_DEVICEIO_BASEADDR  0x7000000
-// #define CONFIG_DEVICEIO_SIZE      MB(512)
-
-// PinePhone uboot load address (kernel_addr_r)
-#define CONFIG_LOAD_BASE          0x40080000
-// Previously: #define CONFIG_LOAD_BASE          0x40280000
-```
-
 TODO: GIC
 
 https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gicv3.c
 
+# TODO
+
 TODO: QEMU "virt" generic virtual platform
 
 https://www.qemu.org/docs/master/system/arm/virt.html
-
-TODO: NuttX RAM Size is 128 MB, ends at 0x4808 0000
-
-Number(0x40080000 + (128 * 1024 * 1024)).toString(16)
 
 TODO: Boot Files for Manjaro Phosh on PinePhone:
 
