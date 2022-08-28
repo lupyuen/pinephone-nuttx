@@ -1042,6 +1042,24 @@ HELLO NUTTX ON PINEPHONE!
 
 # TODO
 
+TODO: arm64_boot_primary_c_routine
+
+https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L179-L189
+
+```c
+void arm64_boot_primary_c_routine(void)
+{
+  int up_putc(int ch);////
+  up_putc('0');////
+  boot_early_memset(_START_BSS, 0, _END_BSS - _START_BSS);
+  up_putc('1');////
+  arm64_chip_boot();
+  up_putc('2');////
+  nx_start();
+  up_putc('3');////
+}
+```
+
 TODO: QEMU "virt" generic virtual platform
 
 https://www.qemu.org/docs/master/system/arm/virt.html
