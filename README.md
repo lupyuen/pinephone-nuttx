@@ -1042,51 +1042,6 @@ HELLO NUTTX ON PINEPHONE!
 
 # TODO
 
-TODO: Allwinner A64 UART
-
-Data should only be written to the THR when the THR Empty (THRE) bit (UART_LSR[5]) is set
-
-If in FIFO mode and FIFOs are enabled (UART_FCR[0] = 1) and THRE is set:
-16 number of characters of data may be written to the THR before the FIFO is full.
-
-Wait for THRE (THR Empty) bit to be set
-
-THRE is UART_LSR Bit 5
-0x20
-
-UART_LSR
-UART Line Status Register
-Offset: 0x0014
-
-THRE: TX Holding Register Empty
-
-If the FIFOs are disabled:
-this bit is set to "1" whenever the TX Holding Register is empty 
-and ready to accept new data 
-and it is cleared when the CPU writes to the TX Holding Register.
-
-If the FIFOs are enabled:
-this bit is set to "1" whenever the TX FIFO is bempty 
-and it is cleared when at least one byte is written to the TX FIFO.
-
-/* PL011 UART wait UART to be ready to transmit
- * xb: register which contains the UART base address
- * c: scratch register number
- */
-
-.macro early_uart_ready xb, wt
-1:
-    # TODO: Wait for PinePhone Allwinner A64 UART
-    # ldrh  \wt, [\xb, #0x18]      /* <- UARTFR (Flag register) */
-    ldrh  \wt, [\xb, #0x14]      /* <- UART_LSR (UART Line Status Register) */
-
-    # tst   \wt, #0x8              /* Check BUSY bit */
-    tst   \wt, #0x20              /* Check THRE bit (TX Holding Register Empty) */
-
-    # b.ne  1b                     /* Wait for the UART to be ready */
-    b.eq  1b                     /* Wait for the UART to be ready (THRE = 1) */
-.endm
-
 TODO: Boot Files for Manjaro Phosh on PinePhone:
 
 ```text
