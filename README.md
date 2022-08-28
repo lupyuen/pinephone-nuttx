@@ -1042,6 +1042,14 @@ HELLO NUTTX ON PINEPHONE!
 
 # TODO
 
+TODO: QEMU "virt" generic virtual platform
+
+https://www.qemu.org/docs/master/system/arm/virt.html
+
+TODO: NuttX RAM Size is 128 MB, ends at 0x4808 0000
+
+Number(0x40080000 + (128 * 1024 * 1024)).toString(16)
+
 TODO: Boot Files for Manjaro Phosh on PinePhone:
 
 ```text
