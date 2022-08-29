@@ -1036,6 +1036,68 @@ work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
 ```
 
+# Interrupt Controller
+
+_Where's the rest of the boot output?_
+
+We expect to see this output when NuttX boots...
+
+-   ["Test NuttX: Single Core"](https://lupyuen.github.io/articles/arm#test-nuttx-single-core)
+
+But we haven't implemented the __Arm Generic Interrupt Controller (GIC)__ for PinePhone...
+
+```text
+arm64_gic_initialize: TODO: Init GIC for PinePhone
+```
+
+This is the current implementation of [Arm GIC Version 3](https://developer.arm.com/documentation/ihi0069/latest) in NuttX Arm64...
+
+-   [arch/arm64/src/common/arm64_gicv3.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gicv3.c)
+
+-   [arch/arm64/src/common/arm64_gic.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gic.h)
+
+This implementation won't work on PinePhone, so we have commented the code out.
+
+_Why won't Arm GIC Version 3 work on PinePhone?_
+
+According to the Allwinner A64 SoC User Manual (page 210), PinePhone's Interrupt Controller runs on...
+
+-   [Arm GIC PL400](https://developer.arm.com/documentation/ddi0471/b/introduction/about-the-gic-400), which is based on...
+
+-   [Arm GIC Version 2](https://developer.arm.com/documentation/ihi0048/latest/)
+
+We'll have to downgrade [arm64_gicv3.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gicv3.c) to support Arm GIC Version 2 for PinePhone.
+
+_Does NuttX implement Arm GIC Version 2?_
+
+NuttX has an implementation of Arm GIC Version 2...
+
+-   [arch/arm/src/armv7-a/arm_gicv2.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/armv7-a/arm_gicv2.c)
+
+-   [arch/arm/src/armv7-a/arm_gicv2_dump.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/armv7-a/arm_gicv2_dump.c)
+
+-   [arch/arm/src/armv7-a/gic.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/armv7-a/gic.h)
+
+-   [arch/arm/src/armv7-a/mpcore.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/armv7-a/mpcore.h)
+
+-   [arch/arm/src/imx6/chip.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/imx6/chip.h)
+
+-   [arch/arm/src/imx6/hardware/imx_memorymap.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/imx6/hardware/imx_memorymap.h)
+
+But it's based on Arm32. We might port this implementation to Arm64.
+
+_Where in memory is the GIC located?_
+
+According to the Allwinner A64 SoC User Manual (page 74, "Memory Mapping"), the GIC is located at this address...
+
+| Module | Address (It is for Cluster CPU) 
+| :----- | :------
+|SCU space | 0x01C80000|
+| | GIC_DIST: 0x01C80000 + 0x1000|
+|CPUS can’t access | GIC_CPUIF:0x01C80000 + 0x2000|
+
+(Why "CPUS can’t access"?)
+
 # Memory Map
 
 TODO: Memory Map
@@ -1132,10 +1194,6 @@ void arm64_chip_boot(void)
 #endif
 }
 ```
-
-TODO: GIC
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gicv3.c
 
 # TODO
 
