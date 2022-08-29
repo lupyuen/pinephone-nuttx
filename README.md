@@ -1773,8 +1773,7 @@ reg = <
 >;
 #redistributor-regions = <0x01>;
 ```
-
-GIC v2 Run:
+Before changing to PinePhone GIC v2:
 
 ```text
 - Ready to Boot CPU
@@ -1816,6 +1815,53 @@ arm64_registerdump: SP_ELX:    0x402c3e40
 arm64_registerdump: TPIDR_EL0: 0x402be258
 arm64_registerdump: TPIDR_EL1: 0x402be258
 arm64_registerdump: EXE_DEPTH: 0x1
+```
+
+After changing to PinePhone GIC v2:
+
+```text
++ qemu-system-aarch64 -cpu cortex-a53 -nographic -machine virt,virtualization=on,gic-version=2 -net none -chardev stdio,id=con,mux=on -serial chardev:con -mon chardev=con,mode=readline -kernel ./nuttx
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+nx_start: Entry
+up_allocate_heap: heap_start=0x0x402c4000, heap_size=0x7d3c000
+arm64_gic_initialize: TODO: Init GIC for PinePhone
+arm64_gic_initialize: GIC Version is 2
+EFGarm64_fatal_error: reason = 0
+arm64_fatal_error: arm64_fatal_error: CPU0 task: Idle Task
+arm64_fatal_error: CurrentEL: MODE_EL1
+arm64_fatal_error: ESR_ELn: 0x96000050
+arm64_fatal_error: FAR_ELn: 0x80a0008
+arm64_fatal_error: ELR_ELn: 0x40281388
+print_ec_cause: Data Abort taken without a change in Exception level
+arm64_registerdump: stack = 0x402c3e40
+arm64_registerdump: x0:   0x7                 x1:   0x80a0008
+arm64_registerdump: x2:   0x8000418           x3:   0xf7fffc00
+arm64_registerdump: x4:   0x80808080          x5:   0x1010101
+arm64_registerdump: x6:   0xffffffff          x7:   0x8000180
+arm64_registerdump: x8:   0x88                x9:   0x402b7000
+arm64_registerdump: x10:  0x402c4000          x11:  0x4
+arm64_registerdump: x12:  0xfffffff7          x13:  0x1
+arm64_registerdump: x14:  0x3                 x15:  0x9000000
+arm64_registerdump: x16:  0x1                 x17:  0x20000000000400
+arm64_registerdump: x18:  0x402b9618          x19:  0x2
+arm64_registerdump: x20:  0x402a81a0          x21:  0x402be000
+arm64_registerdump: x22:  0x402a8270          x23:  0x402be338
+arm64_registerdump: x24:  0x402c4000          x25:  0x402802c8
+arm64_registerdump: x26:  0x0                 x27:  0x0
+arm64_registerdump: x28:  0x0                 x29:  0x0
+arm64_registerdump: x30:  0x402812fc        
+arm64_registerdump: 
+arm64_registerdump: STATUS Registers:
+arm64_registerdump: SPSR:      0x400002c5        
+arm64_registerdump: ELR:       0x40281388        
+arm64_registerdump: SP_EL0:    0x402c4000        
+arm64_registerdump: SP_ELX:    0x402c3e40        
+arm64_registerdump: TPIDR_EL0: 0x402be248        
+arm64_registerdump: TPIDR_EL1: 0x402be248        
+arm64_registerdump: EXE_DEPTH: 0x1   
 ```
 
 TODO: Boot Files for Manjaro Phosh on PinePhone:
