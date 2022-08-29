@@ -1302,6 +1302,8 @@ This prints "012" to the Serial Console as NuttX boots.
 
 # GIC Register Dump
 
+Below is the dump of PinePhone's registers for [Arm Generic Interrupt Controller version 2](https://developer.arm.com/documentation/ihi0048/latest/)...
+
 ```text
 HELLO NUTTX ON PINEPHONE!
 - Ready to Boot CPU
