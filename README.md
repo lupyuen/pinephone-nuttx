@@ -1032,8 +1032,8 @@ nx_start: Entry
 up_allocate_heap: heap_start=0x0x400c4000, heap_size=0x7f3c000
 arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: GIC Version is 2
-up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-uart_regist
+EFGHup_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+AMNOPBIJuart_regi
 ```
 
 # Interrupt Controller
