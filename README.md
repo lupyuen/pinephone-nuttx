@@ -1753,7 +1753,7 @@ dtc -o gicv2.dts -O dts -I dtb gicv2.dtb
 
 https://www.kernel.org/doc/Documentation/devicetree/bindings/interrupt-controller/arm%2Cgic.txt
 
-GIC v2: gicv2.dts
+GIC v2: [gicv2.dts](https://github.com/lupyuen/incubator-nuttx/blob/gicv2/gicv2.dts#L324)
 
 ```text
 reg = <
@@ -1764,7 +1764,7 @@ reg = <
 >;
 ```text
 
-GIC v3: gicv3.dts
+GIC v3: [gicv3.dts](https://github.com/lupyuen/incubator-nuttx/blob/gicv2/gicv3.dts#L324)
 
 ```text
 reg = <
