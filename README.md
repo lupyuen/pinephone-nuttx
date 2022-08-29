@@ -632,16 +632,18 @@ As mentioned earlier, we should rebuild NuttX so that `__start` is changed to 0x
 ```text
 SECTIONS
 {
-  /* TODO: Change to 0x40080000 for PinePhone */
-  . = 0x40280000;  /* uboot load address */
+SECTIONS
+{
+  . = 0x40080000;  /* PinePhone uboot load address (kernel_addr_r) */
+  /* Previously: . = 0x40280000; */  /* uboot load address */
   _start = .;
 ```
 
 Also the Image Load Offset in our NuttX Image Header should be changed to 0x0 (from 0x48 0000): [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L107)
 
 ```text
-    /* TODO: Change to 0x0 for PinePhone */
-    .quad   0x480000              /* Image load offset from start of RAM */
+    .quad   0x0000               /* PinePhone Image load offset from start of RAM */
+    # Previously: .quad   0x480000              /* Image load offset from start of RAM */
 ```
 
 Later we'll increase the RAM Size to 2 GB (from 128 MB): [boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/boards/arm64/qemu/qemu-a53/configs/nsh_smp/defconfig#L47-L48)
@@ -1060,7 +1062,7 @@ This implementation won't work on PinePhone, so we have commented the code out.
 
 _Why won't Arm GIC Version 3 work on PinePhone?_
 
-According to the Allwinner A64 SoC User Manual (page 210), PinePhone's Interrupt Controller runs on...
+According to the Allwinner A64 SoC User Manual (page 210, "GIC"), PinePhone's Interrupt Controller runs on...
 
 -   [Arm GIC PL400](https://developer.arm.com/documentation/ddi0471/b/introduction/about-the-gic-400), which is based on...
 
@@ -1070,7 +1072,7 @@ We'll have to downgrade [arm64_gicv3.c](https://github.com/lupyuen/incubator-nut
 
 _Does NuttX implement Arm GIC Version 2?_
 
-NuttX has an implementation of Arm GIC Version 2...
+NuttX has an implementation of Arm GIC Version 2, but it's based on Arm32. We might port it from Arm32 to Arm64...
 
 -   [arch/arm/src/armv7-a/arm_gicv2.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/armv7-a/arm_gicv2.c)
 
@@ -1083,8 +1085,6 @@ NuttX has an implementation of Arm GIC Version 2...
 -   [arch/arm/src/imx6/chip.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/imx6/chip.h)
 
 -   [arch/arm/src/imx6/hardware/imx_memorymap.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/imx6/hardware/imx_memorymap.h)
-
-But it's based on Arm32. We might port this implementation to Arm64.
 
 _Where in memory is the GIC located?_
 
@@ -1100,14 +1100,18 @@ According to the Allwinner A64 SoC User Manual (page 74, "Memory Mapping"), the 
 
 # Memory Map
 
-TODO: Memory Map
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/include/qemu/chip.h#L38-L56
+PinePhone depends on Arm's Memory Management Unit (MMU). We defined two MMU Memory Regions for PinePhone: RAM and Device I/O: [arch/arm64/include/qemu/chip.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/include/qemu/chip.h#L38-L62)
 
 ```c
-// TODO: PinePhone Interrupt Registers
-#define CONFIG_GICD_BASE          0x8000000
-#define CONFIG_GICR_BASE          0x80a0000
+// PinePhone Generic Interrupt Controller
+// GIC_DIST:  0x01C80000 + 0x1000
+// GIC_CPUIF: 0x01C80000 + 0x2000
+#define CONFIG_GICD_BASE          0x01C81000  
+#define CONFIG_GICR_BASE          0x01C82000  
+
+// Previously:
+// #define CONFIG_GICD_BASE          0x8000000
+// #define CONFIG_GICR_BASE          0x80a0000
 
 // PinePhone RAM: 0x4000 0000 to 0x4800 0000
 #define CONFIG_RAMBANK1_ADDR      0x40000000
@@ -1126,9 +1130,11 @@ https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/include/qem
 // Previously: #define CONFIG_LOAD_BASE          0x40280000
 ```
 
-TODO: mmu_regions
+We also changed CONFIG_LOAD_BASE for PinePhone's Kernel Start Address (kernel_addr_r).
 
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_boot.c#L52-L61
+_How are the MMU Memory Regions used?_
+
+NuttX initialises the Arm MMU with the MMU Memory Regions at startup: [arch/arm64/src/qemu/qemu_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_boot.c#L52-L67)
 
 ```c
 static const struct arm_mmu_region mmu_regions[] =
@@ -1141,7 +1147,15 @@ static const struct arm_mmu_region mmu_regions[] =
                         CONFIG_RAMBANK1_ADDR, MB(512),
                         MT_NORMAL | MT_RW | MT_SECURE),
 };
+
+const struct arm_mmu_config mmu_config =
+{
+  .num_regions = ARRAY_SIZE(mmu_regions),
+  .mmu_regions = mmu_regions,
+};
 ```
+
+We'll talk more about this in the next section...
 
 # Boot Sequence
 
