@@ -1185,7 +1185,11 @@ void up_timer_initialize(void)
 }
 ```
 
-__Timer IRQ Numbers__ are defined in [arch/arm64/src/common/arm64_arch_timer.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.h#L38-L45)
+At every tick, the System Timer triggers an interrupt that calls [`arm64_arch_timer_compare_isr`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L109-L169)
+
+(`CONFIG_SCHED_TICKLESS` is undefined)
+
+__Timer IRQ `ARM_ARCH_TIMER_IRQ`__ is defined in [arch/arm64/src/common/arm64_arch_timer.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.h#L38-L45)
 
 ```c
 #define CONFIG_ARM_TIMER_SECURE_IRQ         (GIC_PPI_INT_BASE + 13)
@@ -1198,9 +1202,19 @@ __Timer IRQ Numbers__ are defined in [arch/arm64/src/common/arm64_arch_timer.h](
 #define ARM_ARCH_TIMER_FLAGS	IRQ_TYPE_LEVEL
 ```
 
-At every tick, the System Timer triggers an interrupt that calls [`arm64_arch_timer_compare_isr`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L109-L169)
+`GIC_PPI_INT_BASE` is defined in [arch/arm64/src/common/arm64_gic.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gic.h#L120-L128)
 
-(`CONFIG_SCHED_TICKLESS` is undefined)
+```c
+#define GIC_SGI_INT_BASE            0
+#define GIC_PPI_INT_BASE            16
+#define GIC_IS_SGI(intid)           (((intid) >= GIC_SGI_INT_BASE) && \
+                                     ((intid) < GIC_PPI_INT_BASE))
+
+#define GIC_SPI_INT_BASE            32
+#define GIC_NUM_INTR_PER_REG        32
+#define GIC_NUM_CFG_PER_REG         16
+#define GIC_NUM_PRI_PER_REG         4
+```
 
 # Memory Map
 
