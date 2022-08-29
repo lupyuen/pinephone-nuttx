@@ -1347,12 +1347,12 @@ We may call `up_putc` to print characters to the Serial Console and troubleshoot
 ```c
 void arm64_boot_primary_c_routine(void)
 {
-  int up_putc(int ch);//// For debugging
-  up_putc('0');//// For debugging
+  int up_putc(int ch);  // For debugging
+  up_putc('0');  // For debugging
   boot_early_memset(_START_BSS, 0, _END_BSS - _START_BSS);
-  up_putc('1');//// For debugging
+  up_putc('1');  // For debugging
   arm64_chip_boot();
-  up_putc('2');//// For debugging
+  up_putc('2');  // For debugging
   nx_start();
 }
 ```
