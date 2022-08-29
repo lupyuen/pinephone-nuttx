@@ -1155,31 +1155,36 @@ const struct arm_mmu_config mmu_config =
 };
 ```
 
-We'll talk more about this in the next section...
+The Arm MMU Initialisation is done by `arm64_mmu_init`, defined in [arch/arm64/src/common/arm64_mmu.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_mmu.c#L571-L622)
+
+We'll talk more about the Arm MMU in the next section...
 
 # Boot Sequence
 
-TODO: arm64_boot_primary_c_routine
+This section describes the Boot Sequence for NuttX on PinePhone.
 
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L179-L189
+The Startup Code (in Arm64 Assembly) inits the Arm64 System Registers, UART Port and jumps to `arm64_boot_secondary_c_routine` (in C): [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L228-L230)
+
+```text
+    ldr    x25, =arm64_boot_secondary_c_routine
+    ...
+jump_to_c_entry:
+    PRINT(jump_to_c_entry, "- Boot to C runtime for OS Initialize\r\n")
+    ret x25
+```
+
+`arm64_boot_primary_c_routine` inits the BSS, calls `arm64_chip_boot` to init the Arm64 CPU, and `nx_start` to start the NuttX processes: [arch/arm64/src/common/arm64_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L179-L189)
 
 ```c
 void arm64_boot_primary_c_routine(void)
 {
-  int up_putc(int ch);////
-  up_putc('0');////
   boot_early_memset(_START_BSS, 0, _END_BSS - _START_BSS);
-  up_putc('1');////
   arm64_chip_boot();
-  up_putc('2');////
   nx_start();
-  up_putc('3');////
 }
 ```
 
-TODO: arm64_chip_boot
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_boot.c#L81-L105
+`arm64_chip_boot` calls `arm64_mmu_init` to enable the Arm Memory Management Unit, and `qemu_board_initialize` to init the Board Drivers: [arch/arm64/src/qemu/qemu_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_boot.c#L81-L105)
 
 ```c
 void arm64_chip_boot(void)
@@ -1208,6 +1213,31 @@ void arm64_chip_boot(void)
 #endif
 }
 ```
+
+`arm64_mmu_init` is defined in [arch/arm64/src/common/arm64_mmu.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_mmu.c#L571-L622)
+
+The next section talks about debugging the Boot Sequence...
+
+# Boot Debugging
+
+_How can we debug NuttX while it boots?_
+
+We may call `up_putc` to print characters to the Serial Console and troubleshoot the Boot Sequence: [arch/arm64/src/common/arm64_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L179-L189)
+
+```c
+void arm64_boot_primary_c_routine(void)
+{
+  int up_putc(int ch);//// For debugging
+  up_putc('0');//// For debugging
+  boot_early_memset(_START_BSS, 0, _END_BSS - _START_BSS);
+  up_putc('1');//// For debugging
+  arm64_chip_boot();
+  up_putc('2');//// For debugging
+  nx_start();
+}
+```
+
+This prints "012" to the Serial Console as NuttX boots.
 
 # TODO
 
