@@ -1719,6 +1719,7 @@ qemu-system-aarch64 \
 
 ## GIC v3 Dump Device Tree
 qemu-system-aarch64 \
+  -smp 4 \
   -cpu cortex-a53 \
   -nographic \
   -machine virt,virtualization=on,gic-version=3,dumpdtb=gicv3.dtb \
@@ -1742,6 +1743,7 @@ qemu-system-aarch64 \
 
 ## GIC v2 Dump Device Tree
 qemu-system-aarch64 \
+  -smp 4 \
   -cpu cortex-a53 \
   -nographic \
   -machine virt,virtualization=on,gic-version=2,dumpdtb=gicv2.dtb \
