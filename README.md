@@ -1090,11 +1090,11 @@ _Where in memory is the GIC located?_
 
 According to the Allwinner A64 SoC User Manual (page 74, "Memory Mapping"), the GIC is located at this address...
 
-| Module | Address (It is for Cluster CPU) 
-| :----- | :------
-|SCU space | 0x01C80000|
-| | GIC_DIST: 0x01C80000 + 0x1000|
-|CPUS can’t access | GIC_CPUIF:0x01C80000 + 0x2000|
+| Module | Address (It is for Cluster CPU) | Remarks
+| :----- | :------ | :------
+|SCU space | 0x01C80000| (What's this?)
+| | GIC_DIST: 0x01C80000 + 0x1000| GIC Distributor (GICD)
+|CPUS can’t access | GIC_CPUIF:0x01C80000 + 0x2000| GIC CPU Interface (GICC)
 
 (Why "CPUS can’t access"?)
 
