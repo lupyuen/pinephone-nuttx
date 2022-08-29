@@ -1098,6 +1098,8 @@ According to the Allwinner A64 SoC User Manual (page 74, "Memory Mapping"), the 
 
 (Why "CPUS can’t access"?)
 
+__Interrupt Sources__ (Private Peripheral Interrupt, Shared Peripheral Interrupt, etc) are defined in the Allwinner A64 SoC User Manual (page 210, "GIC").
+
 # Memory Map
 
 PinePhone depends on Arm's Memory Management Unit (MMU). We defined two MMU Memory Regions for PinePhone: RAM and Device I/O: [arch/arm64/include/qemu/chip.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/include/qemu/chip.h#L38-L62)
