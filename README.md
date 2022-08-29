@@ -1098,7 +1098,7 @@ According to the Allwinner A64 SoC User Manual (page 74, "Memory Mapping"), the 
 
 (Why "CPUS can’t access"?)
 
-__Interrupt Sources__ (Private Peripheral Interrupt, Shared Peripheral Interrupt, etc) are defined in the Allwinner A64 SoC User Manual (page 210, "GIC").
+__Interrupt Sources__ (Software-Generated Interrupts, Private Peripheral Interrupts, Shared Peripheral Interrupts) are defined in the Allwinner A64 SoC User Manual (page 210, "GIC").
 
 # Memory Map
 
