@@ -1296,6 +1296,337 @@ This prints "012" to the Serial Console as NuttX boots.
 
 # TODO
 
+```text
+HELLO NUTTX ON PINEPHONE!
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+nx_start: Entry
+up_allocate_heap: heap_start=0x0x400c4000, heap_size=0x7f3c000
+arm64_gic_initialize: TODO: Init GIC for PinePhone
+arm64_gic_initialize: GIC Version is 2
+Earm_gic_dump: GIC: Entry arm_gic0_initialize NLINES=224
+arm_gic_dump_cpu:   CPU Interface Registers:
+arm_gic_dump_cpu:        ICR: 00000060    PMR: 000000f0    BPR: 00000003    IAR: 000003ff
+arm_gic_dump_cpu:        RPR: 000000ff   HPIR: 000003ff   ABPR: 00000000
+arm_gic_dump_cpu:       AIAR: 00000000  AHPIR: 00000000    IDR: 0202143b
+arm_gic_dump_cpu:       APR1: 00000000   APR2: 00000000   APR3: 00000000   APR4: 00000000
+arm_gic_dump_cpu:     NSAPR1: 00000000 NSAPR2: 00000000 NSAPR3: 00000000 NSAPR4: 00000000
+arm_gic_dump_distributor:   Distributor Registers:
+arm_gic_dump_distributor:        DCR: 00000000   ICTR: 0000fc66   IIDR: 0200143b
+arm_gic_dump32:        ISR[01c81080]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        ISER/ICER[01c81100]
+arm_gic_dumpregs:          0000ffff 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        ISPR/ICPR[01c81200]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        SAR/CAR[01c81300]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump4:        IPR[01c81400]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump4:        IPTR[01c81800]
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          00000000 00000000 01010100 01010101
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump16:        ICFR[01c81c00]
+arm_gic_dumpregs:          aaaaaaaa 55540000 55555555 55555555
+arm_gic_dumpregs:          55555555 55555555 55555555 55555555
+arm_gic_dumpregs:          55555555 55555555 55555555 55555555
+arm_gic_dumpregs:          55555555 55555555 00000000 00000000
+arm_gic_dump32:        PPSIR/SPISR[01c81d00]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        NSACR[01c81e00]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump8:        SCPR/SSPR[01c81f10]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump_distributor:        PIDR[01c81fd0]:
+arm_gic_dump_distributor:          00000004 00000000 00000000 00000000
+arm_gic_dump_distributor:          00000090 000000b4 0000002b
+arm_gic_dump_distributor:        CIDR[01c81ff0]:
+arm_gic_dump_distributor:          0000000d 000000f0 00000005 000000b1
+arm_gic_dump: GIC: Exit arm_gic0_initialize NLINES=224
+arm_gic_dump_cpu:   CPU Interface Registers:
+arm_gic_dump_cpu:        ICR: 00000060    PMR: 000000f0    BPR: 00000003    IAR: 000003ff
+arm_gic_dump_cpu:        RPR: 000000ff   HPIR: 000003ff   ABPR: 00000000
+arm_gic_dump_cpu:       AIAR: 00000000  AHPIR: 00000000    IDR: 0202143b
+arm_gic_dump_cpu:       APR1: 00000000   APR2: 00000000   APR3: 00000000   APR4: 00000000
+arm_gic_dump_cpu:     NSAPR1: 00000000 NSAPR2: 00000000 NSAPR3: 00000000 NSAPR4: 00000000
+arm_gic_dump_distributor:   Distributor Registers:
+arm_gic_dump_distributor:        DCR: 00000000   ICTR: 0000fc66   IIDR: 0200143b
+arm_gic_dump32:        ISR[01c81080]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        ISER/ICER[01c81100]
+arm_gic_dumpregs:          0000ffff 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        ISPR/ICPR[01c81200]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        SAR/CAR[01c81300]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump4:        IPR[01c81400]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dump4:        IPTR[01c81800]
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          00000000 00000000 01010100 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dump16:        ICFR[01c81c00]
+arm_gic_dumpregs:          aaaaaaaa 55540000 55555555 55555555
+arm_gic_dumpregs:          55555555 55555555 55555555 55555555
+arm_gic_dumpregs:          55555555 55555555 55555555 55555555
+arm_gic_dumpregs:          55555555 55555555 00000000 00000000
+arm_gic_dump32:        PPSIR/SPISR[01c81d00]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        NSACR[01c81e00]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump8:        SCPR/SSPR[01c81f10]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump_distributor:        PIDR[01c81fd0]:
+arm_gic_dump_distributor:          00000004 00000000 00000000 00000000
+arm_gic_dump_distributor:          00000090 000000b4 0000002b
+arm_gic_dump_distributor:        CIDR[01c81ff0]:
+arm_gic_dump_distributor:          0000000d 000000f0 00000005 000000b1
+FGarm_gic_dump: GIC: Entry arm_gic_initialize NLINES=224
+arm_gic_dump_cpu:   CPU Interface Registers:
+arm_gic_dump_cpu:        ICR: 00000060    PMR: 000000f0    BPR: 00000003    IAR: 000003ff
+arm_gic_dump_cpu:        RPR: 000000ff   HPIR: 000003ff   ABPR: 00000000
+arm_gic_dump_cpu:       AIAR: 00000000  AHPIR: 00000000    IDR: 0202143b
+arm_gic_dump_cpu:       APR1: 00000000   APR2: 00000000   APR3: 00000000   APR4: 00000000
+arm_gic_dump_cpu:     NSAPR1: 00000000 NSAPR2: 00000000 NSAPR3: 00000000 NSAPR4: 00000000
+arm_gic_dump_distributor:   Distributor Registers:
+arm_gic_dump_distributor:        DCR: 00000000   ICTR: 0000fc66   IIDR: 0200143b
+arm_gic_dump32:        ISR[01c81080]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        ISER/ICER[01c81100]
+arm_gic_dumpregs:          0000ffff 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        ISPR/ICPR[01c81200]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        SAR/CAR[01c81300]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump4:        IPR[01c81400]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dump4:        IPTR[01c81800]
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          00000000 00000000 01010100 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dump16:        ICFR[01c81c00]
+arm_gic_dumpregs:          aaaaaaaa 55540000 55555555 55555555
+arm_gic_dumpregs:          55555555 55555555 55555555 55555555
+arm_gic_dumpregs:          55555555 55555555 55555555 55555555
+arm_gic_dumpregs:          55555555 55555555 00000000 00000000
+arm_gic_dump32:        PPSIR/SPISR[01c81d00]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        NSACR[01c81e00]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump8:        SCPR/SSPR[01c81f10]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump_distributor:        PIDR[01c81fd0]:
+arm_gic_dump_distributor:          00000004 00000000 00000000 00000000
+arm_gic_dump_distributor:          00000090 000000b4 0000002b
+arm_gic_dump_distributor:        CIDR[01c81ff0]:
+arm_gic_dump_distributor:          0000000d 000000f0 00000005 000000b1
+arm_gic_dump: GIC: Exit arm_gic_initialize NLINES=224
+arm_gic_dump_cpu:   CPU Interface Registers:
+arm_gic_dump_cpu:        ICR: 00000061    PMR: 000000f0    BPR: 00000007    IAR: 000003ff
+arm_gic_dump_cpu:        RPR: 000000ff   HPIR: 000003ff   ABPR: 00000000
+arm_gic_dump_cpu:       AIAR: 00000000  AHPIR: 00000000    IDR: 0202143b
+arm_gic_dump_cpu:       APR1: 00000000   APR2: 00000000   APR3: 00000000   APR4: 00000000
+arm_gic_dump_cpu:     NSAPR1: 00000000 NSAPR2: 00000000 NSAPR3: 00000000 NSAPR4: 00000000
+arm_gic_dump_distributor:   Distributor Registers:
+arm_gic_dump_distributor:        DCR: 00000001   ICTR: 0000fc66   IIDR: 0200143b
+arm_gic_dump32:        ISR[01c81080]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        ISER/ICER[01c81100]
+arm_gic_dumpregs:          0000ffff 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        ISPR/ICPR[01c81200]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        SAR/CAR[01c81300]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump4:        IPR[01c81400]
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          00000000 00000000 80000000 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dumpregs:          80808080 80808080 80808080 80808080
+arm_gic_dump4:        IPTR[01c81800]
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          00000000 00000000 01010100 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dumpregs:          01010101 01010101 01010101 01010101
+arm_gic_dump16:        ICFR[01c81c00]
+arm_gic_dumpregs:          aaaaaaaa 55540000 55555555 55555555
+arm_gic_dumpregs:          55555555 55555555 55555555 55555555
+arm_gic_dumpregs:          55555555 55555555 55555555 55555555
+arm_gic_dumpregs:          55555555 55555555 00000000 00000000
+arm_gic_dump32:        PPSIR/SPISR[01c81d00]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump32:        NSACR[01c81e00]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump8:        SCPR/SSPR[01c81f10]
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dumpregs:          00000000 00000000 00000000 00000000
+arm_gic_dump_distributor:        PIDR[01c81fd0]:
+arm_gic_dump_distributor:          00000004 00000000 00000000 00000000
+arm_gic_dump_distributor:          00000090 000000b4 0000002b
+arm_gic_dump_distributor:        CIDR[01c81ff0]:
+arm_gic_dump_distributor:          0000000d 000000f0 00000005 000000b1
+Hup_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+AMarm_gic_dump: GIC: Exit up_prioritize_irq IRQ=27
+arm_gic_dump_cpu:   CPU Interface Registers:
+arm_gic_dump_cpu:        ICR: 00000061    PMR: 000000f0    BPR: 00000007    IAR: 000003ff
+arm_gic_dump_cpu:        RPR: 000000ff   HPIR: 000003ff   ABPR: 00000000
+arm_gic_dump_cpu:       AIAR: 00000000  AHPIR: 00000000    IDR: 0202143b
+arm_gic_dump_cpu:       APR1: 00000000   APR2: 00000000   APR3: 00000000   APR4: 00000000
+arm_gic_dump_cpu:     NSAPR1: 00000000 NSAPR2: 00000000 NSAPR3: 00000000 NSAPR4: 00000000
+arm_gic_dump_distributor:   Distributor Registers:
+arm_gic_dump_distributor:        DCR: 00000001   ICTR: 0000fc66   IIDR: 0200143b
+arm_gic_dump_distributor:        ISR: 00000000   ISER: 0000ffff   ISPR: 00000000    SAR: 00000000
+arm_gic_dump_distributor:        IPR: a0000000   IPTR: 01010100   ICFR: 55540000  SPISR: 00000000
+arm_gic_dump_distributor:      NSACR: 00000000   SCPR: 00000000
+arm_gic_dump_distributor:        PIDR[01c81fd0]:
+arm_gic_dump_distributor:          00000004 00000000 00000000 00000000
+arm_gic_dump_distributor:          00000090 000000b4 0000002b
+arm_gic_dump_distributor:        CIDR[01c81ff0]:
+arm_gic_dump_distributor:          0000000d 000000f0 00000005 000000b1
+NOPBIarm_gic_du
+```
+
 TODO: QEMU "virt" generic virtual platform
 
 https://www.qemu.org/docs/master/system/arm/virt.html
