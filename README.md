@@ -1106,6 +1106,13 @@ The __Interrupt Sources__ are defined in the Allwinner A64 SoC User Manual (page
 
 -   125 x Shared Peripheral Interrupts (SPI)
 
+To verify the GIC Version, read the __Peripheral ID2 Register (ICPIDR2)__ at Offset 0xFE8.
+
+Bits 4 to 7 of ICPIDR2 are...
+
+-   0x1 for GIC Version 1
+-   0x2 for GIC Version 2
+
 # Memory Map
 
 PinePhone depends on Arm's Memory Management Unit (MMU). We defined two MMU Memory Regions for PinePhone: RAM and Device I/O: [arch/arm64/include/qemu/chip.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/include/qemu/chip.h#L38-L62)
