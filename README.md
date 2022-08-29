@@ -1824,7 +1824,7 @@ arm64_registerdump: EXE_DEPTH: 0x1
 After changing to PinePhone GIC v2:
 
 ```text
-+ qemu-system-aarch64 -cpu cortex-a53 -nographic -machine virt,virtualization=on,gic-version=2 -net none -chardev stdio,id=con,mux=on -serial chardev:con -mon chardev=con,mode=readline -kernel ./nuttx
++ qemu-system-aarch64 -smp 4 -cpu cortex-a53 -nographic -machine virt,virtualization=on,gic-version=2 -net none -chardev stdio,id=con,mux=on -serial chardev:con -mon chardev=con,mode=readline -kernel ./nuttx
 - Ready to Boot CPU
 - Boot from EL2
 - Boot from EL1
