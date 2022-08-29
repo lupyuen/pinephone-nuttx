@@ -1106,7 +1106,7 @@ The __Interrupt Sources__ are defined in the Allwinner A64 SoC User Manual (page
 
 -   125 x Shared Peripheral Interrupts (SPI)
 
-To verify the GIC Version, read the __Peripheral ID2 Register (ICPIDR2)__ at Offset 0xFE8.
+To verify the GIC Version, read the __Peripheral ID2 Register (ICPIDR2)__ at Offset 0xFE8 of GIC Distributor.
 
 Bits 4 to 7 of ICPIDR2 are...
 
