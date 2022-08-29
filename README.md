@@ -1696,6 +1696,15 @@ NOPBIarm_gic_du
 
 # TODO
 
+TODO: QEMU GIC
+
+https://community.arm.com/support-forums/f/architectures-and-processors-forum/45606/qemu-gicv2-virtual-interface-alias
+
+```bash
+$ qemu-system-aarch64 -machine virt,gic-version=2,virtualization=on,dumpdtb=dump.dtb
+$ dtc -o dump.dts -O dts -I dtb dump.dtb
+```
+
 TODO: Boot Files for Manjaro Phosh on PinePhone:
 
 ```text
