@@ -1703,6 +1703,53 @@ https://community.arm.com/support-forums/f/architectures-and-processors-forum/45
 ```bash
 $ qemu-system-aarch64 -machine virt,gic-version=2,virtualization=on,dumpdtb=dump.dtb
 $ dtc -o dump.dts -O dts -I dtb dump.dtb
+
+## GIC v3 Run
+qemu-system-aarch64 \
+  -cpu cortex-a53 \
+  -nographic \
+  -machine virt,virtualization=on,gic-version=3 \
+  -net none \
+  -chardev stdio,id=con,mux=on \
+  -serial chardev:con \
+  -mon chardev=con,mode=readline \
+  -kernel ./nuttx
+
+## GIC v3 Dump Device Tree
+qemu-system-aarch64 \
+  -cpu cortex-a53 \
+  -nographic \
+  -machine virt,virtualization=on,gic-version=3,dumpdtb=gicv3.dtb \
+  -net none \
+  -chardev stdio,id=con,mux=on \
+  -serial chardev:con \
+  -mon chardev=con,mode=readline \
+  -kernel ./nuttx
+dtc -o gicv3.dts -O dts -I dtb gicv3.dtb
+
+## GIC v2 Run
+qemu-system-aarch64 \
+  -cpu cortex-a53 \
+  -nographic \
+  -machine virt,virtualization=on,gic-version=2 \
+  -net none \
+  -chardev stdio,id=con,mux=on \
+  -serial chardev:con \
+  -mon chardev=con,mode=readline \
+  -kernel ./nuttx
+
+## GIC v2 Dump Device Tree
+qemu-system-aarch64 \
+  -cpu cortex-a53 \
+  -nographic \
+  -machine virt,virtualization=on,gic-version=2,dumpdtb=gicv2.dtb \
+  -net none \
+  -chardev stdio,id=con,mux=on \
+  -serial chardev:con \
+  -mon chardev=con,mode=readline \
+  -kernel ./nuttx
+dtc -o gicv2.dts -O dts -I dtb gicv2.dtb
+
 ```
 
 TODO: Boot Files for Manjaro Phosh on PinePhone:
