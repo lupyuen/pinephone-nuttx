@@ -1098,7 +1098,13 @@ According to the Allwinner A64 SoC User Manual (page 74, "Memory Mapping"), the 
 
 (Why "CPUS can’t access"?)
 
-__Interrupt Sources__ (Software-Generated Interrupts, Private Peripheral Interrupts, Shared Peripheral Interrupts) are defined in the Allwinner A64 SoC User Manual (page 210, "GIC").
+The __Interrupt Sources__ are defined in the Allwinner A64 SoC User Manual (page 210, "GIC")...
+
+-   16 x Software-Generated Interrupts (SGI)
+
+-   16 x Private Peripheral Interrupts (PPI)
+
+-   125 x Shared Peripheral Interrupts (SPI)
 
 # Memory Map
 
