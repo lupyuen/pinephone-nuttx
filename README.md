@@ -1111,6 +1111,8 @@ Bits 4 to 7 of ICPIDR2 are...
 -   0x1 for GIC Version 1
 -   0x2 for GIC Version 2
 
+See below for the GIC Register Dump.
+
 NuttX's System Timer depends on the GIC...
 
 # System Timer 
@@ -1298,7 +1300,7 @@ void arm64_boot_primary_c_routine(void)
 
 This prints "012" to the Serial Console as NuttX boots.
 
-# TODO
+# GIC Register Dump
 
 ```text
 HELLO NUTTX ON PINEPHONE!
@@ -1630,6 +1632,8 @@ arm_gic_dump_distributor:        CIDR[01c81ff0]:
 arm_gic_dump_distributor:          0000000d 000000f0 00000005 000000b1
 NOPBIarm_gic_du
 ```
+
+# TODO
 
 TODO: QEMU "virt" generic virtual platform
 
