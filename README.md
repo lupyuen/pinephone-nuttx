@@ -1185,6 +1185,19 @@ void up_timer_initialize(void)
 }
 ```
 
+__Timer IRQ Numbers__ are defined in [arch/arm64/src/common/arm64_arch_timer.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.h#L38-L45)
+
+```c
+#define CONFIG_ARM_TIMER_SECURE_IRQ         (GIC_PPI_INT_BASE + 13)
+#define CONFIG_ARM_TIMER_NON_SECURE_IRQ     (GIC_PPI_INT_BASE + 14)
+#define CONFIG_ARM_TIMER_VIRTUAL_IRQ        (GIC_PPI_INT_BASE + 11)
+#define CONFIG_ARM_TIMER_HYP_IRQ            (GIC_PPI_INT_BASE + 10)
+
+#define ARM_ARCH_TIMER_IRQ	CONFIG_ARM_TIMER_VIRTUAL_IRQ
+#define ARM_ARCH_TIMER_PRIO	IRQ_DEFAULT_PRIORITY
+#define ARM_ARCH_TIMER_FLAGS	IRQ_TYPE_LEVEL
+```
+
 At every tick, the System Timer triggers an interrupt that calls [`arm64_arch_timer_compare_isr`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L109-L169)
 
 (`CONFIG_SCHED_TICKLESS` is undefined)
