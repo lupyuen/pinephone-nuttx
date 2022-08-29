@@ -1111,6 +1111,48 @@ Bits 4 to 7 of ICPIDR2 are...
 -   0x1 for GIC Version 1
 -   0x2 for GIC Version 2
 
+NuttX's System Timer depends on the GIC...
+
+# System Timer 
+
+NuttX starts the System Timer when it boots. If there's a problem with the GIC, NuttX will hang during startup like this...
+
+```text
+arm64_gic_initialize: TODO: Init GIC for PinePhone
+arm64_gic_initialize: GIC Version is 2
+up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+uart_regi
+```
+
+In the example above, System Timer triggers a Timer Interrupt, which isn't handled correctly due to a problem with GIC.
+
+Here's how the System Timer is started: [arch/arm64/src/common/arm64_arch_timer.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L212-L233)
+
+```c
+void up_timer_initialize(void)
+{
+  uint64_t curr_cycle;
+
+  arch_timer_rate   = arm64_arch_timer_get_cntfrq();
+  cycle_per_tick    = ((uint64_t)arch_timer_rate / (uint64_t)TICK_PER_SEC);
+
+  sinfo("%s: cp15 timer(s) running at %lu.%02luMHz, cycle %ld\n", __func__,
+        (unsigned long)arch_timer_rate / 1000000,
+        (unsigned long)(arch_timer_rate / 10000) % 100, cycle_per_tick);
+
+  irq_attach(ARM_ARCH_TIMER_IRQ, arm64_arch_timer_compare_isr, 0);
+  arm64_gic_irq_set_priority(ARM_ARCH_TIMER_IRQ, ARM_ARCH_TIMER_PRIO,
+                             ARM_ARCH_TIMER_FLAGS);
+
+  curr_cycle = arm64_arch_timer_count();
+  arm64_arch_timer_set_compare(curr_cycle + cycle_per_tick);
+  arm64_arch_timer_enable(true);
+
+  up_enable_irq(ARM_ARCH_TIMER_IRQ);
+  arm64_arch_timer_set_irq_mask(false);
+}
+```
+
 # Memory Map
 
 PinePhone depends on Arm's Memory Management Unit (MMU). We defined two MMU Memory Regions for PinePhone: RAM and Device I/O: [arch/arm64/include/qemu/chip.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/include/qemu/chip.h#L38-L62)
