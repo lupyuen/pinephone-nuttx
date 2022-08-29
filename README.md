@@ -1696,10 +1696,6 @@ NOPBIarm_gic_du
 
 # TODO
 
-TODO: QEMU "virt" generic virtual platform
-
-https://www.qemu.org/docs/master/system/arm/virt.html
-
 TODO: Boot Files for Manjaro Phosh on PinePhone:
 
 ```text
