@@ -1111,6 +1111,36 @@ Bits 4 to 7 of ICPIDR2 are...
 -   0x1 for GIC Version 1
 -   0x2 for GIC Version 2
 
+This is how we implement the GIC Version verification: [arch/arm64/src/common/arm64_gicv3.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gicv3.c#L710-L734)
+
+```c
+// Init GIC v2 for PinePhone. See https://github.com/lupyuen/pinephone-nuttx#interrupt-controller
+int arm64_gic_initialize(void)
+{
+  sinfo("TODO: Init GIC for PinePhone\n");
+
+  // To verify the GIC Version, read the Peripheral ID2 Register (ICPIDR2) at Offset 0xFE8 of GIC Distributor.
+  // Bits 4 to 7 of ICPIDR2 are...
+  // - 0x1 for GIC Version 1
+  // - 0x2 for GIC Version 2
+  // GIC Distributor is at 0x01C80000 + 0x1000.
+  // See https://github.com/lupyuen/pinephone-nuttx#interrupt-controller
+  const uint8_t *ICPIDR2 = (const uint8_t *) (CONFIG_GICD_BASE + 0xFE8);
+  uint8_t version = (*ICPIDR2 >> 4) & 0b1111;
+  sinfo("GIC Version is %d\n", version);
+  DEBUGASSERT(version == 2);
+
+  // arm_gic0_initialize must be called on CPU0
+  arm_gic0_initialize();
+
+  // arm_gic_initialize must be called for all CPUs
+  // TODO: Move to arm64_gic_secondary_init
+  arm_gic_initialize();
+
+  return 0;
+}
+```
+
 See below for the GIC Register Dump.
 
 NuttX's System Timer depends on the GIC...
