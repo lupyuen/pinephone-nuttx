@@ -1084,6 +1084,8 @@ NuttX has an implementation of Arm GIC Version 2, but it's based on Arm32. We mi
 
 -   [arch/arm/src/imx6/hardware/imx_memorymap.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/imx6/hardware/imx_memorymap.h)
 
+We have started adapting Arm GIC Version 2 for PinePhone, see this: [arch/arm64/src/common/arm64_gicv3.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gicv3.c#L768-L828)
+
 _Where in memory is the GIC located?_
 
 According to the Allwinner A64 SoC User Manual (page 74, "Memory Mapping"), the GIC is located at this address...
