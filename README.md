@@ -1647,6 +1647,8 @@ HELLO NUTTX ON PINEPHONE!
 - Boot to C runtime for OS Initialize
 ```
 
+From this we see that NuttX runs mostly in EL1.
+
 (EL1 is less privileged than EL2, which supports Processor Virtualization)
 
 # Dump Interrupt Vector Table
