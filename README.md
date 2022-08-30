@@ -1256,6 +1256,8 @@ Let's troubleshoot the Timer Interrupt...
 
 __TODO:__ Check that the __Arm64 Vector Table `_vector_table`__ is correctly configured in the Arm CPU: [arch/arm64/src/common/arm64_vector_table.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232)
 
+__TODO:__ Read the [Arm Cortex-A53 Technical Reference Manual](https://documentation-service.arm.com/static/5e9075f9c8052b1608761519?token=) to understand the Arm64 Vector Table
+
 Here's why we think our implementation of PinePhone GIC is working OK...
 
 # Test PinePhone GIC with QEMU
