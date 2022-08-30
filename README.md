@@ -1247,6 +1247,7 @@ This is how we tested PinePhone's [Generic Interrupt Controller (GIC)](https://g
 ```bash
 ## Run GIC v2 with QEMU
 qemu-system-aarch64 \
+  -smp 4 \
   -cpu cortex-a53 \
   -nographic \
   -machine virt,virtualization=on,gic-version=2 \
@@ -1258,6 +1259,8 @@ qemu-system-aarch64 \
 ```
 
 Note that `gic-version=2`, instead of the usual GIC Version 3 for NuttX Arm64.
+
+Also we simulated 4 Cores of Arm Cortex-A53 (similar to PinePhone): `-smp 4`
 
 QEMU boots OK with PinePhone's GIC Version 2...
 
