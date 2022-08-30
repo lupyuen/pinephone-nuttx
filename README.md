@@ -1585,6 +1585,30 @@ When an __Interrupt is triggered__...
       CALL_VECTOR(ndx, vector, irq, context, arg);
     ```
 
+_How is the [Arm64 Vector Table `_vector_table`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232) configured in the Arm CPU?_
+
+The [Arm64 Vector Table `_vector_table`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232) is configured in the Arm CPU by `arm64_boot_el3_init`: [arch/arm64/src/common/arm64_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L39-L75)
+
+```c
+void arm64_boot_el3_init(void)
+{
+  /* Setup vector table */
+  write_sysreg((uint64_t)_vector_table, vbar_el3);
+  ARM64_ISB();
+```
+
+`arm64_boot_el3_init` is called by our Startup Code: [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L181-L191)
+
+```text
+cpu_boot:
+    PRINT(cpu_boot, "- Ready to Boot CPU\r\n")
+switch_el:
+    switch_el x0, 3f, 2f, 1f
+    PRINT(switch_el3, "- Boot from EL3\r\n")
+    /* EL3 init */
+    bl    arm64_boot_el3_init
+```
+
 # Dump Interrupt Vector Table
 
 This is how we dump the Interrupt Vector Table to troubleshoot Interrupts...
