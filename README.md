@@ -1589,7 +1589,7 @@ When an __Interrupt is triggered__...
 
 _How is the [Arm64 Vector Table `_vector_table`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232) configured in the Arm CPU?_
 
-The [Arm64 Vector Table `_vector_table`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232) is configured in the Arm CPU by `arm64_boot_el1_init`: [arch/arm64/src/common/arm64_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L132-L162)
+The [Arm64 Vector Table `_vector_table`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232) is configured in the Arm CPU during EL1 Init by `arm64_boot_el1_init`: [arch/arm64/src/common/arm64_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L132-L162)
 
 ```c
 void arm64_boot_el1_init(void)
@@ -1599,9 +1599,9 @@ void arm64_boot_el1_init(void)
   ARM64_ISB();
 ```
 
-[(Arm64 Vector Table is also configured by `arm64_boot_el3_init`)](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L39-L75)
+[(Arm64 Vector Table is also configured during EL3 Init by `arm64_boot_el3_init`)](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L39-L75)
 
-`arm64_boot_el1_init` is called by our Startup Code: [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L216-L230)
+EL1 Init `arm64_boot_el1_init` is called by our Startup Code: [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L216-L230)
 
 ```text
     PRINT(switch_el1, "- Boot from EL1\r\n")
@@ -1617,6 +1617,30 @@ void arm64_boot_el1_init(void)
 jump_to_c_entry:
     PRINT(jump_to_c_entry, "- Boot to C runtime for OS Initialize\r\n")
     ret x25
+```
+
+_What are EL1 and EL3?_
+
+According to [Arm Cortex-A53 Technical Reference Manual](https://documentation-service.arm.com/static/5e9075f9c8052b1608761519?token=) page 3-5 ("Exception Level")...
+
+> The ARMv8 exception model defines exception levels EL0-EL3, where:
+
+> - EL0 has the lowest software execution privilege, and execution at EL0 is called unprivileged execution.
+
+> - Increased exception levels, from 1 to 3, indicate increased software execution privilege.
+
+> - EL2 provides support for processor virtualization.
+
+> - EL3 provides support for a secure state, see Security state on page 3-6.
+
+PinePhone only uses EL1 and EL2 (but not EL3)...
+
+```text
+HELLO NUTTX ON PINEPHONE!
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
 ```
 
 # Dump Interrupt Vector Table
