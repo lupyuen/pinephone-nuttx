@@ -1232,11 +1232,13 @@ This problem doesn't seem to be caused by [PinePhone's Generic Interrupt Control
 
 Let's troubleshoot the Timer Interrupt...
 
--   Verify that the address in the Interrupt Vector Table is correct
+-   Verify that the Timer Interrupt Handler Address in the Interrupt Vector Table is correct
 
--   Check the Arm64 Assembly Code for the Generic Interrupt Handler
+-   Check the Arm64 Assembly Code for the Common Interrupt Handler
 
 -   Run GDB with QEMU to understand how Interrupts are handled on NuttX
+
+Here's why we think our implementation of PinePhone GIC is working OK...
 
 # Test PinePhone GIC with QEMU
 
@@ -1284,6 +1286,10 @@ nsh> nx_start: CPU0: Beginning Idle Loop
 ```
 
 So our implementation of GIC Version 2 for PinePhone is probably OK.
+
+_Is the Timer Interrupt triggered correctly with PinePhone GIC?_
+
+Yes, we verified that the Timer Interrupt Handler [`arm64_arch_timer_compare_isr`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L109-L169) is  called periodically. (We checked using `up_putc`)
 
 _How did we get the GIC Base Addresses?_
 
