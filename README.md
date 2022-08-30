@@ -2265,6 +2265,8 @@ arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
 arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
 EFGHup_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+up_timer_initialize: _vector_table=0x400a7000
+up_timer_initialize: vbar_el1=0x40227000
 up_timer_initialize: ARM_ARCH_TIMER_IRQ=27
 up_timer_initialize: arm64_arch_timer_compare_isr=0x4009ae18
 up_timer_initialize: irq_unexpected_isr=0x400820e0
