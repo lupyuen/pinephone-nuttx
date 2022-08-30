@@ -1283,6 +1283,8 @@ NuttShell (NSH) NuttX-10.3.0-RC2
 nsh> nx_start: CPU0: Beginning Idle Loop
 ```
 
+So our implementation of GIC Version 2 for PinePhone is probably OK.
+
 _How did we get the GIC Base Addresses?_
 
 ```text
