@@ -1434,31 +1434,90 @@ int irq_attach(int irq, xcpt_t isr, FAR void *arg)
   g_irqvector[irq].arg     = arg;
 ```
 
-When an Interrupt is triggered, NuttX will __dispatch the Interrupt__ and call the Interrupt Handler: [sched/irq/irq_dispatch.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/sched/irq/irq_dispatch.c#L115-L173)
+When an __Interrupt is triggered__...
 
-```c
-/****************************************************************************
- * Name: irq_dispatch
- * Description:
- *   This function must be called from the architecture-specific logic in
- *   order to dispatch an interrupt to the appropriate, registered handling
- *   logic.
- ****************************************************************************/
-void irq_dispatch(int irq, FAR void *context)
-{
-  if ((unsigned)irq < NR_IRQS)
+1.  Arm64 CPU calls `arm64_irq_handler` to handle the Interrupt: [arch/arm64/src/common/arm64_vectors.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vectors.S#L326-L413)
+
+    ```text
+    /****************************************************************************
+    * Name: arm64_irq_handler
+    * Description:
+    *   Interrupt exception handler
+    ****************************************************************************/
+    GTEXT(arm64_irq_handler)
+    SECTION_FUNC(text, arm64_irq_handler)
+        ...
+        /* Call arm64_decodeirq() on the interrupt stack
+        * with interrupts disabled
+        */
+        bl     arm64_decodeirq
+    ```
+
+1.  `arm64_irq_handler` calls `arm64_decodeirq` to decode the Interrupt: [arch/arm64/src/common/arm64_gicv3.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gicv3.c#L800-L829)
+
+    ```c
+    /***************************************************************************
+    * Name: arm64_decodeirq
+    * Description:
+    *   This function is called from the IRQ vector handler in arm64_vectors.S.
+    *   At this point, the interrupt has been taken and the registers have
+    *   been saved on the stack.  This function simply needs to determine the
+    *   the irq number of the interrupt and then to call arm_doirq to dispatch
+    *   the interrupt.
+    *  Input Parameters:
+    *   regs - A pointer to the register save area on the stack.
+    ***************************************************************************/
+    // Decode IRQ for PinePhone, based on arm_decodeirq in arm_gicv2.c
+    uint64_t * arm64_decodeirq(uint64_t * regs)
     {
-      if (g_irqvector[ndx].handler)
+      ...
+      if (irq < NR_IRQS)
         {
-          vector = g_irqvector[ndx].handler;
-          arg    = g_irqvector[ndx].arg;
-        }
-    }
-  /* Then dispatch to the interrupt handler */
-  CALL_VECTOR(ndx, vector, irq, context, arg);
-```
+          /* Dispatch the interrupt */
 
-TODO: Who calls `irq_dispatch`?
+          regs = arm64_doirq(irq, regs);
+    ```
+
+1.  `arm64_decodeirq` calls `arm64_doirq` to dispatch the Interrupt: [arch/arm64/src/common/arm64_doirq.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_doirq.c#L64-L119)
+
+    ```c
+    /****************************************************************************
+     * Name: arm64_doirq
+    * Description:
+    *   Receives the decoded GIC interrupt information and dispatches control
+    *   to the attached interrupt handler.
+    *
+    ****************************************************************************/
+    uint64_t *arm64_doirq(int irq, uint64_t * regs)
+    {
+      ...
+      /* Deliver the IRQ */
+      irq_dispatch(irq, regs);
+    ```
+
+1.  `irq_dispatch` calls the Interrupt Handler fetched from the Interrupt Vector Table: [sched/irq/irq_dispatch.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/sched/irq/irq_dispatch.c#L115-L173)
+
+    ```c
+    /****************************************************************************
+     * Name: irq_dispatch
+    * Description:
+    *   This function must be called from the architecture-specific logic in
+    *   order to dispatch an interrupt to the appropriate, registered handling
+    *   logic.
+    ****************************************************************************/
+    void irq_dispatch(int irq, FAR void *context)
+    {
+      if ((unsigned)irq < NR_IRQS)
+        {
+          if (g_irqvector[ndx].handler)
+            {
+              vector = g_irqvector[ndx].handler;
+              arg    = g_irqvector[ndx].arg;
+            }
+        }
+      /* Then dispatch to the interrupt handler */
+      CALL_VECTOR(ndx, vector, irq, context, arg);
+    ```
 
 # Dump Interrupt Vector Table
 
@@ -1505,6 +1564,35 @@ up_timer_initialize: g_irqvector[219].handler=0x400820e0
 ```
 
 All entries in the Interrupt Vector Table point to the [Unexpected Interrupt Handler `irq_unexpected_isr`](https://github.com/lupyuen/pinephone-nuttx#handling-interrupts), except for `g_irqvector[27]` which points to the [System Timer Interrupt Handler `arm64_arch_timer_compare_isr`](https://github.com/lupyuen/pinephone-nuttx#system-timer).
+
+# Interrupt Debugging
+
+TODO
+
+Based on [arch/arm64/src/common/arm64_vectors.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vectors.S#L326-L413)
+
+```text
+# PinePhone Allwinner A64 UART0 Base Address
+#define UART1_BASE_ADDRESS 0x01C28000
+
+# QEMU UART Base Address
+# Previously: #define UART1_BASE_ADDRESS 0x9000000
+
+/****************************************************************************
+ * Name: arm64_irq_handler
+ * Description:
+ *   Interrupt exception handler
+ ****************************************************************************/
+GTEXT(arm64_irq_handler)
+SECTION_FUNC(text, arm64_irq_handler)
+
+    mov   x0, #84                 /* For Debug: 'T' */
+    ldr   x1, =UART1_BASE_ADDRESS /* For Debug */
+    strb  w0, [x1]                /* For Debug */
+
+    /* switch to IRQ stack and save current sp on it. */
+    ...
+```
 
 # Memory Map
 
