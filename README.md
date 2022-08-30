@@ -1587,26 +1587,34 @@ When an __Interrupt is triggered__...
 
 _How is the [Arm64 Vector Table `_vector_table`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232) configured in the Arm CPU?_
 
-The [Arm64 Vector Table `_vector_table`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232) is configured in the Arm CPU by `arm64_boot_el3_init`: [arch/arm64/src/common/arm64_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L39-L75)
+The [Arm64 Vector Table `_vector_table`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232) is configured in the Arm CPU by `arm64_boot_el1_init`: [arch/arm64/src/common/arm64_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L132-L162)
 
 ```c
-void arm64_boot_el3_init(void)
+void arm64_boot_el1_init(void)
 {
   /* Setup vector table */
-  write_sysreg((uint64_t)_vector_table, vbar_el3);
+  write_sysreg((uint64_t)_vector_table, vbar_el1);
   ARM64_ISB();
 ```
 
-`arm64_boot_el3_init` is called by our Startup Code: [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L181-L191)
+[(Arm64 Vector Table is also configured by `arm64_boot_el3_init`)](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L39-L75)
+
+`arm64_boot_el1_init` is called by our Startup Code: [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L216-L230)
 
 ```text
-cpu_boot:
-    PRINT(cpu_boot, "- Ready to Boot CPU\r\n")
-switch_el:
-    switch_el x0, 3f, 2f, 1f
-    PRINT(switch_el3, "- Boot from EL3\r\n")
-    /* EL3 init */
-    bl    arm64_boot_el3_init
+    PRINT(switch_el1, "- Boot from EL1\r\n")
+
+    /* EL1 init */
+    bl    arm64_boot_el1_init
+
+    /* set SP_ELx and Enable SError interrupts */
+    msr   SPSel, #1
+    msr   DAIFClr, #(DAIFCLR_ABT_BIT)
+    isb
+
+jump_to_c_entry:
+    PRINT(jump_to_c_entry, "- Boot to C runtime for OS Initialize\r\n")
+    ret x25
 ```
 
 # Dump Interrupt Vector Table
