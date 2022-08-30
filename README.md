@@ -1599,6 +1599,10 @@ void arm64_boot_el1_init(void)
   ARM64_ISB();
 ```
 
+`vbar_el1` refers to __Vector Base Address Register EL1__.
+
+[(See Arm Cortex-A53 Technical Reference Manual, page 4-121, "Vector Base Address Register, EL1")](https://documentation-service.arm.com/static/5e9075f9c8052b1608761519?token=)
+
 [(Arm64 Vector Table is also configured during EL3 Init by `arm64_boot_el3_init`)](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L39-L75)
 
 EL1 Init `arm64_boot_el1_init` is called by our Startup Code: [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L216-L230)
@@ -1642,6 +1646,8 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL1
 - Boot to C runtime for OS Initialize
 ```
+
+(EL1 is less privileged than EL2, which supports Processor Virtualization)
 
 # Dump Interrupt Vector Table
 
