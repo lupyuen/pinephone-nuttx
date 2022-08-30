@@ -1224,7 +1224,7 @@ uart_regi
 
 Based on our experiments, it seems the [System Timer](https://github.com/lupyuen/pinephone-nuttx#system-timer) triggered a Timer Interrupt, and NuttX hangs while attempting to handle the Timer Interrupt.
 
-The Timer Interrupt Handler [`arm64_arch_timer_compare_isr`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L109-L169) is never called. (We checked using `up_putc`)
+The Timer Interrupt Handler [`arm64_arch_timer_compare_isr`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L109-L169) is never called. (We checked using [`up_putc`](https://github.com/lupyuen/pinephone-nuttx#boot-debugging))
 
 _Is it caused by PinePhone's GIC?_
 
@@ -1237,6 +1237,8 @@ Let's troubleshoot the Timer Interrupt...
 -   Check the Arm64 Assembly Code for the Common Interrupt Handler
 
 -   [Run GDB with QEMU](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53) to understand how Interrupts are handled on NuttX
+
+    (Or maybe just call [`up_putc`](https://github.com/lupyuen/pinephone-nuttx#boot-debugging))
 
 Here's why we think our implementation of PinePhone GIC is working OK...
 
@@ -1292,7 +1294,7 @@ So our implementation of GIC Version 2 for PinePhone is probably OK.
 
 _Is the Timer Interrupt triggered correctly with PinePhone GIC?_
 
-Yes, we verified that the Timer Interrupt Handler [`arm64_arch_timer_compare_isr`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L109-L169) is  called periodically. (We checked using `up_putc`)
+Yes, we verified that the Timer Interrupt Handler [`arm64_arch_timer_compare_isr`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L109-L169) is  called periodically. (We checked using [`up_putc`](https://github.com/lupyuen/pinephone-nuttx#boot-debugging))
 
 _How did we get the GIC Base Addresses?_
 
@@ -1853,7 +1855,7 @@ arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
 EFGHup_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
 up_timer_initialize: ARM_ARCH_TIMER_IRQ=27
-up_timer_initialize: arm64_arch_timer_compare_isr=0x1b
+up_timer_initialize: arm64_arch_timer_compare_isr=0x4009ae18
 up_timer_initialize: irq_unexpected_isr=0x400820e0
 up_timer_initialize: g_irqvector[0].handler=0x400820e0
 up_timer_initialize: g_irqvector[1].handler=0x400820e0
