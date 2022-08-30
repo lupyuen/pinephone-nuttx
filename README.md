@@ -1363,6 +1363,141 @@ cp ~/PinePhone/nuttx/run.sh             ~/gicv2/nuttx/run.sh
 cp ~/PinePhone/nuttx/.vscode/tasks.json ~/gicv2/nuttx/.vscode/tasks.json
 ```
 
+# Handling Interrupts
+
+Let's talk about NuttX and how it handles interrupts.
+
+The __Interrupt Vector Table__ is defined in [sched/irq/irq_initialize.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/sched/irq/irq_initialize.c#L47-L53)
+
+```c
+/* This is the interrupt vector table */
+struct irq_info_s g_irqvector[NR_IRQS];
+```
+
+(Next section talks about dumping the Interrupt Vector Table)
+
+At startup, the Interrupt Vector Table is initialised to the __Unexpected Interrupt Handler `irq_unexpected_isr`__: [sched/irq/irq_initialize.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/sched/irq/irq_initialize.c#L59-L85)
+
+```c
+/****************************************************************************
+ * Name: irq_initialize
+ * Description:
+ *   Configure the IRQ subsystem
+ ****************************************************************************/
+void irq_initialize(void)
+{
+  /* Point all interrupt vectors to the unexpected interrupt */
+  for (i = 0; i < NR_IRQS; i++)
+    {
+      g_irqvector[i].handler = irq_unexpected_isr;
+    }
+  up_irqinitialize();
+}
+```
+
+To __attach an Interrupt Handler__, we set the Handler and the Argument in the Interrupt Vector Table: [sched/irq/irq_attach.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/sched/irq/irq_attach.c#L37-L136)
+
+```c
+/****************************************************************************
+ * Name: irq_attach
+ * Description:
+ *   Configure the IRQ subsystem so that IRQ number 'irq' is dispatched to
+ *   'isr'
+ ****************************************************************************/
+int irq_attach(int irq, xcpt_t isr, FAR void *arg)
+{
+  ...
+  /* Save the new ISR and its argument in the table. */
+  g_irqvector[irq].handler = isr;
+  g_irqvector[irq].arg     = arg;
+```
+
+When an Interrupt is triggered, NuttX will __dispatch the Interrupt__ and call the Interrupt Handler: [sched/irq/irq_dispatch.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/sched/irq/irq_dispatch.c#L115-L173)
+
+```c
+/****************************************************************************
+ * Name: irq_dispatch
+ * Description:
+ *   This function must be called from the architecture-specific logic in
+ *   order to dispatch an interrupt to the appropriate, registered handling
+ *   logic.
+ ****************************************************************************/
+void irq_dispatch(int irq, FAR void *context)
+{
+  if ((unsigned)irq < NR_IRQS)
+    {
+      if (g_irqvector[ndx].handler)
+        {
+          vector = g_irqvector[ndx].handler;
+          arg    = g_irqvector[ndx].arg;
+        }
+    }
+  /* Then dispatch to the interrupt handler */
+  CALL_VECTOR(ndx, vector, irq, context, arg);
+```
+
+TODO: Who calls `irq_dispatch`?
+
+__Unexpected Interrupt Handler `irq_unexpected_isr`__ is called when an Interrupt is triggered and there's no Interrupt Handler attached to the Interrupt: [sched/irq/irq_unexpectedisr.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/sched/irq/irq_unexpectedisr.c#L38-L59)
+
+```c
+/****************************************************************************
+ * Name: irq_unexpected_isr
+ * Description:
+ *   An interrupt has been received for an IRQ that was never registered
+ *   with the system.
+ ****************************************************************************/
+int irq_unexpected_isr(int irq, FAR void *context, FAR void *arg)
+{
+  up_irq_save();
+  _err("ERROR irq: %d\n", irq);
+  PANIC();
+```
+
+# Dump Interrupt Vector Table
+
+This is how we dump the Interrupt Vector Table to troubleshoot Interrupts...
+
+Based on [arch/arm64/src/common/arm64_arch_timer.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L210-L240)
+
+```c
+#include "irq/irq.h" // For dumping Interrupt Vector Table
+
+void up_timer_initialize(void)
+{
+  // Attach Timer Interrupt Handler
+  irq_attach(ARM_ARCH_TIMER_IRQ, arm64_arch_timer_compare_isr, 0);
+
+  // Begin dumping Interrupt Vector Table
+  sinfo("ARM_ARCH_TIMER_IRQ=%d\n", ARM_ARCH_TIMER_IRQ);
+  sinfo("arm64_arch_timer_compare_isr=%p\n", arm64_arch_timer_compare_isr);
+  sinfo("irq_unexpected_isr=%p\n", irq_unexpected_isr);
+  for (int i = 0; i < NR_IRQS; i++)
+    {
+      sinfo("g_irqvector[%d].handler=%p\n", i, g_irqvector[i].handler);
+    }
+  // End dumping Interrupt Vector Table
+```
+
+This code runs at startup to attach the very first Interrupt Handler, for the System Timer Interrupt.
+
+We see that the System Timer Interrupt Number (IRQ) is 27...
+
+```text
+up_timer_initialize: ARM_ARCH_TIMER_IRQ=27
+up_timer_initialize: arm64_arch_timer_compare_isr=0x4009ae18
+up_timer_initialize: irq_unexpected_isr=0x400820e0
+up_timer_initialize: g_irqvector[0].handler=0x400820e0
+...
+up_timer_initialize: g_irqvector[26].handler=0x400820e0
+up_timer_initialize: g_irqvector[27].handler=0x4009ae18
+up_timer_initialize: g_irqvector[28].handler=0x400820e0
+...
+up_timer_initialize: g_irqvector[219].handler=0x400820e0
+```
+
+All entries in the Interrupt Vector Table point to the Unexpected Interrupt Handler `irq_unexpected_isr`, except for `g_irqvector[27]` which points to the System Timer Interrupt Handler `arm64_arch_timer_compare_isr`.
+
 # Memory Map
 
 PinePhone depends on Arm's Memory Management Unit (MMU). We defined two MMU Memory Regions for PinePhone: RAM and Device I/O: [arch/arm64/include/qemu/chip.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/include/qemu/chip.h#L38-L62)
