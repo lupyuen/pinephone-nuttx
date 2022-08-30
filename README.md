@@ -1232,19 +1232,29 @@ This problem doesn't seem to be caused by [PinePhone's Generic Interrupt Control
 
 Let's troubleshoot the Timer Interrupt...
 
--   We called [`up_putc`](https://github.com/lupyuen/pinephone-nuttx#boot-debugging) to understand [how Interrupts are handled on NuttX](https://github.com/lupyuen/pinephone-nuttx#handling-interrupts)
+-   We called [`up_putc`](https://github.com/lupyuen/pinephone-nuttx#boot-debugging) to understand [how Interrupts are handled on NuttX](https://github.com/lupyuen/pinephone-nuttx#handling-interrupts).
+
+    We also added Debug Code to the [Arm64 Interrupt Handler](https://github.com/lupyuen/pinephone-nuttx#interrupt-debugging).
 
     [(Maybe we should have used GDB with QEMU)](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53) 
 
--   We [dumped the Interrupt Vector Table](https://github.com/lupyuen/pinephone-nuttx#dump-interrupt-vector-table). We verified that the Timer Interrupt Handler Address in the table is correct
+-   We [dumped the Interrupt Vector Table](https://github.com/lupyuen/pinephone-nuttx#dump-interrupt-vector-table).
 
--   We confirmed that [Interrupt Dispatcher `irq_dispatch`](https://github.com/lupyuen/pinephone-nuttx#handling-interrupts)
+    We verified that the Timer Interrupt Handler Address in the table is correct.
 
--   And [Unexpected Interrupt Handler `irq_unexpected_isr`](https://github.com/lupyuen/pinephone-nuttx#handling-interrupts) isn't called either
+-   We confirmed that [Interrupt Dispatcher `irq_dispatch`](https://github.com/lupyuen/pinephone-nuttx#handling-interrupts) isn't called.
 
--   There could be a problem in the Arm64 Interrupt Handler
+    And [Unexpected Interrupt Handler `irq_unexpected_isr`](https://github.com/lupyuen/pinephone-nuttx#handling-interrupts) isn't called either.
 
-TODO: Check the Assembly Code for the Arm64 Interrupt Handler
+-   Let's backtrack, maybe there's a problem in the Arm64 Interrupt Handler?
+
+    But [`arm64_enter_exception`](https://github.com/lupyuen/pinephone-nuttx#handling-interrupts) and [`arm64_irq_handler`](https://github.com/lupyuen/pinephone-nuttx#handling-interrupts) aren't called either.
+
+-   Maybe the __Arm64 Vector Table `_vector_table`__ isn't correctly configured?
+
+    [arch/arm64/src/common/arm64_vector_table.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232)
+
+__TODO:__ Check that the __Arm64 Vector Table `_vector_table`__ is correctly configured in the Arm CPU: [arch/arm64/src/common/arm64_vector_table.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232)
 
 Here's why we think our implementation of PinePhone GIC is working OK...
 
@@ -1436,7 +1446,63 @@ int irq_attach(int irq, xcpt_t isr, FAR void *arg)
 
 When an __Interrupt is triggered__...
 
-1.  Arm64 CPU calls `arm64_irq_handler` to handle the Interrupt: [arch/arm64/src/common/arm64_vectors.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vectors.S#L326-L413)
+1.  Arm CPU looks up the __Arm64 Vector Table `_vector_table`__: [arch/arm64/src/common/arm64_vector_table.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232)
+
+    ```text
+    /* Four types of exceptions:
+    * - synchronous: aborts from MMU, SP/CP alignment checking, unallocated
+    *   instructions, SVCs/SMCs/HVCs, ...)
+    * - IRQ: group 1 (normal) interrupts
+    * - FIQ: group 0 or secure interrupts
+    * - SError: fatal system errors
+    *
+    * Four different contexts:
+    * - from same exception level, when using the SP_EL0 stack pointer
+    * - from same exception level, when using the SP_ELx stack pointer
+    * - from lower exception level, when this is AArch64
+    * - from lower exception level, when this is AArch32
+    *
+    * +------------------+------------------+-------------------------+
+    * |     Address      |  Exception type  |       Description       |
+    * +------------------+------------------+-------------------------+
+    * | VBAR_ELn + 0x000 | Synchronous      | Current EL with SP0     |
+    * |          + 0x080 | IRQ / vIRQ       |                         |
+    * |          + 0x100 | FIQ / vFIQ       |                         |
+    * |          + 0x180 | SError / vSError |                         |
+    * +------------------+------------------+-------------------------+
+    * |          + 0x200 | Synchronous      | Current EL with SPx     |
+    * |          + 0x280 | IRQ / vIRQ       |                         |
+    * |          + 0x300 | FIQ / vFIQ       |                         |
+    * |          + 0x380 | SError / vSError |                         |
+    * +------------------+------------------+-------------------------+
+    * |          + 0x400 | Synchronous      | Lower EL using  AArch64 |
+    * |          + 0x480 | IRQ / vIRQ       |                         |
+    * |          + 0x500 | FIQ / vFIQ       |                         |
+    * |          + 0x580 | SError / vSError |                         |
+    * +------------------+------------------+-------------------------+
+    * |          + 0x600 | Synchronous      | Lower EL using AArch64  |
+    * |          + 0x680 | IRQ / vIRQ       |                         |
+    * |          + 0x700 | FIQ / vFIQ       |                         |
+    * |          + 0x780 | SError / vSError |                         |
+    * +------------------+------------------+-------------------------+
+    */
+    GTEXT(_vector_table)
+    SECTION_SUBSEC_FUNC(exc_vector_table,_vector_table_section,_vector_table)
+        ...
+        /* Current EL with SPx / IRQ */
+        .align 7
+        arm64_enter_exception x0, x1
+        b    arm64_irq_handler
+        ...
+        /* Lower EL using AArch64 / IRQ */
+        .align 7
+        arm64_enter_exception x0, x1
+        b    arm64_irq_handler
+    ```
+
+    [(`arm64_enter_exception` is defined here)](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L41-L87)
+
+1.  Based on the Arm64 Vector Table `_vector_table`, Arm CPU jumps to `arm64_irq_handler`: [arch/arm64/src/common/arm64_vectors.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vectors.S#L326-L413)
 
     ```text
     /****************************************************************************
