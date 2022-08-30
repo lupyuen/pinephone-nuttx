@@ -1155,6 +1155,8 @@ NuttX starts the System Timer when it boots. If there's a problem with the GIC, 
 
 ```text
 arm64_gic_initialize: TODO: Init GIC for PinePhone
+arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
+arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
 up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
 uart_regi
@@ -1218,6 +1220,199 @@ __Timer IRQ `ARM_ARCH_TIMER_IRQ`__ is defined in [arch/arm64/src/common/arm64_ar
 #define GIC_NUM_INTR_PER_REG        32
 #define GIC_NUM_CFG_PER_REG         16
 #define GIC_NUM_PRI_PER_REG         4
+```
+
+# Timer Interrrupt Isn't Handled
+
+Right now NuttX hangs midsentence while booting on PinePhone...
+
+```text
+arm64_gic_initialize: TODO: Init GIC for PinePhone
+arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
+arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
+arm64_gic_initialize: GIC Version is 2
+up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+uart_regi
+```
+
+Based on our experiments, it seems the System Timer triggered a Timer Interrupt, and NuttX hangs while attempting to handle the Timer Interrupt.
+
+The Timer Interrupt Handler [`arm64_arch_timer_compare_isr`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L109-L169) is never called. (We checked using `up_putc`)
+
+_Is it caused by PinePhone's GIC?_
+
+This problem doesn't seem to be caused by PinePhone's Generic Interrupt Controller (GIC) that we have implemented. We successfully tested PinePhone's GIC with QEMU. (See next section)
+
+Let's troubleshoot the Timer Interrupt...
+
+-   Verify that the address in the Interrupt Vector Table is correct
+
+-   Check the Arm64 Assembly Code for the Generic Interrupt Handler
+
+-   Run GDB with QEMU to understand how Interrupts are handled on NuttX
+
+# Test PinePhone GIC with QEMU
+
+TODO: QEMU GIC
+
+https://community.arm.com/support-forums/f/architectures-and-processors-forum/45606/qemu-gicv2-virtual-interface-alias
+
+```bash
+$ qemu-system-aarch64 -machine virt,gic-version=2,virtualization=on,dumpdtb=dump.dtb
+$ dtc -o dump.dts -O dts -I dtb dump.dtb
+
+## GIC v3 Run
+qemu-system-aarch64 \
+  -cpu cortex-a53 \
+  -nographic \
+  -machine virt,virtualization=on,gic-version=3 \
+  -net none \
+  -chardev stdio,id=con,mux=on \
+  -serial chardev:con \
+  -mon chardev=con,mode=readline \
+  -kernel ./nuttx
+
+## GIC v3 Dump Device Tree
+qemu-system-aarch64 \
+  -smp 4 \
+  -cpu cortex-a53 \
+  -nographic \
+  -machine virt,virtualization=on,gic-version=3,dumpdtb=gicv3.dtb \
+  -net none \
+  -chardev stdio,id=con,mux=on \
+  -serial chardev:con \
+  -mon chardev=con,mode=readline \
+  -kernel ./nuttx
+dtc -o gicv3.dts -O dts -I dtb gicv3.dtb
+
+## GIC v2 Run
+qemu-system-aarch64 \
+  -cpu cortex-a53 \
+  -nographic \
+  -machine virt,virtualization=on,gic-version=2 \
+  -net none \
+  -chardev stdio,id=con,mux=on \
+  -serial chardev:con \
+  -mon chardev=con,mode=readline \
+  -kernel ./nuttx
+
+## GIC v2 Dump Device Tree
+qemu-system-aarch64 \
+  -smp 4 \
+  -cpu cortex-a53 \
+  -nographic \
+  -machine virt,virtualization=on,gic-version=2,dumpdtb=gicv2.dtb \
+  -net none \
+  -chardev stdio,id=con,mux=on \
+  -serial chardev:con \
+  -mon chardev=con,mode=readline \
+  -kernel ./nuttx
+dtc -o gicv2.dts -O dts -I dtb gicv2.dtb
+```
+
+https://www.kernel.org/doc/Documentation/devicetree/bindings/interrupt-controller/arm%2Cgic.txt
+
+GIC v2: [gicv2.dts](https://github.com/lupyuen/incubator-nuttx/blob/gicv2/gicv2.dts#L324)
+
+```text
+reg = <
+    0x00 0x8000000 0x00 0x10000  //  GIC Distributor:   0x8000000
+    0x00 0x8010000 0x00 0x10000  //  GIC CPU Interface: 0x8010000
+    0x00 0x8030000 0x00 0x10000  //  VGIC Virtual Interface Control: 0x8030000
+    0x00 0x8040000 0x00 0x10000  //  VGIC Virtual CPU Interface:     0x8040000
+>;
+```text
+
+GIC v3: [gicv3.dts](https://github.com/lupyuen/incubator-nuttx/blob/gicv2/gicv3.dts#L324)
+
+```text
+reg = <
+    0x00 0x8000000 0x00 0x10000   //  GIC Distributor:   0x8000000
+    0x00 0x80a0000 0x00 0xf60000  //  GIC CPU Interface: 0x80a0000
+>;
+#redistributor-regions = <0x01>;
+```
+Before changing to PinePhone GIC v2:
+
+```text
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+nx_start: Entry
+up_allocate_heap: heap_start=0x0x402c4000, heap_size=0x7d3c000
+arm64_fatal_error: reason = 0
+arm64_fatal_error: arm64_fatal_error: CPU0 task: Idle Task
+arm64_fatal_error: CurrentEL: MODE_EL1
+arm64_fatal_error: ESR_ELn: 0x96000010
+arm64_fatal_error: FAR_ELn: 0x800ffe8
+arm64_fatal_error: ELR_ELn: 0x402814d4
+print_ec_cause: Data Abort taken without a change in Exception level
+arm64_registerdump: stack = 0x402c3e40
+arm64_registerdump: x0:   0x800ffe8           x1:   0x402be420
+arm64_registerdump: x2:   0x402825c4          x3:   0xdb0
+arm64_registerdump: x4:   0x8                 x5:   0x1
+arm64_registerdump: x6:   0x7                 x7:   0xa00
+arm64_registerdump: x8:   0x88                x9:   0x402b7000
+arm64_registerdump: x10:  0x402c4000          x11:  0x4
+arm64_registerdump: x12:  0xfffffff7          x13:  0x1
+arm64_registerdump: x14:  0x3                 x15:  0x9000000
+arm64_registerdump: x16:  0x1                 x17:  0x20000000000400
+arm64_registerdump: x18:  0x402b9618          x19:  0x402be250
+arm64_registerdump: x20:  0x402be258          x21:  0x402be000
+arm64_registerdump: x22:  0x402a82b8          x23:  0x402be348
+arm64_registerdump: x24:  0x402c4000          x25:  0x402802c8
+arm64_registerdump: x26:  0x0                 x27:  0x0
+arm64_registerdump: x28:  0x0                 x29:  0x0
+arm64_registerdump: x30:  0x402811ec
+arm64_registerdump:
+arm64_registerdump: STATUS Registers:
+arm64_registerdump: SPSR:      0x600002c5
+arm64_registerdump: ELR:       0x402814d4
+arm64_registerdump: SP_EL0:    0x402c4000
+arm64_registerdump: SP_ELX:    0x402c3e40
+arm64_registerdump: TPIDR_EL0: 0x402be258
+arm64_registerdump: TPIDR_EL1: 0x402be258
+arm64_registerdump: EXE_DEPTH: 0x1
+```
+
+After changing to PinePhone GIC v2:
+
+```text
++ qemu-system-aarch64 -smp 4 -cpu cortex-a53 -nographic -machine virt,virtualization=on,gic-version=2 -net none -chardev stdio,id=con,mux=on -serial chardev:con -mon chardev=con,mode=readline -kernel ./nuttx
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+nx_start: Entry
+up_allocate_heap: heap_start=0x0x402c4000, heap_size=0x7d3c000
+arm64_gic_initialize: TODO: Init GIC for PinePhone
+arm64_gic_initialize: CONFIG_GICD_BASE=0x8000000
+arm64_gic_initialize: CONFIG_GICR_BASE=0x8010000
+arm64_gic_initialize: GIC Version is 2
+EFGHup_timer_initialize: up_timer_initialize: cp15 timer(s) running at 62.50MHz, cycle 62500
+AKLMNOPBIJuart_register: Registering /dev/console
+uart_register: Registering /dev/ttyS0
+AKLMNOPBIJwork_start_highpri: Starting high-priority kernel worker thread(s)
+nx_start_application: Starting init thread
+lib_cxx_initialize: _sinit: 0x402a7000 _einit: 0x402a7000 _stext: 0x40280000 _etext: 0x402a8000
+nsh: sysinit: fopen failed: 2
+nsh: mkfatfs: command not found
+
+NuttShell (NSH) NuttX-10.3.0-RC2
+nsh> nx_start: CPU0: Beginning Idle Loop
+```
+
+Changing QEMU to PinePhone GIC v2:
+
+```bash
+cp ~/PinePhone/nuttx/run.sh ~/gicv2/nuttx/run.sh
+cp ~/PinePhone/nuttx/.vscode/tasks.json ~/gicv2/nuttx/.vscode/tasks.json
+cp ~/PinePhone/nuttx/nuttx/arch/arm64/src/common/arm64_gicv3.c ~/gicv2/nuttx/nuttx/arch/arm64/src/common/arm64_gicv3.c
+cp ~/PinePhone/nuttx/nuttx/arch/arm/src/armv7-a/arm_gicv2.c ~/gicv2/nuttx/nuttx/arch/arm/src/armv7-a/arm_gicv2.c
+cp ~/PinePhone/nuttx/nuttx/arch/arm/src/armv7-a/gic.h ~/gicv2/nuttx/nuttx/arch/arm/src/armv7-a/gic.h
+cp ~/PinePhone/nuttx/nuttx/arch/arm/src/armv7-a/arm_gicv2_dump.c ~/gicv2/nuttx/nuttx/arch/arm/src/armv7-a/arm_gicv2_dump.c
+cp ~/PinePhone/nuttx/nuttx/arch/arm64/src/common/arm64_arch_timer.c ~/gicv2/nuttx/nuttx/arch/arm64/src/common/arm64_arch_timer.c
 ```
 
 # Memory Map
@@ -1697,168 +1892,6 @@ NOPBIarm_gic_du
 ```
 
 # TODO
-
-TODO: QEMU GIC
-
-https://community.arm.com/support-forums/f/architectures-and-processors-forum/45606/qemu-gicv2-virtual-interface-alias
-
-```bash
-$ qemu-system-aarch64 -machine virt,gic-version=2,virtualization=on,dumpdtb=dump.dtb
-$ dtc -o dump.dts -O dts -I dtb dump.dtb
-
-## GIC v3 Run
-qemu-system-aarch64 \
-  -cpu cortex-a53 \
-  -nographic \
-  -machine virt,virtualization=on,gic-version=3 \
-  -net none \
-  -chardev stdio,id=con,mux=on \
-  -serial chardev:con \
-  -mon chardev=con,mode=readline \
-  -kernel ./nuttx
-
-## GIC v3 Dump Device Tree
-qemu-system-aarch64 \
-  -smp 4 \
-  -cpu cortex-a53 \
-  -nographic \
-  -machine virt,virtualization=on,gic-version=3,dumpdtb=gicv3.dtb \
-  -net none \
-  -chardev stdio,id=con,mux=on \
-  -serial chardev:con \
-  -mon chardev=con,mode=readline \
-  -kernel ./nuttx
-dtc -o gicv3.dts -O dts -I dtb gicv3.dtb
-
-## GIC v2 Run
-qemu-system-aarch64 \
-  -cpu cortex-a53 \
-  -nographic \
-  -machine virt,virtualization=on,gic-version=2 \
-  -net none \
-  -chardev stdio,id=con,mux=on \
-  -serial chardev:con \
-  -mon chardev=con,mode=readline \
-  -kernel ./nuttx
-
-## GIC v2 Dump Device Tree
-qemu-system-aarch64 \
-  -smp 4 \
-  -cpu cortex-a53 \
-  -nographic \
-  -machine virt,virtualization=on,gic-version=2,dumpdtb=gicv2.dtb \
-  -net none \
-  -chardev stdio,id=con,mux=on \
-  -serial chardev:con \
-  -mon chardev=con,mode=readline \
-  -kernel ./nuttx
-dtc -o gicv2.dts -O dts -I dtb gicv2.dtb
-```
-
-https://www.kernel.org/doc/Documentation/devicetree/bindings/interrupt-controller/arm%2Cgic.txt
-
-GIC v2: [gicv2.dts](https://github.com/lupyuen/incubator-nuttx/blob/gicv2/gicv2.dts#L324)
-
-```text
-reg = <
-    0x00 0x8000000 0x00 0x10000  //  GIC Distributor:   0x8000000
-    0x00 0x8010000 0x00 0x10000  //  GIC CPU Interface: 0x8010000
-    0x00 0x8030000 0x00 0x10000  //  VGIC Virtual Interface Control: 0x8030000
-    0x00 0x8040000 0x00 0x10000  //  VGIC Virtual CPU Interface:     0x8040000
->;
-```text
-
-GIC v3: [gicv3.dts](https://github.com/lupyuen/incubator-nuttx/blob/gicv2/gicv3.dts#L324)
-
-```text
-reg = <
-    0x00 0x8000000 0x00 0x10000   //  GIC Distributor:   0x8000000
-    0x00 0x80a0000 0x00 0xf60000  //  GIC CPU Interface: 0x80a0000
->;
-#redistributor-regions = <0x01>;
-```
-Before changing to PinePhone GIC v2:
-
-```text
-- Ready to Boot CPU
-- Boot from EL2
-- Boot from EL1
-- Boot to C runtime for OS Initialize
-nx_start: Entry
-up_allocate_heap: heap_start=0x0x402c4000, heap_size=0x7d3c000
-arm64_fatal_error: reason = 0
-arm64_fatal_error: arm64_fatal_error: CPU0 task: Idle Task
-arm64_fatal_error: CurrentEL: MODE_EL1
-arm64_fatal_error: ESR_ELn: 0x96000010
-arm64_fatal_error: FAR_ELn: 0x800ffe8
-arm64_fatal_error: ELR_ELn: 0x402814d4
-print_ec_cause: Data Abort taken without a change in Exception level
-arm64_registerdump: stack = 0x402c3e40
-arm64_registerdump: x0:   0x800ffe8           x1:   0x402be420
-arm64_registerdump: x2:   0x402825c4          x3:   0xdb0
-arm64_registerdump: x4:   0x8                 x5:   0x1
-arm64_registerdump: x6:   0x7                 x7:   0xa00
-arm64_registerdump: x8:   0x88                x9:   0x402b7000
-arm64_registerdump: x10:  0x402c4000          x11:  0x4
-arm64_registerdump: x12:  0xfffffff7          x13:  0x1
-arm64_registerdump: x14:  0x3                 x15:  0x9000000
-arm64_registerdump: x16:  0x1                 x17:  0x20000000000400
-arm64_registerdump: x18:  0x402b9618          x19:  0x402be250
-arm64_registerdump: x20:  0x402be258          x21:  0x402be000
-arm64_registerdump: x22:  0x402a82b8          x23:  0x402be348
-arm64_registerdump: x24:  0x402c4000          x25:  0x402802c8
-arm64_registerdump: x26:  0x0                 x27:  0x0
-arm64_registerdump: x28:  0x0                 x29:  0x0
-arm64_registerdump: x30:  0x402811ec
-arm64_registerdump:
-arm64_registerdump: STATUS Registers:
-arm64_registerdump: SPSR:      0x600002c5
-arm64_registerdump: ELR:       0x402814d4
-arm64_registerdump: SP_EL0:    0x402c4000
-arm64_registerdump: SP_ELX:    0x402c3e40
-arm64_registerdump: TPIDR_EL0: 0x402be258
-arm64_registerdump: TPIDR_EL1: 0x402be258
-arm64_registerdump: EXE_DEPTH: 0x1
-```
-
-After changing to PinePhone GIC v2:
-
-```text
-+ qemu-system-aarch64 -smp 4 -cpu cortex-a53 -nographic -machine virt,virtualization=on,gic-version=2 -net none -chardev stdio,id=con,mux=on -serial chardev:con -mon chardev=con,mode=readline -kernel ./nuttx
-- Ready to Boot CPU
-- Boot from EL2
-- Boot from EL1
-- Boot to C runtime for OS Initialize
-nx_start: Entry
-up_allocate_heap: heap_start=0x0x402c4000, heap_size=0x7d3c000
-arm64_gic_initialize: TODO: Init GIC for PinePhone
-arm64_gic_initialize: CONFIG_GICD_BASE=0x8000000
-arm64_gic_initialize: CONFIG_GICR_BASE=0x8010000
-arm64_gic_initialize: GIC Version is 2
-EFGHup_timer_initialize: up_timer_initialize: cp15 timer(s) running at 62.50MHz, cycle 62500
-AKLMNOPBIJuart_register: Registering /dev/console
-uart_register: Registering /dev/ttyS0
-AKLMNOPBIJwork_start_highpri: Starting high-priority kernel worker thread(s)
-nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x402a7000 _einit: 0x402a7000 _stext: 0x40280000 _etext: 0x402a8000
-nsh: sysinit: fopen failed: 2
-nsh: mkfatfs: command not found
-
-NuttShell (NSH) NuttX-10.3.0-RC2
-nsh> nx_start: CPU0: Beginning Idle Loop
-```
-
-Changing QEMU to PinePhone GIC v2:
-
-```bash
-cp ~/PinePhone/nuttx/run.sh ~/gicv2/nuttx/run.sh
-cp ~/PinePhone/nuttx/.vscode/tasks.json ~/gicv2/nuttx/.vscode/tasks.json
-cp ~/PinePhone/nuttx/nuttx/arch/arm64/src/common/arm64_gicv3.c ~/gicv2/nuttx/nuttx/arch/arm64/src/common/arm64_gicv3.c
-cp ~/PinePhone/nuttx/nuttx/arch/arm/src/armv7-a/arm_gicv2.c ~/gicv2/nuttx/nuttx/arch/arm/src/armv7-a/arm_gicv2.c
-cp ~/PinePhone/nuttx/nuttx/arch/arm/src/armv7-a/gic.h ~/gicv2/nuttx/nuttx/arch/arm/src/armv7-a/gic.h
-cp ~/PinePhone/nuttx/nuttx/arch/arm/src/armv7-a/arm_gicv2_dump.c ~/gicv2/nuttx/nuttx/arch/arm/src/armv7-a/arm_gicv2_dump.c
-cp ~/PinePhone/nuttx/nuttx/arch/arm64/src/common/arm64_arch_timer.c ~/gicv2/nuttx/nuttx/arch/arm64/src/common/arm64_arch_timer.c
-```
 
 TODO: Boot Files for Manjaro Phosh on PinePhone:
 
