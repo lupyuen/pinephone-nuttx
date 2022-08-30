@@ -1567,7 +1567,9 @@ All entries in the Interrupt Vector Table point to the [Unexpected Interrupt Han
 
 # Interrupt Debugging
 
-TODO
+_Can we debug the Arm64 Interrupt Handler?_
+
+Yep we can write to the UART Port like this...
 
 Based on [arch/arm64/src/common/arm64_vectors.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vectors.S#L326-L413)
 
@@ -1592,6 +1594,50 @@ SECTION_FUNC(text, arm64_irq_handler)
 
     /* switch to IRQ stack and save current sp on it. */
     ...
+```
+
+This will print "T" on the console whenever the Arm64 CPU triggers an Interrupt. (Assuming that the UART Buffer hasn't overflowed)
+
+We can insert this debug code for every handler in [arch/arm64/src/common/arm64_vectors.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vectors.S)...
+
+-   [`arm64_sync_exc`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vectors.S#L172-L324): Handle synchronous exception
+
+-   [`arm64_irq_handler`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vectors.S#L326-L413): Interrupt exception handler
+
+-   [`arm64_serror_handler`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vectors.S#L401-L413): SError handler (Fatal System Errors)
+
+-   [`arm64_mode32_error`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vectors.S#L415-L425): Mode32 Error
+
+-   [`arm64_irq_spurious`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vectors.S#L427-L438): Spurious Interrupt
+
+This is how we insert the debug code for every handler in [arm64_vectors.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vectors.S): https://gist.github.com/lupyuen/4bea83c61704080f1af18abfda63c77e
+
+We can do the same for the __Arm64 Vector Table__: [arch/arm64/src/common/arm64_vector_table.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L47-L75)
+
+```text
+# PinePhone Allwinner A64 UART0 Base Address
+#define UART1_BASE_ADDRESS 0x01C28000
+
+# QEMU UART Base Address
+# Previously: #define UART1_BASE_ADDRESS 0x9000000
+
+/* Save Corruptible Registers and exception context
+ * on the task stack
+ * note: allocate stackframe with XCPTCONTEXT_GP_REGS
+ *     which is ARM64_ESF_REGS + ARM64_CS_REGS
+ *     but only save ARM64_ESF_REGS
+ */
+.macro arm64_enter_exception xreg0, xreg1
+    sub    sp, sp, #8 * XCPTCONTEXT_GP_REGS
+
+    stp    x0,  x1,  [sp, #8 * REG_X0]
+    stp    x2,  x3,  [sp, #8 * REG_X2]
+    ...
+    stp    x28, x29, [sp, #8 * REG_X28]
+
+    mov   x0, #88                 /* For Debug: 'X' */
+    ldr   x1, =UART1_BASE_ADDRESS /* For Debug */
+    strb  w0, [x1]                /* For Debug */
 ```
 
 # Memory Map
