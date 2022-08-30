@@ -1236,7 +1236,7 @@ Let's troubleshoot the Timer Interrupt...
 
 -   Check the Arm64 Assembly Code for the Common Interrupt Handler
 
--   Run GDB with QEMU to understand how Interrupts are handled on NuttX
+-   [Run GDB with QEMU](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53) to understand how Interrupts are handled on NuttX
 
 Here's why we think our implementation of PinePhone GIC is working OK...
 
