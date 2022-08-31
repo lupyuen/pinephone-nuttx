@@ -1034,11 +1034,17 @@ arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
 arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
-EFGHup_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-AKLMNOPBIJuart_regi
+up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+up_timer_initialize: _vector_table=0x400a7000
+up_timer_initialize: Before writing: vbar_el1=0x40227000
+up_timer_initialize: After writing: vbar_el1=0x400a7000
+uart_register: Registering /dev/console
+uart_register: Registering /dev/ttyS0
+work_start_highpri: Starting high-priority kernel worker thread(s)
+nx_start_application: Starting init thread
+lib_cxx_initialize: _sinit: 0x400a7000 _einit: 0x400a7000 _stext: 0x40080000 _etext: 0x400a8000
+nx_start: CPU0: Beginning Idle Loop
 ```
-
-# Interrupt Controller
 
 _Where's the rest of the boot output?_
 
@@ -1046,10 +1052,17 @@ We expect to see this output when NuttX boots...
 
 -   ["Test NuttX: Single Core"](https://lupyuen.github.io/articles/arm#test-nuttx-single-core)
 
-But we haven't implemented the __Arm Generic Interrupt Controller (GIC)__ for PinePhone...
+But PinePhone stops halfway. Let's find out why...
+
+# Interrupt Controller
+
+Let's talk about the __Arm Generic Interrupt Controller (GIC)__ for PinePhone...
 
 ```text
 arm64_gic_initialize: TODO: Init GIC for PinePhone
+arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
+arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
+arm64_gic_initialize: GIC Version is 2
 ```
 
 This is the current implementation of [Arm GIC Version 3](https://developer.arm.com/documentation/ihi0069/latest) in NuttX Arm64...
@@ -1211,7 +1224,7 @@ __Timer IRQ `ARM_ARCH_TIMER_IRQ`__ is defined in [arch/arm64/src/common/arm64_ar
 
 # Timer Interrrupt Isn't Handled
 
-Right now NuttX hangs midsentence while booting on PinePhone...
+Previously NuttX hangs midsentence while booting on PinePhone, let's find out how we fixed it...
 
 ```text
 arm64_gic_initialize: TODO: Init GIC for PinePhone
@@ -1228,7 +1241,7 @@ The Timer Interrupt Handler [`arm64_arch_timer_compare_isr`](https://github.com/
 
 _Is it caused by PinePhone's GIC?_
 
-This problem doesn't seem to be caused by [PinePhone's Generic Interrupt Controller (GIC)](https://github.com/lupyuen/pinephone-nuttx#interrupt-controller) that we have implemented. We successfully tested PinePhone's GIC with QEMU. (See next section)
+This problem doesn't seem to be caused by [PinePhone's Generic Interrupt Controller (GIC)](https://github.com/lupyuen/pinephone-nuttx#interrupt-controller) that we have implemented. We [successfully tested PinePhone's GIC](https://github.com/lupyuen/pinephone-nuttx#test-pinephone-gic-with-qemu) with QEMU.
 
 Let's troubleshoot the Timer Interrupt...
 
@@ -1254,11 +1267,62 @@ Let's troubleshoot the Timer Interrupt...
 
     [arch/arm64/src/common/arm64_vector_table.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232)
 
-__TODO:__ Check that the __Arm64 Vector Table `_vector_table`__ is correctly configured in the Arm CPU: [arch/arm64/src/common/arm64_vector_table.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232)
+And we're right! The Arm64 Vector Table is indeed incorrectly configured! Here why...
 
-__TODO:__ Read the [Arm Cortex-A53 Technical Reference Manual](https://documentation-service.arm.com/static/5e9075f9c8052b1608761519?token=) to understand the Arm64 Vector Table
+# Arm64 Vector Table Is Wrong
 
-Here's why we think our implementation of PinePhone GIC is working OK...
+Earlier we saw that the Interrupt Handler wasn't called for System Timer Interrupt. And it might be due to problems in the __Arm64 Vector Table `_vector_table`__: [arch/arm64/src/common/arm64_vector_table.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232)
+
+Let's check whether the Arm64 Vector Table `_vector_table` is correctly configured in the Arm CPU: [arch/arm64/src/common/arm64_arch_timer.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L212-L235)
+
+```c
+void up_timer_initialize(void)
+{
+  ...
+  // Attach System Timer Interrupt Handler
+  irq_attach(ARM_ARCH_TIMER_IRQ, arm64_arch_timer_compare_isr, 0);
+
+  // For PinePhone: Read Vector Base Address Register EL1
+  extern void *_vector_table[];
+  sinfo("_vector_table=%p\n", _vector_table);
+  sinfo("Before writing: vbar_el1=%p\n", read_sysreg(vbar_el1));
+```
+
+After attaching the Interrupt Handler for System Timer, we read the Arm64 [Vector Base Address Register EL1](https://github.com/lupyuen/pinephone-nuttx#handling-interrupts). Here's the output...
+
+```text
+up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+up_timer_initialize: _vector_table=0x400a7000
+up_timer_initialize: Before writing: vbar_el1=0x40227000
+```
+
+Aha! `_vector_table` is at 0x400a7000... But Vector Base Address Register EL1 says 0x40227000!
+
+Our Arm64 CPU is pointing to the wrong Arm64 Vector Table... Hence our Interrupt Handler is never called!
+
+Let's fix the Vector Base Address Register EL1: [arch/arm64/src/common/arm64_arch_timer.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L212-L235)
+
+```c
+  // For PinePhone: Write Vector Base Address Register EL1
+  write_sysreg((uint64_t)_vector_table, vbar_el1);
+  ARM64_ISB();
+
+  // For PinePhone: Read Vector Base Address Register EL1
+  sinfo("After writing: vbar_el1=%p\n", read_sysreg(vbar_el1));
+```
+
+This writes the correct value of `_vector_table` back into Vector Base Address Register EL1. Here's the output...
+
+```text
+up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+up_timer_initialize: _vector_table=0x400a7000
+up_timer_initialize: Before writing: vbar_el1=0x40227000
+up_timer_initialize: After writing: vbar_el1=0x400a7000
+```
+
+Yep Vector Base Address Register EL1 is now correct.
+
+And our Interrupt Handlers are now working fine yay!
 
 # Test PinePhone GIC with QEMU
 
