@@ -2071,6 +2071,8 @@ void arm64_boot_primary_c_routine(void)
 
 This prints "012" to the Serial Console as NuttX boots.
 
+`up_putc` prints directly to the UART Port by writing to the UART Register. So it's safe to be called as NuttX boots.
+
 # GIC Register Dump
 
 Below is the dump of PinePhone's registers for [Arm Generic Interrupt Controller version 2](https://developer.arm.com/documentation/ihi0048/latest/)...
