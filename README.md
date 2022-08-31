@@ -1099,7 +1099,17 @@ NuttX has an implementation of Arm GIC Version 2, but it's based on Arm32. We'll
 
 -   [arch/arm/src/imx6/hardware/imx_memorymap.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/imx6/hardware/imx_memorymap.h)
 
-Based on the code above we have implemented Arm GIC Version 2 for PinePhone, see this: [arch/arm64/src/common/arm64_gicv3.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gicv3.c#L768-L828)
+By reusing the code above, we have implemented Arm GIC Version 2 for PinePhone...
+
+-   [arch/arm64/src/common/arm64_gicv3.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gicv3.c#L765-L823)
+
+We made minor tweaks to NuttX's implementation of GIC Version 2...
+
+-   [Changes for arch/arm/src/armv7-a/arm_gicv2.c](https://github.com/lupyuen/incubator-nuttx/commit/6fa0e7e5d2beddad07890c83d2ee428a3f2b8a62#diff-6e1132aef124dabaf94c200ab06d65c7bc2b9967bf76a46aba71a7f43b5fb219)
+
+-   [Changes for arch/arm/src/armv7-a/arm_gicv2_dump.c](https://github.com/lupyuen/incubator-nuttx/commit/4fc2669fef62d12ba1dd428f2daf03d3bc362501#diff-eb05c977988d59202a9472f6fa7f9dc290724662ad6d15a4ba99b8f1fc1dc8f8)
+
+-   [Changes for arch/arm/src/armv7-a/gic.h](https://github.com/lupyuen/incubator-nuttx/commit/6fa0e7e5d2beddad07890c83d2ee428a3f2b8a62#diff-b4fcb67b71de954c942ead9bb0868e720a5802c90743f0a1883f84b7565e1a0f)
 
 _Where in memory is the GIC located?_
 
