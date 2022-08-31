@@ -1649,12 +1649,12 @@ When an __Interrupt is triggered__...
     GTEXT(_vector_table)
     SECTION_SUBSEC_FUNC(exc_vector_table,_vector_table_section,_vector_table)
         ...
-        /* Current EL with SPx / IRQ */
+        /* Current EL with SP0 / IRQ */
         .align 7
         arm64_enter_exception x0, x1
         b    arm64_irq_handler
         ...
-        /* Lower EL using AArch64 / IRQ */
+        /* Current EL with SPx / IRQ */
         .align 7
         arm64_enter_exception x0, x1
         b    arm64_irq_handler
