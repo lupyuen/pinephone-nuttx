@@ -1222,7 +1222,7 @@ __Timer IRQ `ARM_ARCH_TIMER_IRQ`__ is defined in [arch/arm64/src/common/arm64_ar
 #define GIC_NUM_PRI_PER_REG         4
 ```
 
-# Timer Interrrupt Isn't Handled
+# Timer Interrupt Isn't Handled
 
 Previously NuttX hangs midsentence while booting on PinePhone, let's find out how we fixed it...
 
