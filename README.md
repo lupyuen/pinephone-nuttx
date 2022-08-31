@@ -982,6 +982,40 @@ With the above changes, NuttX boots on PinePhone yay!
 
 ![NuttX Boots On PinePhone](https://lupyuen.github.io/images/Screenshot_2022-08-26_08-04-34_080626.png)
 
+This is how we build NuttX for PinePhone...
+
+```bash
+## Download NuttX OS for PinePhone
+git clone \
+    --recursive \
+    --branch pinephone \
+    https://github.com/lupyuen/incubator-nuttx \
+    nuttx
+
+## Download NuttX Apps for PinePhone
+git clone \
+    --recursive \
+    --branch pinephone \
+    https://github.com/lupyuen/incubator-nuttx-apps \
+    apps
+
+## We'll build NuttX inside nuttx/nuttx
+cd nuttx
+
+## Configure NuttX for Single Core
+./tools/configure.sh -l qemu-a53:nsh
+
+## Build NuttX
+make
+
+## Dump the disassembly to nuttx.S
+aarch64-none-elf-objdump \
+  -t -S --demangle --line-numbers --wide \
+  nuttx \
+  >nuttx.S \
+  2>&1
+```
+
 # NuttX Boot Log
 
 Here's the UART Log of NuttX booting on PinePhone...
@@ -1342,7 +1376,41 @@ And our Interrupt Handlers are now working fine yay!
 
 # Test PinePhone GIC with QEMU
 
-This is how we tested PinePhone's [Generic Interrupt Controller (GIC)](https://github.com/lupyuen/pinephone-nuttx#interrupt-controller) with QEMU...
+This is how we build NuttX for QEMU with [Generic Interrupt Controller (GIC) Version 2](https://github.com/lupyuen/pinephone-nuttx#interrupt-controller)...
+
+```bash
+## Download NuttX OS for QEMU with GIC Version 2
+git clone \
+    --recursive \
+    --branch gicv2 \
+    https://github.com/lupyuen/incubator-nuttx \
+    nuttx
+
+## Download NuttX Apps for QEMU
+git clone \
+    --recursive \
+    --branch arm64 \
+    https://github.com/lupyuen/incubator-nuttx-apps \
+    apps
+
+## We'll build NuttX inside nuttx/nuttx
+cd nuttx
+
+## Configure NuttX for Single Core
+./tools/configure.sh -l qemu-a53:nsh
+
+## Build NuttX
+make
+
+## Dump the disassembly to nuttx.S
+aarch64-none-elf-objdump \
+  -t -S --demangle --line-numbers --wide \
+  nuttx \
+  >nuttx.S \
+  2>&1
+```
+
+And this is how we tested PinePhone's GIC Version 2 with QEMU...
 
 ```bash
 ## Run GIC v2 with QEMU
