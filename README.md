@@ -1,4 +1,4 @@
-![Ghidra with Apache NuttX RTOS for Arm Cortex-A53](https://lupyuen.github.io/images/arm-title.png)
+![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/uboot-title.png)
 
 # Apache NuttX RTOS on PinePhone
 
@@ -7,6 +7,8 @@ Read the articles...
 -   ["Apache NuttX RTOS on Arm Cortex-A53: How it might run on PinePhone"](https://lupyuen.github.io/articles/arm)
 
 -   ["PinePhone boots Apache NuttX RTOS"](https://lupyuen.github.io/articles/uboot)
+
+-   ["NuttX RTOS on PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
 
 [Apache NuttX RTOS](https://nuttx.apache.org/docs/latest/) now runs on Arm Cortex-A53 with Multi-Core SMP...
 
