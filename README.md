@@ -982,6 +982,8 @@ With the above changes, NuttX boots on PinePhone yay!
 
 ![NuttX Boots On PinePhone](https://lupyuen.github.io/images/Screenshot_2022-08-26_08-04-34_080626.png)
 
+# NuttX Boot Log
+
 This is how we build NuttX for PinePhone...
 
 ```bash
@@ -1014,9 +1016,17 @@ aarch64-none-elf-objdump \
   nuttx \
   >nuttx.S \
   2>&1
-```
 
-# NuttX Boot Log
+## Compress the NuttX Binary Image
+cp nuttx.bin Image
+rm -f Image.gz
+gzip Image
+
+## Copy compressed NuttX Binary Image to Jumpdrive microSD
+## TODO: Change the microSD Path
+cp Image.gz "/Volumes/NO NAME"
+```
+Insert the Jumpdrive microSD into PinePhone and power up.
 
 Here's the UART Log of NuttX booting on PinePhone...
 
