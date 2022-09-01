@@ -2074,7 +2074,7 @@ void arm64_boot_primary_c_routine(void)
 
 This prints "012" to the Serial Console as NuttX boots.
 
-`up_putc` prints directly to the UART Port by writing to the UART Register. So it's safe to be called as NuttX boots.
+[`up_putc`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L924-L946) calls [`up_lowputc`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_lowputc.S#L100-L109) to print directly to the UART Port by writing to the UART Register. So it's safe to be called as NuttX boots.
 
 # GIC Register Dump
 
