@@ -2413,6 +2413,28 @@ NOPBIarm_gic_du
 
 # TODO
 
+TODO: sinfo (syslog) works, but printf (puts) doesn't!
+
+https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/system/nsh/nsh_main.c#L88-L102
+
+```c
+/****************************************************************************
+ * Name: nsh_main
+ *
+ * Description:
+ *   This is the main logic for the case of the NSH task.  It will perform
+ *   one-time NSH initialization and start an interactive session on the
+ *   current console device.
+ *
+ ****************************************************************************/
+
+int main(int argc, FAR char *argv[])
+{
+  sinfo("****main\n");////
+  printf("****main2\n");////
+  sinfo("****main3\n");////
+```
+
 PinePhone:
 
 ```text
