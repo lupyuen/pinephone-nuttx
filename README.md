@@ -2667,14 +2667,11 @@ uart_register: Registering /dev/ttyS0
 work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
 lib_cxx_initialize: _sinit: 0x400a7000 _einit: 0x400a7000 _stext: 0x40080000 _etext: 0x400a8000
-nsh_main: ****main
- n*s*h*_mmaaiinn2:
- ****main3
 nsh: sysinit: fopen failed: 2
 eshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
-L 
-toNoupt
- Shell (NSH) NuttX-10.3.0-RC2
+L
+SNoutpt
+ hell (NSH) NuttX-10.3.0-RC2
 nsh> 
 ```
 
