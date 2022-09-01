@@ -1025,6 +1025,7 @@ rm -f Image.gz
 gzip Image
 
 ## Copy compressed NuttX Binary Image to Jumpdrive microSD
+## https://lupyuen.github.io/articles/uboot#pinephone-jumpdrive
 ## TODO: Change the microSD Path
 cp Image.gz "/Volumes/NO NAME"
 ```
