@@ -1090,16 +1090,17 @@ uart_register: Registering /dev/ttyS0
 work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
 lib_cxx_initialize: _sinit: 0x400a7000 _einit: 0x400a7000 _stext: 0x40080000 _etext: 0x400a8000
-nx_start: CPU0: Beginning Idle Loop
+nsh: sysinit: fopen failed: 2
+eshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
+L
+SNoutpt
+ hell (NSH) NuttX-10.3.0-RC2
+nsh> 
 ```
 
-_Where's the rest of the boot output?_
+The output is slightly garbled, the UART Driver needs fixing.
 
-We expect to see this output when NuttX boots...
-
--   ["Test NuttX: Single Core"](https://lupyuen.github.io/articles/arm#test-nuttx-single-core)
-
-But PinePhone stops halfway. Let's find out why...
+NuttX Shell won't work until we implement UART Input in the UART Driver.
 
 # Interrupt Controller
 
