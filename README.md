@@ -989,6 +989,9 @@ With the above changes, NuttX boots on PinePhone yay!
 This is how we build NuttX for PinePhone...
 
 ```bash
+## TODO: Install Build Prerequisites
+## https://lupyuen.github.io/articles/uboot#install-prerequisites
+
 ## Download NuttX OS for PinePhone
 git clone \
     --recursive \
@@ -1024,11 +1027,12 @@ cp nuttx.bin Image
 rm -f Image.gz
 gzip Image
 
-## Copy compressed NuttX Binary Image to Jumpdrive microSD
-## https://lupyuen.github.io/articles/uboot#pinephone-jumpdrive
+## Copy compressed NuttX Binary Image to Jumpdrive microSD.
+## How to create Jumpdrive microSD: https://lupyuen.github.io/articles/uboot#pinephone-jumpdrive
 ## TODO: Change the microSD Path
 cp Image.gz "/Volumes/NO NAME"
 ```
+
 Insert the Jumpdrive microSD into PinePhone and power up.
 
 Here's the UART Log of NuttX booting on PinePhone...
@@ -1286,6 +1290,26 @@ void arm64_gic_secondary_init(void)
 #endif  //  NOTUSED
 ```
 
+And we rebuild NuttX for Multi Core...
+
+```bash
+## Erase the NuttX Configuration
+make distclean
+
+## Configure NuttX for 4 Cores
+./tools/configure.sh -l qemu-a53:nsh_smp
+
+## Build NuttX
+make
+
+## Dump the disassembly to nuttx.S
+aarch64-none-elf-objdump \
+  -t -S --demangle --line-numbers --wide \
+  nuttx \
+  >nuttx.S \
+  2>&1
+```
+
 # System Timer 
 
 NuttX starts the System Timer when it boots. Here's how the System Timer is started: [arch/arm64/src/common/arm64_arch_timer.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L212-L233)
@@ -1453,6 +1477,9 @@ And our Interrupt Handlers are now working fine yay!
 This is how we build NuttX for QEMU with [Generic Interrupt Controller (GIC) Version 2](https://github.com/lupyuen/pinephone-nuttx#interrupt-controller)...
 
 ```bash
+## TODO: Install Build Prerequisites
+## https://lupyuen.github.io/articles/uboot#install-prerequisites
+
 ## Download NuttX OS for QEMU with GIC Version 2
 git clone \
     --recursive \
