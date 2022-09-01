@@ -2652,7 +2652,7 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL2
 - Boot from EL1
 - Boot to C runtime for OS Initialize
-Lnx_start: Entry
+nx_start: Entry
 up_allocate_heap: heap_start=0x0x400c4000, heap_size=0x7f3c000
 arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
@@ -2664,19 +2664,18 @@ up_timer_initialize: Before writing: vbar_el1=0x40227000
 up_timer_initialize: After writing: vbar_el1=0x400a7000
 uart_register: Registering /dev/console
 uart_register: Registering /dev/ttyS0
-KGwork_start_highpri: Starting high-priority kernel worker thread(s)
+work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
 lib_cxx_initialize: _sinit: 0x400a7000 _einit: 0x400a7000 _stext: 0x40080000 _etext: 0x400a8000
 nsh_main: ****main
- EE*nE*sE*hE*_EmmEaaEiiEnnE2:E
-  H****main3
-aEEnEsEhE:E EsEyEsEiEnEiEtE:E EfEoEpEeEnE HHEfHHEaHHEiHHElHHGGEenEdxE:_E sE2tE
-  rEntEs:Eh E:CE PEmUEk0Ef:Ea EtBEfeEsgE:iE nEcnEoiEmnEmgEa EnIEddE lEneEo EtLEEnEfoEopEu
-E EdE
-EE
-EENEuEtEtESEhEeElElE E(ENESEHE)E ENEuEtEtEXE-E1E0E.E3E.E0E-ERECE2E
- EnEsEhE>E E
-[EKH
+ n*s*h*_mmaaiinn2:
+ ****main3
+nsh: sysinit: fopen failed: 2
+eshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
+L 
+toNoupt
+ Shell (NSH) NuttX-10.3.0-RC2
+nsh> 
 ```
 
 QEMU:
