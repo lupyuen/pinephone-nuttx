@@ -2689,11 +2689,44 @@ work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
 lib_cxx_initialize: _sinit: 0x400a7000 _einit: 0x400a7000 _stext: 0x40080000 _etext: 0x400a8000
 nsh: sysinit: fopen failed: 2
-eshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
-L
-SNoutpt
- hell (NSH) NuttX-10.3.0-RC2
-nsh> 
+nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
+e
+  
+L
+ oNoupt
+t
+ Shell (NSH) NuttX-10.3.0-RC2
+nsh> [Kuname -a
+NuttX 10.3.0-RC2 fc909c6-dirty Sep  1 2022 17:05:44 arm64 qemu-a53
+nsh> [Khelo
+nsh: helo: command not found
+nsh> [Khelp
+help usage:  help [-v] [<cmd>]
+
+  .         cd        dmesg     help      mount     rmdir     true      xd        
+  [         cp        echo      hexdump   mv        set       truncate  
+  ?         cmp       exec      kill      printf    sleep     uname     
+  basename  dirname   exit      ls        ps        source    umount    
+  break     dd        false     mkdir     pwd       test      unset     
+  cat       df        free      mkrd      rm        time      usleep    
+
+Builtin Apps:
+  getprime  hello     nsh       ostest    sh        
+nsh> [Khello
+task_spawn: name=hello entry=0x4009b1a0 file_actions=0x400c9580 attr=0x400c9588 argv=0x400c96d0
+spawn_execattrs: Setting policy=2 priority=100 for pid=3
+Hello, World!!
+nsh> [Kls /dev
+/dev:
+ console
+ null
+ ram0
+ ram2
+ ttyS0
+ zero
+nsh> [K
+[7mReally kill this window [y/n][27m[K
+nsh>
 ```
 
 QEMU:
