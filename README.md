@@ -2222,13 +2222,6 @@ This is used to enable/disable the generation of THRE Interrupt.
 0: Disable
 1: Enable
 
-3 R/W 0
-EDSSI
-Enable Modem Status Interrupt
-This is used to enable/disable the generation of Modem Status Interrupt. This is the fourth highest priority interrupt.
-0: Disable
-1: Enable
-
 2 R/W 0
 ELSI
 Enable Receiver Line Status Interrupt
