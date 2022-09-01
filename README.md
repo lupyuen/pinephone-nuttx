@@ -986,6 +986,8 @@ With the above changes, NuttX boots on PinePhone yay!
 
 ![NuttX Boots On PinePhone](https://lupyuen.github.io/images/Screenshot_2022-08-26_08-04-34_080626.png)
 
+[__Watch the Demo on YouTube__](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
+
 # NuttX Boot Log
 
 This is how we build NuttX for PinePhone...
@@ -1130,6 +1132,8 @@ nsh> ls /dev
  ttyS0
  zero
 ```
+
+[__Watch the Demo on YouTube__](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
 
 The output is slightly garbled, the UART Driver needs fixing.
 
@@ -1620,7 +1624,7 @@ reg = <
 compatible = "arm,gic-v3";
 ```
 
-This is how we copied the PinePhone GIC v2 Source Files into NuttX Arm64 for testing...
+This is how we copied the PinePhone GIC v2 Source Files into NuttX QEMU Arm64 for testing...
 
 ```bash
 cp ~/PinePhone/nuttx/nuttx/arch/arm64/src/common/arm64_gicv3.c      ~/gicv2/nuttx/nuttx/arch/arm64/src/common/arm64_gicv3.c
@@ -1628,8 +1632,6 @@ cp ~/PinePhone/nuttx/nuttx/arch/arm/src/armv7-a/arm_gicv2.c         ~/gicv2/nutt
 cp ~/PinePhone/nuttx/nuttx/arch/arm/src/armv7-a/gic.h               ~/gicv2/nuttx/nuttx/arch/arm/src/armv7-a/gic.h
 cp ~/PinePhone/nuttx/nuttx/arch/arm/src/armv7-a/arm_gicv2_dump.c    ~/gicv2/nuttx/nuttx/arch/arm/src/armv7-a/arm_gicv2_dump.c
 cp ~/PinePhone/nuttx/nuttx/arch/arm64/src/common/arm64_arch_timer.c ~/gicv2/nuttx/nuttx/arch/arm64/src/common/arm64_arch_timer.c
-cp ~/PinePhone/nuttx/run.sh             ~/gicv2/nuttx/run.sh
-cp ~/PinePhone/nuttx/.vscode/tasks.json ~/gicv2/nuttx/.vscode/tasks.json
 ```
 
 # Handling Interrupts
