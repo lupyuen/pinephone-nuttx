@@ -2443,7 +2443,8 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL2
 - Boot from EL1
 - Boot to C runtime for OS Initialize
-Lnx_start: Entry
+L: qemu_pl011_setup
+nx_start: Entry
 up_allocate_heap: heap_start=0x0x400c4000, heap_size=0x7f3c000
 arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
@@ -2455,14 +2456,19 @@ up_timer_initialize: Before writing: vbar_el1=0x40227000
 up_timer_initialize: After writing: vbar_el1=0x400a7000
 uart_register: Registering /dev/console
 uart_register: Registering /dev/ttyS0
-KGwork_start_highpri: Starting high-priority kernel worker thread(s)
+K: qemu_pl011_attach
+G: qemu_pl011_rxint
+work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
 lib_cxx_initialize: _sinit: 0x400a7000 _einit: 0x400a7000 _stext: 0x40080000 _etext: 0x400a8000
 nsh_main: ****main
 puts: A
-HHputs: B
+HH: qemu_pl011_txint
+puts: B
 nsh_main: ****main3
-HHHHHHHHHHHHGGnx_start: CPU0: Beginning Idle Loop
+HHHHHHHHHHHH: qemu_pl011_txint
+GG: qemu_pl011_rxint
+nx_start: CPU0: Beginning Idle Loop
 ```
 
 QEMU:
