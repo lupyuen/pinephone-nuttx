@@ -2176,6 +2176,36 @@ This prints "012" to the Serial Console as NuttX boots.
 
 # UART Interrupts
 
+TODO: sinfo (syslog) works, but printf (puts) doesn't! Must implement UART Transmit Interrupts
+
+https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/system/nsh/nsh_main.c#L88-L102
+
+```c
+/****************************************************************************
+ * Name: nsh_main
+ *
+ * Description:
+ *   This is the main logic for the case of the NSH task.  It will perform
+ *   one-time NSH initialization and start an interactive session on the
+ *   current console device.
+ *
+ ****************************************************************************/
+
+int main(int argc, FAR char *argv[])
+{
+  sinfo("****main\n");////
+  printf("****main2\n");////
+  sinfo("****main3\n");////
+```
+
+`main2` never appears in the output because `qemu_pl011_txint` is unimplemented...
+
+```text
+nsh_main: ****main
+HH: qemu_pl011_txint
+nsh_main: ****main3
+```
+
 TODO: UART Interrupts (Page 565)
 
 UART Interrupt Enable Register:
@@ -2282,28 +2312,6 @@ Transmit holding register empty
 Transmitter holding register empty (Program THRE Mode disabled) or XMIT FIFO at or below threshold (Program THRE Mode enabled)
 
 Reading UART Interrupt Identity Register (if source of interrupt); or, writing into THR (FIFOs or THRE Mode not selected or disabled) or XMIT FIFO above threshold (FIFOs and THRE Mode selected and enabled).
-```
-
-TODO: sinfo (syslog) works, but printf (puts) doesn't! Must implement UART Transmit Interrupts
-
-https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/system/nsh/nsh_main.c#L88-L102
-
-```c
-/****************************************************************************
- * Name: nsh_main
- *
- * Description:
- *   This is the main logic for the case of the NSH task.  It will perform
- *   one-time NSH initialization and start an interactive session on the
- *   current console device.
- *
- ****************************************************************************/
-
-int main(int argc, FAR char *argv[])
-{
-  sinfo("****main\n");////
-  printf("****main2\n");////
-  sinfo("****main3\n");////
 ```
 
 # GIC Register Dump
