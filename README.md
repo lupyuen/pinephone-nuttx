@@ -2207,6 +2207,26 @@ HH: qemu_pl011_txint
 nsh_main: ****main3
 ```
 
+This is the sequence of calls to `qemu_pl011_attach`, `qemu_pl011_rxint` and `qemu_pl011_txint`...
+
+```text
+uart_register: Registering /dev/console
+uart_register: Registering /dev/ttyS0
+K: qemu_pl011_attach
+G: qemu_pl011_rxint
+work_start_highpri: Starting high-priority kernel worker thread(s)
+nx_start_application: Starting init thread
+lib_cxx_initialize: _sinit: 0x400a7000 _einit: 0x400a7000 _stext: 0x40080000 _etext: 0x400a8000
+nsh_main: ****main
+puts: A
+HH: qemu_pl011_txint
+puts: B
+nsh_main: ****main3
+HHHHHHHHHHHH: qemu_pl011_txint
+GG: qemu_pl011_rxint
+nx_start: CPU0: Beginning Idle Loop
+```
+
 TODO: UART Interrupts (Page 565)
 
 UART Interrupt Enable Register:
