@@ -1996,60 +1996,158 @@ We'll talk more about the Arm MMU in the next section...
 
 # Boot Sequence
 
-This section describes the Boot Sequence for NuttX on PinePhone.
+This section describes the Boot Sequence for NuttX on PinePhone...
 
-The Startup Code (in Arm64 Assembly) inits the Arm64 System Registers, UART Port and jumps to `arm64_boot_secondary_c_routine` (in C): [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L228-L230)
+1.  [Startup Code](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L117-L176) (in Arm64 Assembly) inits the Arm64 System Registers and UART Port.
 
-```text
-    ldr    x25, =arm64_boot_secondary_c_routine
-    ...
-jump_to_c_entry:
-    PRINT(jump_to_c_entry, "- Boot to C runtime for OS Initialize\r\n")
-    ret x25
-```
+1.  [Startup Code](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L178-L182) prints the Hello Message...
 
-`arm64_boot_primary_c_routine` inits the BSS, calls `arm64_chip_boot` to init the Arm64 CPU, and `nx_start` to start the NuttX processes: [arch/arm64/src/common/arm64_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L179-L189)
+    ```text
+    HELLO NUTTX ON PINEPHONE!
+    Ready to Boot CPU
+    ```
 
-```c
-void arm64_boot_primary_c_routine(void)
-{
-  boot_early_memset(_START_BSS, 0, _END_BSS - _START_BSS);
-  arm64_chip_boot();
-  nx_start();
-}
-```
+1.  [Startup Code](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L199-L213) calls [`arm64_boot_el2_init`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L91-L130) to Init EL2
 
-`arm64_chip_boot` calls `arm64_mmu_init` to enable the Arm Memory Management Unit, and `qemu_board_initialize` to init the Board Drivers: [arch/arm64/src/qemu/qemu_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_boot.c#L81-L105)
+    ```text
+    Boot from EL2
+    ```
 
-```c
-void arm64_chip_boot(void)
-{
-  /* MAP IO and DRAM, enable MMU. */
+1.  [Startup Code](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L215-L226) calls [`arm64_boot_el1_init`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L132-L162) to Init EL1 and load the [Vector Base Address Register EL1](https://github.com/lupyuen/pinephone-nuttx#handling-interrupts)
 
-  arm64_mmu_init(true);
+    ```text
+    Boot from EL1
+    ```
 
-#ifdef CONFIG_SMP
-  arm64_psci_init("smc");
+1.  [Startup Code](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L228-L230) jumps to `arm64_boot_secondary_c_routine`: [arch/arm64/src/common/arm64_head.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L228-L230)
 
-#endif
+    ```text
+        ldr    x25, =arm64_boot_secondary_c_routine
+        ...
+    jump_to_c_entry:
+        PRINT(jump_to_c_entry, "- Boot to C runtime for OS Initialize\r\n")
+        ret x25
+    ```
 
-  /* Perform board-specific device initialization. This would include
-   * configuration of board specific resources such as GPIOs, LEDs, etc.
-   */
+    Which appears as...
 
-  qemu_board_initialize();
+    ```text
+    Boot to C runtime for OS Initialize
+    ```
 
-#ifdef USE_EARLYSERIALINIT
-  /* Perform early serial initialization if we are going to use the serial
-   * driver.
-   */
+1.  TODO: Who calls `qemu_pl011_setup` to init the UART Port?
 
-  qemu_earlyserialinit();
-#endif
-}
-```
+1.  `arm64_boot_primary_c_routine` inits the BSS, calls `arm64_chip_boot` to init the Arm64 CPU, and `nx_start` to start the NuttX processes: [arch/arm64/src/common/arm64_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_boot.c#L179-L189)
 
-`arm64_mmu_init` is defined in [arch/arm64/src/common/arm64_mmu.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_mmu.c#L571-L622)
+    ```c
+    void arm64_boot_primary_c_routine(void)
+    {
+      boot_early_memset(_START_BSS, 0, _END_BSS - _START_BSS);
+      arm64_chip_boot();
+      nx_start();
+    }
+    ```
+
+    Which appears as...
+
+    ```text
+    nx_start: Entry
+    ```
+
+1.  `arm64_chip_boot` calls `arm64_mmu_init` to enable the Arm Memory Management Unit, and `qemu_board_initialize` to init the Board Drivers: [arch/arm64/src/qemu/qemu_boot.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_boot.c#L81-L105)
+
+    ```c
+    void arm64_chip_boot(void)
+    {
+      /* MAP IO and DRAM, enable MMU. */
+
+      arm64_mmu_init(true);
+
+    #ifdef CONFIG_SMP
+      arm64_psci_init("smc");
+
+    #endif
+
+      /* Perform board-specific device initialization. This would include
+      * configuration of board specific resources such as GPIOs, LEDs, etc.
+      */
+
+      qemu_board_initialize();
+
+    #ifdef USE_EARLYSERIALINIT
+      /* Perform early serial initialization if we are going to use the serial
+      * driver.
+      */
+
+      qemu_earlyserialinit();
+    #endif
+    }
+    ```
+
+    `arm64_mmu_init` is defined in [arch/arm64/src/common/arm64_mmu.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_mmu.c#L571-L622)
+
+1.  TODO: Who calls `up_allocate_heap` to allocate the heap?
+
+    ```text
+    up_allocate_heap: heap_start=0x0x400c4000, heap_size=0x7f3c000
+    ```
+
+1.  TODO: Who calls [`arm64_gic_initialize`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_gicv3.c#L710-L734) to init the GIC?
+
+    ```text
+    arm64_gic_initialize: TODO: Init GIC for PinePhone
+    arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
+    arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
+    arm64_gic_initialize: GIC Version is 2
+    ```
+
+1.  TODO: Who calls [`up_timer_initialize`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L212-L235) to start the System Timer?
+
+1.  TODO: Who calls `uart_register` to register `/dev/console` and `/dev/ttyS0`?
+
+1.  TODO: Who calls `qemu_pl011_attach` to Attach UART Interrupt and `qemu_pl011_rxint` to Enable UART Receive Interrupt?
+
+1.  TODO: Who calls `work_start_highpri` to start high-priority kernel worker thread(s)?
+
+1.  TODO: Who calls `nx_start_application` to starting init thread?
+
+1.  TODO: Who calls `nxtask_start` to start the NuttX Shell?
+
+1.  [`nxtask_start`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/sched/task/task_start.c#L60-L145) calls [`nxtask_startup`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/libs/libc/sched/task_startup.c#L40-L71) to start the NuttX Shell
+
+1.  [`nxtask_startup`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/libs/libc/sched/task_startup.c#L40-L71) calls [`lib_cxx_initialize`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/libs/libc/misc/lib_cxx_initialize.c#L68-L123) to init the C++ Constructors.
+
+    ```text
+    lib_cxx_initialize: _sinit: 0x400a7000 _einit: 0x400a7000 _stext: 0x40080000 _etext: 0x400a8000
+    ```
+
+    Then [`nxtask_startup`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/libs/libc/sched/task_startup.c#L40-L71) calls the Main Entry Point for the NuttX Shell, [`entrypt`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/libs/libc/sched/task_startup.c#L66-L70)
+
+1.  [`entrypt`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/libs/libc/sched/task_startup.c#L66-L70) points to [`nsh_main`](https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/system/nsh/nsh_main.c#L87-L165), the Main Function for the NuttX Shell
+
+1.  [`nsh_main`](https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/system/nsh/nsh_main.c#L87-L165), starts the NuttX Shell.
+
+    UART Transmit and Receive Interrupts must work, otherwise nothing appears in NuttX Shell.
+
+    (Because NuttX Shell calls Stream I/O with the Serial Driver)
+
+1.  TODO: Who calls `qemu_pl011_txint` to Enable UART Transmit Interrupt?
+
+    ```text
+    HHHHHHHHHHHH: qemu_pl011_txint
+    ```
+
+1.  TODO: Who calls `qemu_pl011_rxint` to Enable UART Receive Interrupt?
+
+    ```text
+    GG: qemu_pl011_rxint
+    ```
+
+1.  `nx_start` starts the Idle Loop
+
+    ```text
+    nx_start: CPU0: Beginning Idle Loop
+    ```
 
 The next section talks about debugging the Boot Sequence...
 
