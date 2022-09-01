@@ -2413,6 +2413,112 @@ NOPBIarm_gic_du
 
 # TODO
 
+TODO: UART Interrupts (Page 565)
+
+UART Interrupt Enable Register:
+
+```text
+Offset: 0x0004 
+Register Name: UART_IER
+Bit R/W Default/Hex Description
+
+7 R/W
+PTIME
+Programmable THRE Interrupt Mode Enable
+This is used to enable/disable the generation of THRE Interrupt.
+0: Disable
+1: Enable
+
+3 R/W 0
+EDSSI
+Enable Modem Status Interrupt
+This is used to enable/disable the generation of Modem Status Interrupt. This is the fourth highest priority interrupt.
+0: Disable
+1: Enable
+
+2 R/W 0
+ELSI
+Enable Receiver Line Status Interrupt
+This is used to enable/disable the generation of Receiver Line Status Interrupt. This is the highest priority interrupt.
+0: Disable
+1: Enable
+
+1 R/W 0
+ETBEI
+Enable Transmit Holding Register Empty Interrupt
+This is used to enable/disable the generation of Transmitter Holding Register Empty Interrupt. This is the third highest priority interrupt.
+0: Disable
+1: Enable
+
+0 R/W 0
+ERBFI
+Enable Received Data Available Interrupt
+This is used to enable/disable the generation of Received Data Available Interrupt and the Character Timeout Interrupt (if in FIFO mode and FIFOs enabled). These are the second highest priority interrupts.
+0: Disable
+1: Enable
+```
+
+UART Interrupt Identity Register:
+
+```text
+Offset: 0x0008 
+Register Name: UART_IIR
+Bit R/W Default/Hex Description
+
+7:6 R 0
+FEFLAG
+FIFOs Enable Flag
+This is used to indicate whether the FIFOs are enabled or disabled.
+00: Disable
+11: Enable
+
+3:0 R 0x1
+IID
+Interrupt ID
+This indicates the highest priority pending interrupt which can be one of
+the following types:
+0000: modem status
+0001: no interrupt pending
+0010: THR empty
+0100: received data available
+0110: receiver line status
+0111: busy detect
+1100: character timeout
+Bit 3 indicates an interrupt can only occur when the FIFOs are enabled and used to distinguish a Character Timeout condition interrupt.
+```
+
+```text
+Interrupt ID
+Priority Level
+Interrupt Type 
+Interrupt Source 
+Interrupt Reset
+
+0110 Highest 
+Receiver line status
+Overrun/parity/framing errors or break interrupt
+
+Reading UART Line Status Register
+
+0100 Second 
+Received data available
+Receiver data available (non-FIFO mode or FIFOs disabled) or RCVR FIFO trigger level reached (FIFO mode and FIFOs enabled)
+
+Reading UART Receiver Buffer Register (non-FIFO mode or FIFOs disabled) or the FIFO drops below the trigger level (FIFO mode and FIFOs enabled)
+
+1100 Second 
+Character timeout indication
+No characters in or out of the RCVR FIFO during the last 4 character times and there is at least 1character in it during This time
+
+Reading UART Receiver Buffer Register
+
+0010 Third 
+Transmit holding register empty
+Transmitter holding register empty (Program THRE Mode disabled) or XMIT FIFO at or below threshold (Program THRE Mode enabled)
+
+Reading UART Interrupt Identity Register (if source of interrupt); or, writing into THR (FIFOs or THRE Mode not selected or disabled) or XMIT FIFO above threshold (FIFOs and THRE Mode selected and enabled).
+```
+
 TODO: sinfo (syslog) works, but printf (puts) doesn't!
 
 https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/system/nsh/nsh_main.c#L88-L102
