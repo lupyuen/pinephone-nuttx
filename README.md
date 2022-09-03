@@ -22,7 +22,17 @@ PinePhone is based on [Allwinner A64 SoC](https://linux-sunxi.org/A64) with 4 Co
 
 -   [PinePhone Wiki](https://wiki.pine64.org/index.php/PinePhone)
 
-Will NuttX run on PinePhone? Let's find out!
+_Will NuttX run on PinePhone?_
+
+Yep it does! PinePhone (with a Serial Debug Cable) boots to the NuttX Shell...
+
+-   [Watch the Demo on YouTube](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
+
+Here's the NuttX Source Code for PinePhone...
+
+-   NuttX OS: [lupyuen/incubator-nuttx/tree/pinephone](https://github.com/lupyuen/incubator-nuttx/tree/pinephone)
+
+-   NuttX Apps: [lupyuen/incubator-nuttx-apps/tree/pinephone](https://github.com/lupyuen/incubator-nuttx-apps/tree/pinephone)
 
 _Why NuttX?_
 
@@ -32,7 +42,11 @@ Someday we might have a cheap, fast, responsive and tweakable phone running on N
 
 Many thanks to [qinwei2004](https://github.com/qinwei2004) and the NuttX Team for implementing [Cortex-A53 support](https://github.com/apache/incubator-nuttx/pull/6478)!
 
+The following is a journal that documents the porting of NuttX to PinePhone. It looks super messy and unstructured, please read the articles (at the top of this page) instead.
+
 # Download NuttX
+
+We start with NuttX Mainline, run it on QEMU, then mod it for PinePhone.
 
 Download the Source Code for NuttX Mainline, which supports Arm Cortex-A53...
 
@@ -2274,7 +2288,7 @@ Previously we noticed that NuttX Shell wasn't generating output on the Serial Co
 
 We discovered that `sinfo` (`syslog`) works, but `printf` (`puts`) doesn't! 
 
-https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/system/nsh/nsh_main.c#L88-L102
+Here's what we tested with NuttX Shell: [system/nsh/nsh_main.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/system/nsh/nsh_main.c#L88-L102)
 
 ```c
 /****************************************************************************
@@ -2326,285 +2340,26 @@ We need to implement UART Transmit and Receive Interrupts to support NuttX Shell
 
 Here's our implementation...
 
-TODO: Constants
+-   ["NuttX RTOS on PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
 
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L60-L64
+# PinePhone Device Tree
 
-```c
-// UART0 IRQ Number for PinePhone Allwinner A64 UART
-#define UART_IRQ 32
+Below is the Device Tree for PinePhone's Linux Kernel. We'll use this to figure out how Allwinner A64's Display Timing Controller (TCON0) talks to PinePhone's MIPI DSI Display...
 
-// UART0 Base Address for PinePhone Allwinner A64 UART
-#define UART_BASE_ADDRESS 0x01C28000
+-   [PinePhone Device Tree: sun50i-a64-pinephone-1.2.dts](sun50i-a64-pinephone-1.2.dts)
+
+We converted the Device Tree with this command...
+
+```
+## Convert Device Tree to text format
+dtc \
+  -o sun50i-a64-pinephone-1.2.dts \
+  -O dts \
+  -I dtb \
+  sun50i-a64-pinephone-1.2.dtb
 ```
 
-TODO: `qemu_pl011_txready`
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L405-L414
-
-```c
-// Return true if PinePhone Allwinner A64 UART Transmit FIFO is not full
-static bool qemu_pl011_txready(struct uart_dev_s *dev)
-{
-  //up_putc('C');////
-  // LSR is at Offset 0x14
-  const uint8_t *uart_lsr = (const uint8_t *) (UART_BASE_ADDRESS + 0x14);
-
-  // Transmit FIFO is ready if THRE=1 (bit 5 of LSR)
-  return (*uart_lsr & 0x20) != 0;
-}
-```
-
-TODO: `qemu_pl011_txempty`
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L434-L439
-
-```c
-// Return true if PinePhone Allwinner A64 UART Transmit FIFO is empty
-static bool qemu_pl011_txempty(struct uart_dev_s *dev)
-{
-  //up_putc('D');////
-  return qemu_pl011_txready(dev);
-}
-```
-
-TODO: `qemu_pl011_send`
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L460-L466
-
-```c
-// Send one byte to PinePhone Allwinner A64 UART
-static void qemu_pl011_send(struct uart_dev_s *dev, int ch)
-{
-  //up_putc('E');////
-  uint8_t *uart0_base_address = (uint8_t *) UART_BASE_ADDRESS;
-  *uart0_base_address = ch;
-}
-```
-
-TODO: `qemu_pl011_rxavailable`
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L495-L512
-
-```c
-// TODO: Return true if PinePhone Allwinner A64 UART Receive FIFO is not empty
-static bool qemu_pl011_rxavailable(struct uart_dev_s *dev)
-{
-  //up_putc('F');////
-
-  // UART Line Status Register (UART_LSR)
-  // Offset: 0x0014
-  const uint8_t *uart_lsr = (const uint8_t *) (UART_BASE_ADDRESS + 0x14);
-
-  // Bit 0: Data Ready (DR)
-  // This is used to indicate that the receiver contains at least one character in
-  // the RBR or the receiver FIFO.
-  // 0: no data ready
-  // 1: data ready
-  // This bit is cleared when the RBR is read in non-FIFO mode, or when the
-  // receiver FIFO is empty, in FIFO mode.
-  return (*uart_lsr) & 1;  // DR=1 if data is ready
-}
-```
-
-TODO: `qemu_pl011_rxint`
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L539-L554
-
-```c
-// TODO: Enable or disable PinePhone Allwinner A64 UART interrupts
-static void qemu_pl011_rxint(struct uart_dev_s *dev, bool enable)
-{
-  //up_putc('G');////
-
-  // Write to UART Interrupt Enable Register (UART_IER)
-  // Offset: 0x0004
-  uint8_t *uart_ier = (uint8_t *) (UART_BASE_ADDRESS + 0x04);
-
-  // Bit 0: Enable Received Data Available Interrupt (ERBFI)
-  // This is used to enable/disable the generation of Received Data Available Interrupt and the Character Timeout Interrupt (if in FIFO mode and FIFOs enabled). These are the second highest priority interrupts.
-  // 0: Disable
-  // 1: Enable
-  if (enable) { *uart_ier |= 0b00000001; }
-  else        { *uart_ier &= 0b11111110; }
-}
-```
-
-TODO: `qemu_pl011_txint`
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L581-L596
-
-```c
-// TODO: Enable or disable PinePhone Allwinner A64 UART TX interrupts
-static void qemu_pl011_txint(struct uart_dev_s *dev, bool enable)
-{
-  //up_putc('H');////
-
-  // Write to UART Interrupt Enable Register (UART_IER)
-  // Offset: 0x0004
-  uint8_t *uart_ier = (uint8_t *) (UART_BASE_ADDRESS + 0x04);
-
-  // Bit 1: Enable Transmit Holding Register Empty Interrupt (ETBEI)
-  // This is used to enable/disable the generation of Transmitter Holding Register Empty Interrupt. This is the third highest priority interrupt.
-  // 0: Disable
-  // 1: Enable
-  if (enable) { *uart_ier |= 0b00000010; }
-  else        { *uart_ier &= 0b11111101; }
-}
-```
-
-TODO: `qemu_pl011_receive`
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L624-L643
-
-```c
-// TODO: Receive data from PinePhone Allwinner A64 UART
-static int qemu_pl011_receive(struct uart_dev_s *dev, unsigned int *status)
-{
-  //up_putc('I');////
-
-  // Read UART Receiver Buffer Register (UART_RBR)
-  // Offset: 0x0000
-  const uint8_t *uart_rbr = (const uint8_t *) (UART_BASE_ADDRESS + 0x00);
-
-  // Data byte received on the serial input port . The data in this register is
-  // valid only if the Data Ready (DR) bit in the UART Line Status Register
-  // (UART_LCR) is set.
-  //
-  // If in FIFO mode and FIFOs are enabled (UART_FCR[0] set to one), this
-  // register accesses the head of the receive FIFO. If the receive FIFO is full
-  // and this register is not read before the next data character arrives, then
-  // the data already in the FIFO is preserved, but any incoming data are lost
-  // and an overrun error occurs.
-  return *uart_rbr;
-}
-```
-
-TODO: `qemu_pl011_irq_handler`
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L710-L747
-
-```c
-// Interrupt Handler for PinePhone Allwinner A64 UART
-static int qemu_pl011_irq_handler(int irq, void *context, void *arg)
-{
-  //up_putc('M');////
-  struct uart_dev_s         *dev = (struct uart_dev_s *)arg;
-  UNUSED(irq);
-  UNUSED(context);
-  DEBUGASSERT(dev != NULL && dev->priv != NULL);
-
-  // Read UART Interrupt Identity Register (UART_IIR)
-  // Offset: 0x0008 
-  const uint8_t *uart_iir = (const uint8_t *) (UART_BASE_ADDRESS + 0x08);
-
-  // Bits 3:0: Interrupt ID
-  // This indicates the highest priority pending interrupt which can be one of the following types:
-  // 0000: modem status
-  // 0001: no interrupt pending
-  // 0010: THR empty
-  // 0100: received data available
-  // 0110: receiver line status
-  // 0111: busy detect
-  // 1100: character timeout
-  // Bit 3 indicates an interrupt can only occur when the FIFOs are enabled and used to distinguish a Character Timeout condition interrupt.
-  uint8_t int_id = (*uart_iir) & 0b1111;
-
-  // 0100: If received data is available...
-  if (int_id == 0b0100) {
-    // Receive the data
-    uart_recvchars(dev);
-
-  // 0010: If THR is empty (Transmit Holding Register)...
-  } else if (int_id == 0b0010) {
-    // Transmit the data
-    uart_xmitchars(dev);
-
-  }
-  return OK;
-}
-```
-
-TODO: `qemu_pl011_detach`
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L770-L776
-
-```c
-// TODO: Detach PinePhone Allwinner A64 UART
-static void qemu_pl011_detach(struct uart_dev_s *dev)
-{
-  //up_putc('J');////
-  up_disable_irq(UART_IRQ);
-  irq_detach(UART_IRQ);
-}
-```
-
-TODO: `qemu_pl011_attach`
-
-https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L827-L852
-
-```c
-// TODO: Attach PinePhone Allwinner A64 UART
-static int qemu_pl011_attach(struct uart_dev_s *dev)
-{
-  //up_putc('K');////
-  int ret;
-  ret = irq_attach(UART_IRQ, qemu_pl011_irq_handler, dev);
-  arm64_gic_irq_set_priority(UART_IRQ, IRQ_TYPE_LEVEL, 0);
-
-  if (ret == OK)
-    {
-      up_enable_irq(UART_IRQ);
-    }
-  else
-    {
-      sinfo("error ret=%d\n", ret);
-    }
-
-#ifdef TODO
-  if (!data->sbsa)
-    {
-      pl011_enable(sport);
-    }
-#endif  //  TODO
-
-  return ret;
-}
-```
-
-TODO: Interrupt Priority:
-
-```text
-Interrupt ID
-Priority Level
-Interrupt Type 
-Interrupt Source 
-Interrupt Reset
-
-0110 Highest 
-Receiver line status
-Overrun/parity/framing errors or break interrupt
-
-Reading UART Line Status Register
-
-0100 Second 
-Received data available
-Receiver data available (non-FIFO mode or FIFOs disabled) or RCVR FIFO trigger level reached (FIFO mode and FIFOs enabled)
-
-Reading UART Receiver Buffer Register (non-FIFO mode or FIFOs disabled) or the FIFO drops below the trigger level (FIFO mode and FIFOs enabled)
-
-1100 Second 
-Character timeout indication
-No characters in or out of the RCVR FIFO during the last 4 character times and there is at least 1character in it during This time
-
-Reading UART Receiver Buffer Register
-
-0010 Third 
-Transmit holding register empty
-Transmitter holding register empty (Program THRE Mode disabled) or XMIT FIFO at or below threshold (Program THRE Mode enabled)
-
-Reading UART Interrupt Identity Register (if source of interrupt); or, writing into THR (FIFOs or THRE Mode not selected or disabled) or XMIT FIFO above threshold (FIFOs and THRE Mode selected and enabled).
-```
+We got `sun50i-a64-pinephone-1.2.dtb` from the [Jumpdrive microSD](https://lupyuen.github.io/articles/uboot#pinephone-jumpdrive).
 
 # GIC Register Dump
 
