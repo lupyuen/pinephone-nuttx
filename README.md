@@ -2344,7 +2344,13 @@ Here's our implementation...
 
 # PinePhone Device Tree
 
-Below is the Device Tree for PinePhone's Linux Kernel. We'll use this to figure out how Allwinner A64's Display Timing Controller (TCON0) talks to PinePhone's MIPI DSI Display...
+Let's figure out how Allwinner A64's Display Timing Controller (TCON0) talks to PinePhone's MIPI DSI Display. (So we can build NuttX Drivers)
+
+More info on PinePhone Display...
+
+-   [__"Genode Operating System Framework 22.05"__](https://genode.org/documentation/genode-platforms-22-05.pdf), pages 171 to 197.
+
+Below is the Device Tree for PinePhone's Linux Kernel...
 
 -   [PinePhone Device Tree: sun50i-a64-pinephone-1.2.dts](sun50i-a64-pinephone-1.2.dts)
 
@@ -2359,7 +2365,220 @@ dtc \
   sun50i-a64-pinephone-1.2.dtb
 ```
 
-We got `sun50i-a64-pinephone-1.2.dtb` from the [Jumpdrive microSD](https://lupyuen.github.io/articles/uboot#pinephone-jumpdrive).
+`sun50i-a64-pinephone-1.2.dtb` came from the [Jumpdrive microSD](https://lupyuen.github.io/articles/uboot#pinephone-jumpdrive).
+
+Here are the interesting bits from the PinePhone Linux Device Tree: [sun50i-a64-pinephone-1.2.dts](sun50i-a64-pinephone-1.2.dts)
+
+## LCD Controller (TCON0)
+
+```text
+lcd-controller@1c0c000 {
+  compatible = "allwinner,sun50i-a64-tcon-lcd\0allwinner,sun8i-a83t-tcon-lcd";
+  reg = <0x1c0c000 0x1000>;
+  interrupts = <0x00 0x56 0x04>;
+  clocks = <0x02 0x2f 0x02 0x64>;
+  clock-names = "ahb\0tcon-ch0";
+  clock-output-names = "tcon-pixel-clock";
+  #clock-cells = <0x00>;
+  resets = <0x02 0x18 0x02 0x23>;
+  reset-names = "lcd\0lvds";
+
+  ports {
+    #address-cells = <0x01>;
+    #size-cells = <0x00>;
+
+    // TCON0: MIPI DSI Display
+    port@0 {
+      #address-cells = <0x01>;
+      #size-cells = <0x00>;
+      reg = <0x00>;
+
+      endpoint@0 {
+        reg = <0x00>;
+        remote-endpoint = <0x22>;
+        phandle = <0x1e>;
+      };
+
+      endpoint@1 {
+        reg = <0x01>;
+        remote-endpoint = <0x23>;
+        phandle = <0x20>;
+      };
+    };
+
+    // TCON1: HDMI
+    port@1 { ... };
+  };
+};
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L446-L492)
+
+## Backlight PWM
+
+```text
+backlight {
+  compatible = "pwm-backlight";
+  pwms = <0x62 0x00 0xc350 0x01>;
+  enable-gpios = <0x2b 0x07 0x0a 0x00>;
+  power-supply = <0x48>;
+  brightness-levels = <0x1388 0x1480 0x1582 0x16e2 0x18c9 0x1b4b 0x1e7d 0x2277 0x274e 0x2d17 0x33e7 0x3bd5 0x44f6 0x4f5f 0x5b28 0x6864 0x7729 0x878e 0x99a7 0xad8b 0xc350>;
+  num-interpolated-steps = <0x32>;
+  default-brightness-level = <0x1f4>;
+  phandle = <0x56>;
+};
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L1832-L1841)
+
+## MIPI DSI Interface
+
+```text
+dsi@1ca0000 {
+  compatible = "allwinner,sun50i-a64-mipi-dsi";
+  reg = <0x1ca0000 0x1000>;
+  interrupts = <0x00 0x59 0x04>;
+  clocks = <0x02 0x1c>;
+  resets = <0x02 0x05>;
+  phys = <0x53>;
+  phy-names = "dphy";
+  status = "okay";
+  #address-cells = <0x01>;
+  #size-cells = <0x00>;
+  vcc-dsi-supply = <0x45>;
+
+  port {
+
+    endpoint {
+      remote-endpoint = <0x54>;
+      phandle = <0x24>;
+    };
+  };
+
+  panel@0 {
+    compatible = "xingbangda,xbd599";
+    reg = <0x00>;
+    reset-gpios = <0x2b 0x03 0x17 0x01>;
+    iovcc-supply = <0x55>;
+    vcc-supply = <0x48>;
+    backlight = <0x56>;
+  };
+};
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L1327-L1356)
+
+## Display PHY
+
+```text
+d-phy@1ca1000 {
+  compatible = "allwinner,sun50i-a64-mipi-dphy\0allwinner,sun6i-a31-mipi-dphy";
+  reg = <0x1ca1000 0x1000>;
+  clocks = <0x02 0x1c 0x02 0x71>;
+  clock-names = "bus\0mod";
+  resets = <0x02 0x05>;
+  status = "okay";
+  #phy-cells = <0x00>;
+  phandle = <0x53>;
+};
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L1358-L1367)
+
+## Framebuffer
+
+```text
+framebuffer-lcd {
+  compatible = "allwinner,simple-framebuffer\0simple-framebuffer";
+  allwinner,pipeline = "mixer0-lcd0";
+  clocks = <0x02 0x64 0x03 0x06>;
+  status = "disabled";
+};
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L16-L21)
+
+## Display Engine
+
+```text
+display-engine {
+  compatible = "allwinner,sun50i-a64-display-engine";
+  allwinner,pipelines = <0x07 0x08>;
+  status = "okay";
+};
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L98-L102)
+
+## Touch Panel
+
+```text
+touchscreen@5d {
+  compatible = "goodix,gt917s";
+  reg = <0x5d>;
+  interrupt-parent = <0x2b>;
+  interrupts = <0x07 0x04 0x04>;
+  irq-gpios = <0x2b 0x07 0x04 0x00>;
+  reset-gpios = <0x2b 0x07 0x0b 0x00>;
+  AVDD28-supply = <0x48>;
+  VDDIO-supply = <0x48>;
+  touchscreen-size-x = <0x2d0>;
+  touchscreen-size-y = <0x5a0>;
+};
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L1125-L1136)
+
+## Video Codec
+
+```text
+video-codec@1c0e000 {
+  compatible = "allwinner,sun50i-a64-video-engine";
+  reg = <0x1c0e000 0x1000>;
+  clocks = <0x02 0x2e 0x02 0x6a 0x02 0x5f>;
+  clock-names = "ahb\0mod\0ram";
+  resets = <0x02 0x17>;
+  interrupts = <0x00 0x3a 0x04>;
+  allwinner,sram = <0x28 0x01>;
+};
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L539-L547)
+
+## GPU
+
+```text
+gpu@1c40000 {
+  compatible = "allwinner,sun50i-a64-mali\0arm,mali-400";
+  reg = <0x1c40000 0x10000>;
+  interrupts = <0x00 0x61 0x04 0x00 0x62 0x04 0x00 0x63 0x04 0x00 0x64 0x04 0x00 0x66 0x04 0x00 0x67 0x04 0x00 0x65 0x04>;
+  interrupt-names = "gp\0gpmmu\0pp0\0ppmmu0\0pp1\0ppmmu1\0pmu";
+  clocks = <0x02 0x35 0x02 0x72>;
+  clock-names = "bus\0core";
+  resets = <0x02 0x1f>;
+  assigned-clocks = <0x02 0x72>;
+  assigned-clock-rates = <0x1dcd6500>;
+};
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L1246-L1256)
+
+## Deinterlace
+
+```text
+deinterlace@1e00000 {
+  compatible = "allwinner,sun50i-a64-deinterlace\0allwinner,sun8i-h3-deinterlace";
+  reg = <0x1e00000 0x20000>;
+  clocks = <0x02 0x31 0x02 0x66 0x02 0x61>;
+  clock-names = "bus\0mod\0ram";
+  resets = <0x02 0x1a>;
+  interrupts = <0x00 0x5d 0x04>;
+  interconnects = <0x57 0x09>;
+  interconnect-names = "dma-mem";
+};
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L1369-L1378)
 
 # GIC Register Dump
 
