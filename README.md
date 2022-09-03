@@ -2426,23 +2426,6 @@ lcd-controller@1c0c000 {
 
 [(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L446-L492)
 
-## Backlight PWM
-
-```text
-backlight {
-  compatible = "pwm-backlight";
-  pwms = <0x62 0x00 0xc350 0x01>;
-  enable-gpios = <0x2b 0x07 0x0a 0x00>;
-  power-supply = <0x48>;
-  brightness-levels = <0x1388 0x1480 0x1582 0x16e2 0x18c9 0x1b4b 0x1e7d 0x2277 0x274e 0x2d17 0x33e7 0x3bd5 0x44f6 0x4f5f 0x5b28 0x6864 0x7729 0x878e 0x99a7 0xad8b 0xc350>;
-  num-interpolated-steps = <0x32>;
-  default-brightness-level = <0x1f4>;
-  phandle = <0x56>;
-};
-```
-
-[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L1832-L1841)
-
 ## MIPI DSI Interface
 
 ```text
@@ -2496,6 +2479,68 @@ d-phy@1ca1000 {
 ```
 
 [(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L1358-L1367)
+
+## Backlight PWM
+
+```text
+backlight {
+  compatible = "pwm-backlight";
+  pwms = <0x62 0x00 0xc350 0x01>;
+  enable-gpios = <0x2b 0x07 0x0a 0x00>;
+  power-supply = <0x48>;
+  brightness-levels = <0x1388 0x1480 0x1582 0x16e2 0x18c9 0x1b4b 0x1e7d 0x2277 0x274e 0x2d17 0x33e7 0x3bd5 0x44f6 0x4f5f 0x5b28 0x6864 0x7729 0x878e 0x99a7 0xad8b 0xc350>;
+  num-interpolated-steps = <0x32>;
+  default-brightness-level = <0x1f4>;
+  phandle = <0x56>;
+};
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L1832-L1841)
+
+From [PinePhone Schematic](https://files.pine64.org/doc/PinePhone/PinePhone%20v1.2b%20Released%20Schematic.pdf)...
+
+-   Backlight Enable: GPIO PH10 (PH10-LCD-BL-EN)
+
+-   Backlight PWM: PWM PL10 (PL10-LCD-PWM)
+
+## LED
+
+```text
+leds {
+  compatible = "gpio-leds";
+
+  blue {
+    function = "indicator";
+    color = <0x03>;
+    gpios = <0x2b 0x03 0x14 0x00>;
+    retain-state-suspended;
+  };
+
+  green {
+    function = "indicator";
+    color = <0x02>;
+    gpios = <0x2b 0x03 0x12 0x00>;
+    retain-state-suspended;
+  };
+
+  red {
+    function = "indicator";
+    color = <0x01>;
+    gpios = <0x2b 0x03 0x13 0x00>;
+    retain-state-suspended;
+  };
+};
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L1940-L1963)
+
+From [PinePhone Schematic](https://files.pine64.org/doc/PinePhone/PinePhone%20v1.2b%20Released%20Schematic.pdf)...
+
+-   Red LED: GPIO PD18 (PD18-LED-R)
+
+-   Green LED: GPIO PD19 (PD19-LED-G)
+
+-   Blue LED: GPIO PD20 (PD20-LED-B)
 
 ## Framebuffer
 
