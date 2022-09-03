@@ -2944,6 +2944,18 @@ NOPBIarm_gic_du
 PinePhone:
 
 ```text
+nsh> hello
+task_spawn: name=hello entry=0x4009b1a4 file_actions=0x400c9580 attr=0x400c9588 argv=0x400c96d0
+spawn_execattrs: Setting policy=2 priority=100 for pid=19
+ABHello, World!!
+tcon_gctl_reg=0x80000000
+tcon0_3d_fifo_reg=0x80000631
+tcon0_ctl_reg=0x80000000
+tcon0_basic0_reg=0x630063
+tcon0_lvds_if_reg=0x80000000
+```
+
+```text
 HELLO NUTTX ON PINEPHONE!
 - Ready to Boot CPU
 - Boot from EL2
