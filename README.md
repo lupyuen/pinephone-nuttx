@@ -2371,6 +2371,14 @@ dtc \
 
 `sun50i-a64-pinephone-1.2.dtb` came from the [Jumpdrive microSD](https://lupyuen.github.io/articles/uboot#pinephone-jumpdrive).
 
+High-level doc of Linux Drivers...
+
+-   [devicetree/bindings/display/sunxi/sun4i-drm.txt](https://www.kernel.org/doc/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt)
+
+PinePhone Schematic shows the connections for Display, Touch Panel and Backlight...
+
+-   [PinePhone v1.2b Released Schematic](https://files.pine64.org/doc/PinePhone/PinePhone%20v1.2b%20Released%20Schematic.pdf)
+
 Here are the interesting bits from the PinePhone Linux Device Tree: [sun50i-a64-pinephone-1.2.dts](sun50i-a64-pinephone-1.2.dts)
 
 ## LCD Controller (TCON0)
