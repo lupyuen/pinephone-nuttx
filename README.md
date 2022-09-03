@@ -12,6 +12,8 @@ Read the articles...
 
 -   ["NuttX RTOS on PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
 
+-   ["NuttX RTOS on PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
+
 [Apache NuttX RTOS](https://nuttx.apache.org/docs/latest/) now runs on Arm Cortex-A53 with Multi-Core SMP...
 
 -   [nuttx/boards/arm64/qemu/qemu-a53](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53)
