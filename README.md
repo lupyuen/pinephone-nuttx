@@ -2348,7 +2348,11 @@ Let's figure out how Allwinner A64's Display Timing Controller (TCON0) talks to 
 
 More info on PinePhone Display...
 
--   [__"Genode Operating System Framework 22.05"__](https://genode.org/documentation/genode-platforms-22-05.pdf), pages 171 to 197.
+-   ["Genode Operating System Framework 22.05"](https://genode.org/documentation/genode-platforms-22-05.pdf), pages 171 to 197.
+
+We tried tweaking the TCON0 Controller but the display is still blank (maybe backlight is off?)
+
+-   [examples/hello/hello_main.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/examples/hello/hello_main.c#L75-L234)
 
 Below is the Device Tree for PinePhone's Linux Kernel...
 
