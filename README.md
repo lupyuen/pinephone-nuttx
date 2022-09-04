@@ -2,6 +2,8 @@
 
 [__Watch the Demo on YouTube__](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
 
+[__Another Demo Video__](https://youtu.be/MJDxCcKAv0g)
+
 # Apache NuttX RTOS on PinePhone
 
 Read the articles...
@@ -2492,6 +2494,8 @@ The Red, Green and Blue LEDs turn on (appearing as white) and the output shows..
 pd_cfg2_reg=0x77711177
 pd_data_reg=0x1c0000
 ```
+
+[__Watch the Demo on YouTube__](https://youtu.be/MJDxCcKAv0g)
 
 Here's the complete log for [examples/hello/hello_main.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/examples/hello/hello_main.c)...
 
