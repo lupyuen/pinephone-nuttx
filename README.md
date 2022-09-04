@@ -2493,6 +2493,25 @@ pd_cfg2_reg=0x77711177
 pd_data_reg=0x1c0000
 ```
 
+Here's the complete log for [examples/hello/hello_main.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/examples/hello/hello_main.c)...
+
+```text
+nsh> hello
+task_spawn: name=hello entry=0x4009b1a4 file_actions=0x400c9580 attr=0x400c9588 argv=0x400c96d0
+spawn_execattrs: Setting policy=2 priority=100 for pid=3
+ABHello, World!!
+ph_cfg1_reg=0x7177
+ph_data_reg=0x400
+pd_cfg2_reg=0x77711177
+pd_data_reg=0x1c0000
+tcon_gctl_reg=0x80000000
+tcon0_3d_fifo_reg=0x80000631
+tcon0_ctl_reg=0x80000000
+tcon0_basic0_reg=0x630063
+tcon0_lvds_if_reg=0x80000000
+nsh> 
+```
+
 # PinePhone Device Tree
 
 Let's figure out how Allwinner A64's Display Timing Controller (TCON0) talks to PinePhone's MIPI DSI Display. (So we can build NuttX Drivers)
