@@ -2342,6 +2342,157 @@ Here's our implementation...
 
 -   ["NuttX RTOS on PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
 
+# Backlight and LEDs
+
+Let's light up the PinePhone Backlight and the Red / Green / Blue LEDs.
+
+Based on the [PinePhone Schematic](https://files.pine64.org/doc/PinePhone/PinePhone%20v1.2b%20Released%20Schematic.pdf)...
+
+-   Backlight Enable is connected to GPIO PH10
+
+    (PH10-LCD-BL-EN)
+
+-   Backlight PWM is connected to PWM PL10 
+
+    (PL10-LCD-PWM)
+
+This is how we turn on GPIO PH10 in Allwinner A64 Port Controller (PIO): [examples/hello/hello_main.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/examples/hello/hello_main.c#L83-L122)
+
+```c
+// PIO Base Address for PinePhone Allwinner A64 Port Controller (GPIO)
+#define PIO_BASE_ADDRESS 0x01C20800
+
+// Turn on the PinePhone Backlight
+static void test_backlight(void)
+{
+  // From PinePhone Schematic: https://files.pine64.org/doc/PinePhone/PinePhone%20v1.2b%20Released%20Schematic.pdf
+  // - Backlight Enable: GPIO PH10 (PH10-LCD-BL-EN)
+  // - Backlight PWM:    PWM  PL10 (PL10-LCD-PWM)
+  // We won't handle the PWM yet
+
+  // Write to PH Configure Register 1 (PH_CFG1_REG)
+  // Offset: 0x100
+  uint32_t *ph_cfg1_reg = (uint32_t *)
+    (PIO_BASE_ADDRESS + 0x100);
+
+  // Bits 10 to 8: PH10_SELECT (Default 0x7)
+  // 000: Input     001: Output
+  // 010: MIC_CLK   011: Reserved
+  // 100: Reserved  101: Reserved
+  // 110: PH_EINT10 111: IO Disable
+  *ph_cfg1_reg = 
+    (*ph_cfg1_reg & ~(0b111 << 8))  // Clear the bits
+    | (0b001 << 8);                 // Set the bits for Output
+  printf("ph_cfg1_reg=0x%x\n", *ph_cfg1_reg);
+
+  // Write to PH Data Register (PH_DATA_REG)
+  // Offset: 0x10C
+  uint32_t *ph_data_reg = (uint32_t *)
+    (PIO_BASE_ADDRESS + 0x10C);
+
+  // Bits 11 to 0: PH_DAT (Default 0)
+  // If the port is configured as input, the corresponding bit is the pin state. If
+  // the port is configured as output, the pin state is the same as the
+  // corresponding bit. The read bit value is the value setup by software.
+  // If the port is configured as functional pin, the undefined value will
+  // be read.
+  *ph_data_reg |= (1 << 10);  // Set Bit 10 for PH10
+  printf("ph_data_reg=0x%x\n", *ph_data_reg);
+}
+```
+
+The Backlight lights up and the output shows...
+
+```text
+ph_cfg1_reg=0x7177
+ph_data_reg=0x400
+```
+
+Now for the LEDs. Based on the [PinePhone Schematic](https://files.pine64.org/doc/PinePhone/PinePhone%20v1.2b%20Released%20Schematic.pdf)...
+
+-   Red LED is connected to GPIO PD18
+
+    (PD18-LED-R)
+
+-   Green LED is connected to GPIO PD19
+
+    (PD19-LED-G)
+
+-   Blue LED is connected to GPIO PD20 
+
+    (PD20-LED-B)
+
+This is how we turn on GPIOs PD18, PD19, PD20 in Allwinner A64 Port Controller (PIO): [examples/hello/hello_main.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/examples/hello/hello_main.c#L124-L179)
+
+```c
+// PIO Base Address for PinePhone Allwinner A64 Port Controller (GPIO)
+#define PIO_BASE_ADDRESS 0x01C20800
+
+// Turn on the PinePhone Red, Green and Blue LEDs
+static void test_led(void)
+{
+  // From PinePhone Schematic: https://files.pine64.org/doc/PinePhone/PinePhone%20v1.2b%20Released%20Schematic.pdf
+  // - Red LED:   GPIO PD18 (PD18-LED-R)
+  // - Green LED: GPIO PD19 (PD19-LED-G)
+  // - Blue LED:  GPIO PD20 (PD20-LED-B)
+
+  // Write to PD Configure Register 2 (PD_CFG2_REG)
+  // Offset: 0x74
+  uint32_t *pd_cfg2_reg = (uint32_t *)
+    (PIO_BASE_ADDRESS + 0x74);
+
+  // Bits 10 to 8: PD18_SELECT (Default 0x7)
+  // 000: Input    001: Output
+  // 010: LCD_CLK  011: LVDS_VPC
+  // 100: RGMII_TXD0/MII_TXD0/RMII_TXD0 101: Reserved
+  // 110: Reserved 111: IO Disable
+  *pd_cfg2_reg = 
+    (*pd_cfg2_reg & ~(0b111 << 8))  // Clear the bits
+    | (0b001 << 8);                 // Set the bits for Output
+
+  // Bits 14 to 12: PD19_SELECT (Default 0x7)
+  // 000: Input    001: Output
+  // 010: LCD_DE   011: LVDS_VNC
+  // 100: RGMII_TXCK/MII_TXCK/RMII_TXCK 101: Reserved
+  // 110: Reserved 111: IO Disable
+  *pd_cfg2_reg = 
+    (*pd_cfg2_reg & ~(0b111 << 12))  // Clear the bits
+    | (0b001 << 12);                 // Set the bits for Output
+
+  // Bits 18 to 16: PD20_SELECT (Default 0x7)
+  // 000: Input     001: Output
+  // 010: LCD_HSYNC 011: LVDS_VP3
+  // 100: RGMII_TXCTL/MII_TXEN/RMII_TXEN 101: Reserved
+  // 110: Reserved  111: IO Disable
+  *pd_cfg2_reg = 
+    (*pd_cfg2_reg & ~(0b111 << 16))  // Clear the bits
+    | (0b001 << 16);                 // Set the bits for Output
+  printf("pd_cfg2_reg=0x%x\n", *pd_cfg2_reg);
+
+  // Write to PD Data Register (PD_DATA_REG)
+  // Offset: 0x7C
+  uint32_t *pd_data_reg = (uint32_t *)
+    (PIO_BASE_ADDRESS + 0x7C);
+
+  // Bits 24 to 0: PD_DAT (Default 0)
+  // If the port is configured as input, the corresponding bit is the pin state. If
+  // the port is configured as output, the pin state is the same as the
+  // corresponding bit. The read bit value is the value setup by software. If the
+  // port is configured as functional pin, the undefined value will be read.
+  *pd_data_reg |= (1 << 18);  // Set Bit 18 for PD18
+  *pd_data_reg |= (1 << 19);  // Set Bit 19 for PD19
+  *pd_data_reg |= (1 << 20);  // Set Bit 20 for PD20
+  printf("pd_data_reg=0x%x\n", *pd_data_reg);
+}
+```
+
+The Red, Green and Blue LEDs turn on (appearing as white) and the output shows...
+
+```text
+pd_cfg2_reg=0x77711177
+pd_data_reg=0x1c0000
+```
+
 # PinePhone Device Tree
 
 Let's figure out how Allwinner A64's Display Timing Controller (TCON0) talks to PinePhone's MIPI DSI Display. (So we can build NuttX Drivers)
