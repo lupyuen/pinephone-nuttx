@@ -2497,6 +2497,32 @@ pd_data_reg=0x1c0000
 
 [__Watch the Demo on YouTube__](https://youtu.be/MJDxCcKAv0g)
 
+TODO: Works in BASIC too!
+
+```text
+nsh> bas
+task_spawn: name=bas entry=0x4009b340 file_actions=0x400f3580 attr=0x400f3588 argv=0x400f36d0
+spawn_execattrs: Setting policy=2 priority=100 for pid=7
+bas 2.4
+Copyright 1999-2014 Michael Haardt.
+This is free software with ABSOLUTELY NO WARRANTY.
+> 
+> print peek(&h1C20874)
+ 2004316535 
+> poke &h1C20874, &h77711177
+> print peek(&h1C20874)
+ 2003898743 
+> print peek(&h1C2087C)
+ 262144 
+> poke &h1C2087C, &h0000
+> print peek(&h1C2087C)
+ 0 
+> poke &h1C2087C, &h1C0000
+> print peek(&h1C2087C)
+ 1835008 
+> 
+```
+
 Here's the complete log for [examples/hello/hello_main.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/examples/hello/hello_main.c)...
 
 ```text
