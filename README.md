@@ -2497,32 +2497,6 @@ pd_data_reg=0x1c0000
 
 [__Watch the Demo on YouTube__](https://youtu.be/MJDxCcKAv0g)
 
-TODO: Works in BASIC too!
-
-```text
-nsh> bas
-task_spawn: name=bas entry=0x4009b340 file_actions=0x400f3580 attr=0x400f3588 argv=0x400f36d0
-spawn_execattrs: Setting policy=2 priority=100 for pid=7
-bas 2.4
-Copyright 1999-2014 Michael Haardt.
-This is free software with ABSOLUTELY NO WARRANTY.
-> 
-> print peek(&h1C20874)
- 2004316535 
-> poke &h1C20874, &h77711177
-> print peek(&h1C20874)
- 2003898743 
-> print peek(&h1C2087C)
- 262144 
-> poke &h1C2087C, &h0000
-> print peek(&h1C2087C)
- 0 
-> poke &h1C2087C, &h1C0000
-> print peek(&h1C2087C)
- 1835008 
-> 
-```
-
 Here's the complete log for [examples/hello/hello_main.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/examples/hello/hello_main.c)...
 
 ```text
@@ -2540,6 +2514,71 @@ tcon0_ctl_reg=0x80000000
 tcon0_basic0_reg=0x630063
 tcon0_lvds_if_reg=0x80000000
 nsh> 
+```
+
+# BASIC Blinks The LEDs
+
+In the previous section we lit up PinePhone's Red, Green and Blue LEDs. Below are the values we wrote to the Allwinner A64 Port Controller...
+
+```text
+pd_cfg2_reg=0x77711177
+pd_data_reg=0x1c0000
+```
+
+Let's do the same in BASIC! Which is great for interactive experimenting with PinePhone Hardware.
+
+This will enable GPIO Output for PD18 (Red), PD19 (Green), PD20 (Blue) in the Register `pd_cfg2_reg`...
+
+```text
+poke &h1C20874, &h77711177
+```
+
+This will light up Red, Green and Blue LEDs via the Register `pd_data_reg`...
+
+```text
+poke &h1C2087C, &h1C0000
+```
+
+And this will turn off all 3 LEDs via `pd_data_reg`...
+
+```text
+poke &h1C2087C, &h0000
+```
+
+Install the BASIC Interpreter in NuttX...
+
+-   ["Enable BASIC"](https://lupyuen.github.io/articles/nuttx#enable-basic)
+
+And enter these commands to blink the PinePhone LEDs (off and on)...
+
+```text
+nsh> bas
+task_spawn: name=bas entry=0x4009b340 file_actions=0x400f3580 attr=0x400f3588 argv=0x400f36d0
+spawn_execattrs: Setting policy=2 priority=100 for pid=7
+bas 2.4
+Copyright 1999-2014 Michael Haardt.
+This is free software with ABSOLUTELY NO WARRANTY.
+
+> print peek(&h1C20874)
+ 2004316535 
+
+> poke &h1C20874, &h77711177
+
+> print peek(&h1C20874)
+ 2003898743 
+
+> print peek(&h1C2087C)
+ 262144 
+
+> poke &h1C2087C, &h0000
+
+> print peek(&h1C2087C)
+ 0 
+
+> poke &h1C2087C, &h1C0000
+
+> print peek(&h1C2087C)
+ 1835008  
 ```
 
 # PinePhone Device Tree
