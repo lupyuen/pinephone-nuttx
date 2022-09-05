@@ -2583,6 +2583,35 @@ This is free software with ABSOLUTELY NO WARRANTY.
  1835008  
 ```
 
+We patched NuttX BASIC so that it supports `peek` and `poke`: [interpreters/bas/bas_fs.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/interpreters/bas/bas_fs.c#L1862-L1889)
+
+```c
+int FS_memInput(int address)
+{
+  //  Return the 32-bit word at the specified address.
+  //  TODO: Quit if address is invalid.
+  return *(int *)(uint64_t) address;
+
+  //  Previously:
+  //  FS_errmsg = _("Direct memory access not available");
+  //  return -1;
+}
+
+int FS_memOutput(int address, int value)
+{
+  //  Set the 32-bit word at the specified address
+  //  TODO: Quit if address is invalid.
+  *(int *)(uint64_t) address = value;
+  return 0;
+
+  //  Previously:
+  //  FS_errmsg = _("Direct memory access not available");
+  //  return -1;
+}
+```
+
+Note that addresses are passed as 32-bit `int`, so some 64-bit addresses will not be accessible via `peek` and `poke`.
+
 # PinePhone Device Tree
 
 Let's figure out how Allwinner A64's Display Timing Controller (TCON0) talks to PinePhone's MIPI DSI Display. (So we can build NuttX Drivers)
