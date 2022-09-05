@@ -2527,19 +2527,19 @@ pd_data_reg=0x1c0000
 
 Let's do the same in BASIC! Which is great for interactive experimenting with PinePhone Hardware.
 
-This will enable GPIO Output for PD18 (Red), PD19 (Green), PD20 (Blue) in the Register `pd_cfg2_reg`...
+This will enable GPIO Output for PD18 (Red), PD19 (Green), PD20 (Blue) in the Register `pd_cfg2_reg` (0x1C20874)...
 
 ```text
 poke &h1C20874, &h77711177
 ```
 
-This will light up Red, Green and Blue LEDs via the Register `pd_data_reg`...
+This will light up Red, Green and Blue LEDs via the Register `pd_data_reg` (0x1C2087C)...
 
 ```text
 poke &h1C2087C, &h1C0000
 ```
 
-And this will turn off all 3 LEDs via `pd_data_reg`...
+And this will turn off all 3 LEDs via `pd_data_reg` (0x1C2087C)...
 
 ```text
 poke &h1C2087C, &h0000
