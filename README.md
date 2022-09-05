@@ -2551,6 +2551,8 @@ Install the BASIC Interpreter in NuttX...
 
 And enter these commands to blink the PinePhone LEDs (off and on)...
 
+[__Watch the Demo on YouTube__](https://youtu.be/OTIHMIRd1s4)
+
 ```text
 nsh> bas
 task_spawn: name=bas entry=0x4009b340 file_actions=0x400f3580 attr=0x400f3588 argv=0x400f36d0
