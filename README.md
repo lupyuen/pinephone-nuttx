@@ -2583,6 +2583,19 @@ This is free software with ABSOLUTELY NO WARRANTY.
  1835008  
 ```
 
+Or run it in a loop like so...
+
+```text
+10 poke &h1C20874, &h77711177
+20 poke &h1C2087C, &h000000
+30 sleep 5
+40 poke &h1C2087C, &h1C0000
+50 sleep 5
+60 goto 20
+
+run
+```
+
 We patched NuttX BASIC so that it supports `peek` and `poke`: [interpreters/bas/bas_fs.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/pinephone/interpreters/bas/bas_fs.c#L1862-L1889)
 
 ```c
