@@ -2586,12 +2586,15 @@ This is free software with ABSOLUTELY NO WARRANTY.
 Or run it in a loop like so...
 
 ```text
-10 poke &h1C20874, &h77711177
-20 poke &h1C2087C, &h000000
-30 sleep 5
-40 poke &h1C2087C, &h1C0000
+10 'Enable GPIO Output for PD18, PD19 and PD20
+20 poke &h1C20874, &h77711177
+30 'Turn off GPIOs PD18, PD19 and PD20
+40 poke &h1C2087C, &h0
 50 sleep 5
-60 goto 20
+60 'Turn on GPIOs PD18, PD19 and PD20
+70 poke &h1C2087C, &h1C0000
+80 sleep 5
+90 goto 40
 
 run
 ```
