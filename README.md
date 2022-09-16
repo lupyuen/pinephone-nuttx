@@ -2595,7 +2595,6 @@ Or run it in a loop like so...
 70 poke &h1C2087C, &h1C0000
 80 sleep 5
 90 goto 40
-
 run
 ```
 
