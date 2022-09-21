@@ -1,4 +1,4 @@
-![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/uboot-title.png)
+![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/pio-title.webp)
 
 [__Watch the Demo on YouTube__](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
 
@@ -12,9 +12,11 @@ Read the articles...
 
 -   ["PinePhone boots Apache NuttX RTOS"](https://lupyuen.github.io/articles/uboot)
 
--   ["NuttX RTOS on PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
+-   ["NuttX RTOS for PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
 
--   ["NuttX RTOS on PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
+-   ["NuttX RTOS for PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
+
+-   ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
 
 [Apache NuttX RTOS](https://nuttx.apache.org/docs/latest/) now runs on Arm Cortex-A53 with Multi-Core SMP...
 
