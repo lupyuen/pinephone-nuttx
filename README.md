@@ -3266,20 +3266,45 @@ NOPBIarm_gic_du
 PinePhone:
 
 ```text
-nsh> hello
-task_spawn: name=hello entry=0x4009b1a4 file_actions=0x400c9580 attr=0x400c9588 argv=0x400c96d0
-spawn_execattrs: Setting policy=2 priority=100 for pid=3
+nsh> [Khello
+task_spawn: name=hello entry=0x4009c64c file_actions=0x404e9580 attr=0x404e9588 argv=0x404e96d0
+spawn_execattrs: Setting policy=2 priority=100 for pid=27
 ABHello, World!!
 ph_cfg1_reg=0x7177
 ph_data_reg=0x400
-pd_cfg2_reg=0x77711177
+pd_cfg2_reg=0x17711177
 pd_data_reg=0x1c0000
-tcon_gctl_reg=0x80000000
-tcon0_3d_fifo_reg=0x80000631
-tcon0_ctl_reg=0x80000000
-tcon0_basic0_reg=0x630063
-tcon0_lvds_if_reg=0x80000000
-nsh> 
+struct reg_inst dsi_init_seq[] = {
+[8C{ 0x0000, 0x00000001 },
+[8C{ 0x0010, 0x00030000 },
+[8C{ 0x0060, 0x0000000a },
+[8C{ 0x0078, 0x00000000 },
+[8C{ 0x0020, 0x0000001f },
+[8C{ 0x0024, 0x10000001 },
+[8C{ 0x0028, 0x20000010 },
+[8C{ 0x002c, 0x2000000f },
+[8C{ 0x0030, 0x30100001 },
+[8C{ 0x0034, 0x40000010 },
+[8C{ 0x0038, 0x0000000f },
+[8C{ 0x003c, 0x5000001f },
+[8C{ 0x004c, 0x00560001 },
+[8C{ 0x0u2pf_8a,s s0exr0t0:0 0A0s0sfefr t}i,o
+n
+ [6Cf{a i0lxe0d0 1a4t,  f0ixl0e0:0/0U5sbecr7s /}L,u
+p
+p[6Cy{/ P0ixn0e0P7hco,n e0/xn1u0t0t0x0/0a0p7p s}/,i
+n
+c[6Cl{u d0ex/0.0.4/0.,. /0txe3s0t0_0d0i0s0p2l a}y,.
+c
+ [6Cl{i n0ex:0 014040,  t0axs0k0:3 1h0e0l3l1o 
+}
+ ,
+[8C{ 0x0054, 0x00310031 },
+[8C{ 0x0090, 0x1308703e },
+[8C{ 0x0098, 0x0000ffff },
+[8C{ 0x009c, 0xffffffff },
+[8C{ 0x0080, 0x00010008 },
+nsh> [K
 ```
 
 ```text
