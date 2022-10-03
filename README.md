@@ -2926,6 +2926,56 @@ deinterlace@1e00000 {
 
 [(Source)](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L1369-L1378)
 
+# Zig on PinePhone
+
+`make --trace` shows these GCC Compiler Options when building Nuttx for PinePhone...
+
+```bash
+aarch64-none-elf-gcc
+  -c
+  -fno-common
+  -Wall
+  -Wstrict-prototypes
+  -Wshadow
+  -Wundef
+  -Werror
+  -Os
+  -fno-strict-aliasing
+  -fomit-frame-pointer
+  -g
+  -march=armv8-a
+  -mtune=cortex-a53
+  -isystem "/Users/Luppy/PinePhone/nuttx/nuttx/include"
+  -D__NuttX__ 
+  -pipe
+  -I "/Users/Luppy/PinePhone/nuttx/apps/include"
+  -Dmain=hello_main  hello_main.c
+  -o  hello_main.c.Users.Luppy.PinePhone.nuttx.apps.examples.hello.o
+```
+
+Enable the Null Example App: make menuconfig, select "Application Configuration" > "Examples" > "Null Example"
+
+To compile the Zig App...
+
+```bash
+#  Compile the Zig App for PinePhone 
+#  (armv8-a with cortex-a53)
+zig build-obj \
+  -target aarch64-freestanding-none \
+  -mcpu cortex_a53 \
+  hello_zig_main.zig
+
+#  Copy the compiled app to NuttX and overwrite `null.o`
+#  TODO: Change "$HOME/nuttx" to your NuttX Project Directory
+cp hello_zig_main.o \
+  $HOME/nuttx/apps/examples/null/*null.o
+
+#  Build NuttX to link the Zig Object from `null.o`
+#  TODO: Change "$HOME/nuttx" to your NuttX Project Directory
+cd $HOME/nuttx/nuttx
+make
+```
+
 # GIC Register Dump
 
 Below is the dump of PinePhone's registers for [Arm Generic Interrupt Controller version 2](https://developer.arm.com/documentation/ihi0048/latest/)...
