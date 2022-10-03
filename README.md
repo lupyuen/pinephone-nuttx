@@ -2980,7 +2980,7 @@ make
 
 Run the Zig App...
 
-```bash
+```text
 nsh> null
 HELLO ZIG ON PINEPHONE!
 ```
