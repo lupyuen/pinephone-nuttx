@@ -2953,9 +2953,11 @@ aarch64-none-elf-gcc
   -o  hello_main.c.Users.Luppy.PinePhone.nuttx.apps.examples.hello.o
 ```
 
+Let's run this Zig App: [hello_zig_main.zig](hello_zig_main.zig)
+
 Enable the Null Example App: make menuconfig, select "Application Configuration" > "Examples" > "Null Example"
 
-To compile the Zig App...
+Compile the Zig App (based on the above GCC Compiler Options)...
 
 ```bash
 #  Compile the Zig App for PinePhone 
@@ -2974,6 +2976,13 @@ cp hello_zig_main.o \
 #  TODO: Change "$HOME/nuttx" to your NuttX Project Directory
 cd $HOME/nuttx/nuttx
 make
+```
+
+Run the Zig App...
+
+```bash
+nsh> null
+HELLO ZIG ON PINEPHONE!
 ```
 
 # GIC Register Dump

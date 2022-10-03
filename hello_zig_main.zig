@@ -34,10 +34,10 @@ pub extern fn printf(_format: [*:0]const u8) c_int;
 pub export fn null_main(_argc: c_int, _argv: [*]const [*]const u8) c_int {
     _ = _argc;
     _ = _argv;
-    _ = printf("Hello, Zig!\n");
+    test_zig();
     return 0;
 }
 
 pub export fn test_zig() void {
-    _ = printf("test_zig\n");
+    _ = printf("HELLO ZIG ON PINEPHONE!\n");
 }
