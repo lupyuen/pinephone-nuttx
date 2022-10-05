@@ -51,7 +51,8 @@ pub export fn pinephone_mipi_dsi_dcs_write(
     buf: [*c]u8,  // Transmit Buffer
     len: usize    // Length of Buffer
 ) isize {  // On Success: Return number of written bytes. On Error: Return negative error code
-    _ = dev; _ = channel; _ = cmd; _ = buf; _ = len;
+    _ = dev; _ = buf;
+    debug("mipi_dsi_dcs_write: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
     std.debug.panic("pinephone_mipi_dsi_dcs_write not implemented", .{});
     return 0;
 }
