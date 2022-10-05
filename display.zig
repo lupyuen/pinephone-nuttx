@@ -29,6 +29,7 @@ const c = @cImport({
     // NuttX Defines
     @cDefine("__NuttX__",  "");
     @cDefine("NDEBUG",     "");
+    @cDefine("FAR",        "");
 
     // NuttX Header Files
     @cInclude("arch/types.h");
@@ -107,6 +108,7 @@ pub const mipi_dsi_timings = extern struct {
     vsync: u32,
 };
 
+/// Main Function for Null App
 pub export fn null_main(_argc: c_int, _argv: [*]const [*]const u8) c_int {
     _ = _argc;
     _ = _argv;
@@ -114,6 +116,7 @@ pub export fn null_main(_argc: c_int, _argv: [*]const [*]const u8) c_int {
     return 0;
 }
 
+/// Zig Test Function
 pub export fn test_zig() void {
     _ = printf("HELLO ZIG ON PINEPHONE!\n");
     _ = nuttx_mipi_dsi_dcs_write(null, 0, MIPI_DSI_GENERIC_LONG_WRITE, null, 0);
@@ -142,7 +145,7 @@ pub fn panic(
     }
 
     // Halt
-    while(true) {}
+    c.exit(1);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
