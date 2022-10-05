@@ -2953,7 +2953,7 @@ aarch64-none-elf-gcc
   -o  hello_main.c.Users.Luppy.PinePhone.nuttx.apps.examples.hello.o
 ```
 
-Let's run this Zig App: [hello_zig_main.zig](hello_zig_main.zig)
+Let's run this Zig App: [display.zig](display.zig)
 
 Enable the Null Example App: make menuconfig, select "Application Configuration" > "Examples" > "Null Example"
 
@@ -2965,11 +2965,11 @@ Compile the Zig App (based on the above GCC Compiler Options)...
 zig build-obj \
   -target aarch64-freestanding-none \
   -mcpu cortex_a53 \
-  hello_zig_main.zig
+  display.zig
 
 #  Copy the compiled app to NuttX and overwrite `null.o`
 #  TODO: Change "$HOME/nuttx" to your NuttX Project Directory
-cp hello_zig_main.o \
+cp display.o \
   $HOME/nuttx/apps/examples/null/*null.o
 
 #  Build NuttX to link the Zig Object from `null.o`
