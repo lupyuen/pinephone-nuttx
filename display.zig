@@ -116,6 +116,7 @@ pub export fn null_main(_argc: c_int, _argv: [*]const [*]const u8) c_int {
 
 pub export fn test_zig() void {
     _ = printf("HELLO ZIG ON PINEPHONE!\n");
+    _ = pinephone_mipi_dsi_dcs_write(null, 0, MIPI_DSI_GENERIC_LONG_WRITE, null, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
