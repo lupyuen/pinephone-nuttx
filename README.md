@@ -2962,9 +2962,12 @@ Compile the Zig App (based on the above GCC Compiler Options)...
 ```bash
 #  Compile the Zig App for PinePhone 
 #  (armv8-a with cortex-a53)
+#  TODO: Change "$HOME/nuttx" to your NuttX Project Directory
 zig build-obj \
   -target aarch64-freestanding-none \
   -mcpu cortex_a53 \
+  -isystem "$HOME/nuttx/nuttx/include" \
+  -I "$HOME/nuttx/apps/include" \
   display.zig
 
 #  Copy the compiled app to NuttX and overwrite `null.o`
