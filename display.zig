@@ -114,14 +114,6 @@ fn composeLongPacket(
     // Compute Error Correction Code (ECC) for Data Identifier + Word Count
     const ecc: u8 = computeEcc(di_wc);
 
-    // TODO: Checksum (CS) (2 bytes):
-    // - 16-bit Cyclic Redundancy Check (CRC)
-    // See "12.3.6.13: Packet Footer", Page 210 of BL808 Reference Manual:
-    // https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
-    const cs: u16 = 0;
-    const csl: u8 = @intCast(u8, cs & 0xff);
-    const csh: u8 = @intCast(u8, cs >> 8);
-
     // Packet Header (4 bytes):
     // - Data Identifier + Word Count + Error Correction COde
     const header = [4]u8 { di_wc[0], di_wc[1], di_wc[2], ecc };
@@ -132,17 +124,28 @@ fn composeLongPacket(
     assert(len <= 65_541);
     const payload = buf[0..len];
 
+    // Packet = Packet Header + Payload + Packet Footer
+    var pkt = std.mem.zeroes([1024]u8);
+    const pktlen = header.len + len + 2;  // Packet Footer is 2 bytes
+    assert(pktlen <= pkt.len);  // Increase `pkt` size
+    std.mem.copy(u8, pkt[0..header.len], &header); // 4 bytes
+    std.mem.copy(u8, pkt[header.len..], payload);  // `len` bytes
+    // Packet Footer comes later, after we have computed CRC...
+
+    // TODO: Checksum (CS) (2 bytes):
+    // - 16-bit Cyclic Redundancy Check (CRC)
+    // See "12.3.6.13: Packet Footer", Page 210 of BL808 Reference Manual:
+    // https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
+    const cs: u16 = computeCrc(pkt[0..(pktlen - 2)]);
+    const csl: u8 = @intCast(u8, cs & 0xff);
+    const csh: u8 = @intCast(u8, cs >> 8);
+
     // Packet Footer (2 bytes)
     // - Checksum (CS)
     const footer = [2]u8 { csl, csh };
 
-    // Packet = Packet Header + Payload + Packet Footer
-    var pkt = std.mem.zeroes([1024]u8);
-    assert(pkt.len >= header.len + len + footer.len);  // Increase pkt size
-    std.mem.copy(u8, pkt[0..header.len], &header);
-    std.mem.copy(u8, pkt[header.len..], payload);
-    std.mem.copy(u8, pkt[(header.len + len)..], &footer);
-    const pktlen = header.len + len + footer.len;
+    // Append Packet Footer to Packet
+    std.mem.copy(u8, pkt[(pktlen - 2)..], &footer);  // 2 bytes
 
     // Return the packet
     return pkt[0..pktlen];
@@ -189,6 +192,13 @@ fn computeEcc(
         | (@intCast(u8, ecc[5]) << 5)
         | (@intCast(u8, ecc[6]) << 6)
         | (@intCast(u8, ecc[7]) << 7);
+}
+
+fn computeCrc(
+    data: []u8
+) u8 {
+    _ = data;
+    return 0;
 }
 
 /// MIPI DSI Device
