@@ -206,7 +206,11 @@ fn computeCrc(
     data: []const u8
 ) u16 {
     // Use NuttX CRC16
-    const crc = c.crc16(&data[0], data.len);
+    // const crc = c.crc16(&data[0], data.len);
+
+    // For testing
+    const crc = sun6i_dsi_crc_compute(&data[0], data.len);
+
     debug("computeCrc: len={}, crc=0x{x}", .{ data.len, crc });
     dump_buffer(&data[0], data.len);
     return crc;
@@ -411,6 +415,9 @@ pub fn log(
 
 /// From apps/examples/hello/hello_main.c
 extern fn dump_buffer(data: [*c]const u8, len: usize) void;
+
+/// From p-boot/src/display.c
+extern fn sun6i_dsi_crc_compute(buffer: [*c]const u8, len: usize) u16;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
 /// We changed `[*c]const u8` to `[*:0]const u8`
