@@ -103,16 +103,22 @@ fn compose_long_packet(
     //     Allow single-bit errors to be corrected and 2-bit errors to be detected in the Packet Header
     //     See "12.3.6.12: Error Correction Code", Page 208:
     //     https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
-    //
+    const header = [4]u8 { 0, 0, 0, 0 };
+    _ = header;
+
     // Packet Payload:
     // -   Data (0 to 65,541 bytes):
     //     Number of data bytes should match the Word Count (WC)
-    //
+    const payload = [0]u8 { };  // TODO: Set to buf and len
+    _ = payload;
+
     // Packet Footer:
     // -   Checksum (CS) (2 bytes):
     //     16-bit Cyclic Redundancy Check (CRC)
     //     See "12.3.6.13: Packet Footer", Page 210:
     //     https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
+    const footer = [2]u8 { 0, 0 };
+    _ = footer;
 
     std.debug.panic("compose_long_packet not implemented", .{});
     return [_]u8 {};
