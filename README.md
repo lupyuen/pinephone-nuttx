@@ -3031,9 +3031,11 @@ This MIPI DSI Interface is compatible with Zephyr MIPI DSI...
 
 -   [zephyr/drivers/mipi_dsi.h](https://github.com/zephyrproject-rtos/zephyr/blob/main/include/zephyr/drivers/mipi_dsi.h)
 
-_Why Zig?_
+_Why Zig for the MIPI DSI Driver?_
 
-We're doing Quick Prototyping, so it's great to have Zig catch any Runtime Problems caused by our Bad Coding.
+We're doing Quick Prototyping, so it's great to have Zig catch any Runtime Problems caused by our Bad Coding. (Underflow / Overflow / Array Out Of Bounds)
+
+And yet Zig is so similar to C that we can test the Zig Driver with the rest of the C code.
 
 Also `comptime` Compile-Time Expressions in Zig will be helpful when we initialise the ST7703 LCD Controller. [(See this)](https://lupyuen.github.io/articles/dsi#initialise-lcd-controller)
 
