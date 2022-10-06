@@ -107,13 +107,13 @@ fn compose_long_packet(
 
     // TODO: Error Correction Code (ECC) (1 byte):
     // Allow single-bit errors to be corrected and 2-bit errors to be detected in the Packet Header
-    // See "12.3.6.12: Error Correction Code", Page 208:
+    // See "12.3.6.12: Error Correction Code", Page 208 of BL808 Reference Manual:
     // https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
     const ecc: u8 = 0;
 
     // TODO: Checksum (CS) (2 bytes):
     // 16-bit Cyclic Redundancy Check (CRC)
-    // See "12.3.6.13: Packet Footer", Page 210:
+    // See "12.3.6.13: Packet Footer", Page 210 of BL808 Reference Manual:
     // https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
     const cs: u16 = 0;
     const csl: u8 = @intCast(u8, cs & 0xff);
@@ -121,7 +121,6 @@ fn compose_long_packet(
 
     // Packet Header (4 bytes): Data Identifier + Word Count + Error Correction COde
     const header = [4]u8 { di, wcl, wch, ecc };
-    _ = header;
 
     // Packet Payload:
     // Data (0 to 65,541 bytes):
@@ -130,7 +129,6 @@ fn compose_long_packet(
 
     // Packet Footer (2 bytes): Checksum (CS)
     const footer = [2]u8 { csl, csh };
-    _ = footer;
 
     // TODO: Packet = Packet Header + Payload + Packet Footer
     var pkt = std.mem.zeroes([1024]u8);
