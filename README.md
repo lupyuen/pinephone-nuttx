@@ -3379,6 +3379,481 @@ NOPBIarm_gic_du
 PinePhone:
 
 ```text
+.DRAM: 2048 MiB
+Trying to boot from MMC1
+NOTICE:  BL31: v2.2(release):v2.2-904-gf9ea3a629
+NOTICE:  BL31: Built : 15:32:12, Apr  9 2020
+NOTICE:  BL31: Detected Allwinner A64/H64/R18 SoC (1689)
+NOTICE:  BL31: Found U-Boot DTB at 0x4064410, model: PinePhone
+NOTICE:  PSCI: System suspend is unavailable
+
+
+U-Boot 2020.07 (Nov 08 2020 - 00:15:12 +0100)
+
+DRAM:  2 GiB
+MMC:   Device 'mmc@1c11000': seq 1 is in use by 'mmc@1c10000'
+mmc@1c0f000: 0, mmc@1c10000: 2, mmc@1c11000: 1
+Loading Environment from FAT... *** Warning - bad CRC, using default environment
+
+starting USB...
+No working controllers found
+Hit any key to stop autoboot:  0 
+switch to partitions #0, OK
+mmc0 is current device
+Scanning mmc 0:1...
+Found U-Boot script /boot.scr
+653 bytes read in 3 ms (211.9 KiB/s)
+## Executing script at 4fc00000
+gpio: pin 114 (gpio 114) value is 1
+203948 bytes read in 11 ms (17.7 MiB/s)
+Uncompressed size: 4636672 = 0x46C000
+36162 bytes read in 4 ms (8.6 MiB/s)
+1078500 bytes read in 51 ms (20.2 MiB/s)
+## Flattened Device Tree blob at 4fa00000
+   Booting using the fdt blob at 0x4fa00000
+   Loading Ramdisk to 49ef8000, end 49fff4e4 ... OK
+   Loading Device Tree to 0000000049eec000, end 0000000049ef7d41 ... OK
+
+Starting kernel ...
+
+HELLO NUTTX ON PINEPHONE!
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+nx_start: Entry
+up_allocate_heap: heap_start=0x0x404ec000, heap_size=0x7b14000
+arm64_gic_initialize: TODO: Init GIC for PinePhone
+arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
+arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
+arm64_gic_initialize: GIC Version is 2
+up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+up_timer_initialize: _vector_table=0x400ce000
+up_timer_initialize: Before writing: vbar_el1=0x4024e000
+up_timer_initialize: After writing: vbar_el1=0x400ce000
+uart_register: Registering /dev/console
+uart_register: Registering /dev/ttyS0
+work_start_highpri: Starting high-priority kernel worker thread(s)
+nx_start_application: Starting init thread
+lib_cxx_initialize: _sinit: 0x400ce000 _einit: 0x400ce000 _stext: 0x40080000 _etext: 0x400cf000
+nsh: sysinit: fopen failed: 2
+nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
+e
+ 
+L
+oNoupt
+t
+Shell (NSH) NuttX-11.0.0-RC2
+nsh> hello
+task_spawn: name=hello entry=0x4009cf1c file_actions=0x404f1580 attr=0x404f1588 argv=0x404f16d0
+spawn_execattrs: Setting policy=2 priority=100 for pid=3
+ABHello, World!!
+ph_cfg1_reg=0x7177
+ph_data_reg=0x400
+pd_cfg2_reg=0x77711177
+pd_data_reg=0x1c0000
+struct reg_inst dsi_init_seq[] = {
+.{ 0x0000, 0x00000001 },
+.{ 0x0010, 0x00030000 },
+.{ 0x0060, 0x0000000a },
+.{ 0x0078, 0x00000000 },
+.{ 0x0020, 0x0000001f },
+.{ 0x0024, 0x10000001 },
+.{ 0x0028, 0x20000010 },
+.{ 0x002c, 0x2000000f },
+.{ 0x0030, 0x30100001 },
+.{ 0x0034, 0x40000010 },
+.{ 0x0038, 0x0000000f },
+.{ 0x003c, 0x5000001f },
+.{ 0x004c, 0x00560001 },
+.{ 0x02f8, 0x000000ff },
+.{ 0x0014, 0x00005bc7 },
+.{ 0x007c, 0x10000007 },
+.{ 0x0040, 0x30000002 },
+.{ 0x0044, 0x00310031 },
+.{ 0x0054, 0x00310031 },
+.{ 0x0090, 0x1308703e },
+.{ 0x0098, 0x0000ffff },
+.{ 0x009c, 0xffffffff },
+.{ 0x0080, 0x00010008 },
+display_malloc: size=2330
+.{ 0x000c, 0x00000000 },
+.{ 0x00b0, 0x12000021 },
+.{ 0x00b4, 0x01000031 },
+.{ 0x00b8, 0x07000001 },
+.{ 0x00bc, 0x14000011 },
+.{ 0x0018, 0x0011000a },
+.{ 0x001c, 0x05cd05a0 },
+.{ 0x00c0, 0x09004a19 },
+.{ 0x00c4, 0x50b40000 },
+.{ 0x00c8, 0x35005419 },
+.{ 0x00cc, 0x757a0000 },
+.{ 0x00d0, 0x09004a19 },
+.{ 0x00d4, 0x50b40000 },
+.{ 0x00e0, 0x0c091a19 },
+.{ 0x00e4, 0x72bd0000 },
+.{ 0x00e8, 0x1a000019 },
+.{ 0x00ec, 0xffff0000 },
+};
+
+struct reg_inst dsi_panel_init_seq[] = {
+mipi_dsi_dcs_write: len=4
+b9 f1 12 83 
+.{ 0x0300, 0x2c000439 },
+header: 2c000439
+display_zalloc: size=10
+.{ 0x0304, 0x8312f1b9 },
+.{ 0x0308, 0x00005d84 },
+payload[0]: 8312f1b9
+payload[1]: 00005d84
+.{ 0x0200, 0x00000009 },
+len: 9
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=28
+ba 33 81 05 f9 0e 0e 20 
+00 00 00 00 00 00 00 44 
+25 00 91 0a 00 00 02 4f 
+11 00 00 37 
+.{ 0x0300, 0x2f001c39 },
+header: 2f001c39
+display_zalloc: size=34
+.{ 0x0304, 0x058133ba },
+.{ 0x0308, 0x200e0ef9 },
+.{ 0x030c, 0x00000000 },
+.{ 0x0310, 0x44000000 },
+.{ 0x0314, 0x0a910025 },
+.{ 0x0318, 0x4f020000 },
+.{ 0x031c, 0x37000011 },
+.{ 0x0320, 0x0000e22c },
+payload[0]: 058133ba
+payload[1]: 200e0ef9
+payload[2]: 00000000
+payload[3]: 44000000
+payload[4]: 0a910025
+payload[5]: 4f020000
+payload[6]: 37000011
+payload[7]: 0000e22c
+.{ 0x0200, 0x00000021 },
+len: 33
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=5
+b8 25 22 20 03 
+.{ 0x0300, 0x36000539 },
+header: 36000539
+display_zalloc: size=11
+.{ 0x0304, 0x202225b8 },
+.{ 0x0308, 0x00720303 },
+payload[0]: 202225b8
+payload[1]: 00720303
+.{ 0x0200, 0x0000000a },
+len: 10
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=11
+b3 10 10 05 05 03 ff 00 
+00 00 00 
+.{ 0x0300, 0x2c000b39 },
+header: 2c000b39
+display_zalloc: size=17
+.{ 0x0304, 0x051010b3 },
+.{ 0x0308, 0x00ff0305 },
+.{ 0x030c, 0x6f000000 },
+.{ 0x0310, 0x000000bc },
+payload[0]: 051010b3
+payload[1]: 00ff0305
+payload[2]: 6f000000
+payload[3]: 000000bc
+.{ 0x0200, 0x00000010 },
+len: 16
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=10
+c0 73 73 50 50 00 c0 08 
+70 00 
+.{ 0x0300, 0x36000a39 },
+header: 36000a39
+display_zalloc: size=16
+.{ 0x0304, 0x507373c0 },
+.{ 0x0308, 0x08c00050 },
+.{ 0x030c, 0x6a1b0070 },
+payload[0]: 507373c0
+payload[1]: 08c00050
+payload[2]: 6a1b0070
+.{ 0x0200, 0x0000000f },
+len: 15
+.{ MAGIC_COMMIT, 0 },
+.{ 0x0300, 0x354ebc15 },
+.{ 0x0200, 0x00000003 },
+.{ MAGIC_COMMIT, 0 },
+.{ 0x0300, 0x220bcc15 },
+.{ 0x0200, 0x00000003 },
+.{ MAGIC_COMMIT, 0 },
+.{ 0x0300, 0x2280b415 },
+.{ 0x0200, 0x00000003 },
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=4
+b2 f0 12 f0 
+.{ 0x0300, 0x2c000439 },
+header: 2c000439
+display_zalloc: size=10
+.{ 0x0304, 0xf012f0b2 },
+.{ 0x0308, 0x00008651 },
+payload[0]: f012f0b2
+payload[1]: 00008651
+.{ 0x0200, 0x00000009 },
+len: 9
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=15
+e3 00 00 0b 0b 10 10 00 
+00 00 00 ff 00 c0 10 
+.{ 0x0300, 0x0f000f39 },
+header: 0f000f39
+display_zalloc: size=21
+.{ 0x0304, 0x0b0000e3 },
+.{ 0x0308, 0x0010100b },
+.{ 0x030c, 0xff000000 },
+.{ 0x0310, 0x3610c000 },
+.{ 0x0314, 0x0000000f },
+payload[0]: 0b0000e3
+payload[1]: 0010100b
+payload[2]: ff000000
+payload[3]: 3610c000
+payload[4]: 0000000f
+.{ 0x0200, 0x00000014 },
+len: 20
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=6
+c6 01 00 ff ff 00 
+.{ 0x0300, 0x30000639 },
+header: 30000639
+display_zalloc: size=12
+.{ 0x0304, 0xff0001c6 },
+.{ 0x0308, 0x258e00ff },
+payload[0]: ff0001c6
+payload[1]: 258e00ff
+.{ 0x0200, 0x0000000b },
+len: 11
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=13
+c1 74 00 32 32 77 f1 ff 
+ff cc cc 77 77 
+.{ 0x0300, 0x13000d39 },
+header: 13000d39
+display_zalloc: size=19
+.{ 0x0304, 0x320074c1 },
+.{ 0x0308, 0xfff17732 },
+.{ 0x030c, 0x77ccccff },
+.{ 0x0310, 0x00e46977 },
+payload[0]: 320074c1
+payload[1]: fff17732
+payload[2]: 77ccccff
+payload[3]: 00e46977
+.{ 0x0200, 0x00000012 },
+len: 18
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=3
+b5 07 07 
+.{ 0x0300, 0x09000339 },
+header: 09000339
+display_zalloc: size=9
+.{ 0x0304, 0x7b0707b5 },
+.{ 0x0308, 0x000000b3 },
+payload[0]: 7b0707b5
+payload[1]: 000000b3
+.{ 0x0200, 0x00000008 },
+len: 8
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=3
+b6 2c 2c 
+.{ 0x0300, 0x09000339 },
+header: 09000339
+display_zalloc: size=9
+.{ 0x0304, 0x552c2cb6 },
+.{ 0x0308, 0x00000004 },
+payload[0]: 552c2cb6
+payload[1]: 00000004
+.{ 0x0200, 0x00000008 },
+len: 8
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=4
+bf 02 11 00 
+.{ 0x0300, 0x2c000439 },
+header: 2c000439
+display_zalloc: size=10
+.{ 0x0304, 0x001102bf },
+.{ 0x0308, 0x0000e9b5 },
+payload[0]: 001102bf
+payload[1]: 0000e9b5
+.{ 0x0200, 0x00000009 },
+len: 9
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=64
+e9 82 10 06 05 a2 0a a5 
+12 31 23 37 83 04 bc 27 
+38 0c 00 03 00 00 00 0c 
+00 03 00 00 00 75 75 31 
+88 88 88 88 88 88 13 88 
+64 64 20 88 88 88 88 88 
+88 02 88 00 00 00 00 00 
+00 00 00 00 00 00 00 00 
+
+.{ 0x0300, 0x25004039 },
+header: 25004039
+display_zalloc: size=70
+.{ 0x0304, 0x061082e9 },
+.{ 0x0308, 0xa50aa205 },
+.{ 0x030c, 0x37233112 },
+.{ 0x0310, 0x27bc0483 },
+.{ 0x0314, 0x03000c38 },
+.{ 0x0318, 0x0c000000 },
+.{ 0x031c, 0x00000300 },
+.{ 0x0320, 0x31757500 },
+.{ 0x0324, 0x88888888 },
+.{ 0x0328, 0x88138888 },
+.{ 0x032c, 0x88206464 },
+.{ 0x0330, 0x88888888 },
+.{ 0x0334, 0x00880288 },
+.{ 0x0338, 0x00000000 },
+.{ 0x033c, 0x00000000 },
+.{ 0x0340, 0x00000000 },
+.{ 0x0344, 0x00000365 },
+payload[0]: 061082e9
+payload[1]: a50aa205
+payload[2]: 37233112
+payload[3]: 27bc0483
+payload[4]: 03000c38
+payload[5]: 0c000000
+payload[6]: 00000300
+payload[7]: 31757500
+payload[8]: 88888888
+payload[9]: 88138888
+payload[10]: 88206464
+payload[11]: 88888888
+payload[12]: 00880288
+payload[13]: 00000000
+payload[14]: 00000000
+payload[15]: 00000000
+payload[16]: 00000365
+.{ 0x0200, 0x00000045 },
+len: 69
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=62
+ea 02 21 00 00 00 00 00 
+00 00 00 00 00 02 46 02 
+88 88 88 88 88 88 64 88 
+13 57 13 88 88 88 88 88 
+88 75 88 23 14 00 00 02 
+00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 03 
+0a a5 00 00 00 00 
+.{ 0x0300, 0x1a003e39 },
+header: 1a003e39
+display_zalloc: size=68
+.{ 0x0304, 0x002102ea },
+.{ 0x0308, 0x00000000 },
+.{ 0x030c, 0x00000000 },
+.{ 0x0310, 0x02460200 },
+.{ 0x0314, 0x88888888 },
+.{ 0x0318, 0x88648888 },
+.{ 0x031c, 0x88135713 },
+.{ 0x0320, 0x88888888 },
+.{ 0x0324, 0x23887588 },
+.{ 0x0328, 0x02000014 },
+.{ 0x032c, 0x00000000 },
+.{ 0x0330, 0x00000000 },
+.{ 0x0334, 0x00000000 },
+.{ 0x0338, 0x03000000 },
+.{ 0x033c, 0x0000a50a },
+.{ 0x0340, 0x1b240000 },
+payload[0]: 002102ea
+payload[1]: 00000000
+payload[2]: 00000000
+payload[3]: 02460200
+payload[4]: 88888888
+payload[5]: 88648888
+payload[6]: 88135713
+payload[7]: 88888888
+payload[8]: 23887588
+payload[9]: 02000014
+payload[10]: 00000000
+payload[11]: 00000000
+payload[12]: 00000000
+payload[13]: 03000000
+payload[14]: 0000a50a
+payload[15]: 1b240000
+.{ 0x0200, 0x00000043 },
+len: 67
+.{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: len=35
+e0 00 09 0d 23 27 3c 41 
+35 07 0d 0e 12 13 10 12 
+12 18 00 09 0d 23 27 3c 
+41 35 07 0d 0e 12 13 10 
+12 12 18 
+.{ 0x0300, 0x20002339 },
+header: 20002339
+display_zalloc: size=41
+.{ 0x0304, 0x0d0900e0 },
+.{ 0x0308, 0x413c2723 },
+.{ 0x030c, 0x0e0d0735 },
+.{ 0x0310, 0x12101312 },
+.{ 0x0314, 0x09001812 },
+.{ 0x0318, 0x3c27230d },
+.{ 0x031c, 0x0d073541 },
+.{ 0x0320, 0x1013120e },
+.{ 0x0324, 0x93181212 },
+.{ 0x0328, 0x000000bf },
+payload[0]: 0d0900e0
+payload[1]: 413c2723
+payload[2]: 0e0d0735
+payload[3]: 12101312
+payload[4]: 09001812
+payload[5]: 3c27230d
+payload[6]: 0d073541
+payload[7]: 1013120e
+payload[8]: 93181212
+payload[9]: 000000bf
+.{ 0x0200, 0x00000028 },
+len: 40
+.{ MAGIC_COMMIT, 0 },
+.{ 0x0300, 0x36001105 },
+.{ 0x0200, 0x00000003 },
+.{ MAGIC_COMMIT, 0 },
+.{ 0x0300, 0x1c002905 },
+.{ 0x0200, 0x00000003 },
+.{ MAGIC_COMMIT, 0 },
+};
+.{ 0x0048, 0x00000f02 },
+.{ MAGIC_COMMIT, 0 },
+dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000
+.{ 0x0048, 0x63f07006 },
+.{ MAGIC_COMMIT, 0 },
+HELLO ZIG ON PINEPHONE!
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=64
+composeLongPacket: channel=0, cmd=0x39, len=64
+computeCrc: len=64, crc=0xabf2
+e9 82 10 06 05 a2 0a a5 
+12 31 23 37 83 04 bc 27 
+38 0c 00 03 00 00 00 0c 
+00 03 00 00 00 75 75 31 
+88 88 88 88 88 88 13 88 
+64 64 20 88 88 88 88 88 
+88 02 88 00 00 00 00 00 
+00 00 00 00 00 00 00 00 
+
+packet: len=70
+00 60 0e 40 00 00 00 00 
+a6 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 
+48 44 08 40 00 00 00 00 
+0f 00 00 00 00 00 00 00 
+00 60 0e 40 00 00 00 00 
+67 24 57 40 00 00 00 00 
+01 00 00 00 00 00 00 00 
+10 60 0e 40 00 00 
+nsh> 
+nsh> 
+```
+
+```text
 nsh> [Khello
 task_spawn: name=hello entry=0x4009ce04 file_actions=0x404ea580 attr=0x404ea588 argv=0x404ea6d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3

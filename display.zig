@@ -50,25 +50,27 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     dev: [*c]const mipi_dsi_device,  // MIPI DSI Host Device
     channel: u8,  // Virtual Channel ID
     cmd: u8,      // DCS Command
-    buf: [*c]u8,  // Transmit Buffer
-    len: usize    // Length of Buffer
+    buf: [*c]const u8,  // Transmit Buffer
+    len: usize          // Buffer Length
 ) isize {  // On Success: Return number of written bytes. On Error: Return negative error code
     _ = dev;
-    debug("mipi_dsi_dcs_write: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
+    debug("mipi_dsi_dcs_write: channel={}, cmd=0x{x}, len={}", .{ channel, cmd, len });
     assert(cmd == MIPI_DSI_DCS_LONG_WRITE);  // Only DCS Long Write supported
 
     // Compose Long Packet
     const pkt = composeLongPacket(channel, cmd, buf, len);
 
-    // TODO: Dump the packet
-    _ = pkt;
+    // Dump the packet
+    debug("packet: len={}", .{ pkt.len });
+    debug("pkt[0]={}", .{ pkt[0] });
+    dump_buffer(&pkt[0], pkt.len);
 
     // TODO
     // - Write the Long Packet to DSI_CMD_TX_REG 
     //   (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC.
     //
-    // - Set the Packet Length (TX_Size) in Bits 0 to 7 of 
-    //   DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200.
+    // - Set Packet Length - 1 in Bits 0 to 7 (TX_Size) of
+    //   DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset .0x200.
     //
     // - Set DSI_INST_JUMP_SEL_REG (Offset 0x48, undocumented) 
     //   to begin the Low Power Transmission.
@@ -87,17 +89,17 @@ pub export fn nuttx_mipi_dsi_dcs_write(
 fn composeLongPacket(
     channel: u8,  // Virtual Channel ID
     cmd: u8,      // DCS Command
-    buf: [*c]u8,  // Transmit Buffer
-    len: usize    // Length of Buffer
+    buf: [*c]const u8,  // Transmit Buffer
+    len: usize          // Buffer Length
 ) []u8 {
     _ = buf;
-    debug("composeLongPacket: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
+    debug("composeLongPacket: channel={}, cmd=0x{x}, len={}", .{ channel, cmd, len });
     // Data Identifier (DI) (1 byte):
     // - Virtual Channel Identifier (Bits 6 to 7)
     // - Data Type (Bits 0 to 5)
     // (Virtual Channel should be 0, I think)
     assert(cmd < (1 << 6));
-    const vc: u8 = 0;
+    const vc: u8 = channel;
     const dt: u8 = cmd;
     const di: u8 = (vc << 6) | dt;
 
@@ -123,20 +125,9 @@ fn composeLongPacket(
     assert(len <= 65_541);
     const payload = buf[0..len];
 
-    // Packet:
-    // - Packet Header (4 bytes)
-    // - Payload (`len` bytes)
-    // - Packet Footer (2 bytes)
-    const pktlen = header.len + len + 2;  // 2 bytes for Packet Footer
-    var pkt = std.mem.zeroes([1024]u8);
-    assert(pktlen <= pkt.len);  // Increase `pkt` size
-    std.mem.copy(u8, pkt[0..header.len], &header); // 4 bytes
-    std.mem.copy(u8, pkt[header.len..], payload);  // `len` bytes
-    // Packet Footer (2 bytes) comes later, after we have computed CRC...
-
     // Checksum (CS) (2 bytes):
-    // - 16-bit Cyclic Redundancy Check (CRC)
-    const cs: u16 = computeCrc(pkt[0..(pktlen - 2)]);
+    // - 16-bit Cyclic Redundancy Check (CRC) of the Payload (not the entire packet)
+    const cs: u16 = computeCrc(payload);
     const csl: u8 = @intCast(u8, cs & 0xff);
     const csh: u8 = @intCast(u8, cs >> 8);
 
@@ -144,8 +135,16 @@ fn composeLongPacket(
     // - Checksum (CS)
     const footer = [2]u8 { csl, csh };
 
-    // Append Packet Footer to Packet
-    std.mem.copy(u8, pkt[(pktlen - 2)..], &footer);  // 2 bytes
+    // Packet:
+    // - Packet Header (4 bytes)
+    // - Payload (`len` bytes)
+    // - Packet Footer (2 bytes)
+    const pktlen = header.len + len + footer.len;
+    var pkt = std.mem.zeroes([1024]u8);
+    assert(pktlen <= pkt.len);  // Increase `pkt` size
+    std.mem.copy(u8, pkt[0..header.len], &header); // 4 bytes
+    std.mem.copy(u8, pkt[header.len..], payload);  // `len` bytes
+    std.mem.copy(u8, pkt[(header.len + len)..], &footer);  // 2 bytes
 
     // Return the packet
     return pkt[0..pktlen];
@@ -198,10 +197,13 @@ fn computeEcc(
 /// See "12.3.6.13: Packet Footer", Page 210 of BL808 Reference Manual:
 /// https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
 fn computeCrc(
-    data: []u8
+    data: []const u8
 ) u16 {
     // Use NuttX CRC16
-    return c.crc16(data.ptr, data.len);
+    const crc = c.crc16(&data[0], data.len);
+    debug("computeCrc: len={}, crc=0x{x}", .{ data.len, crc });
+    dump_buffer(&data[0], data.len);
+    return crc;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -271,8 +273,74 @@ pub export fn null_main(_argc: c_int, _argv: [*]const [*]const u8) c_int {
 /// Zig Test Function
 pub export fn test_zig() void {
     _ = printf("HELLO ZIG ON PINEPHONE!\n");
-    _ = nuttx_mipi_dsi_dcs_write(null, 0, MIPI_DSI_DCS_LONG_WRITE, null, 0);
+    const buf = [_]u8 {
+        0xe9, 0x82, 0x10, 0x06, 0x05, 0xa2, 0x0a, 0xa5,
+        0x12, 0x31, 0x23, 0x37, 0x83, 0x04, 0xbc, 0x27,
+        0x38, 0x0c, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0c,
+        0x00, 0x03, 0x00, 0x00, 0x00, 0x75, 0x75, 0x31,
+        0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x13, 0x88,
+        0x64, 0x64, 0x20, 0x88, 0x88, 0x88, 0x88, 0x88,
+        0x88, 0x02, 0x88, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    };
+    _ = nuttx_mipi_dsi_dcs_write(
+        null,  //  Device
+        0,     //  Virtual Channel
+        MIPI_DSI_DCS_LONG_WRITE, // DCS Command
+        &buf,    // Transmit Buffer
+        buf.len  // Buffer Length
+    );
 }
+
+// mipi_dsi_dcs_write: len=64
+// e9 82 10 06 05 a2 0a a5 
+// 12 31 23 37 83 04 bc 27 
+// 38 0c 00 03 00 00 00 0c 
+// 00 03 00 00 00 75 75 31 
+// 88 88 88 88 88 88 13 88 
+// 64 64 20 88 88 88 88 88 
+// 88 02 88 00 00 00 00 00 
+// 00 00 00 00 00 00 00 00 
+// .{ 0x0300, 0x25004039 },
+// header: 25004039
+// display_zalloc: size=70
+// .{ 0x0304, 0x061082e9 },
+// .{ 0x0308, 0xa50aa205 },
+// .{ 0x030c, 0x37233112 },
+// .{ 0x0310, 0x27bc0483 },
+// .{ 0x0314, 0x03000c38 },
+// .{ 0x0318, 0x0c000000 },
+// .{ 0x031c, 0x00000300 },
+// .{ 0x0320, 0x31757500 },
+// .{ 0x0324, 0x88888888 },
+// .{ 0x0328, 0x88138888 },
+// .{ 0x032c, 0x88206464 },
+// .{ 0x0330, 0x88888888 },
+// .{ 0x0334, 0x00880288 },
+// .{ 0x0338, 0x00000000 },
+// .{ 0x033c, 0x00000000 },
+// .{ 0x0340, 0x00000000 },
+// .{ 0x0344, 0x00000365 },
+// payload[0]: 061082e9
+// payload[1]: a50aa205
+// payload[2]: 37233112
+// payload[3]: 27bc0483
+// payload[4]: 03000c38
+// payload[5]: 0c000000
+// payload[6]: 00000300
+// payload[7]: 31757500
+// payload[8]: 88888888
+// payload[9]: 88138888
+// payload[10]: 88206464
+// payload[11]: 88888888
+// payload[12]: 00880288
+// payload[13]: 00000000
+// payload[14]: 00000000
+// payload[15]: 00000000
+// payload[16]: 00000365
+// .{ 0x0200, 0x00000045 },
+// len: 69
+// .{ MAGIC_COMMIT, 0 },
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Panic Handler
@@ -334,6 +402,9 @@ pub fn log(
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Imported Functions and Variables
+
+/// From apps/examples/hello/hello_main.c
+extern fn dump_buffer(data: [*c]const u8, len: usize) void;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
 /// We changed `[*c]const u8` to `[*:0]const u8`
