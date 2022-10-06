@@ -55,7 +55,7 @@ pub export fn nuttx_mipi_dsi_dcs_write(
 ) isize {  // On Success: Return number of written bytes. On Error: Return negative error code
     _ = dev;
     debug("mipi_dsi_dcs_write: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
-    assert(cmd == MIPI_DSI_DCS_LONG_WRITE);
+    assert(cmd == MIPI_DSI_DCS_LONG_WRITE);  // Only DCS Long Write supported
 
     // Compose Long Packet
     const pkt = composeLongPacket(channel, cmd, buf, len);
@@ -80,8 +80,6 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     //
     // Instru_En is Bit 0 of DSI_BASIC_CTL0_REG 
     // (DSI Configuration Register 0) at Offset 0x10.
-
-    std.debug.panic("nuttx_mipi_dsi_dcs_write not implemented", .{});
     return 0;
 }
 
@@ -125,13 +123,16 @@ fn composeLongPacket(
     assert(len <= 65_541);
     const payload = buf[0..len];
 
-    // Packet = Packet Header + Payload + Packet Footer
+    // Packet:
+    // - Packet Header (4 bytes)
+    // - Payload (`len` bytes)
+    // - Packet Footer (2 bytes)
+    const pktlen = header.len + len + 2;  // 2 bytes for Packet Footer
     var pkt = std.mem.zeroes([1024]u8);
-    const pktlen = header.len + len + 2;  // Packet Footer is 2 bytes
     assert(pktlen <= pkt.len);  // Increase `pkt` size
     std.mem.copy(u8, pkt[0..header.len], &header); // 4 bytes
     std.mem.copy(u8, pkt[header.len..], payload);  // `len` bytes
-    // Packet Footer comes later, after we have computed CRC...
+    // Packet Footer (2 bytes) comes later, after we have computed CRC...
 
     // Checksum (CS) (2 bytes):
     // - 16-bit Cyclic Redundancy Check (CRC)
