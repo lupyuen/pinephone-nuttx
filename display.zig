@@ -200,15 +200,24 @@ fn computeEcc(
 fn computeCrc(
     data: []const u8
 ) u16 {
-    // Use NuttX CRC16
-    // const crc = c.crc16(&data[0], data.len);
-
     // Use CRC-16-CCITT (x^16 + x^12 + x^5 + 1)
-    const crc = crc16ccitt(&data[0], data.len);
+    const crc = crc16ccitt(data, 0xffff);
 
     debug("computeCrc: len={}, crc=0x{x}", .{ data.len, crc });
     dump_buffer(&data[0], data.len);
     return crc;
+}
+
+/// Return a 16-bit CRC-CCITT of the contents of the `src` buffer.
+/// Based on nuttx/libs/libc/misc/lib_crc16.c
+fn crc16ccitt(src: []const u8, crc16val: u16) u16 {
+    var i: usize = 0;
+    var v = crc16val;
+    while (i < src.len) : (i += 1) {
+      v = (v >> 8)
+        ^ crc16ccitt_tab[(v ^ src[i]) & 0xff];
+    }
+    return v;
 }
 
 /// From CRC-16-CCITT (x^16 + x^12 + x^5 + 1)
@@ -446,9 +455,6 @@ pub fn log(
 
 /// From apps/examples/hello/hello_main.c
 extern fn dump_buffer(data: [*c]const u8, len: usize) void;
-
-/// From p-boot/src/display.c
-extern fn crc16ccitt(buffer: [*c]const u8, len: usize) u16;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
 /// We changed `[*c]const u8` to `[*:0]const u8`

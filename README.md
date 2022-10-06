@@ -3829,7 +3829,7 @@ dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000
 HELLO ZIG ON PINEPHONE!
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=64
 composeLongPacket: channel=0, cmd=0x39, len=64
-computeCrc: len=64, crc=0xabf2
+computeCrc: len=64, crc=0x365
 e9 82 10 06 05 a2 0a a5 
 12 31 23 37 83 04 bc 27 
 38 0c 00 03 00 00 00 0c 
@@ -3839,7 +3839,7 @@ e9 82 10 06 05 a2 0a a5
 88 02 88 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
 
-result: len=70
+packet: len=70
 39 40 00 25 e9 82 10 06 
 05 a2 0a a5 12 31 23 37 
 83 04 bc 27 38 0c 00 03 
@@ -3848,89 +3848,8 @@ result: len=70
 88 88 13 88 64 64 20 88 
 88 88 88 88 88 02 88 00 
 00 00 00 00 00 00 00 00 
-00 00 00 00 f2 ab 
-packet: len=70
-pkt[0]=0x39
-pkt[1]=0x0
-pkt[2]=0x0
-pkt[3]=0x0
-pkt[4]=0x0
-pkt[5]=0x0
-pkt[6]=0x0
-pkt[7]=0x0
-pkt[8]=0x0
-pkt[9]=0x0
-pkt[10]=0x0
-pkt[11]=0x0
-pkt[12]=0x0
-pkt[13]=0x0
-pkt[14]=0x0
-pkt[15]=0x0
-pkt[16]=0x0
-pkt[17]=0x0
-pkt[18]=0x0
-pkt[19]=0x0
-pkt[20]=0x0
-pkt[21]=0x0
-pkt[22]=0x0
-pkt[23]=0x0
-pkt[24]=0x0
-pkt[25]=0x0
-pkt[26]=0x0
-pkt[27]=0x0
-pkt[28]=0x0
-pkt[29]=0x0
-pkt[30]=0x0
-pkt[31]=0x0
-pkt[32]=0x0
-pkt[33]=0x0
-pkt[34]=0x0
-pkt[35]=0x0
-pkt[36]=0x0
-pkt[37]=0x0
-pkt[38]=0x0
-pkt[39]=0x0
-pkt[40]=0x0
-pkt[41]=0x0
-pkt[42]=0x0
-pkt[43]=0x0
-pkt[44]=0x0
-pkt[45]=0x0
-pkt[46]=0x0
-pkt[47]=0x0
-pkt[48]=0x0
-pkt[49]=0x0
-pkt[50]=0x0
-pkt[51]=0x0
-pkt[52]=0x0
-pkt[53]=0x0
-pkt[54]=0x0
-pkt[55]=0x0
-pkt[56]=0x0
-pkt[57]=0x0
-pkt[58]=0x0
-pkt[59]=0x0
-pkt[60]=0x0
-pkt[61]=0x0
-pkt[62]=0x0
-pkt[63]=0x0
-pkt[64]=0x0
-pkt[65]=0x0
-pkt[66]=0x0
-pkt[67]=0x0
-pkt[68]=0x0
-pkt[69]=0x0
-00 50 57 40 00 00 00 00 
-f8 ff ff ff 80 ff ff ff 
-20 00 00 00 00 00 00 00 
-00 00 00 00 00 00 00 00 
-50 00 00 00 00 00 00 00 
-28 00 00 00 00 00 00 00 
-20 00 00 00 00 00 00 00 
-ac 00 00 00 00 00 00 00 
-20 00 00 00 00 00 
+00 00 00 00 65 03 
 nsh> 
-nsh>
 ```
 
 ```text
