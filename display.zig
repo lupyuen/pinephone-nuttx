@@ -81,7 +81,7 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     return 0;
 }
 
-// TODO: Compose Long Packet: https://lupyuen.github.io/articles/dsi#long-packet-for-mipi-dsi
+// Compose MIPI DSI Long Packet. See https://lupyuen.github.io/articles/dsi#long-packet-for-mipi-dsi
 fn compose_long_packet(
     channel: u8,  // Virtual Channel ID
     cmd: u8,      // DCS Command
