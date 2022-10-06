@@ -119,16 +119,16 @@ fn compose_long_packet(
     const csl: u8 = @intCast(u8, cs & 0xff);
     const csh: u8 = @intCast(u8, cs >> 8);
 
-    // Packet Header (4 bytes): Data Identifier, Word Count, Error Correction COde
+    // Packet Header (4 bytes): Data Identifier + Word Count + Error Correction COde
     const header = [4]u8 { di, wcl, wch, ecc };
     _ = header;
 
     // Packet Payload:
     // Data (0 to 65,541 bytes):
     // Number of data bytes should match the Word Count (WC)
-    assert(len <= 65_541);
+    assert(wc <= 65_541);
 
-    // Packet Footer: Checksum
+    // Packet Footer (2 bytes): Checksum (CS)
     const footer = [2]u8 { csl, csh };
     _ = footer;
 
@@ -137,7 +137,7 @@ fn compose_long_packet(
     assert(pkt.len >= header.len + len + footer.len);  // Increase pkt size
     std.mem.copy(u8, pkt[0..header.len], &header);
     ////std.mem.copy(u8, pkt[header.len..header.len + len], buf);
-    std.mem.copy(u8, pkt[header.len + len..], &footer);
+    std.mem.copy(u8, pkt[(header.len + len)..], &footer);
     const pktlen = header.len + len + footer.len;
 
     // Return the packet
