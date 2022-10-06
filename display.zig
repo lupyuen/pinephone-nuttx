@@ -57,7 +57,7 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     assert(cmd == MIPI_DSI_DCS_LONG_WRITE);
 
     // Compose Long Packet
-    const pkt = compose_long_packet(channel, cmd, buf, len);
+    const pkt = composeLongPacket(channel, cmd, buf, len);
 
     // TODO: Dump the packet
     _ = pkt;
@@ -85,14 +85,14 @@ pub export fn nuttx_mipi_dsi_dcs_write(
 }
 
 // Compose MIPI DSI Long Packet. See https://lupyuen.github.io/articles/dsi#long-packet-for-mipi-dsi
-fn compose_long_packet(
+fn composeLongPacket(
     channel: u8,  // Virtual Channel ID
     cmd: u8,      // DCS Command
     buf: [*c]u8,  // Transmit Buffer
     len: usize    // Length of Buffer
 ) []u8 {
     _ = buf;
-    debug("compose_long_packet: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
+    debug("composeLongPacket: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
     // Data Identifier (DI) (1 byte):
     // Virtual Channel Identifier (Bits 6 to 7)
     // Data Type (Bits 0 to 5)
@@ -108,11 +108,11 @@ fn compose_long_packet(
     const wcl: u8 = @intCast(u8, wc & 0xff);
     const wch: u8 = @intCast(u8, wc >> 8);
 
-    // TODO: Error Correction Code (ECC) (1 byte):
-    // Allow single-bit errors to be corrected and 2-bit errors to be detected in the Packet Header
-    // See "12.3.6.12: Error Correction Code", Page 208 of BL808 Reference Manual:
-    // https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
-    const ecc: u8 = 0;
+    // Data Identifier + Word Count (3 bytes): For computing Error Correction Code (ECC)
+    const di_wc = [3]u8 { di, wcl, wch };
+
+    // Compute Error Correction Code (ECC) for Data Identifier + Word Count
+    const ecc: u8 = computeEcc(di_wc);
 
     // TODO: Checksum (CS) (2 bytes):
     // 16-bit Cyclic Redundancy Check (CRC)
@@ -123,7 +123,7 @@ fn compose_long_packet(
     const csh: u8 = @intCast(u8, cs >> 8);
 
     // Packet Header (4 bytes) = Data Identifier + Word Count + Error Correction COde
-    const header = [4]u8 { di, wcl, wch, ecc };
+    const header = [4]u8 { di_wc[0], di_wc[1], di_wc[2], ecc };
 
     // Packet Payload:
     // Data (0 to 65,541 bytes):
@@ -144,6 +144,49 @@ fn compose_long_packet(
 
     // Return the packet
     return pkt[0..pktlen];
+}
+
+/// Compute the Error Correction Code (ECC) (1 byte):
+/// Allow single-bit errors to be corrected and 2-bit errors to be detected in the Packet Header
+/// See "12.3.6.12: Error Correction Code", Page 208 of BL808 Reference Manual:
+/// https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
+fn computeEcc(
+    di_wc: [3]u8  // Data Identifier + Word Count (3 bytes)
+) u8 {
+    // Combine DI and WC into a 24-bit word
+    var di_wc_word: u32 = 
+        di_wc[0] 
+        | (@intCast(u32, di_wc[1]) << 8)
+        | (@intCast(u32, di_wc[2]) << 16);
+
+    // Extract the 24 bits from the word
+    var d = std.mem.zeroes([24]u1);
+    var i: usize = 0;
+    while (i < 24) : (i += 1) {
+        d[i] = @intCast(u1, di_wc_word & 1);
+        di_wc_word >>= 1;
+    }
+
+    // Compute the ECC bits
+    var ecc = std.mem.zeroes([8]u1);
+    ecc[7] = 0;
+    ecc[6] = 0;
+    ecc[5] = d[10] ^ d[11] ^ d[12] ^ d[13] ^ d[14] ^ d[15] ^ d[16] ^ d[17] ^ d[18] ^ d[19] ^ d[21] ^ d[22] ^ d[23];
+    ecc[4] = d[4]  ^ d[5]  ^ d[6]  ^ d[7]  ^ d[8]  ^ d[9]  ^ d[16] ^ d[17] ^ d[18] ^ d[19] ^ d[20] ^ d[22] ^ d[23];
+    ecc[3] = d[1]  ^ d[2]  ^ d[3]  ^ d[7]  ^ d[8]  ^ d[9]  ^ d[13] ^ d[14] ^ d[15] ^ d[19] ^ d[20] ^ d[21] ^ d[23];
+    ecc[2] = d[0]  ^ d[2]  ^ d[3]  ^ d[5]  ^ d[6]  ^ d[9]  ^ d[11] ^ d[12] ^ d[15] ^ d[18] ^ d[20] ^ d[21] ^ d[22];
+    ecc[1] = d[0]  ^ d[1]  ^ d[3]  ^ d[4]  ^ d[6]  ^ d[8]  ^ d[10] ^ d[12] ^ d[14] ^ d[17] ^ d[20] ^ d[21] ^ d[22] ^ d[23];
+    ecc[0] = d[0]  ^ d[1]  ^ d[2]  ^ d[4]  ^ d[5]  ^ d[7]  ^ d[10] ^ d[11] ^ d[13] ^ d[16] ^ d[20] ^ d[21] ^ d[22] ^ d[23];
+
+    // Merge the ECC bits
+    return @intCast(u8, ecc[0])
+        | (@intCast(u8, ecc[1]) << 1)
+        | (@intCast(u8, ecc[2]) << 2)
+        | (@intCast(u8, ecc[3]) << 3)
+        | (@intCast(u8, ecc[4]) << 4)
+        | (@intCast(u8, ecc[5]) << 5)
+        | (@intCast(u8, ecc[6]) << 6)
+        | (@intCast(u8, ecc[7]) << 7);
 }
 
 /// MIPI DSI Device
