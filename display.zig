@@ -52,11 +52,14 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     buf: [*c]u8,  // Transmit Buffer
     len: usize    // Length of Buffer
 ) isize {  // On Success: Return number of written bytes. On Error: Return negative error code
-    _ = dev; _ = buf;
+    _ = dev;
     debug("mipi_dsi_dcs_write: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
+    assert(cmd == MIPI_DSI_DCS_LONG_WRITE);
 
     // Compose Long Packet
     const pkt = compose_long_packet(channel, cmd, buf, len);
+
+    // TODO: Dump the packet
     _ = pkt;
 
     // TODO
