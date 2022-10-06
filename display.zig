@@ -58,14 +58,11 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     assert(cmd == MIPI_DSI_DCS_LONG_WRITE);  // Only DCS Long Write supported
 
     // Compose Long Packet
-    const pkt = composeLongPacket(channel, cmd, buf, len);
+    var pkt_buf = std.mem.zeroes([128]u8);
+    const pkt = composeLongPacket(&pkt_buf, channel, cmd, buf, len);
 
     // Dump the packet
     debug("packet: len={}", .{ pkt.len });
-    var i: usize = 0;
-    while (i < pkt.len) : (i += 1) {
-        debug("pkt[{}]=0x{x}", .{ i, pkt[0] });
-    }    
     dump_buffer(&pkt[0], pkt.len);
 
     // TODO
@@ -90,11 +87,12 @@ pub export fn nuttx_mipi_dsi_dcs_write(
 
 // Compose MIPI DSI Long Packet. See https://lupyuen.github.io/articles/dsi#long-packet-for-mipi-dsi
 fn composeLongPacket(
+    pkt: []u8,    // Buffer for the Long Packet
     channel: u8,  // Virtual Channel ID
     cmd: u8,      // DCS Command
     buf: [*c]const u8,  // Transmit Buffer
     len: usize          // Buffer Length
-) []const u8 {
+) []const u8 {          // Returns the Long Packet
     _ = buf;
     debug("composeLongPacket: channel={}, cmd=0x{x}, len={}", .{ channel, cmd, len });
     // Data Identifier (DI) (1 byte):
@@ -143,7 +141,6 @@ fn composeLongPacket(
     // - Payload (`len` bytes)
     // - Packet Footer (2 bytes)
     const pktlen = header.len + len + footer.len;
-    var pkt = std.mem.zeroes([128]u8);
     assert(pktlen <= pkt.len);  // Increase `pkt` size
     std.mem.copy(u8, pkt[0..header.len], &header); // 4 bytes
     std.mem.copy(u8, pkt[header.len..], payload);  // `len` bytes
@@ -151,8 +148,6 @@ fn composeLongPacket(
 
     // Return the packet
     const result = pkt[0..pktlen];
-    debug("result: len={}", .{ result.len });
-    dump_buffer(&result[0], result.len);
     return result;
 }
 
