@@ -2988,6 +2988,55 @@ nsh> null
 HELLO ZIG ON PINEPHONE!
 ```
 
+# Zig Driver for PinePhone MIPI DSI
+
+With Zig, we create a Quick Prototype of the NuttX Driver for MIPI DSI: [display.zig](display.zig)
+
+```zig
+/// Write to MIPI DSI. See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
+pub export fn nuttx_mipi_dsi_dcs_write(
+    dev: [*c]const mipi_dsi_device,  // MIPI DSI Host Device
+    channel: u8,  // Virtual Channel ID
+    cmd: u8,      // DCS Command
+    buf: [*c]u8,  // Transmit Buffer
+    len: usize    // Length of Buffer
+) isize {  // On Success: Return number of written bytes. On Error: Return negative error code
+    _ = dev; _ = buf;
+    debug("mipi_dsi_dcs_write: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
+
+    // TODO
+    // - Write the Long Packet to __DSI_CMD_TX_REG__ 
+    //   (DSI Low Power Transmit Package Register) at Offset `0x300` to `0x3FC`.
+    //
+    // - Set the __Packet Length (TX_Size)__ in Bits 0 to 7 of 
+    //   __DSI_CMD_CTL_REG__ (DSI Low Power Control Register) at Offset `0x200`.
+    //
+    // - Set __DSI_INST_JUMP_SEL_REG__ (Offset `0x48`, undocumented) 
+    //   to begin the Low Power Transmission.
+    //
+    // - Disable DSI Processing: Set __Instru_En__ to 0.
+    // - Then Enable DSI Processing: Set __Instru_En__ to 1.
+    //
+    // - To check whether the transmission is complete, we poll on __Instru_En__.
+    //
+    // __Instru_En__ is Bit 0 of __DSI_BASIC_CTL0_REG__ 
+    // (DSI Configuration Register 0) at Offset `0x10`.
+
+    std.debug.panic("nuttx_mipi_dsi_dcs_write not implemented", .{});
+    return 0;
+}
+```
+
+This MIPI DSI Interface is compatible with Zephyr MIPI DSI...
+
+-   [zephyr/drivers/mipi_dsi.h](https://github.com/zephyrproject-rtos/zephyr/blob/main/include/zephyr/drivers/mipi_dsi.h)
+
+_Why Zig?_
+
+We're doing Quick Prototyping, so it's great to have Zig catch any Runtime Problems caused by our Bad Coding.
+
+Also `comptime` Compile-Time Expressions in Zig will be helpful when we initialise the ST7703 LCD Controller. [(See this)](https://lupyuen.github.io/articles/dsi#initialise-lcd-controller)
+
 # GIC Register Dump
 
 Below is the dump of PinePhone's registers for [Arm Generic Interrupt Controller version 2](https://developer.arm.com/documentation/ihi0048/latest/)...
