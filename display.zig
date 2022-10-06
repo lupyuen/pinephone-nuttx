@@ -94,8 +94,8 @@ fn composeLongPacket(
     _ = buf;
     debug("composeLongPacket: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
     // Data Identifier (DI) (1 byte):
-    // Virtual Channel Identifier (Bits 6 to 7)
-    // Data Type (Bits 0 to 5)
+    // - Virtual Channel Identifier (Bits 6 to 7)
+    // - Data Type (Bits 0 to 5)
     // (Virtual Channel should be 0, I think)
     assert(cmd < (1 << 6));
     const vc: u8 = 0;
@@ -103,7 +103,7 @@ fn composeLongPacket(
     const di: u8 = (vc << 6) | dt;
 
     // Word Count (WC) (2 bytes)：
-    // Number of bytes in the Packet Payload
+    // - Number of bytes in the Packet Payload
     const wc: u16 = @intCast(u16, len);
     const wcl: u8 = @intCast(u8, wc & 0xff);
     const wch: u8 = @intCast(u8, wc >> 8);
@@ -115,23 +115,25 @@ fn composeLongPacket(
     const ecc: u8 = computeEcc(di_wc);
 
     // TODO: Checksum (CS) (2 bytes):
-    // 16-bit Cyclic Redundancy Check (CRC)
+    // - 16-bit Cyclic Redundancy Check (CRC)
     // See "12.3.6.13: Packet Footer", Page 210 of BL808 Reference Manual:
     // https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
     const cs: u16 = 0;
     const csl: u8 = @intCast(u8, cs & 0xff);
     const csh: u8 = @intCast(u8, cs >> 8);
 
-    // Packet Header (4 bytes) = Data Identifier + Word Count + Error Correction COde
+    // Packet Header (4 bytes):
+    // - Data Identifier + Word Count + Error Correction COde
     const header = [4]u8 { di_wc[0], di_wc[1], di_wc[2], ecc };
 
     // Packet Payload:
-    // Data (0 to 65,541 bytes):
+    // - Data (0 to 65,541 bytes):
     // Number of data bytes should match the Word Count (WC)
     assert(len <= 65_541);
     const payload = buf[0..len];
 
-    // Packet Footer (2 bytes) = Checksum (CS)
+    // Packet Footer (2 bytes)
+    // - Checksum (CS)
     const footer = [2]u8 { csl, csh };
 
     // Packet = Packet Header + Payload + Packet Footer
