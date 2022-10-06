@@ -42,7 +42,7 @@ const c = @cImport({
 });
 
 /// MIPI DSI Processor-to-Peripheral transaction types
-const MIPI_DSI_GENERIC_LONG_WRITE = 0x29;
+const MIPI_DSI_DCS_LONG_WRITE = 0x39;
 
 /// Write to MIPI DSI. See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
 pub export fn nuttx_mipi_dsi_dcs_write(
