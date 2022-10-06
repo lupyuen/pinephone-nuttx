@@ -35,6 +35,7 @@ const c = @cImport({
     @cInclude("arch/types.h");
     @cInclude("../../nuttx/include/limits.h");
     @cInclude("nuttx/config.h");
+    @cInclude("nuttx/crc16.h");
     @cInclude("inttypes.h");
     @cInclude("unistd.h");
     @cInclude("stdlib.h");
@@ -132,10 +133,8 @@ fn composeLongPacket(
     std.mem.copy(u8, pkt[header.len..], payload);  // `len` bytes
     // Packet Footer comes later, after we have computed CRC...
 
-    // TODO: Checksum (CS) (2 bytes):
+    // Checksum (CS) (2 bytes):
     // - 16-bit Cyclic Redundancy Check (CRC)
-    // See "12.3.6.13: Packet Footer", Page 210 of BL808 Reference Manual:
-    // https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
     const cs: u16 = computeCrc(pkt[0..(pktlen - 2)]);
     const csl: u8 = @intCast(u8, cs & 0xff);
     const csh: u8 = @intCast(u8, cs >> 8);
@@ -194,12 +193,18 @@ fn computeEcc(
         | (@intCast(u8, ecc[7]) << 7);
 }
 
+/// Compute 16-bit Cyclic Redundancy Check (CRC).
+/// See "12.3.6.13: Packet Footer", Page 210 of BL808 Reference Manual:
+/// https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
 fn computeCrc(
     data: []u8
-) u8 {
-    _ = data;
-    return 0;
+) u16 {
+    // Use NuttX CRC16
+    return c.crc16(data.ptr, data.len);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+//  MIPI DSI Types
 
 /// MIPI DSI Device
 pub const mipi_dsi_device = extern struct {
@@ -250,6 +255,9 @@ pub const mipi_dsi_timings = extern struct {
     /// Vertical sync length
     vsync: u32,
 };
+
+///////////////////////////////////////////////////////////////////////////////
+//  Test Functions
 
 /// Main Function for Null App
 pub export fn null_main(_argc: c_int, _argv: [*]const [*]const u8) c_int {
