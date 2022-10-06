@@ -56,6 +56,8 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     debug("mipi_dsi_dcs_write: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
 
     // TODO
+    // - Compose Long Packet
+    //
     // - Write the Long Packet to DSI_CMD_TX_REG 
     //   (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC.
     //
@@ -78,29 +80,38 @@ pub export fn nuttx_mipi_dsi_dcs_write(
 }
 
 // TODO: Compose Long Packet: https://lupyuen.github.io/articles/dsi#long-packet-for-mipi-dsi
-// Packet Header (4 bytes):
-// -   Data Identifier (DI) (1 byte):
-//     Virtual Channel Identifier (Bits 6 to 7)
-//     Data Type (Bits 0 to 5)
-//     (Virtual Channel should be 0, I think)
-//
-// -   Word Count (WC) (2 bytes)：
-//     Number of bytes in the Packet Payload
-//
-// -   Error Correction Code (ECC) (1 byte):
-//     Allow single-bit errors to be corrected and 2-bit errors to be detected in the Packet Header
-//     See "12.3.6.12: Error Correction Code", Page 208:
-//     https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
-//
-// Packet Payload:
-// -   Data (0 to 65,541 bytes):
-//     Number of data bytes should match the Word Count (WC)
-//
-// Packet Footer:
-// -   Checksum (CS) (2 bytes):
-//     16-bit Cyclic Redundancy Check (CRC)
-//     See "12.3.6.13: Packet Footer", Page 210:
-//     https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
+fn compose_long_packet(
+    channel: u8,  // Virtual Channel ID
+    cmd: u8,      // DCS Command
+    buf: [*c]u8,  // Transmit Buffer
+    len: usize    // Length of Buffer
+) []u8 {
+    _ = buf;
+    debug("compose_long_packet: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
+    // Packet Header (4 bytes):
+    // -   Data Identifier (DI) (1 byte):
+    //     Virtual Channel Identifier (Bits 6 to 7)
+    //     Data Type (Bits 0 to 5)
+    //     (Virtual Channel should be 0, I think)
+    //
+    // -   Word Count (WC) (2 bytes)：
+    //     Number of bytes in the Packet Payload
+    //
+    // -   Error Correction Code (ECC) (1 byte):
+    //     Allow single-bit errors to be corrected and 2-bit errors to be detected in the Packet Header
+    //     See "12.3.6.12: Error Correction Code", Page 208:
+    //     https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
+    //
+    // Packet Payload:
+    // -   Data (0 to 65,541 bytes):
+    //     Number of data bytes should match the Word Count (WC)
+    //
+    // Packet Footer:
+    // -   Checksum (CS) (2 bytes):
+    //     16-bit Cyclic Redundancy Check (CRC)
+    //     See "12.3.6.13: Packet Footer", Page 210:
+    //     https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
+}
 
 /// MIPI DSI Device
 pub const mipi_dsi_device = extern struct {
@@ -163,7 +174,7 @@ pub export fn null_main(_argc: c_int, _argv: [*]const [*]const u8) c_int {
 /// Zig Test Function
 pub export fn test_zig() void {
     _ = printf("HELLO ZIG ON PINEPHONE!\n");
-    _ = nuttx_mipi_dsi_dcs_write(null, 0, MIPI_DSI_GENERIC_LONG_WRITE, null, 0);
+    _ = nuttx_mipi_dsi_dcs_write(null, 0, MIPI_DSI_DCS_LONG_WRITE, null, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
