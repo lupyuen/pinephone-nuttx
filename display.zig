@@ -55,9 +55,11 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     _ = dev; _ = buf;
     debug("mipi_dsi_dcs_write: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
 
+    // Compose Long Packet
+    const pkt = compose_long_packet(channel, cmd, buf, len);
+    _ = pkt;
+
     // TODO
-    // - Compose Long Packet
-    //
     // - Write the Long Packet to DSI_CMD_TX_REG 
     //   (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC.
     //
@@ -111,6 +113,9 @@ fn compose_long_packet(
     //     16-bit Cyclic Redundancy Check (CRC)
     //     See "12.3.6.13: Packet Footer", Page 210:
     //     https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
+
+    std.debug.panic("compose_long_packet not implemented", .{});
+    return [_]u8 {};
 }
 
 /// MIPI DSI Device
