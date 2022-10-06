@@ -1,4 +1,4 @@
-![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/pio-title.webp)
+![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/de-title.jpg)
 
 [__Watch the Demo on YouTube__](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
 
