@@ -3039,6 +3039,20 @@ And yet Zig is so similar to C that we can test the Zig Driver with the rest of 
 
 Also `comptime` Compile-Time Expressions in Zig will be helpful when we initialise the ST7703 LCD Controller. [(See this)](https://lupyuen.github.io/articles/dsi#initialise-lcd-controller)
 
+# Compose MIPI DSI Long Packet in Zig
+
+To initialise PinePhone's ST7703 LCD Controller, our PinePhone Display Driver shall send MIPI DSI Long Packets to ST7703...
+
+-   ["Long Packet for MIPI DSI"](https://lupyuen.github.io/articles/dsi#long-packet-for-mipi-dsi)
+
+This is how our Zig Driver composes a MIPI DSI Long Packet...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/442a44aaa1a8c13efb8181d6789aa63d7125c972/display.zig#L88-L152
+
+This code was tested in QEMU for Arm64 with GIC Version 2...
+
+[lupyuen/incubator-nuttx/tree/gicv2](https://github.com/lupyuen/incubator-nuttx/tree/gicv2)
+
 # GIC Register Dump
 
 Below is the dump of PinePhone's registers for [Arm Generic Interrupt Controller version 2](https://developer.arm.com/documentation/ihi0048/latest/)...
