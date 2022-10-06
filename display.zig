@@ -91,28 +91,34 @@ fn compose_long_packet(
     _ = buf;
     debug("compose_long_packet: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
     // Packet Header (4 bytes):
+    // TODO: 
     // -   Data Identifier (DI) (1 byte):
     //     Virtual Channel Identifier (Bits 6 to 7)
     //     Data Type (Bits 0 to 5)
     //     (Virtual Channel should be 0, I think)
-    //
+    const dc = 0;
+
     // -   Word Count (WC) (2 bytes)：
     //     Number of bytes in the Packet Payload
-    //
+    const wc = @intCast(u16, len);
+    const wcl = @intCast(u8, wc & 0xff);
+    const wch = @intCast(u8, wc >> 8);
+
+    // TODO: 
     // -   Error Correction Code (ECC) (1 byte):
     //     Allow single-bit errors to be corrected and 2-bit errors to be detected in the Packet Header
     //     See "12.3.6.12: Error Correction Code", Page 208:
     //     https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
-    const header = [4]u8 { 0, 0, 0, 0 };
+    const ecc = 0;
+    const header = [4]u8 { dc, wcl, wch, ecc };
     _ = header;
 
     // Packet Payload:
     // -   Data (0 to 65,541 bytes):
     //     Number of data bytes should match the Word Count (WC)
-    const payload = [0]u8 { };  // TODO: Set to buf and len
-    _ = payload;
+    assert(len <= 65_541);
 
-    // Packet Footer:
+    // TODO: Packet Footer:
     // -   Checksum (CS) (2 bytes):
     //     16-bit Cyclic Redundancy Check (CRC)
     //     See "12.3.6.13: Packet Footer", Page 210:
@@ -120,8 +126,16 @@ fn compose_long_packet(
     const footer = [2]u8 { 0, 0 };
     _ = footer;
 
-    std.debug.panic("compose_long_packet not implemented", .{});
-    return [_]u8 {};
+    // TODO: Concatenate the header, payload and footer
+    var pkt = std.mem.zeroes([1024]u8);
+    assert(pkt.len >= header.len + len + footer.len);  // Increase pkt size
+    std.mem.copy(u8, pkt[0..header.len], &header);
+    ////std.mem.copy(u8, pkt[header.len..header.len + len], buf);
+    std.mem.copy(u8, pkt[header.len + len..], &footer);
+    const pktlen = header.len + len + footer.len;
+
+    // Return the packet
+    return pkt[0..pktlen];
 }
 
 /// MIPI DSI Device
