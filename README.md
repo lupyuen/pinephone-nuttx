@@ -3379,7 +3379,7 @@ NOPBIarm_gic_du
 PinePhone:
 
 ```text
-.DRAM: 2048 MiB
+DRAM: 2048 MiB
 Trying to boot from MMC1
 NOTICE:  BL31: v2.2(release):v2.2-904-gf9ea3a629
 NOTICE:  BL31: Built : 15:32:12, Apr  9 2020
@@ -3405,8 +3405,8 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-203948 bytes read in 11 ms (17.7 MiB/s)
-Uncompressed size: 4636672 = 0x46C000
+204599 bytes read in 13 ms (15 MiB/s)
+Uncompressed size: 4640768 = 0x46D000
 36162 bytes read in 4 ms (8.6 MiB/s)
 1078500 bytes read in 51 ms (20.2 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
@@ -3422,20 +3422,20 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL1
 - Boot to C runtime for OS Initialize
 nx_start: Entry
-up_allocate_heap: heap_start=0x0x404ec000, heap_size=0x7b14000
+up_allocate_heap: heap_start=0x0x404ed000, heap_size=0x7b13000
 arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
 arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
 up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-up_timer_initialize: _vector_table=0x400ce000
-up_timer_initialize: Before writing: vbar_el1=0x4024e000
-up_timer_initialize: After writing: vbar_el1=0x400ce000
+up_timer_initialize: _vector_table=0x400cf000
+up_timer_initialize: Before writing: vbar_el1=0x4024f000
+up_timer_initialize: After writing: vbar_el1=0x400cf000
 uart_register: Registering /dev/console
 uart_register: Registering /dev/ttyS0
 work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400ce000 _einit: 0x400ce000 _stext: 0x40080000 _etext: 0x400cf000
+lib_cxx_initialize: _sinit: 0x400cf000 _einit: 0x400cf000 _stext: 0x40080000 _etext: 0x400d0000
 nsh: sysinit: fopen failed: 2
 nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
 e
@@ -3445,7 +3445,7 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009cf1c file_actions=0x404f1580 attr=0x404f1588 argv=0x404f16d0
+task_spawn: name=hello entry=0x4009cf1c file_actions=0x404f2580 attr=0x404f2588 argv=0x404f26d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
@@ -3839,18 +3839,98 @@ e9 82 10 06 05 a2 0a a5
 88 02 88 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
 
-packet: len=70
-00 60 0e 40 00 00 00 00 
-a6 00 00 00 00 00 00 00 
+result: len=70
+39 40 00 25 e9 82 10 06 
+05 a2 0a a5 12 31 23 37 
+83 04 bc 27 38 0c 00 03 
+00 00 00 0c 00 03 00 00 
+00 75 75 31 88 88 88 88 
+88 88 13 88 64 64 20 88 
+88 88 88 88 88 02 88 00 
 00 00 00 00 00 00 00 00 
-48 44 08 40 00 00 00 00 
-0f 00 00 00 00 00 00 00 
-00 60 0e 40 00 00 00 00 
-67 24 57 40 00 00 00 00 
-01 00 00 00 00 00 00 00 
-10 60 0e 40 00 00 
+00 00 00 00 f2 ab 
+packet: len=70
+pkt[0]=0x39
+pkt[1]=0x0
+pkt[2]=0x0
+pkt[3]=0x0
+pkt[4]=0x0
+pkt[5]=0x0
+pkt[6]=0x0
+pkt[7]=0x0
+pkt[8]=0x0
+pkt[9]=0x0
+pkt[10]=0x0
+pkt[11]=0x0
+pkt[12]=0x0
+pkt[13]=0x0
+pkt[14]=0x0
+pkt[15]=0x0
+pkt[16]=0x0
+pkt[17]=0x0
+pkt[18]=0x0
+pkt[19]=0x0
+pkt[20]=0x0
+pkt[21]=0x0
+pkt[22]=0x0
+pkt[23]=0x0
+pkt[24]=0x0
+pkt[25]=0x0
+pkt[26]=0x0
+pkt[27]=0x0
+pkt[28]=0x0
+pkt[29]=0x0
+pkt[30]=0x0
+pkt[31]=0x0
+pkt[32]=0x0
+pkt[33]=0x0
+pkt[34]=0x0
+pkt[35]=0x0
+pkt[36]=0x0
+pkt[37]=0x0
+pkt[38]=0x0
+pkt[39]=0x0
+pkt[40]=0x0
+pkt[41]=0x0
+pkt[42]=0x0
+pkt[43]=0x0
+pkt[44]=0x0
+pkt[45]=0x0
+pkt[46]=0x0
+pkt[47]=0x0
+pkt[48]=0x0
+pkt[49]=0x0
+pkt[50]=0x0
+pkt[51]=0x0
+pkt[52]=0x0
+pkt[53]=0x0
+pkt[54]=0x0
+pkt[55]=0x0
+pkt[56]=0x0
+pkt[57]=0x0
+pkt[58]=0x0
+pkt[59]=0x0
+pkt[60]=0x0
+pkt[61]=0x0
+pkt[62]=0x0
+pkt[63]=0x0
+pkt[64]=0x0
+pkt[65]=0x0
+pkt[66]=0x0
+pkt[67]=0x0
+pkt[68]=0x0
+pkt[69]=0x0
+00 50 57 40 00 00 00 00 
+f8 ff ff ff 80 ff ff ff 
+20 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 
+50 00 00 00 00 00 00 00 
+28 00 00 00 00 00 00 00 
+20 00 00 00 00 00 00 00 
+ac 00 00 00 00 00 00 00 
+20 00 00 00 00 00 
 nsh> 
-nsh> 
+nsh>
 ```
 
 ```text

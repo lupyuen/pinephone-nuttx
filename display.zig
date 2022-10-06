@@ -62,7 +62,10 @@ pub export fn nuttx_mipi_dsi_dcs_write(
 
     // Dump the packet
     debug("packet: len={}", .{ pkt.len });
-    debug("pkt[0]={}", .{ pkt[0] });
+    var i: usize = 0;
+    while (i < pkt.len) : (i += 1) {
+        debug("pkt[{}]=0x{x}", .{ i, pkt[0] });
+    }    
     dump_buffer(&pkt[0], pkt.len);
 
     // TODO
@@ -91,7 +94,7 @@ fn composeLongPacket(
     cmd: u8,      // DCS Command
     buf: [*c]const u8,  // Transmit Buffer
     len: usize          // Buffer Length
-) []u8 {
+) []const u8 {
     _ = buf;
     debug("composeLongPacket: channel={}, cmd=0x{x}, len={}", .{ channel, cmd, len });
     // Data Identifier (DI) (1 byte):
@@ -140,14 +143,17 @@ fn composeLongPacket(
     // - Payload (`len` bytes)
     // - Packet Footer (2 bytes)
     const pktlen = header.len + len + footer.len;
-    var pkt = std.mem.zeroes([1024]u8);
+    var pkt = std.mem.zeroes([128]u8);
     assert(pktlen <= pkt.len);  // Increase `pkt` size
     std.mem.copy(u8, pkt[0..header.len], &header); // 4 bytes
     std.mem.copy(u8, pkt[header.len..], payload);  // `len` bytes
     std.mem.copy(u8, pkt[(header.len + len)..], &footer);  // 2 bytes
 
     // Return the packet
-    return pkt[0..pktlen];
+    const result = pkt[0..pktlen];
+    debug("result: len={}", .{ result.len });
+    dump_buffer(&result[0], result.len);
+    return result;
 }
 
 /// Compute the Error Correction Code (ECC) (1 byte):
@@ -410,9 +416,6 @@ extern fn dump_buffer(data: [*c]const u8, len: usize) void;
 /// We changed `[*c]const u8` to `[*:0]const u8`
 extern fn printf(format: [*:0]const u8, ...) c_int;
 extern fn puts(str: [*:0]const u8) c_int;
-
-/// LoRaWAN Event Queue
-extern var event_queue: c.struct_ble_npl_eventq;
 
 /// Aliases for Zig Standard Library
 const assert = std.debug.assert;
