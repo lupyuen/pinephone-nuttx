@@ -35,7 +35,6 @@ const c = @cImport({
     @cInclude("arch/types.h");
     @cInclude("../../nuttx/include/limits.h");
     @cInclude("nuttx/config.h");
-    @cInclude("nuttx/crc16.h");
     @cInclude("inttypes.h");
     @cInclude("unistd.h");
     @cInclude("stdlib.h");
