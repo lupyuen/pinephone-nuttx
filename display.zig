@@ -45,6 +45,12 @@ const c = @cImport({
 /// DCS Long Write. See https://lupyuen.github.io/articles/dsi#display-command-set-for-mipi-dsi
 const MIPI_DSI_DCS_LONG_WRITE = 0x39;
 
+/// DCS Short Write (Without Parameter)
+const MIPI_DSI_DCS_SHORT_WRITE = 0x05;
+
+/// DCS Short Write (With Parameter)
+const MIPI_DSI_DCS_SHORT_WRITE_PARAM = 0x15;
+
 /// Base Address of Allwinner A64 MIPI DSI Controller. See https://lupyuen.github.io/articles/dsi#a64-registers-for-mipi-dsi
 const DSI_BASE_ADDRESS = 0x01CA_0000;
 
@@ -400,7 +406,24 @@ pub export fn test_zig() void {
     );
 }
 
-// mipi_dsi_dcs_write: len=64
+// Test Case for Short Packet (Without Parameter):
+// mipi_dsi_dcs_write: short len=1
+// 11 
+// .{ 0x0300, 0x36001105 },
+// header: 36001105
+// .{ 0x0200, 0x00000003 },
+// len: 3
+
+// Test Case for Short Packet (With Parameter):
+// mipi_dsi_dcs_write: short len=2
+// bc 4e 
+// .{ 0x0300, 0x354ebc15 },
+// header: 354ebc15
+// .{ 0x0200, 0x00000003 },
+// len: 3
+
+// Test Case for Long Packet:
+// mipi_dsi_dcs_write: long len=64
 // e9 82 10 06 05 a2 0a a5 
 // 12 31 23 37 83 04 bc 27 
 // 38 0c 00 03 00 00 00 0c 
