@@ -93,7 +93,6 @@ fn composeLongPacket(
     buf: [*c]const u8,  // Transmit Buffer
     len: usize          // Buffer Length
 ) []const u8 {          // Returns the Long Packet
-    _ = buf;
     debug("composeLongPacket: channel={}, cmd=0x{x}, len={}", .{ channel, cmd, len });
     // Data Identifier (DI) (1 byte):
     // - Virtual Channel Identifier (Bits 6 to 7)
