@@ -153,7 +153,7 @@ fn composeLongPacket(
 /// Compute the Error Correction Code (ECC) (1 byte):
 /// Allow single-bit errors to be corrected and 2-bit errors to be detected in the Packet Header
 /// See "12.3.6.12: Error Correction Code", Page 208 of BL808 Reference Manual:
-/// https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
+/// https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf
 fn computeEcc(
     di_wc: [3]u8  // Data Identifier + Word Count (3 bytes)
 ) u8 {
@@ -195,7 +195,7 @@ fn computeEcc(
 
 /// Compute 16-bit Cyclic Redundancy Check (CRC).
 /// See "12.3.6.13: Packet Footer", Page 210 of BL808 Reference Manual:
-/// https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf)
+/// https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf
 fn computeCrc(
     data: []const u8
 ) u16 {
