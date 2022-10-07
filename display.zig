@@ -41,8 +41,12 @@ const c = @cImport({
     @cInclude("stdio.h");
 });
 
-/// MIPI DSI Processor-to-Peripheral transaction types
+/// MIPI DSI Processor-to-Peripheral transaction types:
+/// DCS Long Write. See https://lupyuen.github.io/articles/dsi#display-command-set-for-mipi-dsi
 const MIPI_DSI_DCS_LONG_WRITE = 0x39;
+
+/// Base Address of Allwinner A64 MIPI DSI Controller. See https://lupyuen.github.io/articles/dsi#a64-registers-for-mipi-dsi
+const DSI_BASE_ADDRESS = 0x01CA_0000;
 
 /// Write to MIPI DSI. See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
 pub export fn nuttx_mipi_dsi_dcs_write(
@@ -67,15 +71,14 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     // TODO
     // - Write the Long Packet to DSI_CMD_TX_REG 
     //   (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC.
-    // const addr = 0;
-    // const pin = 1;
-    // modifyreg32(addr, 0, (1 << pin));
-    // modifyreg32(addr, (1 << pin), 0);
+    // const DSI_CMD_TX_REG = DSI_BASE_ADDRESS + 0x300;
+
+    // Set Packet Length - 1 in Bits 0 to 7 (TX_Size) of
+    // DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200.
+    const DSI_CMD_CTL_REG = DSI_BASE_ADDRESS + 0x200;
+    modifyreg32(DSI_CMD_CTL_REG, 0xFF, @intCast(u32, pkt.len) - 1);
 
     // TODO
-    // - Set Packet Length - 1 in Bits 0 to 7 (TX_Size) of
-    //   DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200.
-    //
     // - Set DSI_INST_JUMP_SEL_REG (Offset 0x48, undocumented) 
     //   to begin the Low Power Transmission.
     //
