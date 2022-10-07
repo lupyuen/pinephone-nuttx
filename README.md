@@ -3363,7 +3363,7 @@ NOPBIarm_gic_du
 
 # TODO
 
-NuttX Zig Driver for MIPI DSI Long Packet tested OK:
+## NuttX Zig Driver for MIPI DSI Long Packet tested OK
 
 ```text
 DRAM: 2048 MiB
@@ -3833,7 +3833,7 @@ nsh>
 nsh> 
 ```
 
-Original Driver for MIPI DSI:
+## Original Driver for MIPI DSI (with logging)
 
 ```text
 DRAM: 2048 MiB
@@ -3862,7 +3862,7 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-204599 bytes read in 13 ms (15 MiB/s)
+205024 bytes read in 13 ms (15 MiB/s)
 Uncompressed size: 4640768 = 0x46D000
 36162 bytes read in 4 ms (8.6 MiB/s)
 1078500 bytes read in 51 ms (20.2 MiB/s)
@@ -3902,7 +3902,7 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009cf1c file_actions=0x404f2580 attr=0x404f2588 argv=0x404f26d0
+task_spawn: name=hello entry=0x4009cf58 file_actions=0x404f2580 attr=0x404f2588 argv=0x404f26d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
@@ -3954,7 +3954,7 @@ display_malloc: size=2330
 };
 
 struct reg_inst dsi_panel_init_seq[] = {
-mipi_dsi_dcs_write: len=4
+mipi_dsi_dcs_write: long len=4
 b9 f1 12 83 
 .{ 0x0300, 0x2c000439 },
 header: 2c000439
@@ -3966,7 +3966,7 @@ payload[1]: 00005d84
 .{ 0x0200, 0x00000009 },
 len: 9
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=28
+mipi_dsi_dcs_write: long len=28
 ba 33 81 05 f9 0e 0e 20 
 00 00 00 00 00 00 00 44 
 25 00 91 0a 00 00 02 4f 
@@ -3993,7 +3993,7 @@ payload[7]: 0000e22c
 .{ 0x0200, 0x00000021 },
 len: 33
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=5
+mipi_dsi_dcs_write: long len=5
 b8 25 22 20 03 
 .{ 0x0300, 0x36000539 },
 header: 36000539
@@ -4005,7 +4005,7 @@ payload[1]: 00720303
 .{ 0x0200, 0x0000000a },
 len: 10
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=11
+mipi_dsi_dcs_write: long len=11
 b3 10 10 05 05 03 ff 00 
 00 00 00 
 .{ 0x0300, 0x2c000b39 },
@@ -4022,7 +4022,7 @@ payload[3]: 000000bc
 .{ 0x0200, 0x00000010 },
 len: 16
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=10
+mipi_dsi_dcs_write: long len=10
 c0 73 73 50 50 00 c0 08 
 70 00 
 .{ 0x0300, 0x36000a39 },
@@ -4037,16 +4037,28 @@ payload[2]: 6a1b0070
 .{ 0x0200, 0x0000000f },
 len: 15
 .{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: short len=2
+bc 4e 
 .{ 0x0300, 0x354ebc15 },
+header: 354ebc15
 .{ 0x0200, 0x00000003 },
+len: 3
 .{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: short len=2
+cc 0b 
 .{ 0x0300, 0x220bcc15 },
+header: 220bcc15
 .{ 0x0200, 0x00000003 },
+len: 3
 .{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: short len=2
+b4 80 
 .{ 0x0300, 0x2280b415 },
+header: 2280b415
 .{ 0x0200, 0x00000003 },
+len: 3
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=4
+mipi_dsi_dcs_write: long len=4
 b2 f0 12 f0 
 .{ 0x0300, 0x2c000439 },
 header: 2c000439
@@ -4058,7 +4070,7 @@ payload[1]: 00008651
 .{ 0x0200, 0x00000009 },
 len: 9
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=15
+mipi_dsi_dcs_write: long len=15
 e3 00 00 0b 0b 10 10 00 
 00 00 00 ff 00 c0 10 
 .{ 0x0300, 0x0f000f39 },
@@ -4077,7 +4089,7 @@ payload[4]: 0000000f
 .{ 0x0200, 0x00000014 },
 len: 20
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=6
+mipi_dsi_dcs_write: long len=6
 c6 01 00 ff ff 00 
 .{ 0x0300, 0x30000639 },
 header: 30000639
@@ -4089,7 +4101,7 @@ payload[1]: 258e00ff
 .{ 0x0200, 0x0000000b },
 len: 11
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=13
+mipi_dsi_dcs_write: long len=13
 c1 74 00 32 32 77 f1 ff 
 ff cc cc 77 77 
 .{ 0x0300, 0x13000d39 },
@@ -4106,7 +4118,7 @@ payload[3]: 00e46977
 .{ 0x0200, 0x00000012 },
 len: 18
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=3
+mipi_dsi_dcs_write: long len=3
 b5 07 07 
 .{ 0x0300, 0x09000339 },
 header: 09000339
@@ -4118,7 +4130,7 @@ payload[1]: 000000b3
 .{ 0x0200, 0x00000008 },
 len: 8
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=3
+mipi_dsi_dcs_write: long len=3
 b6 2c 2c 
 .{ 0x0300, 0x09000339 },
 header: 09000339
@@ -4130,7 +4142,7 @@ payload[1]: 00000004
 .{ 0x0200, 0x00000008 },
 len: 8
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=4
+mipi_dsi_dcs_write: long len=4
 bf 02 11 00 
 .{ 0x0300, 0x2c000439 },
 header: 2c000439
@@ -4142,7 +4154,7 @@ payload[1]: 0000e9b5
 .{ 0x0200, 0x00000009 },
 len: 9
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=64
+mipi_dsi_dcs_write: long len=64
 e9 82 10 06 05 a2 0a a5 
 12 31 23 37 83 04 bc 27 
 38 0c 00 03 00 00 00 0c 
@@ -4192,7 +4204,7 @@ payload[16]: 00000365
 .{ 0x0200, 0x00000045 },
 len: 69
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=62
+mipi_dsi_dcs_write: long len=62
 ea 02 21 00 00 00 00 00 
 00 00 00 00 00 02 46 02 
 88 88 88 88 88 88 64 88 
@@ -4239,7 +4251,7 @@ payload[15]: 1b240000
 .{ 0x0200, 0x00000043 },
 len: 67
 .{ MAGIC_COMMIT, 0 },
-mipi_dsi_dcs_write: len=35
+mipi_dsi_dcs_write: long len=35
 e0 00 09 0d 23 27 3c 41 
 35 07 0d 0e 12 13 10 12 
 12 18 00 09 0d 23 27 3c 
@@ -4271,11 +4283,19 @@ payload[9]: 000000bf
 .{ 0x0200, 0x00000028 },
 len: 40
 .{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: short len=1
+11 
 .{ 0x0300, 0x36001105 },
+header: 36001105
 .{ 0x0200, 0x00000003 },
+len: 3
 .{ MAGIC_COMMIT, 0 },
+mipi_dsi_dcs_write: short len=1
+29 
 .{ 0x0300, 0x1c002905 },
+header: 1c002905
 .{ 0x0200, 0x00000003 },
+len: 3
 .{ MAGIC_COMMIT, 0 },
 };
 .{ 0x0048, 0x00000f02 },
@@ -4326,7 +4346,10 @@ modifyreg32: addr=0x340, val=0x00000000
 modifyreg32: addr=0x344, val=0x00000365
 modifyreg32: addr=0x200, val=0x00000045
 nsh> 
+nsh> 
 ```
+
+## Original Driver for MIPI DSI (without logging)
 
 ```text
 nsh> [Khello
@@ -4546,6 +4569,8 @@ dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000
 [8C{ MAGIC_COMMIT, 0 },
 nsh> [K
 ```
+
+## Testing Zig on PinePhone
 
 ```text
 DRAM: 2048 MiB
