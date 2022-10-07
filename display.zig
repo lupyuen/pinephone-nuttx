@@ -68,10 +68,32 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     debug("packet: len={}", .{ pkt.len });
     dump_buffer(&pkt[0], pkt.len);
 
-    // TODO
-    // - Write the Long Packet to DSI_CMD_TX_REG 
-    //   (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC.
-    // const DSI_CMD_TX_REG = DSI_BASE_ADDRESS + 0x300;
+    // Write the Long Packet to DSI_CMD_TX_REG 
+    // (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC.
+    const DSI_CMD_TX_REG = DSI_BASE_ADDRESS + 0x300;
+    var addr: u64 = DSI_CMD_TX_REG;
+    var i: usize = 0;
+    while (i < pkt.len) : (i += 4) {
+        // Fetch the next 4 bytes, fill with 0 if not available
+        const b = [4]u32 {
+            pkt[i],
+            if (i + 1 < pkt.len) pkt[i + 1] else 0,
+            if (i + 2 < pkt.len) pkt[i + 2] else 0,
+            if (i + 3 < pkt.len) pkt[i + 3] else 0,
+        };
+
+        // Merge the next 4 bytes into a 32-bit value
+        const v: u32 =
+            b[0]
+            + (b[1] << 8)
+            + (b[2] << 16)
+            + (b[3] << 24);
+
+        // Write the 32-bit value
+        assert(addr <= DSI_BASE_ADDRESS + 0x3FC);
+        modifyreg32(addr, 0xFFFF_FFFF, v);
+        addr += 4;
+    }
 
     // Set Packet Length - 1 in Bits 0 to 7 (TX_Size) of
     // DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200.
