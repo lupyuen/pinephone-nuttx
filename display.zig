@@ -291,12 +291,13 @@ fn modifyreg32(
     clearbits: u32,  // Bits to clear, like (1 << bit)
     setbits: u32     // Bit to set, like (1 << bit)
 ) void {
-  // TODO: flags = spin_lock_irqsave(NULL);
-  var regval = getreg32(addr);
-  regval &= ~clearbits;
-  regval |= setbits;
-  putreg32(regval, addr);
-  // TODO: spin_unlock_irqrestore(NULL, flags);
+    debug("modifyreg32: addr=0x{x:0>3}, val=0x{x:0>8}", .{ addr - DSI_BASE_ADDRESS, setbits & clearbits });
+    // TODO: flags = spin_lock_irqsave(NULL);
+    var regval = getreg32(addr);
+    regval &= ~clearbits;
+    regval |= setbits;
+    putreg32(regval, addr);
+    // TODO: spin_unlock_irqrestore(NULL, flags);
 }
 
 /// Get the 32-bit value at the address
@@ -445,7 +446,6 @@ pub export fn test_zig() void {
 // payload[16]: 00000365
 // .{ 0x0200, 0x00000045 },
 // len: 69
-// .{ MAGIC_COMMIT, 0 },
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Panic Handler
