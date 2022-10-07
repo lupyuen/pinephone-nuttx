@@ -3030,9 +3030,9 @@ https://github.com/lupyuen/pinephone-nuttx/blob/65c060b56680d4592eb448abdd0f0797
 
 PinePhone Logs captured from various tests...
 
-## NuttX Zig Driver for MIPI DSI Long Packet tested OK
+## Testing NuttX Zig Driver for MIPI DSI on PinePhone
 
-Testing our [NuttX Zig Driver for MIPI DSI](https://github.com/lupyuen/pinephone-nuttx#zig-driver-for-pinephone-mipi-dsi)...
+Testing our [NuttX Zig Driver for MIPI DSI](https://github.com/lupyuen/pinephone-nuttx#zig-driver-for-pinephone-mipi-dsi) on PinePhone...
 
 ```text
 DRAM: 2048 MiB
@@ -3061,8 +3061,8 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-204722 bytes read in 12 ms (16.3 MiB/s)
-Uncompressed size: 4640768 = 0x46D000
+205601 bytes read in 12 ms (16.3 MiB/s)
+Uncompressed size: 4644864 = 0x46E000
 36162 bytes read in 4 ms (8.6 MiB/s)
 1078500 bytes read in 50 ms (20.6 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
@@ -3078,20 +3078,20 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL1
 - Boot to C runtime for OS Initialize
 nx_start: Entry
-up_allocate_heap: heap_start=0x0x404ed000, heap_size=0x7b13000
+up_allocate_heap: heap_start=0x0x404ee000, heap_size=0x7b12000
 arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
 arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
 up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-up_timer_initialize: _vector_table=0x400cf000
-up_timer_initialize: Before writing: vbar_el1=0x4024f000
-up_timer_initialize: After writing: vbar_el1=0x400cf000
+up_timer_initialize: _vector_table=0x400d0000
+up_timer_initialize: Before writing: vbar_el1=0x40250000
+up_timer_initialize: After writing: vbar_el1=0x400d0000
 uart_register: Registering /dev/console
 uart_register: Registering /dev/ttyS0
 work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400cf000 _einit: 0x400cf000 _stext: 0x40080000 _etext: 0x400d0000
+lib_cxx_initialize: _sinit: 0x400d0000 _einit: 0x400d0000 _stext: 0x40080000 _etext: 0x400d1000
 nsh: sysinit: fopen failed: 2
 nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
 e
@@ -3101,7 +3101,7 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009cdac file_actions=0x404f2580 attr=0x404f2588 argv=0x404f26d0
+task_spawn: name=hello entry=0x4009cddc file_actions=0x404f3580 attr=0x404f3588 argv=0x404f36d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
@@ -3232,14 +3232,26 @@ modifyreg32: addr=0x308, val=0x08c00050
 modifyreg32: addr=0x30c, val=0x6a1b0070
 modifyreg32: addr=0x200, val=0x0000000f
 .{ MAGIC_COMMIT, 0 },
-.{ 0x0300, 0x354ebc15 },
-.{ 0x0200, 0x00000003 },
+mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
+composeShortPacket: channel=0, cmd=0x15, len=2
+packet: len=4
+15 bc 4e 35 
+modifyreg32: addr=0x300, val=0x354ebc15
+modifyreg32: addr=0x200, val=0x00000003
 .{ MAGIC_COMMIT, 0 },
-.{ 0x0300, 0x220bcc15 },
-.{ 0x0200, 0x00000003 },
+mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
+composeShortPacket: channel=0, cmd=0x15, len=2
+packet: len=4
+15 cc 0b 22 
+modifyreg32: addr=0x300, val=0x220bcc15
+modifyreg32: addr=0x200, val=0x00000003
 .{ MAGIC_COMMIT, 0 },
-.{ 0x0300, 0x2280b415 },
-.{ 0x0200, 0x00000003 },
+mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
+composeShortPacket: channel=0, cmd=0x15, len=2
+packet: len=4
+15 b4 80 22 
+modifyreg32: addr=0x300, val=0x2280b415
+modifyreg32: addr=0x200, val=0x00000003
 .{ MAGIC_COMMIT, 0 },
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
 composeLongPacket: channel=0, cmd=0x39, len=4
@@ -3444,11 +3456,19 @@ modifyreg32: addr=0x324, val=0x93181212
 modifyreg32: addr=0x328, val=0x000000bf
 modifyreg32: addr=0x200, val=0x00000028
 .{ MAGIC_COMMIT, 0 },
-.{ 0x0300, 0x36001105 },
-.{ 0x0200, 0x00000003 },
+mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
+composeShortPacket: channel=0, cmd=0x5, len=1
+packet: len=4
+05 11 00 36 
+modifyreg32: addr=0x300, val=0x36001105
+modifyreg32: addr=0x200, val=0x00000003
 .{ MAGIC_COMMIT, 0 },
-.{ 0x0300, 0x1c002905 },
-.{ 0x0200, 0x00000003 },
+mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
+composeShortPacket: channel=0, cmd=0x5, len=1
+packet: len=4
+05 29 00 1c 
+modifyreg32: addr=0x300, val=0x1c002905
+modifyreg32: addr=0x200, val=0x00000003
 .{ MAGIC_COMMIT, 0 },
 };
 .{ 0x0048, 0x00000f02 },
@@ -3457,6 +3477,18 @@ dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000
 .{ 0x0048, 0x63f07006 },
 .{ MAGIC_COMMIT, 0 },
 HELLO ZIG ON PINEPHONE!
+mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
+composeShortPacket: channel=0, cmd=0x5, len=1
+packet: len=4
+05 11 00 36 
+modifyreg32: addr=0x300, val=0x36001105
+modifyreg32: addr=0x200, val=0x00000003
+mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
+composeShortPacket: channel=0, cmd=0x15, len=2
+packet: len=4
+15 bc 4e 35 
+modifyreg32: addr=0x300, val=0x354ebc15
+modifyreg32: addr=0x200, val=0x00000003
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=64
 composeLongPacket: channel=0, cmd=0x39, len=64
 computeCrc: len=64, crc=0x365
@@ -3503,6 +3535,8 @@ nsh>
 ```
 
 ## Testing NuttX Zig Driver for MIPI DSI on QEMU
+
+Testing our [NuttX Zig Driver for MIPI DSI](https://github.com/lupyuen/pinephone-nuttx#zig-driver-for-pinephone-mipi-dsi) on PinePhone...
 
 ```text
 nsh> null
