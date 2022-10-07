@@ -67,7 +67,12 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     // TODO
     // - Write the Long Packet to DSI_CMD_TX_REG 
     //   (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC.
-    //
+    // const addr = 0;
+    // const pin = 1;
+    // modifyreg32(addr, 0, (1 << pin));
+    // modifyreg32(addr, (1 << pin), 0);
+
+    // TODO
     // - Set Packet Length - 1 in Bits 0 to 7 (TX_Size) of
     //   DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200.
     //
@@ -207,7 +212,7 @@ fn computeCrc(
 }
 
 /// Return a 16-bit CRC-CCITT of the contents of the `src` buffer.
-/// Based on nuttx/libs/libc/misc/lib_crc16.c
+/// Based on https://github.com/lupyuen/incubator-nuttx/blob/pinephone/libs/libc/misc/lib_crc16.c
 fn crc16ccitt(src: []const u8, crc16val: u16) u16 {
     var i: usize = 0;
     var v = crc16val;
@@ -253,6 +258,33 @@ const crc16ccitt_tab: [256]u16 = .{
     0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330,
     0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78,
 };
+
+/// Atomically modify the specified bits in a memory mapped register.
+/// Based on https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/common/arm_modifyreg32.c#L38-L57
+fn modifyreg32(
+    addr: u64,       // Address to modify
+    clearbits: u32,  // Bits to clear, like (1 << bit)
+    setbits: u32     // Bit to set, like (1 << bit)
+) void {
+  // TODO: flags = spin_lock_irqsave(NULL);
+  var regval = getreg32(addr);
+  regval &= ~clearbits;
+  regval |= setbits;
+  putreg32(regval, addr);
+  // TODO: spin_unlock_irqrestore(NULL, flags);
+}
+
+/// Get the 32-bit value at the address
+fn getreg32(addr: u64) u32 {
+    const ptr = @intToPtr(*const volatile u32, addr);
+    return ptr.*;
+}
+
+/// Set the 32-bit value at the address
+fn putreg32(val: u32, addr: u64) void {
+    const ptr = @intToPtr(*volatile u32, addr);
+    ptr.* = val;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //  MIPI DSI Types
