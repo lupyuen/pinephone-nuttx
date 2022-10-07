@@ -64,11 +64,26 @@ pub export fn nuttx_mipi_dsi_dcs_write(
 ) isize {  // On Success: Return number of written bytes. On Error: Return negative error code
     _ = dev;
     debug("mipi_dsi_dcs_write: channel={}, cmd=0x{x}, len={}", .{ channel, cmd, len });
-    assert(cmd == MIPI_DSI_DCS_LONG_WRITE);  // Only DCS Long Write supported
 
-    // Compose Long Packet
+    // Allocate Packet Buffer
     var pkt_buf = std.mem.zeroes([128]u8);
-    const pkt = composeLongPacket(&pkt_buf, channel, cmd, buf, len);
+
+    // Compose Short or Long Packet depending on DCS Command
+    const pkt = switch (cmd) {
+
+        // For DCS Long Write: Compose Long Packet
+        MIPI_DSI_DCS_LONG_WRITE =>
+            composeLongPacket(&pkt_buf, channel, cmd, buf, len),
+
+        // For DCS Short Write (with and without parameter):
+        // Compose Short Packet
+        MIPI_DSI_DCS_SHORT_WRITE,
+        MIPI_DSI_DCS_SHORT_WRITE_PARAM =>
+            composeShortPacket(&pkt_buf, channel, cmd, buf, len),
+
+        // DCS Command not supported
+        else => unreachable,
+    };
 
     // Dump the packet
     debug("packet: len={}", .{ pkt.len });
@@ -135,6 +150,7 @@ fn composeLongPacket(
     // - Virtual Channel Identifier (Bits 6 to 7)
     // - Data Type (Bits 0 to 5)
     // (Virtual Channel should be 0, I think)
+    assert(channel < 4);
     assert(cmd < (1 << 6));
     const vc: u8 = channel;
     const dt: u8 = cmd;
@@ -181,6 +197,63 @@ fn composeLongPacket(
     std.mem.copy(u8, pkt[0..header.len], &header); // 4 bytes
     std.mem.copy(u8, pkt[header.len..], payload);  // `len` bytes
     std.mem.copy(u8, pkt[(header.len + len)..], &footer);  // 2 bytes
+
+    // Return the packet
+    const result = pkt[0..pktlen];
+    return result;
+}
+
+// Compose MIPI DSI Short Packet. See https://lupyuen.github.io/articles/dsi#appendix-short-packet-for-mipi-dsi
+fn composeShortPacket(
+    pkt: []u8,    // Buffer for the Long Packet
+    channel: u8,  // Virtual Channel ID
+    cmd: u8,      // DCS Command
+    buf: [*c]const u8,  // Transmit Buffer
+    len: usize          // Buffer Length
+) []const u8 {          // Returns the Long Packet
+    debug("composeShortPacket: channel={}, cmd=0x{x}, len={}", .{ channel, cmd, len });
+    assert(len == 1 or len == 2);
+
+    // From BL808 Reference Manual (Page 201): https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf
+    //   A Short Packet consists of 8-bit data identification (DI),
+    //   two bytes of commands or data, and 8-bit ECC.
+    //   The length of a short packet is 4 bytes including ECC.
+    // Thus a MIPI DSI Short Packet (compared with Long Packet)...
+    // - Doesn't have Packet Payload and Packet Footer (CRC)
+    // - Instead of Word Count (WC), the Packet Header now has 2 bytes of data
+    // Everything else is the same.
+
+    // Data Identifier (DI) (1 byte):
+    // - Virtual Channel Identifier (Bits 6 to 7)
+    // - Data Type (Bits 0 to 5)
+    // (Virtual Channel should be 0, I think)
+    assert(channel < 4);
+    assert(cmd < (1 << 6));
+    const vc: u8 = channel;
+    const dt: u8 = cmd;
+    const di: u8 = (vc << 6) | dt;
+
+    // Data (2 bytes), fill with 0 if Second Byte is missing
+    const data = [2]u8 {
+        buf[0],                       // First Byte
+        if (len == 2) buf[1] else 0,  // Second Byte
+    };
+
+    // Data Identifier + Data (3 bytes): For computing Error Correction Code (ECC)
+    const di_data = [3]u8 { di, data[0], data[1] };
+
+    // Compute Error Correction Code (ECC) for Data Identifier + Word Count
+    const ecc: u8 = computeEcc(di_data);
+
+    // Packet Header (4 bytes):
+    // - Data Identifier + Word Count + Error Correction COde
+    const header = [4]u8 { di_data[0], di_data[1], di_data[2], ecc };
+
+    // Packet:
+    // - Packet Header (4 bytes)
+    const pktlen = header.len;
+    assert(pktlen <= pkt.len);  // Increase `pkt` size
+    std.mem.copy(u8, pkt[0..header.len], &header); // 4 bytes
 
     // Return the packet
     const result = pkt[0..pktlen];
@@ -387,7 +460,33 @@ pub export fn null_main(_argc: c_int, _argv: [*]const [*]const u8) c_int {
 /// Zig Test Function
 pub export fn test_zig() void {
     _ = printf("HELLO ZIG ON PINEPHONE!\n");
-    const buf = [_]u8 {
+
+    // Test DCS Short Write (Without Parameter)
+    const short_write = [_]u8 {
+        0x11,
+    };
+    _ = nuttx_mipi_dsi_dcs_write(
+        null,  //  Device
+        0,     //  Virtual Channel
+        MIPI_DSI_DCS_SHORT_WRITE, // DCS Command
+        &short_write,    // Transmit Buffer
+        short_write.len  // Buffer Length
+    );
+
+    // Test DCS Short Write (With Parameter)
+    const short_write_param = [_]u8 {
+        0xbc, 0x4e,
+    };
+    _ = nuttx_mipi_dsi_dcs_write(
+        null,  //  Device
+        0,     //  Virtual Channel
+        MIPI_DSI_DCS_SHORT_WRITE_PARAM, // DCS Command
+        &short_write_param,    // Transmit Buffer
+        short_write_param.len  // Buffer Length
+    );
+
+    // Test DCS Long Write
+    const long_write = [_]u8 {
         0xe9, 0x82, 0x10, 0x06, 0x05, 0xa2, 0x0a, 0xa5,
         0x12, 0x31, 0x23, 0x37, 0x83, 0x04, 0xbc, 0x27,
         0x38, 0x0c, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0c,
@@ -401,12 +500,12 @@ pub export fn test_zig() void {
         null,  //  Device
         0,     //  Virtual Channel
         MIPI_DSI_DCS_LONG_WRITE, // DCS Command
-        &buf,    // Transmit Buffer
-        buf.len  // Buffer Length
+        &long_write,    // Transmit Buffer
+        long_write.len  // Buffer Length
     );
 }
 
-// Test Case for Short Packet (Without Parameter):
+// Test Case for DCS Short Write (Without Parameter):
 // mipi_dsi_dcs_write: short len=1
 // 11 
 // .{ 0x0300, 0x36001105 },
@@ -414,7 +513,7 @@ pub export fn test_zig() void {
 // .{ 0x0200, 0x00000003 },
 // len: 3
 
-// Test Case for Short Packet (With Parameter):
+// Test Case for DCS Short Write (With Parameter):
 // mipi_dsi_dcs_write: short len=2
 // bc 4e 
 // .{ 0x0300, 0x354ebc15 },
@@ -422,7 +521,7 @@ pub export fn test_zig() void {
 // .{ 0x0200, 0x00000003 },
 // len: 3
 
-// Test Case for Long Packet:
+// Test Case for DCS Long Write:
 // mipi_dsi_dcs_write: long len=64
 // e9 82 10 06 05 a2 0a a5 
 // 12 31 23 37 83 04 bc 27 
@@ -471,6 +570,37 @@ pub export fn test_zig() void {
 // payload[16]: 00000365
 // .{ 0x0200, 0x00000045 },
 // len: 69
+
+// Expected Result for DCS Long Write:
+// packet: len=70
+// 39 40 00 25 e9 82 10 06 
+// 05 a2 0a a5 12 31 23 37 
+// 83 04 bc 27 38 0c 00 03 
+// 00 00 00 0c 00 03 00 00 
+// 00 75 75 31 88 88 88 88 
+// 88 88 13 88 64 64 20 88 
+// 88 88 88 88 88 02 88 00 
+// 00 00 00 00 00 00 00 00 
+// 00 00 00 00 65 03 
+// modifyreg32: addr=0x300, val=0x25004039
+// modifyreg32: addr=0x304, val=0x061082e9
+// modifyreg32: addr=0x308, val=0xa50aa205
+// modifyreg32: addr=0x30c, val=0x37233112
+// modifyreg32: addr=0x310, val=0x27bc0483
+// modifyreg32: addr=0x314, val=0x03000c38
+// modifyreg32: addr=0x318, val=0x0c000000
+// modifyreg32: addr=0x31c, val=0x00000300
+// modifyreg32: addr=0x320, val=0x31757500
+// modifyreg32: addr=0x324, val=0x88888888
+// modifyreg32: addr=0x328, val=0x88138888
+// modifyreg32: addr=0x32c, val=0x88206464
+// modifyreg32: addr=0x330, val=0x88888888
+// modifyreg32: addr=0x334, val=0x00880288
+// modifyreg32: addr=0x338, val=0x00000000
+// modifyreg32: addr=0x33c, val=0x00000000
+// modifyreg32: addr=0x340, val=0x00000000
+// modifyreg32: addr=0x344, val=0x00000365
+// modifyreg32: addr=0x200, val=0x00000045
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Panic Handler
