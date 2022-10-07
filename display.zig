@@ -69,13 +69,13 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     //   (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC.
     //
     // - Set Packet Length - 1 in Bits 0 to 7 (TX_Size) of
-    //   DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset .0x200.
+    //   DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200.
     //
     // - Set DSI_INST_JUMP_SEL_REG (Offset 0x48, undocumented) 
     //   to begin the Low Power Transmission.
     //
     // - Disable DSI Processing: Set Instru_En to 0.
-    // - Then Enable DSI Processing: Set Instru_En to 1.
+    //   Then Enable DSI Processing: Set Instru_En to 1.
     //
     // - To check whether the transmission is complete, we poll on Instru_En.
     //
