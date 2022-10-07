@@ -111,7 +111,9 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     //
     // Instru_En is Bit 0 of DSI_BASIC_CTL0_REG 
     // (DSI Configuration Register 0) at Offset 0x10.
-    return 0;
+
+    // Return number of written bytes
+    return @intCast(isize, len);
 }
 
 // Compose MIPI DSI Long Packet. See https://lupyuen.github.io/articles/dsi#long-packet-for-mipi-dsi
