@@ -2992,40 +2992,7 @@ HELLO ZIG ON PINEPHONE!
 
 With Zig, we create a Quick Prototype of the NuttX Driver for MIPI DSI: [display.zig](display.zig)
 
-```zig
-/// Write to MIPI DSI. See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
-pub export fn nuttx_mipi_dsi_dcs_write(
-    dev: [*c]const mipi_dsi_device,  // MIPI DSI Host Device
-    channel: u8,  // Virtual Channel ID
-    cmd: u8,      // DCS Command
-    buf: [*c]u8,  // Transmit Buffer
-    len: usize    // Length of Buffer
-) isize {  // On Success: Return number of written bytes. On Error: Return negative error code
-    _ = dev; _ = buf;
-    debug("mipi_dsi_dcs_write: channel={}, cmd={x}, len={}", .{ channel, cmd, len });
-
-    // TODO
-    // - Write the Long Packet to DSI_CMD_TX_REG 
-    //   (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC.
-    //
-    // - Set the Packet Length (TX_Size) in Bits 0 to 7 of 
-    //   DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200.
-    //
-    // - Set DSI_INST_JUMP_SEL_REG (Offset 0x48, undocumented) 
-    //   to begin the Low Power Transmission.
-    //
-    // - Disable DSI Processing: Set Instru_En to 0.
-    // - Then Enable DSI Processing: Set Instru_En to 1.
-    //
-    // - To check whether the transmission is complete, we poll on Instru_En.
-    //
-    // Instru_En is Bit 0 of DSI_BASIC_CTL0_REG 
-    // (DSI Configuration Register 0) at Offset 0x10.
-
-    std.debug.panic("nuttx_mipi_dsi_dcs_write not implemented", .{});
-    return 0;
-}
-```
+https://github.com/lupyuen/pinephone-nuttx/blob/442a44aaa1a8c13efb8181d6789aa63d7125c972/display.zig#L48-L86
 
 This MIPI DSI Interface is compatible with Zephyr MIPI DSI...
 
