@@ -3836,6 +3836,25 @@ packet: len=70
 88 88 88 88 88 02 88 00 
 00 00 00 00 00 00 00 00 
 00 00 00 00 65 03 
+modifyreg32: addr=0x300, val=0x25004039
+modifyreg32: addr=0x304, val=0x061082e9
+modifyreg32: addr=0x308, val=0xa50aa205
+modifyreg32: addr=0x30c, val=0x37233112
+modifyreg32: addr=0x310, val=0x27bc0483
+modifyreg32: addr=0x314, val=0x03000c38
+modifyreg32: addr=0x318, val=0x0c000000
+modifyreg32: addr=0x31c, val=0x00000300
+modifyreg32: addr=0x320, val=0x31757500
+modifyreg32: addr=0x324, val=0x88888888
+modifyreg32: addr=0x328, val=0x88138888
+modifyreg32: addr=0x32c, val=0x88206464
+modifyreg32: addr=0x330, val=0x88888888
+modifyreg32: addr=0x334, val=0x00880288
+modifyreg32: addr=0x338, val=0x00000000
+modifyreg32: addr=0x33c, val=0x00000000
+modifyreg32: addr=0x340, val=0x00000000
+modifyreg32: addr=0x344, val=0x00000365
+modifyreg32: addr=0x200, val=0x00000045
 nsh> 
 ```
 
