@@ -3044,11 +3044,11 @@ The Cyclic Redundancy Check is the 2-byte Packet Footer for Long Packets.
 
 # Test PinePhone MIPI DSI Driver with QEMU
 
-The above code for composing Long Packets and Short Packets was tested in QEMU for Arm64 with GIC Version 2...
+The above Zig Code for composing Long Packets and Short Packets was tested in QEMU for Arm64 with GIC Version 2...
 
 [lupyuen/incubator-nuttx/tree/gicv2](https://github.com/lupyuen/incubator-nuttx/tree/gicv2)
 
-Here's the log...
+Here's the NuttX Log for QEMU Arm64...
 
 ```text
 NuttShell (NSH) NuttX-11.0.0-RC2
@@ -3081,9 +3081,26 @@ Result:
 
 # Test Case for PinePhone MIPI DSI Driver
 
-This is how we write a Test Case for PinePhone MIPI DSI Driver, running on QEMU Arm64...
+This is how we write a Test Case for the PinePhone MIPI DSI Driver on NuttX...
 
 https://github.com/lupyuen/pinephone-nuttx/blob/aaf0ed0fb3e8ada663fe9c64f16ea9cb1e3235ed/display.zig#L593-L639
+
+The above Test Case shows this output on QEMU Arm64...
+
+```text
+Testing Compose Long Packet...
+composeLongPacket: channel=0, cmd=0x39, len=64
+Result:
+39 40 00 25 e9 82 10 06 
+05 a2 0a a5 12 31 23 37 
+83 04 bc 27 38 0c 00 03 
+00 00 00 0c 00 03 00 00 
+00 75 75 31 88 88 88 88 
+88 88 13 88 64 64 20 88 
+88 88 88 88 88 02 88 00 
+00 00 00 00 00 00 00 00 
+00 00 00 00 65 03 
+```
 
 # Test Logs
 
