@@ -145,20 +145,11 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     const DSI_INST_ID_LPDT = 4;
     const DSI_INST_ID_LP11 = 0;
     const DSI_INST_ID_END  = 15;
-    // putreg32(
-    //     DSI_INST_ID_LPDT << (4 * DSI_INST_ID_LP11) |
-    //     DSI_INST_ID_END  << (4 * DSI_INST_ID_LPDT),
-    //     DSI_INST_JUMP_SEL_REG
-    // );
-    const v: u32 = 
+    putreg32(
         DSI_INST_ID_LPDT << (4 * DSI_INST_ID_LP11) |
-        DSI_INST_ID_END  << (4 * DSI_INST_ID_LPDT);
-    debug("nuttx_mipi_dsi_dcs_write: addr={x}, v={x}", .{ DSI_INST_JUMP_SEL_REG, v });
-
-    putreg32(v, DSI_INST_JUMP_SEL_REG);
-
-    // const v2: u32 = getreg32(DSI_INST_JUMP_SEL_REG);
-    // debug("nuttx_mipi_dsi_dcs_write: addr={x}, v2={x}", .{ DSI_INST_JUMP_SEL_REG, v2 });
+        DSI_INST_ID_END  << (4 * DSI_INST_ID_LPDT),
+        DSI_INST_JUMP_SEL_REG
+    );
 
     // Disable DSI Processing then Enable DSI Processing
     // disableDsiProcessing();
