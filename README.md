@@ -3022,7 +3022,7 @@ This code was tested in QEMU for Arm64 with GIC Version 2...
 
 # Compose MIPI DSI Short Packet in Zig
 
-TODO
+For 1 or 2 bytes of data, our PinePhone Display Driver shall send MIPI DSI Short Packets (instead of Long Packets)...
 
 -   ["Short Packet for MIPI DSI"](https://lupyuen.github.io/articles/dsi#appendix-short-packet-for-mipi-dsi)
 
@@ -3036,11 +3036,15 @@ In our PinePhone Display Driver for NuttX, this is how we compute the Error Corr
 
 https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc57871308ed1/display.zig#L263-L304
 
+The Error Correction Code is the last byte of the 4-byte Packet Header for Long Packets and Short Packets.
+
 # Compute Cyclic Redundancy Check in Zig
 
-TODO
+This is how our PinePhone Display Driver computes the 16-bit Cyclic Redundancy Check (CCITT) in Zig...
 
 https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc57871308ed1/display.zig#L306-L366
+
+The Cyclic Redundancy Check is the 2-byte Packet Footer for Long Packets.
 
 # Test Logs
 
