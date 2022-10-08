@@ -155,6 +155,7 @@ pub export fn nuttx_mipi_dsi_dcs_write(
         DSI_INST_ID_END  << (4 * DSI_INST_ID_LPDT);
     debug("nuttx_mipi_dsi_dcs_write: addr={x}, v={x}", .{ DSI_INST_JUMP_SEL_REG, v });
 
+    // putreg32 doesn't work, but dsi_write works. Why?
     // putreg32(DSI_INST_JUMP_SEL_REG, v);
     dsi_write(0x48, v); ////
 
