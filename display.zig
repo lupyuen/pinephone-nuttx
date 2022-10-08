@@ -62,7 +62,8 @@ const DSI_BASE_ADDRESS = 0x01CA_0000;
 const DSI_BASIC_CTL0_REG = DSI_BASE_ADDRESS + 0x10;
 const Instru_En = 1 << 0;
 
-/// Initialise the ST7703 LCD Controller in Xingbangda XBD599 LCD Panel
+/// Initialise the ST7703 LCD Controller in Xingbangda XBD599 LCD Panel.
+/// See https://lupyuen.github.io/articles/dsi#initialise-lcd-controller
 pub export fn nuttx_panel_init() void {
     writeDcs(&[_]u8 { 0xB9,
             0xF1, 0x12, 0x83 });

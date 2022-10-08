@@ -3110,6 +3110,8 @@ PinePhone Logs captured from various tests...
 
 Testing our [NuttX Zig Driver for MIPI DSI](https://github.com/lupyuen/pinephone-nuttx#zig-driver-for-pinephone-mipi-dsi) on PinePhone...
 
+(Screen lights up and shows a test pattern)
+
 ```text
 DRAM: 2048 MiB
 Trying to boot from MMC1
@@ -3137,9 +3139,9 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-205974 bytes read in 12 ms (16.4 MiB/s)
-Uncompressed size: 4644864 = 0x46E000
-36162 bytes read in 4 ms (8.6 MiB/s)
+207239 bytes read in 14 ms (14.1 MiB/s)
+Uncompressed size: 4648960 = 0x46F000
+36162 bytes read in 5 ms (6.9 MiB/s)
 1078500 bytes read in 51 ms (20.2 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
    Booting using the fdt blob at 0x4fa00000
@@ -3154,20 +3156,20 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL1
 - Boot to C runtime for OS Initialize
 nx_start: Entry
-up_allocate_heap: heap_start=0x0x404ee000, heap_size=0x7b12000
+up_allocate_heap: heap_start=0x0x404ef000, heap_size=0x7b11000
 arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
 arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
 up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-up_timer_initialize: _vector_table=0x400d0000
-up_timer_initialize: Before writing: vbar_el1=0x40250000
-up_timer_initialize: After writing: vbar_el1=0x400d0000
+up_timer_initialize: _vector_table=0x400d1000
+up_timer_initialize: Before writing: vbar_el1=0x40251000
+up_timer_initialize: After writing: vbar_el1=0x400d1000
 uart_register: Registering /dev/console
 uart_register: Registering /dev/ttyS0
 work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400d0000 _einit: 0x400d0000 _stext: 0x40080000 _etext: 0x400d1000
+lib_cxx_initialize: _sinit: 0x400d1000 _einit: 0x400d1000 _stext: 0x40080000 _etext: 0x400d2000
 nsh: sysinit: fopen failed: 2
 nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
 e
@@ -3177,7 +3179,7 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009ce48 file_actions=0x404f3580 attr=0x404f3588 argv=0x404f36d0
+task_spawn: name=hello entry=0x4009ce64 file_actions=0x404f4580 attr=0x404f4588 argv=0x404f46d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
@@ -3229,10 +3231,10 @@ display_malloc: size=2330
 };
 
 struct reg_inst dsi_panel_init_seq[] = {
+writeDcs: len=4
+b9 f1 12 83 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
 composeLongPacket: channel=0, cmd=0x39, len=4
-computeCrc: len=4, crc=0x5d84
-b9 f1 12 83 
 packet: len=10
 39 04 00 2c b9 f1 12 83 
 84 5d 
@@ -3242,13 +3244,13 @@ modifyreg32: addr=0x308, val=0x00005d84
 modifyreg32: addr=0x200, val=0x00000009
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
-mipi_dsi_dcs_write: channel=0, cmd=0x39, len=28
-composeLongPacket: channel=0, cmd=0x39, len=28
-computeCrc: len=28, crc=0xe22c
+writeDcs: len=28
 ba 33 81 05 f9 0e 0e 20 
 00 00 00 00 00 00 00 44 
 25 00 91 0a 00 00 02 4f 
 11 00 00 37 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=28
+composeLongPacket: channel=0, cmd=0x39, len=28
 packet: len=34
 39 1c 00 2f ba 33 81 05 
 f9 0e 0e 20 00 00 00 00 
@@ -3267,10 +3269,10 @@ modifyreg32: addr=0x320, val=0x0000e22c
 modifyreg32: addr=0x200, val=0x00000021
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=5
+b8 25 22 20 03 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=5
 composeLongPacket: channel=0, cmd=0x39, len=5
-computeCrc: len=5, crc=0x7203
-b8 25 22 20 03 
 packet: len=11
 39 05 00 36 b8 25 22 20 
 03 03 72 
@@ -3280,11 +3282,11 @@ modifyreg32: addr=0x308, val=0x00720303
 modifyreg32: addr=0x200, val=0x0000000a
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
-mipi_dsi_dcs_write: channel=0, cmd=0x39, len=11
-composeLongPacket: channel=0, cmd=0x39, len=11
-computeCrc: len=11, crc=0xbc6f
+writeDcs: len=11
 b3 10 10 05 05 03 ff 00 
 00 00 00 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=11
+composeLongPacket: channel=0, cmd=0x39, len=11
 packet: len=17
 39 0b 00 2c b3 10 10 05 
 05 03 ff 00 00 00 00 6f 
@@ -3297,11 +3299,11 @@ modifyreg32: addr=0x310, val=0x000000bc
 modifyreg32: addr=0x200, val=0x00000010
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
-mipi_dsi_dcs_write: channel=0, cmd=0x39, len=10
-composeLongPacket: channel=0, cmd=0x39, len=10
-computeCrc: len=10, crc=0x6a1b
+writeDcs: len=10
 c0 73 73 50 50 00 c0 08 
 70 00 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=10
+composeLongPacket: channel=0, cmd=0x39, len=10
 packet: len=16
 39 0a 00 36 c0 73 73 50 
 50 00 c0 08 70 00 1b 6a 
@@ -3313,6 +3315,8 @@ modifyreg32: addr=0x30c, val=0x6a1b0070
 modifyreg32: addr=0x200, val=0x0000000f
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=2
+bc 4e 
 mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
 composeShortPacket: channel=0, cmd=0x15, len=2
 packet: len=4
@@ -3321,6 +3325,8 @@ modifyreg32: addr=0x300, val=0x354ebc15
 modifyreg32: addr=0x200, val=0x00000003
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=2
+cc 0b 
 mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
 composeShortPacket: channel=0, cmd=0x15, len=2
 packet: len=4
@@ -3329,6 +3335,8 @@ modifyreg32: addr=0x300, val=0x220bcc15
 modifyreg32: addr=0x200, val=0x00000003
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=2
+b4 80 
 mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
 composeShortPacket: channel=0, cmd=0x15, len=2
 packet: len=4
@@ -3337,10 +3345,10 @@ modifyreg32: addr=0x300, val=0x2280b415
 modifyreg32: addr=0x200, val=0x00000003
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=4
+b2 f0 12 f0 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
 composeLongPacket: channel=0, cmd=0x39, len=4
-computeCrc: len=4, crc=0x8651
-b2 f0 12 f0 
 packet: len=10
 39 04 00 2c b2 f0 12 f0 
 51 86 
@@ -3350,11 +3358,11 @@ modifyreg32: addr=0x308, val=0x00008651
 modifyreg32: addr=0x200, val=0x00000009
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
-mipi_dsi_dcs_write: channel=0, cmd=0x39, len=15
-composeLongPacket: channel=0, cmd=0x39, len=15
-computeCrc: len=15, crc=0xf36
+writeDcs: len=15
 e3 00 00 0b 0b 10 10 00 
 00 00 00 ff 00 c0 10 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=15
+composeLongPacket: channel=0, cmd=0x39, len=15
 packet: len=21
 39 0f 00 0f e3 00 00 0b 
 0b 10 10 00 00 00 00 ff 
@@ -3368,10 +3376,10 @@ modifyreg32: addr=0x314, val=0x0000000f
 modifyreg32: addr=0x200, val=0x00000014
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=6
+c6 01 00 ff ff 00 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=6
 composeLongPacket: channel=0, cmd=0x39, len=6
-computeCrc: len=6, crc=0x258e
-c6 01 00 ff ff 00 
 packet: len=12
 39 06 00 30 c6 01 00 ff 
 ff 00 8e 25 
@@ -3381,11 +3389,11 @@ modifyreg32: addr=0x308, val=0x258e00ff
 modifyreg32: addr=0x200, val=0x0000000b
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
-mipi_dsi_dcs_write: channel=0, cmd=0x39, len=13
-composeLongPacket: channel=0, cmd=0x39, len=13
-computeCrc: len=13, crc=0xe469
+writeDcs: len=13
 c1 74 00 32 32 77 f1 ff 
 ff cc cc 77 77 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=13
+composeLongPacket: channel=0, cmd=0x39, len=13
 packet: len=19
 39 0d 00 13 c1 74 00 32 
 32 77 f1 ff ff cc cc 77 
@@ -3398,10 +3406,10 @@ modifyreg32: addr=0x310, val=0x00e46977
 modifyreg32: addr=0x200, val=0x00000012
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=3
+b5 07 07 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=3
 composeLongPacket: channel=0, cmd=0x39, len=3
-computeCrc: len=3, crc=0xb37b
-b5 07 07 
 packet: len=9
 39 03 00 09 b5 07 07 7b 
 b3 
@@ -3411,10 +3419,10 @@ modifyreg32: addr=0x308, val=0x000000b3
 modifyreg32: addr=0x200, val=0x00000008
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=3
+b6 2c 2c 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=3
 composeLongPacket: channel=0, cmd=0x39, len=3
-computeCrc: len=3, crc=0x455
-b6 2c 2c 
 packet: len=9
 39 03 00 09 b6 2c 2c 55 
 04 
@@ -3424,10 +3432,10 @@ modifyreg32: addr=0x308, val=0x00000004
 modifyreg32: addr=0x200, val=0x00000008
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=4
+bf 02 11 00 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
 composeLongPacket: channel=0, cmd=0x39, len=4
-computeCrc: len=4, crc=0xe9b5
-bf 02 11 00 
 packet: len=10
 39 04 00 2c bf 02 11 00 
 b5 e9 
@@ -3437,9 +3445,7 @@ modifyreg32: addr=0x308, val=0x0000e9b5
 modifyreg32: addr=0x200, val=0x00000009
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
-mipi_dsi_dcs_write: channel=0, cmd=0x39, len=64
-composeLongPacket: channel=0, cmd=0x39, len=64
-computeCrc: len=64, crc=0x365
+writeDcs: len=64
 e9 82 10 06 05 a2 0a a5 
 12 31 23 37 83 04 bc 27 
 38 0c 00 03 00 00 00 0c 
@@ -3449,6 +3455,8 @@ e9 82 10 06 05 a2 0a a5
 88 02 88 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=64
+composeLongPacket: channel=0, cmd=0x39, len=64
 packet: len=70
 39 40 00 25 e9 82 10 06 
 05 a2 0a a5 12 31 23 37 
@@ -3480,9 +3488,7 @@ modifyreg32: addr=0x344, val=0x00000365
 modifyreg32: addr=0x200, val=0x00000045
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
-mipi_dsi_dcs_write: channel=0, cmd=0x39, len=62
-composeLongPacket: channel=0, cmd=0x39, len=62
-computeCrc: len=62, crc=0x1b24
+writeDcs: len=62
 ea 02 21 00 00 00 00 00 
 00 00 00 00 00 02 46 02 
 88 88 88 88 88 88 64 88 
@@ -3491,6 +3497,8 @@ ea 02 21 00 00 00 00 00
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 03 
 0a a5 00 00 00 00 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=62
+composeLongPacket: channel=0, cmd=0x39, len=62
 packet: len=68
 39 3e 00 1a ea 02 21 00 
 00 00 00 00 00 00 00 00 
@@ -3521,14 +3529,14 @@ modifyreg32: addr=0x340, val=0x1b240000
 modifyreg32: addr=0x200, val=0x00000043
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
-mipi_dsi_dcs_write: channel=0, cmd=0x39, len=35
-composeLongPacket: channel=0, cmd=0x39, len=35
-computeCrc: len=35, crc=0xbf93
+writeDcs: len=35
 e0 00 09 0d 23 27 3c 41 
 35 07 0d 0e 12 13 10 12 
 12 18 00 09 0d 23 27 3c 
 41 35 07 0d 0e 12 13 10 
 12 12 18 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=35
+composeLongPacket: channel=0, cmd=0x39, len=35
 packet: len=41
 39 23 00 20 e0 00 09 0d 
 23 27 3c 41 35 07 0d 0e 
@@ -3550,6 +3558,8 @@ modifyreg32: addr=0x328, val=0x000000bf
 modifyreg32: addr=0x200, val=0x00000028
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=1
+11 
 mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
 composeShortPacket: channel=0, cmd=0x5, len=1
 packet: len=4
@@ -3558,6 +3568,8 @@ modifyreg32: addr=0x300, val=0x36001105
 modifyreg32: addr=0x200, val=0x00000003
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=1
+29 
 mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
 composeShortPacket: channel=0, cmd=0x5, len=1
 packet: len=4
@@ -3573,6 +3585,26 @@ dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000
 .{ 0x0048, 0x63f07006 },
 .{ MAGIC_COMMIT, 0 },
 HELLO ZIG ON PINEPHONE!
+Testing Compose Short Packet (Without Parameter)...
+composeShortPacket: channel=0, cmd=0x5, len=1
+Result:
+05 11 00 36 
+Testing Compose Short Packet (With Parameter)...
+composeShortPacket: channel=0, cmd=0x15, len=2
+Result:
+15 bc 4e 35 
+Testing Compose Long Packet...
+composeLongPacket: channel=0, cmd=0x39, len=64
+Result:
+39 40 00 25 e9 82 10 06 
+05 a2 0a a5 12 31 23 37 
+83 04 bc 27 38 0c 00 03 
+00 00 00 0c 00 03 00 00 
+00 75 75 31 88 88 88 88 
+88 88 13 88 64 64 20 88 
+88 88 88 88 88 02 88 00 
+00 00 00 00 00 00 00 00 
+00 00 00 00 65 03 
 nsh> 
 nsh> 
 ```
