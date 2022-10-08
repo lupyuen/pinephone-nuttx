@@ -3016,10 +3016,6 @@ This is how our Zig Driver composes a MIPI DSI Long Packet...
 
 https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc57871308ed1/display.zig#L140-L204
 
-This code was tested in QEMU for Arm64 with GIC Version 2...
-
-[lupyuen/incubator-nuttx/tree/gicv2](https://github.com/lupyuen/incubator-nuttx/tree/gicv2)
-
 # Compose MIPI DSI Short Packet in Zig
 
 For 1 or 2 bytes of data, our PinePhone Display Driver shall send MIPI DSI Short Packets (instead of Long Packets)...
@@ -3047,6 +3043,43 @@ https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc578
 The Cyclic Redundancy Check is the 2-byte Packet Footer for Long Packets.
 
 # Test PinePhone MIPI DSI Driver with QEMU
+
+The above code for composing Long Packets and Short Packets was tested in QEMU for Arm64 with GIC Version 2...
+
+[lupyuen/incubator-nuttx/tree/gicv2](https://github.com/lupyuen/incubator-nuttx/tree/gicv2)
+
+Here's the log...
+
+```text
+NuttShell (NSH) NuttX-11.0.0-RC2
+nsh> uname -a
+NuttX 11.0.0-RC2 c938291 Oct  7 2022 16:54:31 arm64 qemu-a53
+
+nsh> null
+HELLO ZIG ON PINEPHONE!
+Testing Compose Short Packet (Without Parameter)...
+composeShortPacket: channel=0, cmd=0x5, len=1
+Result:
+05 11 00 36 
+Testing Compose Short Packet (With Parameter)...
+composeShortPacket: channel=0, cmd=0x15, len=2
+Result:
+15 bc 4e 35 
+Testing Compose Long Packet...
+composeLongPacket: channel=0, cmd=0x39, len=64
+Result:
+39 40 00 25 e9 82 10 06 
+05 a2 0a a5 12 31 23 37 
+83 04 bc 27 38 0c 00 03 
+00 00 00 0c 00 03 00 00 
+00 75 75 31 88 88 88 88 
+88 88 13 88 64 64 20 88 
+88 88 88 88 88 02 88 00 
+00 00 00 00 00 00 00 00 
+00 00 00 00 65 03 
+```
+
+# Test Compose Packet
 
 TODO
 
