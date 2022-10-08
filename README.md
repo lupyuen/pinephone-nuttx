@@ -3079,9 +3079,11 @@ Result:
 00 00 00 00 65 03 
 ```
 
-# Test Compose Packet
+# Test Case for PinePhone MIPI DSI Driver
 
-TODO
+This is how we write a Test Case for PinePhone MIPI DSI Driver, running on QEMU Arm64...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/aaf0ed0fb3e8ada663fe9c64f16ea9cb1e3235ed/display.zig#L593-L639
 
 # Test Logs
 
