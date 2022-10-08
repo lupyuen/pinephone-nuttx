@@ -2992,7 +2992,7 @@ HELLO ZIG ON PINEPHONE!
 
 With Zig, we create a Quick Prototype of the NuttX Driver for MIPI DSI: [display.zig](display.zig)
 
-https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc57871308ed1/display.zig#L57-L138
+https://github.com/lupyuen/pinephone-nuttx/blob/4840d2f1bd42d6bc596040f5417fd8cf8a6dcfeb/display.zig#L62-L167
 
 This MIPI DSI Interface is compatible with Zephyr MIPI DSI...
 
@@ -3045,6 +3045,10 @@ This is how our PinePhone Display Driver computes the 16-bit Cyclic Redundancy C
 https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc57871308ed1/display.zig#L306-L366
 
 The Cyclic Redundancy Check is the 2-byte Packet Footer for Long Packets.
+
+# Test PinePhone MIPI DSI Driver with QEMU
+
+TODO
 
 # Test Logs
 
