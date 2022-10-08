@@ -372,8 +372,8 @@ fn computeCrc(
     // Use CRC-16-CCITT (x^16 + x^12 + x^5 + 1)
     const crc = crc16ccitt(data, 0xffff);
 
-    debug("computeCrc: len={}, crc=0x{x}", .{ data.len, crc });
-    dump_buffer(&data[0], data.len);
+    // debug("computeCrc: len={}, crc=0x{x}", .{ data.len, crc });
+    // dump_buffer(&data[0], data.len);
     return crc;
 }
 
@@ -521,47 +521,121 @@ pub export fn null_main(_argc: c_int, _argv: [*]const [*]const u8) c_int {
 pub export fn test_zig() void {
     _ = printf("HELLO ZIG ON PINEPHONE!\n");
 
-    // // Test DCS Short Write (Without Parameter)
-    // const short_write = [_]u8 {
-    //     0x11,
-    // };
+    // Allocate Packet Buffer
+    var pkt_buf = std.mem.zeroes([128]u8);
+
+    // Test Compose Short Packet (Without Parameter)
+    debug("Testing Compose Short Packet (Without Parameter)...", .{});
+    const short_pkt = [_]u8 {
+        0x11,
+    };
+    const short_pkt_result = composeShortPacket(
+        &pkt_buf,  //  Packet Buffer
+        0,         //  Virtual Channel
+        MIPI_DSI_DCS_SHORT_WRITE, // DCS Command
+        &short_pkt,    // Transmit Buffer
+        short_pkt.len  // Buffer Length
+    );
+    debug("Result:", .{});
+    dump_buffer(&short_pkt_result[0], short_pkt_result.len);
+    assert(  //  Verify result
+        std.mem.eql(
+            u8,
+            short_pkt_result,
+            &[_]u8 { 
+                0x05, 0x11, 0x00, 0x36 
+            }
+        )
+    );
+
+    // Write to MIPI DSI
     // _ = nuttx_mipi_dsi_dcs_write(
     //     null,  //  Device
     //     0,     //  Virtual Channel
     //     MIPI_DSI_DCS_SHORT_WRITE, // DCS Command
-    //     &short_write,    // Transmit Buffer
-    //     short_write.len  // Buffer Length
+    //     &short_pkt,    // Transmit Buffer
+    //     short_pkt.len  // Buffer Length
     // );
 
-    // // Test DCS Short Write (With Parameter)
-    // const short_write_param = [_]u8 {
-    //     0xbc, 0x4e,
-    // };
+    // Test Compose Short Packet (With Parameter)
+    debug("Testing Compose Short Packet (With Parameter)...", .{});
+    const short_pkt_param = [_]u8 {
+        0xbc, 0x4e,
+    };
+    const short_pkt_param_result = composeShortPacket(
+        &pkt_buf,  //  Packet Buffer
+        0,         //  Virtual Channel
+        MIPI_DSI_DCS_SHORT_WRITE_PARAM, // DCS Command
+        &short_pkt_param,    // Transmit Buffer
+        short_pkt_param.len  // Buffer Length
+    );
+    debug("Result:", .{});
+    dump_buffer(&short_pkt_param_result[0], short_pkt_param_result.len);
+    assert(  //  Verify result
+        std.mem.eql(
+            u8,
+            short_pkt_param_result,
+            &[_]u8 { 
+                0x15, 0xbc, 0x4e, 0x35 
+            }
+        )
+    );
+
+    // Write to MIPI DSI
     // _ = nuttx_mipi_dsi_dcs_write(
     //     null,  //  Device
     //     0,     //  Virtual Channel
     //     MIPI_DSI_DCS_SHORT_WRITE_PARAM, // DCS Command
-    //     &short_write_param,    // Transmit Buffer
-    //     short_write_param.len  // Buffer Length
+    //     &short_pkt_param,    // Transmit Buffer
+    //     short_pkt_param.len  // Buffer Length
     // );
 
-    // // Test DCS Long Write
-    // const long_write = [_]u8 {
-    //     0xe9, 0x82, 0x10, 0x06, 0x05, 0xa2, 0x0a, 0xa5,
-    //     0x12, 0x31, 0x23, 0x37, 0x83, 0x04, 0xbc, 0x27,
-    //     0x38, 0x0c, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0c,
-    //     0x00, 0x03, 0x00, 0x00, 0x00, 0x75, 0x75, 0x31,
-    //     0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x13, 0x88,
-    //     0x64, 0x64, 0x20, 0x88, 0x88, 0x88, 0x88, 0x88,
-    //     0x88, 0x02, 0x88, 0x00, 0x00, 0x00, 0x00, 0x00,
-    //     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    // };
+    // Test Compose Long Packet
+    debug("Testing Compose Long Packet...", .{});
+    const long_pkt = [_]u8 {
+        0xe9, 0x82, 0x10, 0x06, 0x05, 0xa2, 0x0a, 0xa5,
+        0x12, 0x31, 0x23, 0x37, 0x83, 0x04, 0xbc, 0x27,
+        0x38, 0x0c, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0c,
+        0x00, 0x03, 0x00, 0x00, 0x00, 0x75, 0x75, 0x31,
+        0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x13, 0x88,
+        0x64, 0x64, 0x20, 0x88, 0x88, 0x88, 0x88, 0x88,
+        0x88, 0x02, 0x88, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    };
+    const long_pkt_result = composeLongPacket(
+        &pkt_buf,  //  Packet Buffer
+        0,         //  Virtual Channel
+        MIPI_DSI_DCS_LONG_WRITE, // DCS Command
+        &long_pkt,    // Transmit Buffer
+        long_pkt.len  // Buffer Length
+    );
+    debug("Result:", .{});
+    dump_buffer(&long_pkt_result[0], long_pkt_result.len);
+    assert(  //  Verify result
+        std.mem.eql(
+            u8,
+            long_pkt_result,
+            &[_]u8 {
+                0x39, 0x40, 0x00, 0x25, 0xe9, 0x82, 0x10, 0x06,
+                0x05, 0xa2, 0x0a, 0xa5, 0x12, 0x31, 0x23, 0x37,
+                0x83, 0x04, 0xbc, 0x27, 0x38, 0x0c, 0x00, 0x03,
+                0x00, 0x00, 0x00, 0x0c, 0x00, 0x03, 0x00, 0x00,
+                0x00, 0x75, 0x75, 0x31, 0x88, 0x88, 0x88, 0x88,
+                0x88, 0x88, 0x13, 0x88, 0x64, 0x64, 0x20, 0x88,
+                0x88, 0x88, 0x88, 0x88, 0x88, 0x02, 0x88, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x65, 0x03,
+            }
+        )
+    );
+
+    // Write to MIPI DSI
     // _ = nuttx_mipi_dsi_dcs_write(
     //     null,  //  Device
     //     0,     //  Virtual Channel
     //     MIPI_DSI_DCS_LONG_WRITE, // DCS Command
-    //     &long_write,    // Transmit Buffer
-    //     long_write.len  // Buffer Length
+    //     &long_pkt,    // Transmit Buffer
+    //     long_pkt.len  // Buffer Length
     // );
 }
 
