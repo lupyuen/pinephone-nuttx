@@ -2992,7 +2992,7 @@ HELLO ZIG ON PINEPHONE!
 
 With Zig, we create a Quick Prototype of the NuttX Driver for MIPI DSI: [display.zig](display.zig)
 
-https://github.com/lupyuen/pinephone-nuttx/blob/65c060b56680d4592eb448abdd0f0797570c33f0/display.zig#L48-L86
+https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc57871308ed1/display.zig#L57-L138
 
 This MIPI DSI Interface is compatible with Zephyr MIPI DSI...
 
@@ -3014,17 +3014,33 @@ To initialise PinePhone's ST7703 LCD Controller, our PinePhone Display Driver fo
 
 This is how our Zig Driver composes a MIPI DSI Long Packet...
 
-https://github.com/lupyuen/pinephone-nuttx/blob/65c060b56680d4592eb448abdd0f0797570c33f0/display.zig#L88-L151
+https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc57871308ed1/display.zig#L140-L204
 
 This code was tested in QEMU for Arm64 with GIC Version 2...
 
 [lupyuen/incubator-nuttx/tree/gicv2](https://github.com/lupyuen/incubator-nuttx/tree/gicv2)
 
+# Compose MIPI DSI Short Packet in Zig
+
+TODO
+
+-   ["Short Packet for MIPI DSI"](https://lupyuen.github.io/articles/dsi#appendix-short-packet-for-mipi-dsi)
+
+This is how our Zig Driver composes a MIPI DSI Short Packet...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc57871308ed1/display.zig#L206-L261
+
 # Compute Error Correction Code in Zig
 
-In our PinePhone Display Driver for NuttX, this is how we compute the Error Correction Code for a MIPI DSI Long Packet...
+In our PinePhone Display Driver for NuttX, this is how we compute the Error Correction Code for a MIPI DSI Packet...
 
-https://github.com/lupyuen/pinephone-nuttx/blob/65c060b56680d4592eb448abdd0f0797570c33f0/display.zig#L153-L194
+https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc57871308ed1/display.zig#L263-L304
+
+# Compute Cyclic Redundancy Check in Zig
+
+TODO
+
+https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc57871308ed1/display.zig#L306-L366
 
 # Test Logs
 
