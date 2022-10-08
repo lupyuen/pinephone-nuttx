@@ -94,6 +94,19 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     debug("packet: len={}", .{ pkt.len });
     dump_buffer(&pkt[0], pkt.len);
 
+    // Set the following bits in DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200:
+    // RX_Overflow (Bit 26): Clear flag for "Receive Overflow"
+    // RX_Flag (Bit 25): Clear flag for "Receive has started"
+    // TX_Flag (Bit 9): Clear flag for "Transmit has started"
+    const DSI_CMD_CTL_REG = DSI_BASE_ADDRESS + 0x200;
+    const RX_Overflow = 1 << 26;
+    const RX_Flag     = 1 << 25;
+    const TX_Flag     = 1 << 9;
+    modifyreg32(DSI_CMD_CTL_REG, 0,
+        RX_Overflow
+        | RX_Flag
+        | TX_Flag);
+
     // Write the Long Packet to DSI_CMD_TX_REG 
     // (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC
     const DSI_CMD_TX_REG = DSI_BASE_ADDRESS + 0x300;
@@ -123,7 +136,6 @@ pub export fn nuttx_mipi_dsi_dcs_write(
 
     // Set Packet Length - 1 in Bits 0 to 7 (TX_Size) of
     // DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200
-    const DSI_CMD_CTL_REG = DSI_BASE_ADDRESS + 0x200;
     modifyreg32(DSI_CMD_CTL_REG, 0xFF, @intCast(u32, pkt.len) - 1);
 
     // Set DSI_INST_JUMP_SEL_REG (Offset 0x48, undocumented) 
