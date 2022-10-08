@@ -120,10 +120,14 @@ pub export fn nuttx_panel_init() void {
             0x18, 0x00, 0x09, 0x0D, 0x23, 0x27, 0x3C, 0x41,
             0x35, 0x07, 0x0D, 0x0E, 0x12, 0x13, 0x10, 0x12,
             0x12, 0x18 });
+
+    // TODO: Is this needed?
     writeDcs(&[_]u8 { MIPI_DCS_EXIT_SLEEP_MODE });
 
+    // TODO: Verify the delay
     _ = c.usleep(120 * 1000);
 
+    // TODO: Is this needed?
     writeDcs(&[_]u8 { MIPI_DCS_SET_DISPLAY_ON });    
 }
 
