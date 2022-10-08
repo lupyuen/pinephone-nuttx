@@ -520,48 +520,48 @@ pub export fn null_main(_argc: c_int, _argv: [*]const [*]const u8) c_int {
 pub export fn test_zig() void {
     _ = printf("HELLO ZIG ON PINEPHONE!\n");
 
-    // Test DCS Short Write (Without Parameter)
-    const short_write = [_]u8 {
-        0x11,
-    };
-    _ = nuttx_mipi_dsi_dcs_write(
-        null,  //  Device
-        0,     //  Virtual Channel
-        MIPI_DSI_DCS_SHORT_WRITE, // DCS Command
-        &short_write,    // Transmit Buffer
-        short_write.len  // Buffer Length
-    );
+    // // Test DCS Short Write (Without Parameter)
+    // const short_write = [_]u8 {
+    //     0x11,
+    // };
+    // _ = nuttx_mipi_dsi_dcs_write(
+    //     null,  //  Device
+    //     0,     //  Virtual Channel
+    //     MIPI_DSI_DCS_SHORT_WRITE, // DCS Command
+    //     &short_write,    // Transmit Buffer
+    //     short_write.len  // Buffer Length
+    // );
 
-    // Test DCS Short Write (With Parameter)
-    const short_write_param = [_]u8 {
-        0xbc, 0x4e,
-    };
-    _ = nuttx_mipi_dsi_dcs_write(
-        null,  //  Device
-        0,     //  Virtual Channel
-        MIPI_DSI_DCS_SHORT_WRITE_PARAM, // DCS Command
-        &short_write_param,    // Transmit Buffer
-        short_write_param.len  // Buffer Length
-    );
+    // // Test DCS Short Write (With Parameter)
+    // const short_write_param = [_]u8 {
+    //     0xbc, 0x4e,
+    // };
+    // _ = nuttx_mipi_dsi_dcs_write(
+    //     null,  //  Device
+    //     0,     //  Virtual Channel
+    //     MIPI_DSI_DCS_SHORT_WRITE_PARAM, // DCS Command
+    //     &short_write_param,    // Transmit Buffer
+    //     short_write_param.len  // Buffer Length
+    // );
 
-    // Test DCS Long Write
-    const long_write = [_]u8 {
-        0xe9, 0x82, 0x10, 0x06, 0x05, 0xa2, 0x0a, 0xa5,
-        0x12, 0x31, 0x23, 0x37, 0x83, 0x04, 0xbc, 0x27,
-        0x38, 0x0c, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0c,
-        0x00, 0x03, 0x00, 0x00, 0x00, 0x75, 0x75, 0x31,
-        0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x13, 0x88,
-        0x64, 0x64, 0x20, 0x88, 0x88, 0x88, 0x88, 0x88,
-        0x88, 0x02, 0x88, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    };
-    _ = nuttx_mipi_dsi_dcs_write(
-        null,  //  Device
-        0,     //  Virtual Channel
-        MIPI_DSI_DCS_LONG_WRITE, // DCS Command
-        &long_write,    // Transmit Buffer
-        long_write.len  // Buffer Length
-    );
+    // // Test DCS Long Write
+    // const long_write = [_]u8 {
+    //     0xe9, 0x82, 0x10, 0x06, 0x05, 0xa2, 0x0a, 0xa5,
+    //     0x12, 0x31, 0x23, 0x37, 0x83, 0x04, 0xbc, 0x27,
+    //     0x38, 0x0c, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0c,
+    //     0x00, 0x03, 0x00, 0x00, 0x00, 0x75, 0x75, 0x31,
+    //     0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x13, 0x88,
+    //     0x64, 0x64, 0x20, 0x88, 0x88, 0x88, 0x88, 0x88,
+    //     0x88, 0x02, 0x88, 0x00, 0x00, 0x00, 0x00, 0x00,
+    //     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    // };
+    // _ = nuttx_mipi_dsi_dcs_write(
+    //     null,  //  Device
+    //     0,     //  Virtual Channel
+    //     MIPI_DSI_DCS_LONG_WRITE, // DCS Command
+    //     &long_write,    // Transmit Buffer
+    //     long_write.len  // Buffer Length
+    // );
 }
 
 // Test Case for DCS Short Write (Without Parameter):
