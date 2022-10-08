@@ -103,10 +103,10 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     const RX_Overflow = 1 << 26;
     const RX_Flag     = 1 << 25;
     const TX_Flag     = 1 << 9;
-    putreg32(DSI_CMD_CTL_REG,
-        RX_Overflow
-        | RX_Flag
-        | TX_Flag);
+    putreg32(
+        RX_Overflow | RX_Flag | TX_Flag,
+        DSI_CMD_CTL_REG
+    );
 
     // Write the Long Packet to DSI_CMD_TX_REG 
     // (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC
@@ -146,18 +146,16 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     const DSI_INST_ID_LP11 = 0;
     const DSI_INST_ID_END  = 15;
     // putreg32(
-    //     DSI_INST_JUMP_SEL_REG,
     //     DSI_INST_ID_LPDT << (4 * DSI_INST_ID_LP11) |
-    //     DSI_INST_ID_END  << (4 * DSI_INST_ID_LPDT)
+    //     DSI_INST_ID_END  << (4 * DSI_INST_ID_LPDT),
+    //     DSI_INST_JUMP_SEL_REG
     // );
     const v: u32 = 
         DSI_INST_ID_LPDT << (4 * DSI_INST_ID_LP11) |
         DSI_INST_ID_END  << (4 * DSI_INST_ID_LPDT);
     debug("nuttx_mipi_dsi_dcs_write: addr={x}, v={x}", .{ DSI_INST_JUMP_SEL_REG, v });
 
-    // putreg32 doesn't work, but dsi_write works. Why?
-    // putreg32(DSI_INST_JUMP_SEL_REG, v);
-    dsi_write(0x48, v); ////
+    putreg32(v, DSI_INST_JUMP_SEL_REG);
 
     // const v2: u32 = getreg32(DSI_INST_JUMP_SEL_REG);
     // debug("nuttx_mipi_dsi_dcs_write: addr={x}, v2={x}", .{ DSI_INST_JUMP_SEL_REG, v2 });
@@ -176,8 +174,6 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     // Return number of written bytes
     return @intCast(isize, len);
 }
-
-extern fn dsi_write(reg: u64, val: u32) void; ////
 
 /// Wait for transmit to complete. Returns 0 if completed, -1 if timeout.
 /// See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
