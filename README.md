@@ -3048,7 +3048,7 @@ The above Zig Code for composing Long Packets and Short Packets was tested in QE
 
 [lupyuen/incubator-nuttx/tree/gicv2](https://github.com/lupyuen/incubator-nuttx/tree/gicv2)
 
-Here's the NuttX Log for QEMU Arm64...
+Here's the NuttX Test Log for QEMU Arm64...
 
 ```text
 NuttShell (NSH) NuttX-11.0.0-RC2
