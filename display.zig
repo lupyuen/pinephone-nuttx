@@ -52,7 +52,7 @@ const MIPI_DSI_DCS_SHORT_WRITE = 0x05;
 const MIPI_DSI_DCS_SHORT_WRITE_PARAM = 0x15;
 
 const MIPI_DCS_EXIT_SLEEP_MODE = 0x11;
-const MIPI_DCS_SET_DISPLAY_ON = 0x29;
+const MIPI_DCS_SET_DISPLAY_ON  = 0x29;
 
 /// Base Address of Allwinner A64 MIPI DSI Controller. See https://lupyuen.github.io/articles/dsi#a64-registers-for-mipi-dsi
 const DSI_BASE_ADDRESS = 0x01CA_0000;
@@ -66,14 +66,18 @@ const Instru_En = 1 << 0;
 /// See https://lupyuen.github.io/articles/dsi#initialise-lcd-controller
 pub export fn nuttx_panel_init() void {
     debug("nuttx_panel_init", .{});
+
+    // Most of these commands are documented in the ST7703 Datasheet:
+    // https://files.pine64.org/doc/datasheet/pinephone/ST7703_DS_v01_20160128.pdf
+
     writeDcs(&[_]u8 { 
-        0xB9,
+        0xB9,  // SETEXTC (Page 131): Enable USER Command
         0xF1, 
         0x12, 
         0x83 
     });
     writeDcs(&[_]u8 { 
-        0xBA,
+        0xBA,  // SETMIPI (Page 144): Set MIPI related register
         0x33, 
         0x81, 
         0x05, 
@@ -103,14 +107,14 @@ pub export fn nuttx_panel_init() void {
         0x37 
     });
     writeDcs(&[_]u8 { 
-        0xB8,
+        0xB8,  // SETPOWER_EXT (Page 142): Set display related register
         0x25, 
         0x22, 
         0x20, 
         0x03 
     });
     writeDcs(&[_]u8 { 
-        0xB3,
+        0xB3,  // SETRGBIF (Page 134): Control RGB I/F porch timing for internal use
         0x10, 
         0x10, 
         0x05, 
@@ -124,7 +128,7 @@ pub export fn nuttx_panel_init() void {
     });
 
     writeDcs(&[_]u8 { 
-        0xC0,
+        0xC0,  // SETSCR (Page 147): Set related setting of Source driving
         0x73, 
         0x73, 
         0x50, 
@@ -136,25 +140,25 @@ pub export fn nuttx_panel_init() void {
         0x00
     });
     writeDcs(&[_]u8 { 
-        0xBC, 
+        0xBC,  // SETVDC (Page 146): Control NVDDD/VDDD Voltage
         0x4E
     });
     writeDcs(&[_]u8 { 
-        0xCC, 
+        0xCC,  // SETPANEL (Page 154): Set display related register
         0x0B 
     });
     writeDcs(&[_]u8 { 
-        0xB4, 
+        0xB4,  // SETCYC (Page 135): Control display inversion type
         0x80 
     });
     writeDcs(&[_]u8 {
-        0xB2, 
+        0xB2,  // SETDISP (Page 132): Control the display resolution
         0xF0, 
         0x12, 
         0xF0
     });
     writeDcs(&[_]u8 { 
-        0xE3,
+        0xE3,  // SETEQ (Page 159): Set EQ related register
         0x00, 
         0x00, 
         0x0B, 
@@ -171,11 +175,11 @@ pub export fn nuttx_panel_init() void {
         0x10 
     });
     writeDcs(&[_]u8 { 
-        0xC6, 
+        0xC6,  // Undocumented
         0x01, 0x00, 0xFF, 0xFF, 0x00 
     });
     writeDcs(&[_]u8 { 
-        0xC1,
+        0xC1,  // SETPOWER (Page 149): Set related setting of power
         0x74, 
         0x00, 
         0x32, 
@@ -190,22 +194,22 @@ pub export fn nuttx_panel_init() void {
         0x77 
     });
     writeDcs(&[_]u8 { 
-        0xB5, 
+        0xB5,  // SETBGP (Page 136): Internal reference voltage setting
         0x07, 
         0x07 
     });
     writeDcs(&[_]u8 { 
-        0xB6, 
+        0xB6,  // SETVCOM (Page 137): Set VCOM Voltage
         0x2C, 
         0x2C 
     });
     writeDcs(&[_]u8 { 
-        0xBF, 
+        0xBF,  // Undocumented
         0x02, 0x11, 0x00 
     });
 
     writeDcs(&[_]u8 { 
-        0xE9,
+        0xE9,  // SETGIP1 (Page 163): Set forward GIP timing
         0x82, 0x10, 0x06, 0x05, 0xA2, 0x0A, 0xA5, 0x12,
         0x31, 0x23, 0x37, 0x83, 0x04, 0xBC, 0x27, 0x38,
         0x0C, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0C, 0x00,
@@ -216,7 +220,7 @@ pub export fn nuttx_panel_init() void {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 
     });
     writeDcs(&[_]u8 { 
-        0xEA,
+        0xEA,  // SETGIP2 (Page 170): Set backward GIP timing
         0x02, 0x21, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x02, 0x46, 0x02, 0x88,
         0x88, 0x88, 0x88, 0x88, 0x88, 0x64, 0x88, 0x13,
@@ -227,7 +231,7 @@ pub export fn nuttx_panel_init() void {
         0xA5, 0x00, 0x00, 0x00, 0x00 
     });
     writeDcs(&[_]u8 { 
-        0xE0,
+        0xE0,  // SETGAMMA (Page 158): Set the gray scale voltage to adjust the gamma characteristics of the TFT panel
         0x00, 0x09, 0x0D, 0x23, 0x27, 0x3C, 0x41, 0x35,
         0x07, 0x0D, 0x0E, 0x12, 0x13, 0x10, 0x12, 0x12,
         0x18, 0x00, 0x09, 0x0D, 0x23, 0x27, 0x3C, 0x41,
@@ -236,12 +240,14 @@ pub export fn nuttx_panel_init() void {
     });
 
     // TODO: Is this needed?
+    // SLPOUT (Page 89): Turns off sleep mode
     writeDcs(&[_]u8 { MIPI_DCS_EXIT_SLEEP_MODE });
 
     // TODO: Verify the delay
     _ = c.usleep(120 * 1000);
 
     // TODO: Is this needed?
+    // Display On (Page 97): Recover from DISPLAY OFF mode
     writeDcs(&[_]u8 { MIPI_DCS_SET_DISPLAY_ON });    
 }
 
