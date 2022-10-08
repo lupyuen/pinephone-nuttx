@@ -94,15 +94,16 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     debug("packet: len={}", .{ pkt.len });
     dump_buffer(&pkt[0], pkt.len);
 
-    // Set the following bits in DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200:
+    // Set the following bits to 1 in DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200:
     // RX_Overflow (Bit 26): Clear flag for "Receive Overflow"
     // RX_Flag (Bit 25): Clear flag for "Receive has started"
     // TX_Flag (Bit 9): Clear flag for "Transmit has started"
+    // All other bits must be set to 0.
     const DSI_CMD_CTL_REG = DSI_BASE_ADDRESS + 0x200;
     const RX_Overflow = 1 << 26;
     const RX_Flag     = 1 << 25;
     const TX_Flag     = 1 << 9;
-    modifyreg32(DSI_CMD_CTL_REG, 0,
+    putreg32(DSI_CMD_CTL_REG,
         RX_Overflow
         | RX_Flag
         | TX_Flag);
@@ -140,26 +141,26 @@ pub export fn nuttx_mipi_dsi_dcs_write(
 
     // Set DSI_INST_JUMP_SEL_REG (Offset 0x48, undocumented) 
     // to begin the Low Power Transmission (LPTX)
-    const DSI_INST_JUMP_SEL_REG = DSI_BASE_ADDRESS + 0x48;
-    const DSI_INST_ID_LPDT = 4;
-    const DSI_INST_ID_LP11 = 0;
-    const DSI_INST_ID_END  = 15;
-    putreg32(
-        DSI_INST_JUMP_SEL_REG,
-        DSI_INST_ID_LPDT << (4 * DSI_INST_ID_LP11) |
-        DSI_INST_ID_END  << (4 * DSI_INST_ID_LPDT)
-    );
+    // const DSI_INST_JUMP_SEL_REG = DSI_BASE_ADDRESS + 0x48;
+    // const DSI_INST_ID_LPDT = 4;
+    // const DSI_INST_ID_LP11 = 0;
+    // const DSI_INST_ID_END  = 15;
+    // putreg32(
+    //     DSI_INST_JUMP_SEL_REG,
+    //     DSI_INST_ID_LPDT << (4 * DSI_INST_ID_LP11) |
+    //     DSI_INST_ID_END  << (4 * DSI_INST_ID_LPDT)
+    // );
 
     // Disable DSI Processing then Enable DSI Processing
-    disableDsiProcessing();
-    enableDsiProcessing();
+    // disableDsiProcessing();
+    // enableDsiProcessing();
 
     // Wait for transmission to complete
-    const res = waitForTransmit();
-    if (res < 0) {
-        disableDsiProcessing();
-        return res;
-    }
+    // const res = waitForTransmit();
+    // if (res < 0) {
+    //     disableDsiProcessing();
+    //     return res;
+    // }
 
     // Return number of written bytes
     return @intCast(isize, len);
