@@ -152,15 +152,15 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     );
 
     // Disable DSI Processing then Enable DSI Processing
-    // disableDsiProcessing();
-    // enableDsiProcessing();
+    disableDsiProcessing();
+    enableDsiProcessing();
 
     // Wait for transmission to complete
-    // const res = waitForTransmit();
-    // if (res < 0) {
-    //     disableDsiProcessing();
-    //     return res;
-    // }
+    const res = waitForTransmit();
+    if (res < 0) {
+        disableDsiProcessing();
+        return res;
+    }
 
     // Return number of written bytes
     return @intCast(isize, len);

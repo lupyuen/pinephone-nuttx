@@ -3081,10 +3081,10 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-205601 bytes read in 12 ms (16.3 MiB/s)
+205974 bytes read in 12 ms (16.4 MiB/s)
 Uncompressed size: 4644864 = 0x46E000
 36162 bytes read in 4 ms (8.6 MiB/s)
-1078500 bytes read in 50 ms (20.6 MiB/s)
+1078500 bytes read in 51 ms (20.2 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
    Booting using the fdt blob at 0x4fa00000
    Loading Ramdisk to 49ef8000, end 49fff4e4 ... OK
@@ -3121,7 +3121,7 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009cddc file_actions=0x404f3580 attr=0x404f3588 argv=0x404f36d0
+task_spawn: name=hello entry=0x4009ce48 file_actions=0x404f3580 attr=0x404f3588 argv=0x404f36d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
@@ -3184,7 +3184,8 @@ modifyreg32: addr=0x300, val=0x2c000439
 modifyreg32: addr=0x304, val=0x8312f1b9
 modifyreg32: addr=0x308, val=0x00005d84
 modifyreg32: addr=0x200, val=0x00000009
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=28
 composeLongPacket: channel=0, cmd=0x39, len=28
 computeCrc: len=28, crc=0xe22c
@@ -3208,7 +3209,8 @@ modifyreg32: addr=0x318, val=0x4f020000
 modifyreg32: addr=0x31c, val=0x37000011
 modifyreg32: addr=0x320, val=0x0000e22c
 modifyreg32: addr=0x200, val=0x00000021
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=5
 composeLongPacket: channel=0, cmd=0x39, len=5
 computeCrc: len=5, crc=0x7203
@@ -3220,7 +3222,8 @@ modifyreg32: addr=0x300, val=0x36000539
 modifyreg32: addr=0x304, val=0x202225b8
 modifyreg32: addr=0x308, val=0x00720303
 modifyreg32: addr=0x200, val=0x0000000a
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=11
 composeLongPacket: channel=0, cmd=0x39, len=11
 computeCrc: len=11, crc=0xbc6f
@@ -3236,7 +3239,8 @@ modifyreg32: addr=0x308, val=0x00ff0305
 modifyreg32: addr=0x30c, val=0x6f000000
 modifyreg32: addr=0x310, val=0x000000bc
 modifyreg32: addr=0x200, val=0x00000010
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=10
 composeLongPacket: channel=0, cmd=0x39, len=10
 computeCrc: len=10, crc=0x6a1b
@@ -3251,28 +3255,32 @@ modifyreg32: addr=0x304, val=0x507373c0
 modifyreg32: addr=0x308, val=0x08c00050
 modifyreg32: addr=0x30c, val=0x6a1b0070
 modifyreg32: addr=0x200, val=0x0000000f
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
 composeShortPacket: channel=0, cmd=0x15, len=2
 packet: len=4
 15 bc 4e 35 
 modifyreg32: addr=0x300, val=0x354ebc15
 modifyreg32: addr=0x200, val=0x00000003
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
 composeShortPacket: channel=0, cmd=0x15, len=2
 packet: len=4
 15 cc 0b 22 
 modifyreg32: addr=0x300, val=0x220bcc15
 modifyreg32: addr=0x200, val=0x00000003
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
 composeShortPacket: channel=0, cmd=0x15, len=2
 packet: len=4
 15 b4 80 22 
 modifyreg32: addr=0x300, val=0x2280b415
 modifyreg32: addr=0x200, val=0x00000003
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
 composeLongPacket: channel=0, cmd=0x39, len=4
 computeCrc: len=4, crc=0x8651
@@ -3284,7 +3292,8 @@ modifyreg32: addr=0x300, val=0x2c000439
 modifyreg32: addr=0x304, val=0xf012f0b2
 modifyreg32: addr=0x308, val=0x00008651
 modifyreg32: addr=0x200, val=0x00000009
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=15
 composeLongPacket: channel=0, cmd=0x39, len=15
 computeCrc: len=15, crc=0xf36
@@ -3301,7 +3310,8 @@ modifyreg32: addr=0x30c, val=0xff000000
 modifyreg32: addr=0x310, val=0x3610c000
 modifyreg32: addr=0x314, val=0x0000000f
 modifyreg32: addr=0x200, val=0x00000014
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=6
 composeLongPacket: channel=0, cmd=0x39, len=6
 computeCrc: len=6, crc=0x258e
@@ -3313,7 +3323,8 @@ modifyreg32: addr=0x300, val=0x30000639
 modifyreg32: addr=0x304, val=0xff0001c6
 modifyreg32: addr=0x308, val=0x258e00ff
 modifyreg32: addr=0x200, val=0x0000000b
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=13
 composeLongPacket: channel=0, cmd=0x39, len=13
 computeCrc: len=13, crc=0xe469
@@ -3329,7 +3340,8 @@ modifyreg32: addr=0x308, val=0xfff17732
 modifyreg32: addr=0x30c, val=0x77ccccff
 modifyreg32: addr=0x310, val=0x00e46977
 modifyreg32: addr=0x200, val=0x00000012
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=3
 composeLongPacket: channel=0, cmd=0x39, len=3
 computeCrc: len=3, crc=0xb37b
@@ -3341,7 +3353,8 @@ modifyreg32: addr=0x300, val=0x09000339
 modifyreg32: addr=0x304, val=0x7b0707b5
 modifyreg32: addr=0x308, val=0x000000b3
 modifyreg32: addr=0x200, val=0x00000008
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=3
 composeLongPacket: channel=0, cmd=0x39, len=3
 computeCrc: len=3, crc=0x455
@@ -3353,7 +3366,8 @@ modifyreg32: addr=0x300, val=0x09000339
 modifyreg32: addr=0x304, val=0x552c2cb6
 modifyreg32: addr=0x308, val=0x00000004
 modifyreg32: addr=0x200, val=0x00000008
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
 composeLongPacket: channel=0, cmd=0x39, len=4
 computeCrc: len=4, crc=0xe9b5
@@ -3365,7 +3379,8 @@ modifyreg32: addr=0x300, val=0x2c000439
 modifyreg32: addr=0x304, val=0x001102bf
 modifyreg32: addr=0x308, val=0x0000e9b5
 modifyreg32: addr=0x200, val=0x00000009
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=64
 composeLongPacket: channel=0, cmd=0x39, len=64
 computeCrc: len=64, crc=0x365
@@ -3407,7 +3422,8 @@ modifyreg32: addr=0x33c, val=0x00000000
 modifyreg32: addr=0x340, val=0x00000000
 modifyreg32: addr=0x344, val=0x00000365
 modifyreg32: addr=0x200, val=0x00000045
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=62
 composeLongPacket: channel=0, cmd=0x39, len=62
 computeCrc: len=62, crc=0x1b24
@@ -3447,7 +3463,8 @@ modifyreg32: addr=0x338, val=0x03000000
 modifyreg32: addr=0x33c, val=0x0000a50a
 modifyreg32: addr=0x340, val=0x1b240000
 modifyreg32: addr=0x200, val=0x00000043
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=35
 composeLongPacket: channel=0, cmd=0x39, len=35
 computeCrc: len=35, crc=0xbf93
@@ -3475,21 +3492,24 @@ modifyreg32: addr=0x320, val=0x1013120e
 modifyreg32: addr=0x324, val=0x93181212
 modifyreg32: addr=0x328, val=0x000000bf
 modifyreg32: addr=0x200, val=0x00000028
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
 composeShortPacket: channel=0, cmd=0x5, len=1
 packet: len=4
 05 11 00 36 
 modifyreg32: addr=0x300, val=0x36001105
 modifyreg32: addr=0x200, val=0x00000003
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
 composeShortPacket: channel=0, cmd=0x5, len=1
 packet: len=4
 05 29 00 1c 
 modifyreg32: addr=0x300, val=0x1c002905
 modifyreg32: addr=0x200, val=0x00000003
-.{ MAGIC_COMMIT, 0 },
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
 };
 .{ 0x0048, 0x00000f02 },
 .{ MAGIC_COMMIT, 0 },
@@ -3497,59 +3517,6 @@ dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000
 .{ 0x0048, 0x63f07006 },
 .{ MAGIC_COMMIT, 0 },
 HELLO ZIG ON PINEPHONE!
-mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
-composeShortPacket: channel=0, cmd=0x5, len=1
-packet: len=4
-05 11 00 36 
-modifyreg32: addr=0x300, val=0x36001105
-modifyreg32: addr=0x200, val=0x00000003
-mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
-composeShortPacket: channel=0, cmd=0x15, len=2
-packet: len=4
-15 bc 4e 35 
-modifyreg32: addr=0x300, val=0x354ebc15
-modifyreg32: addr=0x200, val=0x00000003
-mipi_dsi_dcs_write: channel=0, cmd=0x39, len=64
-composeLongPacket: channel=0, cmd=0x39, len=64
-computeCrc: len=64, crc=0x365
-e9 82 10 06 05 a2 0a a5 
-12 31 23 37 83 04 bc 27 
-38 0c 00 03 00 00 00 0c 
-00 03 00 00 00 75 75 31 
-88 88 88 88 88 88 13 88 
-64 64 20 88 88 88 88 88 
-88 02 88 00 00 00 00 00 
-00 00 00 00 00 00 00 00 
-
-packet: len=70
-39 40 00 25 e9 82 10 06 
-05 a2 0a a5 12 31 23 37 
-83 04 bc 27 38 0c 00 03 
-00 00 00 0c 00 03 00 00 
-00 75 75 31 88 88 88 88 
-88 88 13 88 64 64 20 88 
-88 88 88 88 88 02 88 00 
-00 00 00 00 00 00 00 00 
-00 00 00 00 65 03 
-modifyreg32: addr=0x300, val=0x25004039
-modifyreg32: addr=0x304, val=0x061082e9
-modifyreg32: addr=0x308, val=0xa50aa205
-modifyreg32: addr=0x30c, val=0x37233112
-modifyreg32: addr=0x310, val=0x27bc0483
-modifyreg32: addr=0x314, val=0x03000c38
-modifyreg32: addr=0x318, val=0x0c000000
-modifyreg32: addr=0x31c, val=0x00000300
-modifyreg32: addr=0x320, val=0x31757500
-modifyreg32: addr=0x324, val=0x88888888
-modifyreg32: addr=0x328, val=0x88138888
-modifyreg32: addr=0x32c, val=0x88206464
-modifyreg32: addr=0x330, val=0x88888888
-modifyreg32: addr=0x334, val=0x00880288
-modifyreg32: addr=0x338, val=0x00000000
-modifyreg32: addr=0x33c, val=0x00000000
-modifyreg32: addr=0x340, val=0x00000000
-modifyreg32: addr=0x344, val=0x00000365
-modifyreg32: addr=0x200, val=0x00000045
 nsh> 
 nsh> 
 ```
