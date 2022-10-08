@@ -54,6 +54,11 @@ const MIPI_DSI_DCS_SHORT_WRITE_PARAM = 0x15;
 /// Base Address of Allwinner A64 MIPI DSI Controller. See https://lupyuen.github.io/articles/dsi#a64-registers-for-mipi-dsi
 const DSI_BASE_ADDRESS = 0x01CA_0000;
 
+/// Instru_En is Bit 0 of DSI_BASIC_CTL0_REG 
+/// (DSI Configuration Register 0) at Offset 0x10
+const DSI_BASIC_CTL0_REG = DSI_BASE_ADDRESS + 0x10;
+const Instru_En = 1 << 0;
+
 /// Write to MIPI DSI. See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
 pub export fn nuttx_mipi_dsi_dcs_write(
     dev: [*c]const mipi_dsi_device,  // MIPI DSI Host Device
@@ -90,7 +95,7 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     dump_buffer(&pkt[0], pkt.len);
 
     // Write the Long Packet to DSI_CMD_TX_REG 
-    // (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC.
+    // (DSI Low Power Transmit Package Register) at Offset 0x300 to 0x3FC
     const DSI_CMD_TX_REG = DSI_BASE_ADDRESS + 0x300;
     var addr: u64 = DSI_CMD_TX_REG;
     var i: usize = 0;
@@ -117,24 +122,65 @@ pub export fn nuttx_mipi_dsi_dcs_write(
     }
 
     // Set Packet Length - 1 in Bits 0 to 7 (TX_Size) of
-    // DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200.
+    // DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200
     const DSI_CMD_CTL_REG = DSI_BASE_ADDRESS + 0x200;
     modifyreg32(DSI_CMD_CTL_REG, 0xFF, @intCast(u32, pkt.len) - 1);
 
-    // TODO
-    // - Set DSI_INST_JUMP_SEL_REG (Offset 0x48, undocumented) 
-    //   to begin the Low Power Transmission.
-    //
-    // - Disable DSI Processing: Set Instru_En to 0.
-    //   Then Enable DSI Processing: Set Instru_En to 1.
-    //
-    // - To check whether the transmission is complete, we poll on Instru_En.
-    //
-    // Instru_En is Bit 0 of DSI_BASIC_CTL0_REG 
-    // (DSI Configuration Register 0) at Offset 0x10.
+    // Set DSI_INST_JUMP_SEL_REG (Offset 0x48, undocumented) 
+    // to begin the Low Power Transmission (LPTX)
+    const DSI_INST_JUMP_SEL_REG = DSI_BASE_ADDRESS + 0x48;
+    const DSI_INST_ID_LPDT = 4;
+    const DSI_INST_ID_LP11 = 0;
+    const DSI_INST_ID_END  = 15;
+    putreg32(
+        DSI_INST_JUMP_SEL_REG,
+        DSI_INST_ID_LPDT << (4 * DSI_INST_ID_LP11) |
+        DSI_INST_ID_END  << (4 * DSI_INST_ID_LPDT)
+    );
+
+    // Disable DSI Processing then Enable DSI Processing
+    disableDsiProcessing();
+    enableDsiProcessing();
+
+    // Wait for transmission to complete
+    const res = waitForTransmit();
+    if (res < 0) {
+        disableDsiProcessing();
+        return res;
+    }
 
     // Return number of written bytes
     return @intCast(isize, len);
+}
+
+/// Wait for transmit to complete. Returns 0 if completed, -1 if timeout.
+/// See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
+fn waitForTransmit() isize {
+    // Wait up to 5,000 microseconds
+    var i: usize = 0;
+    while (i < 5_000) : (i += 1) {
+        // To check whether the transmission is complete, we poll on Instru_En
+        if ((getreg32(DSI_BASIC_CTL0_REG) & Instru_En) == 0) {
+            // If Instru_En is 0, then transmission is complete
+            return 0;
+        }
+        // Sleep 1 microsecond
+        _ = c.usleep(1);
+    }
+    // Return Timeout
+    return -1;
+}
+
+/// Disable DSI Processing. See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
+fn disableDsiProcessing() void {
+    // Set Instru_En to 0
+    modifyreg32(DSI_BASIC_CTL0_REG, Instru_En, 0);
+}
+
+/// Enable DSI Processing. See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
+fn enableDsiProcessing() void {
+    // Set Instru_En to 1
+    modifyreg32(DSI_BASIC_CTL0_REG, Instru_En, Instru_En);
 }
 
 // Compose MIPI DSI Long Packet. See https://lupyuen.github.io/articles/dsi#long-packet-for-mipi-dsi
