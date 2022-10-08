@@ -72,39 +72,39 @@ pub export fn nuttx_panel_init() void {
 
     writeDcs(&[_]u8 { 
         0xB9,  // SETEXTC (Page 131): Enable USER Command
-        0xF1, 
-        0x12, 
-        0x83 
+        0xF1,  // Enable User command
+        0x12,  // (Continued)
+        0x83   // (Continued)
     });
     writeDcs(&[_]u8 { 
         0xBA,  // SETMIPI (Page 144): Set MIPI related register
-        0x33, 
-        0x81, 
-        0x05, 
-        0xF9, 
-        0x0E, 
-        0x0E, 
-        0x20, 
-        0x00,
-        0x00, 
-        0x00, 
-        0x00, 
-        0x00, 
-        0x00, 
-        0x00, 
-        0x44, 
-        0x25,
-        0x00, 
-        0x91, 
-        0x0a, 
-        0x00, 
-        0x00, 
-        0x02, 
-        0x4F, 
-        0x11,
-        0x00, 
-        0x00, 
-        0x37 
+        0x33,  // Virtual Channel = 0, Number of Lanes = 4
+        0x81,  // LDO = 1.7 V, Terminal Resistance = 90 Ohm
+        0x05,  // MIPI Low High Speed driving ability = x6
+        0xF9,  // TXCLK speed in DSI LP mode = fDSICLK / 16
+        0x0E,  // Min HFP number in DSI mode = 14
+        0x0E,  // Min HBP number in DSI mode = 14
+        0x20,  // Undocumented
+        0x00,  // Undocumented
+        0x00,  // Undocumented
+        0x00,  // Undocumented
+        0x00,  // Undocumented
+        0x00,  // Undocumented
+        0x00,  // Undocumented
+        0x00,  // Undocumented
+        0x44,  // Undocumented
+        0x25,  // Undocumented
+        0x00,  // Undocumented
+        0x91,  // Undocumented
+        0x0a,  // Undocumented
+        0x00,  // Undocumented
+        0x00,  // Undocumented
+        0x02,  // Undocumented
+        0x4F,  // Undocumented
+        0x11,  // Undocumented
+        0x00,  // Undocumented
+        0x00,  // Undocumented
+        0x37   // Undocumented
     });
     writeDcs(&[_]u8 { 
         0xB8,  // SETPOWER_EXT (Page 142): Set display related register
