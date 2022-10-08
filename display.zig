@@ -210,7 +210,7 @@ fn composeShortPacket(
     cmd: u8,      // DCS Command
     buf: [*c]const u8,  // Transmit Buffer
     len: usize          // Buffer Length
-) []const u8 {          // Returns the Long Packet
+) []const u8 {          // Returns the Short Packet
     debug("composeShortPacket: channel={}, cmd=0x{x}, len={}", .{ channel, cmd, len });
     assert(len == 1 or len == 2);
 
