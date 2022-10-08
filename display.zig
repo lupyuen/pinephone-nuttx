@@ -180,6 +180,7 @@ fn waitForTransmit() isize {
         _ = c.usleep(1);
     }
     // Return Timeout
+    std.log.err("waitForTransmit: timeout", .{});
     return -1;
 }
 
