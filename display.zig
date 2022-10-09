@@ -70,12 +70,15 @@ pub export fn nuttx_panel_init() void {
     // Most of these commands are documented in the ST7703 Datasheet:
     // https://files.pine64.org/doc/datasheet/pinephone/ST7703_DS_v01_20160128.pdf
 
+    // Command #1
     writeDcs(&[_]u8 { 
         0xB9,  // SETEXTC (Page 131): Enable USER Command
         0xF1,  // Enable User command
         0x12,  // (Continued)
         0x83   // (Continued)
     });
+
+    // Command #2
     writeDcs(&[_]u8 { 
         0xBA,  // SETMIPI (Page 144): Set MIPI related register
         0x33,  // Virtual Channel = 0 (VC_Main = 0) ; Number of Lanes = 4 (Lane_Number = 3)
@@ -106,6 +109,8 @@ pub export fn nuttx_panel_init() void {
         0x00,  // Undocumented
         0x37   // Undocumented
     });
+
+    // Command #3
     writeDcs(&[_]u8 { 
         0xB8,  // SETPOWER_EXT (Page 142): Set display related register
         0x25,  // External power IC or PFM: VSP = FL1002, VSN = FL1002 (PCCS = 2) ; VCSW1 / VCSW2 Frequency for Pumping VSP / VSN = 1/4 Hsync (ECP_DC_DIV = 5)
@@ -113,6 +118,8 @@ pub export fn nuttx_panel_init() void {
         0x20,  // PFM operation frequency FoscD = Fosc/1 (PFM_DC_DIV = 0)
         0x03   // Enable power IC pumping frequency synchronization = Synchronize with external Hsync (ECP_SYNC_EN = 1) ; Enable VGH/VGL pumping frequency synchronization = Synchronize with external Hsync (VGX_SYNC_EN = 1)
     });
+
+    // Command #4
     writeDcs(&[_]u8 { 
         0xB3,  // SETRGBIF (Page 134): Control RGB I/F porch timing for internal use
         0x10,  // Vertical back porch HS number in Blank Frame Period  = Hsync number 16 (VBP_RGB_GEN = 16)
@@ -127,6 +134,7 @@ pub export fn nuttx_panel_init() void {
         0x00   // Undocumented
     });
 
+    // Command #5
     writeDcs(&[_]u8 { 
         0xC0,  // SETSCR (Page 147): Set related setting of Source driving
         0x73,  // Source OP Amp driving period for positive polarity in Normal Mode: Source OP Period = 115*4/Fosc (N_POPON = 115)
@@ -139,24 +147,34 @@ pub export fn nuttx_panel_init() void {
         0x70,  // Source and Gamma bias current core tune: Ibias = 1 (SCR Bits 0-3 = 0) ; Source bias current fine tune: Current xIbias = 7 (SCR Bits 4-8 = 7) ; (SCR Bits  0-7  = 0x70)
         0x00   // Undocumented
     });
+
+    // Command #6
     writeDcs(&[_]u8 { 
         0xBC,  // SETVDC (Page 146): Control NVDDD/VDDD Voltage
         0x4E   // NVDDD voltage = -1.8 V (NVDDD_SEL = 4) ; VDDD voltage = 1.9 V (VDDD_SEL = 6)
     });
+
+    // Command #7
     writeDcs(&[_]u8 { 
         0xCC,  // SETPANEL (Page 154): Set display related register
         0x0B   // Enable reverse the source scan direction (SS_PANEL = 1) ; Normal vertical scan direction (GS_PANEL = 0) ; Normally black panel (REV_PANEL = 1) ; S1:S2:S3 = B:G:R (BGR_PANEL = 1)
     });
+
+    // Command #8
     writeDcs(&[_]u8 { 
         0xB4,  // SETCYC (Page 135): Control display inversion type
         0x80   // Extra source for Zig-Zag Inversion = S2401 (ZINV_S2401_EN = 1) ; Row source data dislocates = Even row (ZINV_G_EVEN_EN = 0) ; Disable Zig-Zag Inversion (ZINV_EN = 0) ; Enable Zig-Zag1 Inversion (ZINV2_EN = 0) ; Normal mode inversion type = Column inversion (N_NW = 0)
     });
+
+    // Command #9
     writeDcs(&[_]u8 {
         0xB2,  // SETDISP (Page 132): Control the display resolution
         0xF0,  // Gate number of vertical direction = 480 + (240*4) (NL = 240)
         0x12,  // (RES_V_LSB = 0) ; Non-display area source output control: Source output = VSSD (BLK_CON = 1) ; Channel number of source direction = 720RGB (RESO_SEL = 2)
         0xF0   // Source voltage during Blanking Time when accessing Sleep-Out / Sleep-In command = GND (WHITE_GND_EN = 1) ; Blank timing control when access sleep out command: Blank Frame Period = 7 Frames (WHITE_FRAME_SEL = 7) ; Source output refresh control: Refresh Period = 0 Frames (ISC = 0)
     });
+
+    // Command #10
     writeDcs(&[_]u8 { 
         0xE3,  // SETEQ (Page 159): Set EQ related register
         0x00,  // Temporal spacing between HSYNC and PEQGND = 0*4/Fosc (PNOEQ = 0)
@@ -174,6 +192,8 @@ pub export fn nuttx_panel_init() void {
         0xC0,  // White pattern to protect GOA glass (ESD_DET_DATA_WHITE = 1) ; Enable ESD detection function to protect GOA glass (ESD_WHITE_EN = 1)
         0x10   // No Need VSYNC (additional frame) after Sleep-In command to display sleep-in blanking frame then into Sleep-In State (SLPIN_OPTION = 1) ; Enable video function detection (VEDIO_NO_CHECK_EN = 0) ; Disable ESD white pattern scanning voltage pull ground (ESD_WHITE_GND_EN = 0) ; ESD detection function period = 0 Frames (ESD_DET_TIME_SEL = 0)
     });
+
+    // Command #11
     writeDcs(&[_]u8 { 
         0xC6,  // Undocumented
         0x01,  // Undocumented
@@ -182,6 +202,8 @@ pub export fn nuttx_panel_init() void {
         0xFF,  // Undocumented
         0x00   // Undocumented
     });
+
+    // Command #12
     writeDcs(&[_]u8 { 
         0xC1,  // SETPOWER (Page 149): Set related setting of power
         0x74,  // VGH Voltage Adjustment = 17 V (VBTHS = 7) ; VGL Voltage Adjustment = -11 V (VBTLS = 4)
@@ -197,16 +219,22 @@ pub export fn nuttx_panel_init() void {
         0x77,  // Left side VGH stage 3 pumping frequency  = 4.5 MHz (VGH3_L_DIV = 7)  ; Left side VGL stage 3 pumping frequency  = 4.5 MHz (VGL3_L_DIV = 7)
         0x77   // Right side VGH stage 3 pumping frequency = 4.5 MHz (VGH3_R_DIV = 7)  ; Right side VGL stage 3 pumping frequency = 4.5 MHz (VGL3_R_DIV = 7)
     });
+
+    // Command #13
     writeDcs(&[_]u8 { 
         0xB5,  // SETBGP (Page 136): Internal reference voltage setting
         0x07,  // VREF Voltage: 4.2 V (VREF_SEL = 7)
         0x07   // NVREF Voltage: 4.2 V (NVREF_SEL = 7)
     });
+
+    // Command #14
     writeDcs(&[_]u8 { 
         0xB6,  // SETVCOM (Page 137): Set VCOM Voltage
         0x2C,  // VCOMDC voltage at "GS_PANEL=0" = -0.67 V (VCOMDC_F = 0x2C)
         0x2C   // VCOMDC voltage at "GS_PANEL=1" = -0.67 V (VCOMDC_B = 0x2C)
     });
+
+    // Command #15
     writeDcs(&[_]u8 { 
         0xBF,  // Undocumented
         0x02,  // Undocumented
@@ -214,6 +242,7 @@ pub export fn nuttx_panel_init() void {
         0x00   // Undocumented
     });
 
+    // Command #16
     writeDcs(&[_]u8 { 
         0xE9,  // SETGIP1 (Page 163): Set forward GIP timing
         0x82,  // SHR0, SHR1, CHR, CHR2 refer to Internal DE (REF_EN = 1) ; (PANEL_SEL = 2)
@@ -280,16 +309,18 @@ pub export fn nuttx_panel_init() void {
         0x00,  // (COFF Bits 8-9 = 0) ; (CON Bits 8-9 = 0) ; (SPOFF Bits 8-9 = 0) ; (SPON Bits 8-9 = 0)
         0x00   // (COFF2 Bits 8-9 = 0) ; (CON2 Bits 8-9 = 0)
     });
+
+    // Command #17
     writeDcs(&[_]u8 { 
         0xEA,  // SETGIP2 (Page 170): Set backward GIP timing
-        0x02,  // (YS2_SEL = 0) ; (YS1_SEL = 0) ; (YS2_XOR = 0) ; (YS_FLAG_EN = 1) ; (ALL_ON_EN = 0)
+        0x02,  // YS2 Signal Mode = INYS1/INYS2 (YS2_SEL = 0) ; YS2 Signal Mode = INYS1/INYS2 (YS1_SEL = 0) ; Don't reverse YS2 signal (YS2_XOR = 0) ; Don't reverse YS1 signal (YS1_XOR = 0) ; Enable YS signal function (YS_FLAG_EN = 1) ; Disable ALL ON function (ALL_ON_EN = 0)
         0x21,  // (GATE = 0x21)
-        0x00,  // (CK_ALL_ON_EN = 0) ; (STV_ALL_ON_EN = 0) ; (CK_ALL_ON_WIDTH1 = 0)
-        0x00,  // (CK_ALL_ON_WIDTH2 = 0)
-        0x00,  // (CK_ALL_ON_WIDTH3 = 0)
+        0x00,  // (CK_ALL_ON_EN = 0) ; (STV_ALL_ON_EN = 0) ; Timing of YS1 and YS2 signal = ??? (CK_ALL_ON_WIDTH1 = 0)
+        0x00,  // Timing of YS1 and YS2 signal = ??? (CK_ALL_ON_WIDTH2 = 0)
+        0x00,  // Timing of YS1 and YS2 signal = ??? (CK_ALL_ON_WIDTH3 = 0)
         0x00,  // (YS_FLAG_PERIOD = 0)
         0x00,  // (YS2_SEL_2 = 0) ; (YS1_SEL_2 = 0) ; (YS2_XOR_2 = 0) ; (YS_FLAG_EN_2 = 0) ; (ALL_ON_EN_2 = 0)
-        0x00,  // (USER_GIP_GATE1_2 = 0)
+        0x00,  // Distance of GIP ALL On rising edge and DE = ??? (USER_GIP_GATE1_2 = 0)
         0x00,  // (CK_ALL_ON_EN_2 = 0) ; (STV_ALL_ON_EN_2 = 0) ; (CK_ALL_ON_WIDTH1_2 = 0)
         0x00,  // (CK_ALL_ON_WIDTH2_2 = 0)
         0x00,  // (CK_ALL_ON_WIDTH3_2 = 0)
@@ -316,11 +347,11 @@ pub export fn nuttx_panel_init() void {
         0x88,  // (COS17_R_GS = 8) ; (COS18_R_GS = 8)
         0x75,  // (COS19_R_GS = 7) ; (COS20_R_GS = 5)
         0x88,  // (COS21_R_GS = 8) ; (COS22_R_GS = 8)
-        0x23,  // (EQOPT = 2) ; (EQ_SEL = 3)
-        0x14,  // (EQ_DELAY = 0x14)
-        0x00,  // (EQ_DELAY_HSYNC = 0)
+        0x23,  // GIP output EQ signal: P_EQ = Yes, N_EQ = No (EQOPT = 2) ;  GIP output EQ signal level: P_EQ = GND, N_EQ = GND (EQ_SEL = 3)
+        0x14,  // Distance of EQ rising edge and HYSNC = 20 Fosc (EQ_DELAY = 0x14)
+        0x00,  // Distance of EQ rising edge and HYSNC = 0 HSYNC (EQ_DELAY_HSYNC = 0)
         0x00,  // (HSYNC_TO_CL1_CNT10 Bits 8-9 = 0)
-        0x02,  // (HSYNC_TO_CL1_CNT10 Bits 0-7 = 2)
+        0x02,  // GIP reference HSYNC between external HSYNC = 2 Fosc (HSYNC_TO_CL1_CNT10 Bits 0-7 = 2)
         0x00,  // Undocumented (Parameter 40)
         0x00,  // Undocumented (Parameter 41)
         0x00,  // Undocumented (Parameter 42)
@@ -344,6 +375,8 @@ pub export fn nuttx_panel_init() void {
         0x00,  // Undocumented (Parameter 60)
         0x00   // Undocumented (Parameter 61)
     });
+
+    // Command #18
     writeDcs(&[_]u8 { 
         0xE0,  // SETGAMMA (Page 158): Set the gray scale voltage to adjust the gamma characteristics of the TFT panel
         0x00,  //
@@ -382,16 +415,20 @@ pub export fn nuttx_panel_init() void {
         0x18   //
     });
 
+    // Command #19    
     // TODO: Is this needed?
-    // SLPOUT (Page 89): Turns off sleep mode
-    writeDcs(&[_]u8 { MIPI_DCS_EXIT_SLEEP_MODE });
+    writeDcs(&[_]u8 {
+        MIPI_DCS_EXIT_SLEEP_MODE  // SLPOUT (Page 89): Turns off sleep mode
+    });
 
     // TODO: Verify the delay
     _ = c.usleep(120 * 1000);
 
+    // Command #20
     // TODO: Is this needed?
-    // Display On (Page 97): Recover from DISPLAY OFF mode
-    writeDcs(&[_]u8 { MIPI_DCS_SET_DISPLAY_ON });    
+    writeDcs(&[_]u8 {
+        MIPI_DCS_SET_DISPLAY_ON  // Display On (Page 97): Recover from DISPLAY OFF mode
+    });    
 }
 
 /// Write the DCS Command to MIPI DSI
