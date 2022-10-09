@@ -149,7 +149,7 @@ pub export fn nuttx_panel_init() void {
     });
     writeDcs(&[_]u8 { 
         0xB4,  // SETCYC (Page 135): Control display inversion type
-        0x80 
+        0x80   // Extra source for Zig-Zag Inversion = S2401 (ZINV_S2401_EN = 1) ; Row source data dislocates = Even row (ZINV_G_EVEN_EN = 0) ; Disable Zig-Zag Inversion (ZINV_EN = 0) ; Enable Zig-Zag1 Inversion (ZINV2_EN = 0) ; Normal mode inversion type = Column inversion (N_NW = 0)
     });
     writeDcs(&[_]u8 {
         0xB2,  // SETDISP (Page 132): Control the display resolution
