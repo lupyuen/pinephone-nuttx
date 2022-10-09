@@ -252,12 +252,12 @@ pub export fn nuttx_panel_init() void {
         0x88,  // Reserved (Parameter 34)
         0x88,  // Reserved (Parameter 35)
         0x88,  // Reserved (Parameter 36)
-        0x88,  // Left side GIP output pad signal = ??? (COS17_L = 8) ; Left side GIP output pad signal = ??? (COS18_L = 8)
-        0x13,  // Left side GIP output pad signal = ??? (COS19_L = 1) ; Left side GIP output pad signal = ??? (COS20_L = 3)
-        0x88,  // Left side GIP output pad signal = ??? (COS21_L = 8) ; Left side GIP output pad signal = ??? (COS22_L = 8)
-        0x64,  // Right side GIP output pad signal = ??? (COS1_R = 6) ; Right side GIP output pad signal = ??? (COS2_R = 4)
-        0x64,  // Right side GIP output pad signal = ??? (COS3_R = 6) ; Right side GIP output pad signal = ??? (COS4_R = 4)
-        0x20,  // Right side GIP output pad signal = ??? (COS5_R = 2) ; Right side GIP output pad signal = ??? (COS6_R = 0)
+        0x88,  // Left side GIP output pad signal  = ??? (COS17_L = 8) ; Left side GIP output pad signal  = ??? (COS18_L = 8)
+        0x13,  // Left side GIP output pad signal  = ??? (COS19_L = 1) ; Left side GIP output pad signal  = ??? (COS20_L = 3)
+        0x88,  // Left side GIP output pad signal  = ??? (COS21_L = 8) ; Left side GIP output pad signal  = ??? (COS22_L = 8)
+        0x64,  // Right side GIP output pad signal = ??? (COS1_R  = 6) ; Right side GIP output pad signal = ??? (COS2_R  = 4)
+        0x64,  // Right side GIP output pad signal = ??? (COS3_R  = 6) ; Right side GIP output pad signal = ??? (COS4_R  = 4)
+        0x20,  // Right side GIP output pad signal = ??? (COS5_R  = 2) ; Right side GIP output pad signal = ??? (COS6_R  = 0)
         0x88,  // Reserved (Parameter 43)
         0x88,  // Reserved (Parameter 44)
         0x88,  // Reserved (Parameter 45)
@@ -282,67 +282,67 @@ pub export fn nuttx_panel_init() void {
     });
     writeDcs(&[_]u8 { 
         0xEA,  // SETGIP2 (Page 170): Set backward GIP timing
-        0x02,  //
-        0x21,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x02,  //
-        0x46,  //
-        0x02,  //
-        0x88,  //
-        0x88,  //
-        0x88,  //
-        0x88,  //
-        0x88,  //
-        0x88,  //
-        0x64,  //
-        0x88,  //
-        0x13,  //
-        0x57,  //
-        0x13,  //
-        0x88,  //
-        0x88,  //
-        0x88,  //
-        0x88,  //
-        0x88,  //
-        0x88,  //
-        0x75,  //
-        0x88,  //
-        0x23,  //
-        0x14,  //
-        0x00,  //
-        0x00,  //
-        0x02,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x03,  //
-        0x0A,  //
-        0xA5,  //
-        0x00,  //
-        0x00,  //
-        0x00,  //
-        0x00   //
+        0x02,  // (YS2_SEL = 0) ; (YS1_SEL = 0) ; (YS2_XOR = 0) ; (YS_FLAG_EN = 1) ; (ALL_ON_EN = 0)
+        0x21,  // (GATE = 0x21)
+        0x00,  // (CK_ALL_ON_EN = 0) ; (STV_ALL_ON_EN = 0) ; (CK_ALL_ON_WIDTH1 = 0)
+        0x00,  // (CK_ALL_ON_WIDTH2 = 0)
+        0x00,  // (CK_ALL_ON_WIDTH3 = 0)
+        0x00,  // (YS_FLAG_PERIOD = 0)
+        0x00,  // (YS2_SEL_2 = 0) ; (YS1_SEL_2 = 0) ; (YS2_XOR_2 = 0) ; (YS_FLAG_EN_2 = 0) ; (ALL_ON_EN_2 = 0)
+        0x00,  // (USER_GIP_GATE1_2 = 0)
+        0x00,  // (CK_ALL_ON_EN_2 = 0) ; (STV_ALL_ON_EN_2 = 0) ; (CK_ALL_ON_WIDTH1_2 = 0)
+        0x00,  // (CK_ALL_ON_WIDTH2_2 = 0)
+        0x00,  // (CK_ALL_ON_WIDTH3_2 = 0)
+        0x00,  // (YS_FLAG_PERIOD_2 = 0)
+        0x02,  // (COS1_L_GS = 0) ; (COS2_L_GS = 2)
+        0x46,  // (COS3_L_GS = 4) ; (COS4_L_GS = 6)
+        0x02,  // (COS5_L_GS = 0) ; (COS6_L_GS = 2)
+        0x88,  // Reserved (Parameter 16)
+        0x88,  // Reserved (Parameter 17)
+        0x88,  // Reserved (Parameter 18)
+        0x88,  // Reserved (Parameter 19)
+        0x88,  // Reserved (Parameter 20)
+        0x88,  // (COS17_L_GS = 8) ; (COS18_L_GS = 8)
+        0x64,  // (COS19_L_GS = 6) ; (COS20_L_GS = 4)
+        0x88,  // (COS21_L_GS = 8) ; (COS22_L_GS = 8)
+        0x13,  // (COS1_R_GS = 1) ; (COS2_R_GS = 3)
+        0x57,  // (COS3_R_GS = 5) ; (COS4_R_GS = 7)
+        0x13,  // (COS5_R_GS = 1) ; (COS6_R_GS = 3)
+        0x88,  // Reserved (Parameter 27)
+        0x88,  // Reserved (Parameter 28)
+        0x88,  // Reserved (Parameter 29)
+        0x88,  // Reserved (Parameter 30)
+        0x88,  // Reserved (Parameter 31)
+        0x88,  // (COS17_R_GS = 8) ; (COS18_R_GS = 8)
+        0x75,  // (COS19_R_GS = 7) ; (COS20_R_GS = 5)
+        0x88,  // (COS21_R_GS = 8) ; (COS22_R_GS = 8)
+        0x23,  // (EQOPT = 2) ; (EQ_SEL = 3)
+        0x14,  // (EQ_DELAY = 0x14)
+        0x00,  // (EQ_DELAY_HSYNC = 0)
+        0x00,  // (HSYNC_TO_CL1_CNT10 Bits 8-9 = 0)
+        0x02,  // (HSYNC_TO_CL1_CNT10 Bits 0-7 = 2)
+        0x00,  // Undocumented (Parameter 40)
+        0x00,  // Undocumented (Parameter 41)
+        0x00,  // Undocumented (Parameter 42)
+        0x00,  // Undocumented (Parameter 43)
+        0x00,  // Undocumented (Parameter 44)
+        0x00,  // Undocumented (Parameter 45)
+        0x00,  // Undocumented (Parameter 46)
+        0x00,  // Undocumented (Parameter 47)
+        0x00,  // Undocumented (Parameter 48)
+        0x00,  // Undocumented (Parameter 49)
+        0x00,  // Undocumented (Parameter 50)
+        0x00,  // Undocumented (Parameter 51)
+        0x00,  // Undocumented (Parameter 52)
+        0x00,  // Undocumented (Parameter 53)
+        0x00,  // Undocumented (Parameter 54)
+        0x03,  // Undocumented (Parameter 55)
+        0x0A,  // Undocumented (Parameter 56)
+        0xA5,  // Undocumented (Parameter 57)
+        0x00,  // Undocumented (Parameter 58)
+        0x00,  // Undocumented (Parameter 59)
+        0x00,  // Undocumented (Parameter 60)
+        0x00   // Undocumented (Parameter 61)
     });
     writeDcs(&[_]u8 { 
         0xE0,  // SETGAMMA (Page 158): Set the gray scale voltage to adjust the gamma characteristics of the TFT panel
