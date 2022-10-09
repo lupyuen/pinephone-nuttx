@@ -115,16 +115,16 @@ pub export fn nuttx_panel_init() void {
     });
     writeDcs(&[_]u8 { 
         0xB3,  // SETRGBIF (Page 134): Control RGB I/F porch timing for internal use
-        0x10, 
-        0x10, 
-        0x05, 
-        0x05, 
-        0x03, 
-        0xFF, 
-        0x00, 
-        0x00,
-        0x00, 
-        0x00 
+        0x10,  // Vertical back porch HS number selection in Blank Frame Period = Hsync number 16 (VBP_RGB_GEN = 16)
+        0x10,  // Vertical front porch HS number selection in Blank Frame Period = Hsync number 16 (VFP_RGB_GEN = 16)
+        0x05,  // HBP OSC number selection in Blank Frame Period = OSC number 5 (DE_BP_RGB_GEN = 5)
+        0x05,  // HFP OSC number selection in Blank Frame Period = OSC number 5 (DE_FP_RGB_GEN = 5)
+        0x03,  // Undocumented
+        0xFF,  // Undocumented
+        0x00,  // Undocumented
+        0x00,  // Undocumented
+        0x00,  // Undocumented
+        0x00   // Undocumented
     });
 
     writeDcs(&[_]u8 { 
