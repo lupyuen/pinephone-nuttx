@@ -108,17 +108,17 @@ pub export fn nuttx_panel_init() void {
     });
     writeDcs(&[_]u8 { 
         0xB8,  // SETPOWER_EXT (Page 142): Set display related register
-        0x25,  // External power IC or PFM selection: VSP = FL1002, VSN = FL1002 (PCCS = 2) ; VCSW1 / VCSW2 Frequency for Pumping VSP / VSN = 1/4 Hsync (ECP_DC_DIV = 5)
+        0x25,  // External power IC or PFM: VSP = FL1002, VSN = FL1002 (PCCS = 2) ; VCSW1 / VCSW2 Frequency for Pumping VSP / VSN = 1/4 Hsync (ECP_DC_DIV = 5)
         0x22,  // VCSW1/VCSW2 soft start time = 15 ms (DT = 2) ; Pumping ratio of VSP / VSN with VCI = x2 (XDK_ECP = 1)
         0x20,  // PFM operation frequency FoscD = Fosc/1 (PFM_DC_DIV = 0)
         0x03   // Enable power IC pumping frequency synchronization = Synchronize with external Hsync (ECP_SYNC_EN = 1) ; Enable VGH/VGL pumping frequency synchronization = Synchronize with external Hsync (VGX_SYNC_EN = 1)
     });
     writeDcs(&[_]u8 { 
         0xB3,  // SETRGBIF (Page 134): Control RGB I/F porch timing for internal use
-        0x10,  // Vertical back porch HS number selection in Blank Frame Period = Hsync number 16 (VBP_RGB_GEN = 16)
-        0x10,  // Vertical front porch HS number selection in Blank Frame Period = Hsync number 16 (VFP_RGB_GEN = 16)
-        0x05,  // HBP OSC number selection in Blank Frame Period = OSC number 5 (DE_BP_RGB_GEN = 5)
-        0x05,  // HFP OSC number selection in Blank Frame Period = OSC number 5 (DE_FP_RGB_GEN = 5)
+        0x10,  // Vertical back porch HS number in Blank Frame Period = Hsync number 16 (VBP_RGB_GEN = 16)
+        0x10,  // Vertical front porch HS number in Blank Frame Period = Hsync number 16 (VFP_RGB_GEN = 16)
+        0x05,  // HBP OSC number in Blank Frame Period = OSC number 5 (DE_BP_RGB_GEN = 5)
+        0x05,  // HFP OSC number in Blank Frame Period = OSC number 5 (DE_FP_RGB_GEN = 5)
         0x03,  // Undocumented
         0xFF,  // Undocumented
         0x00,  // Undocumented
@@ -141,11 +141,11 @@ pub export fn nuttx_panel_init() void {
     });
     writeDcs(&[_]u8 { 
         0xBC,  // SETVDC (Page 146): Control NVDDD/VDDD Voltage
-        0x4E
+        0x4E   // NVDDD voltage = -1.8 V (NVDDD_SEL = 4) ; VDDD voltage = 1.9 V (VDDD_SEL = 6)
     });
     writeDcs(&[_]u8 { 
         0xCC,  // SETPANEL (Page 154): Set display related register
-        0x0B 
+        0x0B   // Enable reverse the source scan direction (SS_PANEL = 1) ; Normal vertical scan direction (GS_PANEL = 0) ; Normally black panel (REV_PANEL = 1) ; S1:S2:S3 = B:G:R (BGR_PANEL = 1)
     });
     writeDcs(&[_]u8 { 
         0xB4,  // SETCYC (Page 135): Control display inversion type
