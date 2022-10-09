@@ -78,12 +78,12 @@ pub export fn nuttx_panel_init() void {
     });
     writeDcs(&[_]u8 { 
         0xBA,  // SETMIPI (Page 144): Set MIPI related register
-        0x33,  // Virtual Channel = 0, Number of Lanes = 4
-        0x81,  // LDO = 1.7 V, Terminal Resistance = 90 Ohm
-        0x05,  // MIPI Low High Speed driving ability = x6
-        0xF9,  // TXCLK speed in DSI LP mode = fDSICLK / 16
-        0x0E,  // Min HFP number in DSI mode = 14
-        0x0E,  // Min HBP number in DSI mode = 14
+        0x33,  // Virtual Channel = 0 (VC_Main = 0) ; Number of Lanes = 4 (Lane_Number = 3)
+        0x81,  // LDO = 1.7 V (DSI_LDO_SEL = 4) ; Terminal Resistance = 90 Ohm (RTERM = 1)
+        0x05,  // MIPI Low High Speed driving ability = x6 (IHSRX = 5)
+        0xF9,  // TXCLK speed in DSI LP mode = fDSICLK / 16 (Tx_clk_sel = 2)
+        0x0E,  // Min HFP number in DSI mode = 14 (HFP_OSC = 14)
+        0x0E,  // Min HBP number in DSI mode = 14 (HBP_OSC = 14)
         0x20,  // Undocumented
         0x00,  // Undocumented
         0x00,  // Undocumented
@@ -108,10 +108,10 @@ pub export fn nuttx_panel_init() void {
     });
     writeDcs(&[_]u8 { 
         0xB8,  // SETPOWER_EXT (Page 142): Set display related register
-        0x25, 
-        0x22, 
-        0x20, 
-        0x03 
+        0x25,  // External power IC or PFM selection: VSP = FL1002, VSN = FL1002 (PCCS = 2) ; VCSW1 / VCSW2 Frequency for Pumping VSP / VSN = 1/4 Hsync (ECP_DC_DIV = 5)
+        0x22,  // VCSW1/VCSW2 soft start time = 15 ms (DT = 2) ; Pumping ratio of VSP / VSN with VCI = x2 (XDK_ECP = 1)
+        0x20,  // PFM operation frequency FoscD = Fosc/1 (PFM_DC_DIV = 0)
+        0x03   // Enable power IC pumping frequency synchronization = Synchronize with external Hsync (ECP_SYNC_EN = 1) ; Enable VGH/VGL pumping frequency synchronization = Synchronize with external Hsync (VGX_SYNC_EN = 1)
     });
     writeDcs(&[_]u8 { 
         0xB3,  // SETRGBIF (Page 134): Control RGB I/F porch timing for internal use
