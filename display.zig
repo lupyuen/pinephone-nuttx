@@ -51,9 +51,6 @@ const MIPI_DSI_DCS_SHORT_WRITE = 0x05;
 /// DCS Short Write (With Parameter)
 const MIPI_DSI_DCS_SHORT_WRITE_PARAM = 0x15;
 
-const MIPI_DCS_EXIT_SLEEP_MODE = 0x11;
-const MIPI_DCS_SET_DISPLAY_ON  = 0x29;
-
 /// Base Address of Allwinner A64 MIPI DSI Controller. See https://lupyuen.github.io/articles/dsi#a64-registers-for-mipi-dsi
 const DSI_BASE_ADDRESS = 0x01CA_0000;
 
@@ -379,46 +376,46 @@ pub export fn nuttx_panel_init() void {
     // Command #18
     writeDcs(&[_]u8 { 
         0xE0,  // SETGAMMA (Page 158): Set the gray scale voltage to adjust the gamma characteristics of the TFT panel
-        0x00,  //
-        0x09,  //
-        0x0D,  //
-        0x23,  //
-        0x27,  //
-        0x3C,  //
-        0x41,  //
-        0x35,  //
-        0x07,  //
-        0x0D,  //
-        0x0E,  //
-        0x12,  //
-        0x13,  //
-        0x10,  //
-        0x12,  //
-        0x12,  //
-        0x18,  //
-        0x00,  //
-        0x09,  //
-        0x0D,  //
-        0x23,  //
-        0x27,  //
-        0x3C,  //
-        0x41,  //
-        0x35,  //
-        0x07,  //
-        0x0D,  //
-        0x0E,  //
-        0x12,  //
-        0x13,  //
-        0x10,  //
-        0x12,  //
-        0x12,  //
-        0x18   //
+        0x00,  // (PVR0 = 0x00)
+        0x09,  // (PVR1 = 0x09)
+        0x0D,  // (PVR2 = 0x0D)
+        0x23,  // (PVR3 = 0x23)
+        0x27,  // (PVR4 = 0x27)
+        0x3C,  // (PVR5 = 0x3C)
+        0x41,  // (PPR0 = 0x41)
+        0x35,  // (PPR1 = 0x35)
+        0x07,  // (PPK0 = 0x07)
+        0x0D,  // (PPK1 = 0x0D)
+        0x0E,  // (PPK2 = 0x0E)
+        0x12,  // (PPK3 = 0x12)
+        0x13,  // (PPK4 = 0x13)
+        0x10,  // (PPK5 = 0x10)
+        0x12,  // (PPK6 = 0x12)
+        0x12,  // (PPK7 = 0x12)
+        0x18,  // (PPK8 = 0x18)
+        0x00,  // (NVR0 = 0x00)
+        0x09,  // (NVR1 = 0x09)
+        0x0D,  // (NVR2 = 0x0D)
+        0x23,  // (NVR3 = 0x23)
+        0x27,  // (NVR4 = 0x27)
+        0x3C,  // (NVR5 = 0x3C)
+        0x41,  // (NPR0 = 0x41)
+        0x35,  // (NPR1 = 0x35)
+        0x07,  // (NPK0 = 0x07)
+        0x0D,  // (NPK1 = 0x0D)
+        0x0E,  // (NPK2 = 0x0E)
+        0x12,  // (NPK3 = 0x12)
+        0x13,  // (NPK4 = 0x13)
+        0x10,  // (NPK5 = 0x10)
+        0x12,  // (NPK6 = 0x12)
+        0x12,  // (NPK7 = 0x12)
+        0x18   // (NPK8 = 0x18)
     });
 
     // Command #19    
     // TODO: Is this needed?
     writeDcs(&[_]u8 {
-        MIPI_DCS_EXIT_SLEEP_MODE  // SLPOUT (Page 89): Turns off sleep mode
+        0x11  // SLPOUT (Page 89): Turns off sleep mode (MIPI_DCS_EXIT_SLEEP_MODE)
     });
 
     // TODO: Verify the delay
@@ -427,7 +424,7 @@ pub export fn nuttx_panel_init() void {
     // Command #20
     // TODO: Is this needed?
     writeDcs(&[_]u8 {
-        MIPI_DCS_SET_DISPLAY_ON  // Display On (Page 97): Recover from DISPLAY OFF mode
+        0x29  // Display On (Page 97): Recover from DISPLAY OFF mode (MIPI_DCS_SET_DISPLAY_ON)
     });    
 }
 
