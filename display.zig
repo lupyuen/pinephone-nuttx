@@ -190,26 +190,28 @@ pub export fn nuttx_panel_init() void {
         0x32,  // VSNROUT Voltage = ??? (VRN = 50)
         0x77,  // Undocumented
         0xF1,  // Enable VGL voltage Detect Function = VGL voltage Abnormal (VGL_DET_EN = 1) ; Enable VGH voltage Detect Function = VGH voltage Abnormal (VGH_DET_EN = 1) ; Enlarge VGL Voltage at "FBOFF_VGL=1" = "VGL=-15V" (VGL_TURBO = 1) ; Enlarge VGH Voltage at "FBOFF_VGH=1" = "VGH=20V" (VGH_TURBO = 1) ; (APS = 1)
-        0xFF,  // Left side VGH stage 1 pumping frequency = 1.5 MHz (VGH1_L_DIV = 15) ; Left side VGL stage 1 pumping frequency = 1.5 MHz (VGL1_L_DIV = 15)
+        0xFF,  // Left side VGH stage 1 pumping frequency  = 1.5 MHz (VGH1_L_DIV = 15) ; Left side VGL stage 1 pumping frequency  = 1.5 MHz (VGL1_L_DIV = 15)
         0xFF,  // Right side VGH stage 1 pumping frequency = 1.5 MHz (VGH1_R_DIV = 15) ; Right side VGL stage 1 pumping frequency = 1.5 MHz (VGL1_R_DIV = 15)
-        0xCC,  // Left side VGH stage 2 pumping frequency = 2.6 MHz (VGH2_L_DIV = 12) ; Left side VGL stage 2 pumping frequency = 2.6 MHz (VGL2_L_DIV = 12)
+        0xCC,  // Left side VGH stage 2 pumping frequency  = 2.6 MHz (VGH2_L_DIV = 12) ; Left side VGL stage 2 pumping frequency  = 2.6 MHz (VGL2_L_DIV = 12)
         0xCC,  // Right side VGH stage 2 pumping frequency = 2.6 MHz (VGH2_R_DIV = 12) ; Right side VGL stage 2 pumping frequency = 2.6 MHz (VGL2_R_DIV = 12)
-        0x77,  // Left side VGH stage 3 pumping frequency = 4.5 MHz (VGH3_L_DIV = 7) ; Left side VGL stage 3 pumping frequency = 4.5 MHz (VGL3_L_DIV = 7)
-        0x77   // Right side VGH stage 3 pumping frequency = 4.5 MHz (VGH3_R_DIV = 7) ; Right side VGL stage 3 pumping frequency = 4.5 MHz (VGL3_R_DIV = 7)
+        0x77,  // Left side VGH stage 3 pumping frequency  = 4.5 MHz (VGH3_L_DIV = 7)  ; Left side VGL stage 3 pumping frequency  = 4.5 MHz (VGL3_L_DIV = 7)
+        0x77   // Right side VGH stage 3 pumping frequency = 4.5 MHz (VGH3_R_DIV = 7)  ; Right side VGL stage 3 pumping frequency = 4.5 MHz (VGL3_R_DIV = 7)
     });
     writeDcs(&[_]u8 { 
         0xB5,  // SETBGP (Page 136): Internal reference voltage setting
-        0x07, 
-        0x07 
+        0x07,  // VREF Voltage: 4.2 V (VREF_SEL = 7)
+        0x07   // NVREF Voltage: 4.2 V (NVREF_SEL = 7)
     });
     writeDcs(&[_]u8 { 
         0xB6,  // SETVCOM (Page 137): Set VCOM Voltage
-        0x2C, 
-        0x2C 
+        0x2C,  // VCOMDC voltage at "GS_PANEL=0" = -0.67 V (VCOMDC_F = 0x2C)
+        0x2C   // VCOMDC voltage at "GS_PANEL=1" = -0.67 V (VCOMDC_B = 0x2C)
     });
     writeDcs(&[_]u8 { 
         0xBF,  // Undocumented
-        0x02, 0x11, 0x00 
+        0x02,  // Undocumented
+        0x11,  // Undocumented
+        0x00   // Undocumented
     });
 
     writeDcs(&[_]u8 { 
