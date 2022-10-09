@@ -159,20 +159,20 @@ pub export fn nuttx_panel_init() void {
     });
     writeDcs(&[_]u8 { 
         0xE3,  // SETEQ (Page 159): Set EQ related register
-        0x00, 
-        0x00, 
-        0x0B, 
-        0x0B, 
-        0x10, 
-        0x10, 
-        0x00, 
-        0x00,
-        0x00, 
-        0x00, 
-        0xFF, 
-        0x00, 
-        0xC0, 
-        0x10 
+        0x00,  // Temporal spacing between HSYNC and PEQGND = 0*4/Fosc (PNOEQ = 0)
+        0x00,  // Temporal spacing between HSYNC and NEQGND = 0*4/Fosc (NNOEQ = 0)
+        0x0B,  // Source EQ GND period when Source up to positive voltage = 11*4/Fosc (PEQGND = 11)
+        0x0B,  // Source EQ GND period when Source down to negative voltage = 11*4/Fosc (NEQGND = 11)
+        0x10,  // Source EQ VCI period when Source up to positive voltage = 16*4/Fosc (PEQVCI = 16)
+        0x10,  // Source EQ VCI period when Source down to negative voltage = 16*4/Fosc (NEQVCI = 16)
+        0x00,  // Temporal period of PEQVCI1 = 0*4/Fosc (PEQVCI1 = 0)
+        0x00,  // Temporal period of NEQVCI1 = 0*4/Fosc (NEQVCI1 = 0)
+        0x00,  // (Reserved)
+        0x00,  // (Reserved)
+        0xFF,  // (Undocumented)
+        0x00,  // (Reserved)
+        0xC0,  // White pattern to protect GOA glass (ESD_DET_DATA_WHITE = 1) ; Enable ESD detection function to protect GOA glass (ESD_WHITE_EN = 1)
+        0x10   // No Need VSYNC (additional frame) after Sleep-In command to display sleep-in blanking frame then into Sleep-In State (SLPIN_OPTION = 1) ; Enable video function detection (VEDIO_NO_CHECK_EN = 0) ; Disable ESD white pattern scanning voltage pull ground (ESD_WHITE_GND_EN = 0) ; ESD detection function period = 0 Frames (ESD_DET_TIME_SEL = 0)
     });
     writeDcs(&[_]u8 { 
         0xC6,  // Undocumented
