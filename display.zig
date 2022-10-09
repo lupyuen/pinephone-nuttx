@@ -153,9 +153,9 @@ pub export fn nuttx_panel_init() void {
     });
     writeDcs(&[_]u8 {
         0xB2,  // SETDISP (Page 132): Control the display resolution
-        0xF0, 
-        0x12, 
-        0xF0
+        0xF0,  // Gate number of vertical direction = 480 + (240*4) (NL = 240)
+        0x12,  // (RES_V_LSB = 0) ; Non-display area source output control: Source output = VSSD (BLK_CON = 1) ; Channel number of source direction = 720RGB (RESO_SEL = 2)
+        0xF0   // Source voltage during Blanking Time when accessing Sleep-Out / Sleep-In command = GND (WHITE_GND_EN = 1) ; Blank timing control when access sleep out command: Blank Frame Period = 7 Frames (WHITE_FRAME_SEL = 7) ; Source output refresh control: Refresh Period = 0 Frames (ISC = 0)
     });
     writeDcs(&[_]u8 { 
         0xE3,  // SETEQ (Page 159): Set EQ related register
