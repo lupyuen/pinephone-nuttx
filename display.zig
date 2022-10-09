@@ -176,22 +176,26 @@ pub export fn nuttx_panel_init() void {
     });
     writeDcs(&[_]u8 { 
         0xC6,  // Undocumented
-        0x01, 0x00, 0xFF, 0xFF, 0x00 
+        0x01,  // Undocumented
+        0x00,  // Undocumented
+        0xFF,  // Undocumented
+        0xFF,  // Undocumented
+        0x00   // Undocumented
     });
     writeDcs(&[_]u8 { 
         0xC1,  // SETPOWER (Page 149): Set related setting of power
-        0x74, 
-        0x00, 
-        0x32, 
-        0x32, 
-        0x77, 
-        0xF1, 
-        0xFF, 
-        0xFF,
-        0xCC, 
-        0xCC, 
-        0x77, 
-        0x77 
+        0x74,  // VGH Voltage Adjustment = 17 V (VBTHS = 7) ; VGL Voltage Adjustment = -11 V (VBTLS = 4)
+        0x00,  // Enable VGH feedback voltage detection. Output voltage = VBTHS (FBOFF_VGH = 0) ; Enable VGL feedback voltage detection. Output voltage = VBTLS (FBOFF_VGL = 0)
+        0x32,  // VSPROUT Voltage = ??? (VRP = 50)
+        0x32,  // VSNROUT Voltage = ??? (VRN = 50)
+        0x77,  // Undocumented
+        0xF1,  // Enable VGL voltage Detect Function = VGL voltage Abnormal (VGL_DET_EN = 1) ; Enable VGH voltage Detect Function = VGH voltage Abnormal (VGH_DET_EN = 1) ; Enlarge VGL Voltage at "FBOFF_VGL=1" = "VGL=-15V" (VGL_TURBO = 1) ; Enlarge VGH Voltage at "FBOFF_VGH=1" = "VGH=20V" (VGH_TURBO = 1) ; (APS = 1)
+        0xFF,  // Left side VGH stage 1 pumping frequency = 1.5 MHz (VGH1_L_DIV = 15) ; Left side VGL stage 1 pumping frequency = 1.5 MHz (VGL1_L_DIV = 15)
+        0xFF,  // Right side VGH stage 1 pumping frequency = 1.5 MHz (VGH1_R_DIV = 15) ; Right side VGL stage 1 pumping frequency = 1.5 MHz (VGL1_R_DIV = 15)
+        0xCC,  // Left side VGH stage 2 pumping frequency = 2.6 MHz (VGH2_L_DIV = 12) ; Left side VGL stage 2 pumping frequency = 2.6 MHz (VGL2_L_DIV = 12)
+        0xCC,  // Right side VGH stage 2 pumping frequency = 2.6 MHz (VGH2_R_DIV = 12) ; Right side VGL stage 2 pumping frequency = 2.6 MHz (VGL2_R_DIV = 12)
+        0x77,  // Left side VGH stage 3 pumping frequency = 4.5 MHz (VGH3_L_DIV = 7) ; Left side VGL stage 3 pumping frequency = 4.5 MHz (VGL3_L_DIV = 7)
+        0x77   // Right side VGH stage 3 pumping frequency = 4.5 MHz (VGH3_R_DIV = 7) ; Right side VGL stage 3 pumping frequency = 4.5 MHz (VGL3_R_DIV = 7)
     });
     writeDcs(&[_]u8 { 
         0xB5,  // SETBGP (Page 136): Internal reference voltage setting
