@@ -129,15 +129,15 @@ pub export fn nuttx_panel_init() void {
 
     writeDcs(&[_]u8 { 
         0xC0,  // SETSCR (Page 147): Set related setting of Source driving
-        0x73, 
-        0x73, 
-        0x50, 
-        0x50, 
-        0x00, 
-        0xC0, 
-        0x08, 
-        0x70,
-        0x00
+        0x73,  // Source OP Amp driving period for positive polarity in Normal Mode: Source OP Period = 115*4/Fosc (N_POPON = 115)
+        0x73,  // Source OP Amp driving period for negative polarity in Normal Mode: Source OP Period = 115*4/Fosc (N_NOPON = 115)
+        0x50,  // Source OP Amp driving period for positive polarity in Idle mode: Source OP Period = 80*4/Fosc (I_POPON = 80)
+        0x50,  // Source OP Amp dirivng period for negative polarity in Idle Mode: Source OP Period = 80*4/Fosc (I_NOPON = 80)
+        0x00,  // (SCR Bits 24-31 = 0x00)
+        0xC0,  // (SCR Bits 16-23 = 0xC0) 
+        0x08,  // Gamma bias current fine tune: Current xIbias = 4 (SCR Bits 9-13 = 4) ; (SCR Bits  8-15 = 0x08) 
+        0x70,  // Source and Gamma bias current core tune: Ibias = 1 (SCR Bits 0-3 = 0) ; Source bias current fine tune: Current xIbias = 7 (SCR Bits 4-8 = 7) ; (SCR Bits  0-7  = 0x70)
+        0x00   // Undocumented
     });
     writeDcs(&[_]u8 { 
         0xBC,  // SETVDC (Page 146): Control NVDDD/VDDD Voltage
