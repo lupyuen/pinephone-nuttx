@@ -186,8 +186,8 @@ pub export fn nuttx_panel_init() void {
         0xC1,  // SETPOWER (Page 149): Set related setting of power
         0x74,  // VGH Voltage Adjustment = 17 V (VBTHS = 7) ; VGL Voltage Adjustment = -11 V (VBTLS = 4)
         0x00,  // Enable VGH feedback voltage detection. Output voltage = VBTHS (FBOFF_VGH = 0) ; Enable VGL feedback voltage detection. Output voltage = VBTLS (FBOFF_VGL = 0)
-        0x32,  // VSPROUT Voltage = ??? (VRP = 50)
-        0x32,  // VSNROUT Voltage = ??? (VRN = 50)
+        0x32,  // VSPROUT Voltage = (VRH[5:0] x 0.05 + 3.3) x (VREF/4.8) if VREF [4]=0 (VRP = 50)
+        0x32,  // VSNROUT Voltage = (VRH[5:0] x 0.05 + 3.3) x (VREF/5.6) if VREF [4]=1 (VRN = 50)
         0x77,  // Undocumented
         0xF1,  // Enable VGL voltage Detect Function = VGL voltage Abnormal (VGL_DET_EN = 1) ; Enable VGH voltage Detect Function = VGH voltage Abnormal (VGH_DET_EN = 1) ; Enlarge VGL Voltage at "FBOFF_VGL=1" = "VGL=-15V" (VGL_TURBO = 1) ; Enlarge VGH Voltage at "FBOFF_VGH=1" = "VGH=20V" (VGH_TURBO = 1) ; (APS = 1)
         0xFF,  // Left side VGH stage 1 pumping frequency  = 1.5 MHz (VGH1_L_DIV = 15) ; Left side VGL stage 1 pumping frequency  = 1.5 MHz (VGL1_L_DIV = 15)
@@ -216,9 +216,24 @@ pub export fn nuttx_panel_init() void {
 
     writeDcs(&[_]u8 { 
         0xE9,  // SETGIP1 (Page 163): Set forward GIP timing
-        0x82, 0x10, 0x06, 0x05, 0xA2, 0x0A, 0xA5, 0x12,
-        0x31, 0x23, 0x37, 0x83, 0x04, 0xBC, 0x27, 0x38,
-        0x0C, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0C, 0x00,
+        0x82,  // 
+        0x10,  //
+        0x06,  // 
+        0x05,  // 
+        0xA2,  //
+        0x0A,  //
+        0xA5,  //
+        0x12,  //
+        0x31,  //
+        0x23,  //
+        0x37,  //
+        0x83,  //
+        0x04,  //
+        0xBC,  //
+        0x27,  //
+        0x38,  //
+        0x0C,  //
+        0x00, 0x03, 0x00, 0x00, 0x00, 0x0C, 0x00,
         0x03, 0x00, 0x00, 0x00, 0x75, 0x75, 0x31, 0x88,
         0x88, 0x88, 0x88, 0x88, 0x88, 0x13, 0x88, 0x64,
         0x64, 0x20, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
