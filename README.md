@@ -3122,6 +3122,8 @@ Our NuttX Zig Display Driver powers on the PinePhone Display and works exactly l
 
 ![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/dsi2-title.jpg)
 
+_Can our driver render graphics on PinePhone Display?_
+
 Our PinePhone Display Driver isn't complete. It handles MIPI DSI (for initialising ST7703) but doesn't support Allwinner A64's Display Engine (DE) and Timing Controller (TCON), which are needed for rendering graphics.
 
 We'll implement DE and TCON next.
