@@ -3102,6 +3102,20 @@ Result:
 00 00 00 00 65 03 
 ```
 
+# Initialise ST7703 LCD Controller
+
+PinePhone's ST7703 LCD Controller needs to be initialised with these 20 Commands...
+
+-   ["Initialise LCD Controller"](https://lupyuen.github.io/articles/dsi#initialise-lcd-controller)
+
+This is how we send the 20 Commands with our NuttX Driver in ZigLang, as DCS Short Writes and DCS Long Writes...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/40098cd9ea37ab5e0192b2dc006a98630fa6a7e8/display.zig#L62-L429
+
+To send a command, `writeDcs` executes a DCS Short Write or DCS Long Write, depending on the length of the command...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/40098cd9ea37ab5e0192b2dc006a98630fa6a7e8/display.zig#L431-L453
+
 # Test Logs
 
 PinePhone Logs captured from various tests...
