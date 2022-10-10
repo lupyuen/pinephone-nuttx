@@ -438,15 +438,18 @@ fn writeDcs(buf: []const u8) void {
     const res = switch (buf.len) {
 
         // DCS Short Write (without parameter)
-        1 => nuttx_mipi_dsi_dcs_write(null, 0, MIPI_DSI_DCS_SHORT_WRITE, 
+        1 => nuttx_mipi_dsi_dcs_write(null, 0, 
+            MIPI_DSI_DCS_SHORT_WRITE, 
             &buf[0], buf.len),
 
         // DCS Short Write (with parameter)
-        2 => nuttx_mipi_dsi_dcs_write(null, 0, MIPI_DSI_DCS_SHORT_WRITE_PARAM, 
+        2 => nuttx_mipi_dsi_dcs_write(null, 0, 
+            MIPI_DSI_DCS_SHORT_WRITE_PARAM, 
             &buf[0], buf.len),
 
         // DCS Long Write
-        else => nuttx_mipi_dsi_dcs_write(null, 0, MIPI_DSI_DCS_LONG_WRITE, 
+        else => nuttx_mipi_dsi_dcs_write(null, 0, 
+            MIPI_DSI_DCS_LONG_WRITE, 
             &buf[0], buf.len),
     };
     assert(res == buf.len);
