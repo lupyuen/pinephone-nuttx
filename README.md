@@ -3102,7 +3102,7 @@ Result:
 00 00 00 00 65 03 
 ```
 
-# Initialise ST7703 LCD Controller
+# Initialise ST7703 LCD Controller in Zig
 
 PinePhone's ST7703 LCD Controller needs to be initialised with these 20 Commands...
 
