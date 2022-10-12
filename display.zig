@@ -46,7 +46,7 @@ const c = @cImport({
 
 // Compose MIPI DSI Long Packet. See https://lupyuen.github.io/articles/dsi#long-packet-for-mipi-dsi
 fn composeLongPacket(
-    pkt: []u8,    // Buffer for the Long Packet
+    pkt: []u8,    // Buffer for the Returned Long Packet
     channel: u8,  // Virtual Channel ID
     cmd: u8,      // DCS Command
     buf: [*c]const u8,  // Transmit Buffer
@@ -112,7 +112,7 @@ fn composeLongPacket(
 
 // Compose MIPI DSI Short Packet. See https://lupyuen.github.io/articles/dsi#appendix-short-packet-for-mipi-dsi
 fn composeShortPacket(
-    pkt: []u8,    // Buffer for the Long Packet
+    pkt: []u8,    // Buffer for the Returned Short Packet
     channel: u8,  // Virtual Channel ID
     cmd: u8,      // DCS Command
     buf: [*c]const u8,  // Transmit Buffer
