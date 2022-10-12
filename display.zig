@@ -76,7 +76,7 @@ fn composeLongPacket(
     const ecc: u8 = computeEcc(di_wc);
 
     // Packet Header (4 bytes):
-    // - Data Identifier + Word Count + Error Correction COde
+    // - Data Identifier + Word Count + Error Correction Code
     const header = [4]u8 { di_wc[0], di_wc[1], di_wc[2], ecc };
 
     // Packet Payload:
@@ -153,7 +153,7 @@ fn composeShortPacket(
     const ecc: u8 = computeEcc(di_data);
 
     // Packet Header (4 bytes):
-    // - Data Identifier + Word Count + Error Correction COde
+    // - Data Identifier + Word Count + Error Correction Code
     const header = [4]u8 { di_data[0], di_data[1], di_data[2], ecc };
 
     // Packet:
