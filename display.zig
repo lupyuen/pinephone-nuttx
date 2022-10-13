@@ -121,7 +121,7 @@ fn composeShortPacket(
     debug("composeShortPacket: channel={}, cmd=0x{x}, len={}", .{ channel, cmd, len });
     assert(len == 1 or len == 2);
 
-    // From BL808 Reference Manual (Page 201): https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf
+    // From BL808 Reference Manual (Page 201): https://files.pine64.org/doc/datasheet/ox64/BL808_RM_en_1.0(open).pdf
     //   A Short Packet consists of 8-bit data identification (DI),
     //   two bytes of commands or data, and 8-bit ECC.
     //   The length of a short packet is 4 bytes including ECC.
@@ -170,7 +170,7 @@ fn composeShortPacket(
 /// Compute the Error Correction Code (ECC) (1 byte):
 /// Allow single-bit errors to be corrected and 2-bit errors to be detected in the Packet Header
 /// See "12.3.6.12: Error Correction Code", Page 208 of BL808 Reference Manual:
-/// https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf
+/// https://files.pine64.org/doc/datasheet/ox64/BL808_RM_en_1.0(open).pdf
 fn computeEcc(
     di_wc: [3]u8  // Data Identifier + Word Count (3 bytes)
 ) u8 {
@@ -212,7 +212,7 @@ fn computeEcc(
 
 /// Compute 16-bit Cyclic Redundancy Check (CRC).
 /// See "12.3.6.13: Packet Footer", Page 210 of BL808 Reference Manual:
-/// https://github.com/sipeed/sipeed2022_autumn_competition/blob/main/assets/BL808_RM_en.pdf
+/// https://files.pine64.org/doc/datasheet/ox64/BL808_RM_en_1.0(open).pdf
 fn computeCrc(
     data: []const u8
 ) u16 {
