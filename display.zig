@@ -153,7 +153,7 @@ fn composeShortPacket(
     const ecc: u8 = computeEcc(di_data);
 
     // Packet Header (4 bytes):
-    // - Data Identifier + Word Count + Error Correction Code
+    // - Data Identifier + Data + Error Correction Code
     const header = [4]u8 { di_data[0], di_data[1], di_data[2], ecc };
 
     // Packet:
