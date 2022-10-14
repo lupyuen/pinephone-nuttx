@@ -3640,35 +3640,233 @@ nsh>
 Testing our [NuttX Zig Driver for MIPI DSI](https://github.com/lupyuen/pinephone-nuttx#zig-driver-for-pinephone-mipi-dsi) on PinePhone...
 
 ```text
++ aarch64-none-elf-gcc -v
+Using built-in specs.
+COLLECT_GCC=aarch64-none-elf-gcc
+COLLECT_LTO_WRAPPER=/Applications/ArmGNUToolchain/11.3.rel1/aarch64-none-elf/bin/../libexec/gcc/aarch64-none-elf/11.3.1/lto-wrapper
+Target: aarch64-none-elf
+Configured with: /Volumes/data/jenkins/workspace/GNU-toolchain/arm-11/src/gcc/configure --target=aarch64-none-elf --prefix=/Volumes/data/jenkins/workspace/GNU-toolchain/arm-11/build-aarch64-none-elf/install --with-gmp=/Volumes/data/jenkins/workspace/GNU-toolchain/arm-11/build-aarch64-none-elf/host-tools --with-mpfr=/Volumes/data/jenkins/workspace/GNU-toolchain/arm-11/build-aarch64-none-elf/host-tools --with-mpc=/Volumes/data/jenkins/workspace/GNU-toolchain/arm-11/build-aarch64-none-elf/host-tools --with-isl=/Volumes/data/jenkins/workspace/GNU-toolchain/arm-11/build-aarch64-none-elf/host-tools --disable-shared --disable-nls --disable-threads --disable-tls --enable-checking=release --enable-languages=c,c++,fortran --with-newlib --with-gnu-as --with-gnu-ld --with-sysroot=/Volumes/data/jenkins/workspace/GNU-toolchain/arm-11/build-aarch64-none-elf/install/aarch64-none-elf --with-pkgversion='Arm GNU Toolchain 11.3.Rel1' --with-bugurl=https://bugs.linaro.org/
+Thread model: single
+Supported LTO compression algorithms: zlib
+gcc version 11.3.1 20220712 (Arm GNU Toolchain 11.3.Rel1) 
++ zig version
+0.10.0-dev.2351+b64a1d5ab
++ build_zig
++ pushd ../pinephone-nuttx
+~/gicv2/nuttx/pinephone-nuttx ~/gicv2/nuttx/nuttx
++ git pull
+Already up-to-date.
++ zig build-obj -target aarch64-freestanding-none -mcpu cortex_a53 -isystem /Users/Luppy/gicv2/nuttx/nuttx/include -I /Users/Luppy/gicv2/nuttx/apps/include display.zig
++ cp display.o /Users/Luppy/gicv2/nuttx/apps/examples/null/null_main.c.Users.Luppy.gicv2.nuttx.apps.examples.null.o
++ popd
+~/gicv2/nuttx/nuttx
++ make -j
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/apps'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/libs/libxx'
+make[1]: 'libxx.a' is up to date.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/libs/libxx'
+make[2]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/examples/hello'
+make[2]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/builtin'
+make[2]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/examples/null'
+make[2]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/system/system'
+make[2]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/system/readline'
+make[2]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/testing/getprime'
+make[2]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/platform'
+make[2]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/system/nsh'
+make[2]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/nshlib'
+make[2]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/testing/ostest'
+make[2]: Nothing to be done for 'depend'.
+make[2]: Nothing to be done for 'depend'.
+make[2]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/nshlib'
+make[2]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/system/system'
+make[2]: Nothing to be done for 'depend'.
+make[2]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/examples/hello'
+make[2]: Nothing to be done for 'depend'.
+make[2]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/system/readline'
+make[2]: Nothing to be done for 'depend'.
+make[2]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/testing/getprime'
+make[2]: Nothing to be done for 'depend'.
+make[2]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/examples/null'
+make[2]: Nothing to be done for 'depend'.
+make[2]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/platform'
+make[2]: Nothing to be done for 'depend'.
+make[2]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/builtin'
+make[2]: Nothing to be done for 'depend'.
+make[2]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/system/nsh'
+make[2]: Nothing to be done for 'depend'.
+make[2]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/testing/ostest'
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/sched'
+make[1]: Nothing to be done for 'depend'.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/sched'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/drivers'
+make[1]: Nothing to be done for 'depend'.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/drivers'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/boards'
+make[1]: Nothing to be done for 'depend'.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/boards'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/arch/arm64/src'
+make[1]: Nothing to be done for 'depend'.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/arch/arm64/src'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/fs'
+make[1]: Nothing to be done for 'depend'.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/fs'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/binfmt'
+make[1]: Nothing to be done for 'depend'.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/binfmt'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/libs/libc'
+make[1]: Nothing to be done for 'depend'.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/libs/libc'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/mm'
+make[1]: Nothing to be done for 'depend'.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/mm'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/libs/libxx'
+make[1]: Nothing to be done for 'depend'.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/libs/libxx'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/sched'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/drivers'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/libs/libc'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/boards'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/mm'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/arch/arm64/src'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/apps'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/fs'
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/binfmt'
+make[1]: 'libboards.a' is up to date.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/boards'
+make[1]: 'libdrivers.a' is up to date.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/drivers'
+make[1]: 'libmm.a' is up to date.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/mm'
+make[1]: 'libsched.a' is up to date.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/sched'
+make[1]: 'libfs.a' is up to date.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/fs'
+make[1]: 'libbinfmt.a' is up to date.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/binfmt'
+rm -f /Users/Luppy/gicv2/nuttx/apps/libapps.a
+make /Users/Luppy/gicv2/nuttx/apps/libapps.a
+make[1]: 'libarch.a' is up to date.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/arch/arm64/src'
+make[2]: Entering directory '/Users/Luppy/gicv2/nuttx/apps'
+make[1]: 'libc.a' is up to date.
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/libs/libc'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/builtin'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/nshlib'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/testing/getprime'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/examples/null'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/platform'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/examples/hello'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/system/system'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/testing/ostest'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/system/nsh'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/system/readline'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/examples/hello'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/builtin'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/platform'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/system/nsh'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/system/system'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/testing/ostest'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/nshlib'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/testing/getprime'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/examples/null'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/system/readline'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/builtin'
+AR (add): libapps.a    builtin_list.c.Users.Luppy.gicv2.nuttx.apps.builtin.o exec_builtin.c.Users.Luppy.gicv2.nuttx.apps.builtin.o       
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/builtin'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/examples/hello'
+AR (add): libapps.a        hello_main.c.Users.Luppy.gicv2.nuttx.apps.examples.hello.o   
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/examples/hello'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/examples/null'
+AR (add): libapps.a        null_main.c.Users.Luppy.gicv2.nuttx.apps.examples.null.o   
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/examples/null'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/nshlib'
+AR (add): libapps.a    nsh_init.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_parse.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_console.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_script.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_system.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_command.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_fscmds.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_ddcmd.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_proccmds.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_mmcmds.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_timcmds.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_envcmds.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_syscmds.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_dbgcmds.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_session.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_fsutils.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_builtin.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_romfsetc.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_mntcmds.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_consolemain.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_printf.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o nsh_test.c.Users.Luppy.gicv2.nuttx.apps.nshlib.o       
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/nshlib'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/platform'
+AR (add): libapps.a    dummy.c.Users.Luppy.gicv2.nuttx.apps.platform.o       
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/platform'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/system/nsh'
+AR (add): libapps.a        nsh_main.c.Users.Luppy.gicv2.nuttx.apps.system.nsh.o sh_main.c.Users.Luppy.gicv2.nuttx.apps.system.nsh.o   
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/system/nsh'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/system/readline'
+AR (add): libapps.a    readline.c.Users.Luppy.gicv2.nuttx.apps.system.readline.o readline_fd.c.Users.Luppy.gicv2.nuttx.apps.system.readline.o readline_common.c.Users.Luppy.gicv2.nuttx.apps.system.readline.o       
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/system/readline'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/system/system'
+AR (add): libapps.a    system.c.Users.Luppy.gicv2.nuttx.apps.system.system.o       
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/system/system'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/testing/getprime'
+AR (add): libapps.a        getprime_main.c.Users.Luppy.gicv2.nuttx.apps.testing.getprime.o   
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/testing/getprime'
+make[3]: Entering directory '/Users/Luppy/gicv2/nuttx/apps/testing/ostest'
+AR (add): libapps.a    getopt.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o dev_null.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o restart.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o sigprocmask.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o sighand.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o signest.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o fpu.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o setvbuf.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o tls.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o waitpid.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o cancel.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o cond.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o mutex.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o timedmutex.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o sem.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o semtimed.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o barrier.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o timedwait.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o pthread_rwlock.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o pthread_rwlock_cancel.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o specific.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o robust.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o roundrobin.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o mqueue.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o timedmqueue.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o posixtimer.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o vfork.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o    ostest_main.c.Users.Luppy.gicv2.nuttx.apps.testing.ostest.o   
+make[3]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps/testing/ostest'
+make[2]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps'
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/apps'
+IN: /Users/Luppy/gicv2/nuttx/apps/libapps.a -> staging/libapps.a
+make[1]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/arch/arm64/src'
+make[2]: Entering directory '/Users/Luppy/gicv2/nuttx/nuttx/boards/arm64/qemu/qemu-a53/src'
+make[2]: 'libboard.a' is up to date.
+make[2]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/boards/arm64/qemu/qemu-a53/src'
+LD: nuttx
+make[1]: Leaving directory '/Users/Luppy/gicv2/nuttx/nuttx/arch/arm64/src'
+CP: nuttx.hex
+CP: nuttx.bin
++ aarch64-none-elf-size nuttx
+   text    data     bss     dec     hex filename
+ 253075   12624   48504  314203   4cb5b nuttx
++ aarch64-none-elf-objdump -t -S --demangle --line-numbers --wide nuttx
++ qemu-system-aarch64 -smp 4 -cpu cortex-a53 -nographic -machine virt,virtualization=on,gic-version=2 -net none -chardev stdio,id=con,mux=on -serial chardev:con -mon chardev=con,mode=readline -kernel ./nuttx
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+nx_start: Entry
+up_allocate_heap: heap_start=0x0x402cf000, heap_size=0x7d31000
+arm64_gic_initialize: TODO: Init GIC for PinePhone
+arm64_gic_initialize: CONFIG_GICD_BASE=0x8000000
+arm64_gic_initialize: CONFIG_GICR_BASE=0x8010000
+arm64_gic_initialize: GIC Version is 2
+up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 62.50MHz, cycle 62500
+up_timer_initialize: _vector_table=0x402b1000
+up_timer_initialize: Before writing: vbar_el1=0x402b1000
+up_timer_initialize: After writing: vbar_el1=0x402b1000
+uart_register: Registering /dev/console
+uart_register: Registering /dev/ttyS0
+work_start_highpri: Starting high-priority kernel worker thread(s)
+nx_start_application: Starting init thread
+lib_cxx_initialize: _sinit: 0x402b1000 _einit: 0x402b1000 _stext: 0x40280000 _etext: 0x402b2000
+nsh: sysinit: fopen failed: 2
+nsh: mkfatfs: command not found
+
+NuttShell (NSH) NuttX-11.0.0-RC2
+nsh> nx_start: CPU0: Beginning Idle Loop
+
 nsh> null
-task_spawn: name=null entry=0x4029c4e0 file_actions=0x402d2580 attr=0x402d2588 argv=0x402d26d0
+task_spawn: name=null entry=0x4029c9d0 file_actions=0x402d4580 attr=0x402d4588 argv=0x402d46d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 HELLO ZIG ON PINEPHONE!
-mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
+Testing Compose Short Packet (Without Parameter)...
 composeShortPacket: channel=0, cmd=0x5, len=1
-packet: len=4
+Result:
 05 11 00 36 
-modifyreg32: addr=0x300, val=0x36001105
-modifyreg32: addr=0x200, val=0x00000003
-mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
+Testing Compose Short Packet (With Parameter)...
 composeShortPacket: channel=0, cmd=0x15, len=2
-packet: len=4
+Result:
 15 bc 4e 35 
-modifyreg32: addr=0x300, val=0x354ebc15
-modifyreg32: addr=0x200, val=0x00000003
-mipi_dsi_dcs_write: channel=0, cmd=0x39, len=64
+Testing Compose Long Packet...
 composeLongPacket: channel=0, cmd=0x39, len=64
-computeCrc: len=64, crc=0x365
-e9 82 10 06 05 a2 0a a5 
-12 31 23 37 83 04 bc 27 
-38 0c 00 03 00 00 00 0c 
-00 03 00 00 00 75 75 31 
-88 88 88 88 88 88 13 88 
-64 64 20 88 88 88 88 88 
-88 02 88 00 00 00 00 00 
-00 00 00 00 00 00 00 00 
-
-packet: len=70
+Result:
 39 40 00 25 e9 82 10 06 
 05 a2 0a a5 12 31 23 37 
 83 04 bc 27 38 0c 00 03 
@@ -3678,26 +3876,8 @@ packet: len=70
 88 88 88 88 88 02 88 00 
 00 00 00 00 00 00 00 00 
 00 00 00 00 65 03 
-modifyreg32: addr=0x300, val=0x25004039
-modifyreg32: addr=0x304, val=0x061082e9
-modifyreg32: addr=0x308, val=0xa50aa205
-modifyreg32: addr=0x30c, val=0x37233112
-modifyreg32: addr=0x310, val=0x27bc0483
-modifyreg32: addr=0x314, val=0x03000c38
-modifyreg32: addr=0x318, val=0x0c000000
-modifyreg32: addr=0x31c, val=0x00000300
-modifyreg32: addr=0x320, val=0x31757500
-modifyreg32: addr=0x324, val=0x88888888
-modifyreg32: addr=0x328, val=0x88138888
-modifyreg32: addr=0x32c, val=0x88206464
-modifyreg32: addr=0x330, val=0x88888888
-modifyreg32: addr=0x334, val=0x00880288
-modifyreg32: addr=0x338, val=0x00000000
-modifyreg32: addr=0x33c, val=0x00000000
-modifyreg32: addr=0x340, val=0x00000000
-modifyreg32: addr=0x344, val=0x00000365
-modifyreg32: addr=0x200, val=0x00000045
-nsh> 
+nsh> qemu-system-aarch64: terminating on signal 2 from pid 5928 (<unknown process>)
+ *  Terminal will be reused by tasks, press any key to close it. 
 ```
 
 ## Testing p-boot Driver for MIPI DSI (with logging)
