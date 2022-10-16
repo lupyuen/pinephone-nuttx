@@ -2928,38 +2928,17 @@ deinterlace@1e00000 {
 
 # Zig on PinePhone
 
-`make --trace` shows these GCC Compiler Options when building Nuttx for PinePhone...
+Let's run this Zig App on NuttX for PinePhone: [display.zig](display.zig)
+
+In NuttX, enable the Null Example App: make menuconfig, select "Application Configuration" > "Examples" > "Null Example"
+
+Compile the Zig App (based on the GCC Compiler Options, see below)...
 
 ```bash
-aarch64-none-elf-gcc
-  -c
-  -fno-common
-  -Wall
-  -Wstrict-prototypes
-  -Wshadow
-  -Wundef
-  -Werror
-  -Os
-  -fno-strict-aliasing
-  -fomit-frame-pointer
-  -g
-  -march=armv8-a
-  -mtune=cortex-a53
-  -isystem "/Users/Luppy/PinePhone/nuttx/nuttx/include"
-  -D__NuttX__ 
-  -pipe
-  -I "/Users/Luppy/PinePhone/nuttx/apps/include"
-  -Dmain=hello_main  hello_main.c
-  -o  hello_main.c.Users.Luppy.PinePhone.nuttx.apps.examples.hello.o
-```
+#  Download the Zig App
+git clone --recursive https://github.com/lupyuen/pinephone-nuttx
+cd pinephone-nuttx
 
-Let's run this Zig App: [display.zig](display.zig)
-
-Enable the Null Example App: make menuconfig, select "Application Configuration" > "Examples" > "Null Example"
-
-Compile the Zig App (based on the above GCC Compiler Options)...
-
-```bash
 #  Compile the Zig App for PinePhone 
 #  (armv8-a with cortex-a53)
 #  TODO: Change "$HOME/nuttx" to your NuttX Project Directory
@@ -2987,6 +2966,35 @@ Run the Zig App...
 nsh> null
 HELLO ZIG ON PINEPHONE!
 ```
+
+_How did we get the Zig Compiler options `-target`, `-mcpu`, `-isystem` and `-I`?_
+
+`make --trace` shows these GCC Compiler Options when building Nuttx for PinePhone...
+
+```bash
+aarch64-none-elf-gcc
+  -c
+  -fno-common
+  -Wall
+  -Wstrict-prototypes
+  -Wshadow
+  -Wundef
+  -Werror
+  -Os
+  -fno-strict-aliasing
+  -fomit-frame-pointer
+  -g
+  -march=armv8-a
+  -mtune=cortex-a53
+  -isystem "/Users/Luppy/PinePhone/nuttx/nuttx/include"
+  -D__NuttX__ 
+  -pipe
+  -I "/Users/Luppy/PinePhone/nuttx/apps/include"
+  -Dmain=hello_main  hello_main.c
+  -o  hello_main.c.Users.Luppy.PinePhone.nuttx.apps.examples.hello.o
+```
+
+We copied and modified these GCC Compiler Options for Zig.
 
 # Zig Driver for PinePhone MIPI DSI
 
@@ -3046,7 +3054,56 @@ The Cyclic Redundancy Check is the 2-byte Packet Footer for Long Packets.
 
 The above Zig Code for composing Long Packets and Short Packets was tested in QEMU for Arm64 with GIC Version 2...
 
-[lupyuen/incubator-nuttx/tree/gicv2](https://github.com/lupyuen/incubator-nuttx/tree/gicv2)
+```bash
+## TODO: Install Build Prerequisites
+## https://lupyuen.github.io/articles/uboot#install-prerequisites
+
+## Download NuttX OS for QEMU with GIC Version 2
+git clone \
+    --recursive \
+    --branch gicv2 \
+    https://github.com/lupyuen/incubator-nuttx \
+    nuttx
+
+## Download NuttX Apps for QEMU
+git clone \
+    --recursive \
+    --branch arm64 \
+    https://github.com/lupyuen/incubator-nuttx-apps \
+    apps
+
+## We'll build NuttX inside nuttx/nuttx
+cd nuttx
+
+## Configure NuttX for Single Core
+./tools/configure.sh -l qemu-a53:nsh
+
+## Build NuttX
+make
+
+## Dump the disassembly to nuttx.S
+aarch64-none-elf-objdump \
+  -t -S --demangle --line-numbers --wide \
+  nuttx \
+  >nuttx.S \
+  2>&1
+```
+
+And this is how we start NuttX on QEMU Arm64...
+
+```bash
+## Run GIC v2 with QEMU
+qemu-system-aarch64 \
+  -smp 4 \
+  -cpu cortex-a53 \
+  -nographic \
+  -machine virt,virtualization=on,gic-version=2 \
+  -net none \
+  -chardev stdio,id=con,mux=on \
+  -serial chardev:con \
+  -mon chardev=con,mode=readline \
+  -kernel ./nuttx
+```
 
 Here's the NuttX Test Log for QEMU Arm64...
 
