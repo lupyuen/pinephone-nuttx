@@ -3089,7 +3089,11 @@ aarch64-none-elf-objdump \
   2>&1
 ```
 
-And this is how we start NuttX on QEMU Arm64...
+Follow these steps to compile our Zig App and link into NuttX...
+
+-   ["Zig on PinePhone"](https://github.com/lupyuen/pinephone-nuttx#zig-on-pinephone)
+
+Start NuttX on QEMU Arm64...
 
 ```bash
 ## Run GIC v2 with QEMU
@@ -3105,7 +3109,7 @@ qemu-system-aarch64 \
   -kernel ./nuttx
 ```
 
-Here's the NuttX Test Log for QEMU Arm64...
+Here's the NuttX Test Log for our Zig App on QEMU Arm64...
 
 ```text
 NuttShell (NSH) NuttX-11.0.0-RC2
