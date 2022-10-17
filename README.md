@@ -3009,6 +3009,12 @@ aarch64-none-elf-gcc
 
 We copied and modified these GCC Compiler Options for Zig.
 
+_What about `-D__NuttX__`?_
+
+The Zig Compiler won't let us specify C Macros at the Command Line, so we inserted the macro `__NuttX__` into the Zig App...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/2d938b9f09a165c0ff82b5dbbb12f1c4c6db61f2/display.zig#L27-L42
+
 # Zig Driver for PinePhone MIPI DSI
 
 With Zig, we create a Quick Prototype of the NuttX Driver for MIPI DSI: [display.zig](display.zig)
