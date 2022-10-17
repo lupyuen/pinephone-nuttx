@@ -3383,10 +3383,10 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-207239 bytes read in 14 ms (14.1 MiB/s)
-Uncompressed size: 4648960 = 0x46F000
-36162 bytes read in 5 ms (6.9 MiB/s)
-1078500 bytes read in 51 ms (20.2 MiB/s)
+207379 bytes read in 13 ms (15.2 MiB/s)
+Uncompressed size: 4653056 = 0x470000
+36162 bytes read in 4 ms (8.6 MiB/s)
+1078500 bytes read in 50 ms (20.6 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
    Booting using the fdt blob at 0x4fa00000
    Loading Ramdisk to 49ef8000, end 49fff4e4 ... OK
@@ -3400,20 +3400,20 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL1
 - Boot to C runtime for OS Initialize
 nx_start: Entry
-up_allocate_heap: heap_start=0x0x404ef000, heap_size=0x7b11000
+up_allocate_heap: heap_start=0x0x404f0000, heap_size=0x7b10000
 arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
 arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
 up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-up_timer_initialize: _vector_table=0x400d1000
-up_timer_initialize: Before writing: vbar_el1=0x40251000
-up_timer_initialize: After writing: vbar_el1=0x400d1000
+up_timer_initialize: _vector_table=0x400d2000
+up_timer_initialize: Before writing: vbar_el1=0x40252000
+up_timer_initialize: After writing: vbar_el1=0x400d2000
 uart_register: Registering /dev/console
 uart_register: Registering /dev/ttyS0
 work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400d1000 _einit: 0x400d1000 _stext: 0x40080000 _etext: 0x400d2000
+lib_cxx_initialize: _sinit: 0x400d2000 _einit: 0x400d2000 _stext: 0x40080000 _etext: 0x400d3000
 nsh: sysinit: fopen failed: 2
 nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
 e
@@ -3423,7 +3423,7 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009ce64 file_actions=0x404f4580 attr=0x404f4588 argv=0x404f46d0
+task_spawn: name=hello entry=0x4009ce64 file_actions=0x404f5580 attr=0x404f5588 argv=0x404f56d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
@@ -3475,6 +3475,7 @@ display_malloc: size=2330
 };
 
 struct reg_inst dsi_panel_init_seq[] = {
+nuttx_panel_init
 writeDcs: len=4
 b9 f1 12 83 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
@@ -3849,6 +3850,9 @@ Result:
 88 88 88 88 88 02 88 00 
 00 00 00 00 00 00 00 00 
 00 00 00 00 65 03 
+nsh> 
+nsh> uname -a
+NuttX 11.0.0-RC2 a33f82d Oct  6 2022 19:36:13 arm64 qemu-a53
 nsh> 
 nsh> 
 ```
