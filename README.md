@@ -3307,9 +3307,6 @@ HELLO NUTTX ON PINEPHONE!
 ...
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009ce64 file_actions=0x404f4580 attr=0x404f4588 argv=0x404f46d0
-spawn_execattrs: Setting policy=2 priority=100 for pid=3
-ABHello, World!!
 ...
 writeDcs: len=4
 b9 f1 12 83 
