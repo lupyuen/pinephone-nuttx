@@ -3298,6 +3298,35 @@ nuttx
 
 1.  Insert the Jumpdrive microSD into PinePhone and power up
 
+1.  At the NuttX Shell, enter `hello`
+
+We should see...
+
+```text
+HELLO NUTTX ON PINEPHONE!
+...
+Shell (NSH) NuttX-11.0.0-RC2
+nsh> hello
+task_spawn: name=hello entry=0x4009ce64 file_actions=0x404f4580 attr=0x404f4588 argv=0x404f46d0
+spawn_execattrs: Setting policy=2 priority=100 for pid=3
+ABHello, World!!
+...
+writeDcs: len=4
+b9 f1 12 83 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
+composeLongPacket: channel=0, cmd=0x39, len=4
+packet: len=10
+39 04 00 2c b9 f1 12 83 
+84 5d 
+modifyreg32: addr=0x300, val=0x2c000439
+modifyreg32: addr=0x304, val=0x8312f1b9
+modifyreg32: addr=0x308, val=0x00005d84
+modifyreg32: addr=0x200, val=0x00000009
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+...
+```
+
 Our NuttX Zig Display Driver powers on the PinePhone Display and works exactly like the C Driver! 🎉
 
 ![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/dsi2-title.jpg)
