@@ -3327,6 +3327,8 @@ modifyreg32: addr=0x010, val=0x00000001
 ...
 ```
 
+[(Source)](https://github.com/lupyuen/pinephone-nuttx#testing-nuttx-zig-driver-for-mipi-dsi-on-pinephone)
+
 Our NuttX Zig Display Driver powers on the PinePhone Display and works exactly like the C Driver! 🎉
 
 ![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/dsi2-title.jpg)
