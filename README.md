@@ -3302,6 +3302,10 @@ nuttx
     cp Image.gz "/Volumes/NO NAME"
     ```
 
+1.  To access the UART Port on PinePhone, we'll connect this USB Serial Debug Cable (at 115.2 kbps)...
+
+    [PinePhone Serial Debug Cable](https://wiki.pine64.org/index.php/PinePhone#Serial_console)
+
 1.  Insert the Jumpdrive microSD into PinePhone and power up
 
 1.  At the NuttX Shell, enter `hello`
