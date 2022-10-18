@@ -3346,6 +3346,53 @@ Our PinePhone Display Driver isn't complete. It handles MIPI DSI (for initialisi
 
 We'll implement DE and TCON next.
 
+# Display Engine in Allwinner A64
+
+TODO
+
+Based on...
+-   [__Allwinner Display Engine 2.0 Specifications__](https://linux-sunxi.org/images/7/7b/Allwinner_DE2.0_Spec_V1.0.pdf)
+
+Which Display Engine for A64 (sun50iw1): H8, H3, H3 or A83?
+
+Should be H3:
+> The A64 is basically an Allwinner H3 with the Cortex-A7 cores replaced with Cortex-A53 cores (ARM64 architecture). They share most of the memory map, clocks, interrupts and also uses the same IP blocks.
+[(Source)](https://linux-sunxi.org/A64)
+
+Refer to "H3 Display_Engine_Top" (Page 22)
+
+DE Base Address: 0x01000000 (Page 24)
+
+DE RT-MIXER: (Page 87)
+> The RT-mixer Core consist of dma, overlay, scaler and blender block. It supports 4 layers overlay in one pipe, and its result can scaler up or down to blender in the next processing.
+
+DE RT-MIXER0 has 4 DMA Inputs (Offset 0x100000, Page 87)
+-   DMA0 for Video Overlay + Video Scaler
+-   Followed by DMA1, 2, 3 for UI Overlays + UI Scalers + UI Blenders
+
+DE RT-MIXER1 has 2 DMA Inputs (Offset 0x200000, Page 23)
+-   DMA0 for Video Overlay + Video Scaler
+-   DMA1 for UI Overlay + UI Scaler + UI Blender
+
+RT-MIXER0 and RT-MIXER1 are muxed to TCON0
+
+(Why 2 mixers?)
+
+DE RT-WB: (Page 116)
+> The Real-time write-back controller (RT-WB) provides data capture function for display engine. It captures data from RT-mixer module, performs the image resizing function, and then write-back to SDRAM.
+
+(For screen capture?)
+
+DE VSU: (Page 128)
+> The Video Scaler (VS) provides YUV format image resizing function for display engine. It receives data from overlay module, performs the image resizing function, and outputs to video post-processing modules. 
+
+DE Rotation: (Page 137)
+> There are several types of rotation: clockwise 0/90/180/270 degree Rotation and H-Flip/V-Flip. Operation of Copy is the same as a 0 degree rotation.
+
+# Timing Controller in Allwinner A64
+
+TODO
+
 # Test Logs
 
 PinePhone Logs captured from various tests...
