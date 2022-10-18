@@ -3353,7 +3353,7 @@ TODO
 Based on...
 -   [__Allwinner Display Engine 2.0 Specifications__](https://linux-sunxi.org/images/7/7b/Allwinner_DE2.0_Spec_V1.0.pdf)
 
-Which Display Engine for A64 (sun50iw1): H8, H3, H3 or A83?
+Which Display Engine for A64 (sun50iw1): H8, H3, H5 or A83?
 
 Should be H3:
 > The A64 is basically an Allwinner H3 with the Cortex-A7 cores replaced with Cortex-A53 cores (ARM64 architecture). They share most of the memory map, clocks, interrupts and also uses the same IP blocks.
