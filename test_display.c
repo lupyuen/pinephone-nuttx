@@ -169,7 +169,7 @@ static void test_display(void) {
 	// Enable Backlight
 	backlight_enable(90);
 
-	// Init First Display Plane
+	// Init Display Plane 0
 	d->planes[0].fb_start = (uintptr_t)fb;
 	d->planes[0].fb_pitch = 720 * 4;
 	d->planes[0].src_w = 720;
@@ -177,7 +177,7 @@ static void test_display(void) {
 	d->planes[0].dst_w = 720;
 	d->planes[0].dst_h = 1440;
 
-	// Init Second Display Plane
+	// Init Display Plane 1
 	d->planes[1].fb_start = (uintptr_t)fb;
 	d->planes[1].fb_pitch = 600 * 4;
 	d->planes[1].src_w = 600;
@@ -187,7 +187,7 @@ static void test_display(void) {
 	d->planes[1].dst_x = 52;
 	d->planes[1].dst_y = 52;
 
-	// Init Third Display Plane
+	// Init Display Plane 2
 	d->planes[2].fb_start = (uintptr_t)fb;
 	d->planes[2].fb_pitch = 720 * 4;
 	d->planes[2].src_w = 720;
