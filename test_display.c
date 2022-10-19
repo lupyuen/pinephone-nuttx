@@ -1,10 +1,10 @@
-// Test PinePhone Display with Apache NuttX RTOS
-// Called by https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/hello_main.c
-// Download the Modified p-boot Display Code `p-boot.4.zip` from...
-// https://github.com/lupyuen/pinephone-nuttx/releases/tag/pboot4
-// Extract into the `nuttx` folder and rename as `p-boot`
+//! Test PinePhone Display with Apache NuttX RTOS
+//! Called by https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/hello_main.c
+//! Download the Modified p-boot Display Code `p-boot.4.zip` from...
+//! https://github.com/lupyuen/pinephone-nuttx/releases/tag/pboot4
+//! Extract into the `nuttx` folder and rename as `p-boot`
 
-// From p-boot/build/build.ninja
+/// From p-boot/build/build.ninja
 #define DUMP_DSI_INIT 1
 #define DSI_FULL_INIT 1 
 #define DE2_RESIZE 1
@@ -58,16 +58,12 @@
 #define __sum16 __u16
 #define __wsum __u32
 
-// sizeof(long)=8
-// sizeof(long long)=8
 #define BITS_PER_LONG 64
 #define BITS_PER_LONG_LONG 64
 
 #define noinline
 #define __force
 #define udelay(us) usleep(us)
-//#define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
-//#define BIT(n) (0x1U << (n))
 
 #define min(x, y) (				\
 	(x) < (y) ? (x) : (y) )
@@ -75,22 +71,20 @@
 #define max(x, y) (				\
 	(x) > (y) ? (x) : (y) )
 
-////TODO: Implement barriers. From p-boot/src/uboot/arch/arm/include/asm/io.h
-////TODO: #define mb()		dsb()
-////TODO: #define __iormb()	dmb()
-////TODO: #define __iowmb()	dmb()
+/// TODO: Implement barriers. From p-boot/src/uboot/arch/arm/include/asm/io.h
+/// #define mb()		dsb()
+/// #define __iormb()	dmb()
+/// #define __iowmb()	dmb()
 #define mb()
 #define __iormb()
 #define __iowmb()
 
-////TODO
 static ulong timer_get_boot_us(void) {
     usleep(1);
     static ulong microsecs = 0;
     return microsecs++;
 }
 
-////TODO
 #define hang display_hang
 #define malloc display_malloc
 #define zalloc display_zalloc
@@ -100,7 +94,7 @@ static void display_hang(void) {
     for(;;) {} 
 }
 
-////TODO
+/// TODO: Support multiple allocations
 static void *display_malloc(size_t size) {
     printf("display_malloc: size=%ld\n", size);
     static uint8_t buf[2330];
@@ -109,7 +103,7 @@ static void *display_malloc(size_t size) {
     return buf;
 }
 
-////TODO
+/// TODO: Support multiple allocations
 void *display_zalloc(size_t size) {
     printf("display_zalloc: size=%ld\n", size);
     static uint8_t buf[1024];
@@ -145,7 +139,9 @@ void *display_zalloc(size_t size) {
 #include "../../p-boot/src/pmic.c"
 #include "../../p-boot/src/display.c"
 
-// Based on https://megous.com/git/p-boot/tree/src/dtest.c#n221
+/// Render a Test Pattern on PinePhone's Display.
+/// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
+/// Based on https://megous.com/git/p-boot/tree/src/dtest.c#n221
 static void test_display(void) {
     // Allocate display
     static struct display disp;
