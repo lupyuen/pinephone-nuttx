@@ -148,12 +148,6 @@ static void test_display(void) {
     memset(&disp, 0, sizeof(disp));
     struct display* d = &disp;
 
-    // Allocate framebuffer, init with pattern
-    static uint8_t fb[4 * 720 * 1440];
-    for (int i = 0; i < sizeof(fb); i++) {
-        fb[i] = i;
-    }
-
 	// Init PMIC
 	pmic_init();
 	udelay(500);
@@ -165,18 +159,41 @@ static void test_display(void) {
 	// Enable Backlight
 	backlight_enable(90);
 
+	// Init Framebuffer 0:
+	// Fullscreen 720 x 1440 (4 bytes per RGBA pixel)
+    static uint8_t fb0[720 * 1440 * 4];
+    for (int i = 0; i < sizeof(fb0); i++) {
+        fb0[i] = 0x55;
+    }
+
+	// Init Framebuffer 1:
+	// Box 600 x 600 (4 bytes per RGBA pixel)
+    static uint8_t fb1[600 * 600 * 4];
+    for (int i = 0; i < sizeof(fb1); i++) {
+        fb1[i] = 0x88;
+    }
+
+	// Init Framebuffer 2:
+	// Fullscreen 720 x 1440 (4 bytes per RGBA pixel)
+    static uint8_t fb2[720 * 1440 * 4];
+    for (int i = 0; i < sizeof(fb2); i++) {
+		if (i > sizeof(fb2) / 2) {
+        	fb2[i] = i;
+		}
+    }
+
 	// Init Display Plane 0: (Base Plane)
 	// Fullscreen 720 x 1440
-	d->planes[0].fb_start = (uintptr_t)fb;  // Framebuffer
+	d->planes[0].fb_start = (uintptr_t) fb0;  // Framebuffer
 	d->planes[0].fb_pitch = 720 * 4;  // Framebuffer Pitch
 	d->planes[0].src_w    = 720;   // Source Width
 	d->planes[0].src_h    = 1440;  // Source Height
 	d->planes[0].dst_w    = 720;   // Dest Width
 	d->planes[0].dst_h    = 1440;  // Dest Height
 
-	// Init Display Plane 1:
+	// Init Display Plane 1: (First Overlay)
 	// Box 600 x 600
-	d->planes[1].fb_start = (uintptr_t)fb;  // Framebuffer
+	d->planes[1].fb_start = (uintptr_t) fb1;  // Framebuffer
 	d->planes[1].fb_pitch = 600 * 4;  // Framebuffer Pitch
 	d->planes[1].src_w    = 600;  // Source Width
 	d->planes[1].src_h    = 600;  // Source Height
@@ -185,9 +202,9 @@ static void test_display(void) {
 	d->planes[1].dst_x    = 52;   // Dest X
 	d->planes[1].dst_y    = 52;   // Dest Y
 
-	// Init Display Plane 2:
+	// Init Display Plane 2: (Second Overlay)
 	// Fullscreen 720 x 1440 with Alpha Blending
-	d->planes[2].fb_start = (uintptr_t)fb;  // Framebuffer
+	d->planes[2].fb_start = (uintptr_t) fb2;  // Framebuffer
 	d->planes[2].fb_pitch = 720 * 4;  // Framebuffer Pitch
 	d->planes[2].src_w    = 720;   // Source Width
 	d->planes[2].src_h    = 1440;  // Source Height
