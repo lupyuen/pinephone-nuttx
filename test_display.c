@@ -165,34 +165,37 @@ static void test_display(void) {
 	// Enable Backlight
 	backlight_enable(90);
 
-	// Init Display Plane 0
-	d->planes[0].fb_start = (uintptr_t)fb;
-	d->planes[0].fb_pitch = 720 * 4;
-	d->planes[0].src_w = 720;
-	d->planes[0].src_h = 1440;
-	d->planes[0].dst_w = 720;
-	d->planes[0].dst_h = 1440;
+	// Init Display Plane 0: (Base Plane)
+	// Fullscreen 720 x 1440
+	d->planes[0].fb_start = (uintptr_t)fb;  // Framebuffer
+	d->planes[0].fb_pitch = 720 * 4;  // Framebuffer Pitch
+	d->planes[0].src_w    = 720;   // Source Width
+	d->planes[0].src_h    = 1440;  // Source Height
+	d->planes[0].dst_w    = 720;   // Dest Width
+	d->planes[0].dst_h    = 1440;  // Dest Height
 
-	// Init Display Plane 1
-	d->planes[1].fb_start = (uintptr_t)fb;
-	d->planes[1].fb_pitch = 600 * 4;
-	d->planes[1].src_w = 600;
-	d->planes[1].src_h = 600;
-	d->planes[1].dst_w = 600;
-	d->planes[1].dst_h = 600;
-	d->planes[1].dst_x = 52;
-	d->planes[1].dst_y = 52;
+	// Init Display Plane 1:
+	// Box 600 x 600
+	d->planes[1].fb_start = (uintptr_t)fb;  // Framebuffer
+	d->planes[1].fb_pitch = 600 * 4;  // Framebuffer Pitch
+	d->planes[1].src_w    = 600;  // Source Width
+	d->planes[1].src_h    = 600;  // Source Height
+	d->planes[1].dst_w    = 600;  // Dest Width
+	d->planes[1].dst_h    = 600;  // Dest Height
+	d->planes[1].dst_x    = 52;   // Dest X
+	d->planes[1].dst_y    = 52;   // Dest Y
 
-	// Init Display Plane 2
-	d->planes[2].fb_start = (uintptr_t)fb;
-	d->planes[2].fb_pitch = 720 * 4;
-	d->planes[2].src_w = 720;
-	d->planes[2].src_h = 1440;
-	d->planes[2].dst_w = 720;
-	d->planes[2].dst_h = 1440;
-	d->planes[2].dst_x = 0;
-	d->planes[2].dst_y = 0;
-	d->planes[2].alpha = 255;
+	// Init Display Plane 2:
+	// Fullscreen 720 x 1440 with Alpha Blending
+	d->planes[2].fb_start = (uintptr_t)fb;  // Framebuffer
+	d->planes[2].fb_pitch = 720 * 4;  // Framebuffer Pitch
+	d->planes[2].src_w    = 720;   // Source Width
+	d->planes[2].src_h    = 1440;  // Source Height
+	d->planes[2].dst_w    = 720;   // Dest Width
+	d->planes[2].dst_h    = 1440;  // Dest Height
+	d->planes[2].dst_x    = 0;     // Dest X
+	d->planes[2].dst_y    = 0;     // Dest Y
+	d->planes[2].alpha    = 255;   // Dest Alpha
 
 	// Render the Display Planes
 	display_commit(d);
