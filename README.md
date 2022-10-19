@@ -3366,19 +3366,19 @@ DE Base Address: 0x01000000 (Page 24)
 DE RT-MIXER: (Page 87)
 > The RT-mixer Core consist of dma, overlay, scaler and blender block. It supports 4 layers overlay in one pipe, and its result can scaler up or down to blender in the next processing.
 
-DE RT-MIXER0 has 4 DMA Inputs (Offset 0x100000, Page 87)
--   DMA0 for Video Overlay + Video Scaler
--   Followed by DMA1, 2, 3 for UI Overlays + UI Scalers + UI Blenders
+DE RT-MIXER0 has 4 Layers (Offset 0x100000, Page 87)
+-   Layer 0: DMA0, Video Overlay, Video Scaler
+-   Layers 1, 2, 3: DMA1 / 2 / 3, UI Overlays, UI Scalers, UI Blenders
+-   Layer priority is Layer 3 > Layer2 > Layer 1 > Layer0 (Page 89)
+-   Layer 0 has format XRGB 8888
+-   Layers 1 to 3 have format ARGB 8888
 -   GLB at Offset 0x00000 (de_glb_regs)
 -   BLD at Offset 0x01000 (de_bld_regs)
--   OVL_V(CH0) at Offset 0x02000 (de_ui_regs for plane 0)
--   OVL_UI(CH1) at Offset 0x03000 (de_ui_regs for plane 1)
--   OVL_UI(CH2) at Offset 0x04000 (de_ui_regs for plane 2)
--   OVL_UI(CH3) at Offset 0x05000 (de_ui_regs for plane 3)
+-   OVL_V(CH0) at Offset 0x02000 (de_ui_regs for Layer 0)
+-   OVL_UI(CH1) at Offset 0x03000 (de_ui_regs for Layer 1)
+-   OVL_UI(CH2) at Offset 0x04000 (de_ui_regs for Layer 2)
+-   OVL_UI(CH3) at Offset 0x05000 (de_ui_regs for Layer 3)
 -   POST_PROC2 at Offset 0xB0000 (de_csc_regs)
--   Plane 0 has format XRGB 8888
--   Planes 1 to 3 have format ARGB 8888
--   layer priority is layer3>layer2>layer1>layer0 (Page 89)
 
 DE RT-MIXER1 has 2 DMA Inputs (Offset 0x200000, Page 23)
 -   DMA0 for Video Overlay + Video Scaler
