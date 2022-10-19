@@ -3371,6 +3371,13 @@ DE RT-MIXER0 has 4 DMA Inputs (Offset 0x100000, Page 87)
 -   Followed by DMA1, 2, 3 for UI Overlays + UI Scalers + UI Blenders
 -   GLB at Offset 0x00000 (de_glb_regs)
 -   BLD at Offset 0x01000 (de_bld_regs)
+-   OVL_V(CH0) at Offset 0x02000 (de_ui_regs for plane 0)
+-   OVL_UI(CH1) at Offset 0x03000 (de_ui_regs for plane 1)
+-   OVL_UI(CH2) at Offset 0x04000 (de_ui_regs for plane 2)
+-   OVL_UI(CH3) at Offset 0x05000 (de_ui_regs for plane 3)
+-   Plane 0 has format XRGB 8888
+-   Planes 1 to 3 have format ARGB 8888
+-   layer priority is layer3>layer2>layer1>layer0 (Page 89)
 
 DE RT-MIXER1 has 2 DMA Inputs (Offset 0x200000, Page 23)
 -   DMA0 for Video Overlay + Video Scaler
