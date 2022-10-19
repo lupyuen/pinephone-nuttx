@@ -3369,6 +3369,8 @@ DE RT-MIXER: (Page 87)
 DE RT-MIXER0 has 4 DMA Inputs (Offset 0x100000, Page 87)
 -   DMA0 for Video Overlay + Video Scaler
 -   Followed by DMA1, 2, 3 for UI Overlays + UI Scalers + UI Blenders
+-   GLB at Offset 0x00000 (de_glb_regs)
+-   BLD at Offset 0x01000 (de_bld_regs)
 
 DE RT-MIXER1 has 2 DMA Inputs (Offset 0x200000, Page 23)
 -   DMA0 for Video Overlay + Video Scaler
