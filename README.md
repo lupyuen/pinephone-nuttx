@@ -3436,6 +3436,12 @@ TODO
 
 PinePhone Logs captured from various tests...
 
+## Testing p-boot Display Engine on PinePhone
+
+```text
+TODO
+```
+
 ## Testing NuttX Zig Driver for MIPI DSI on PinePhone
 
 Testing our [NuttX Zig Driver for MIPI DSI](https://github.com/lupyuen/pinephone-nuttx#zig-driver-for-pinephone-mipi-dsi) on PinePhone...
