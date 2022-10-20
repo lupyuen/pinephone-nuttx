@@ -3408,7 +3408,7 @@ DE Rotation: (Page 137)
 
 TODO
 
-1.  Configure Blender: BLD BkColor and Premultiply
+1.  Configure Blender: BLD BkColor and BLD Premultiply
 
 1.  For Layers 0 to 3...
 
