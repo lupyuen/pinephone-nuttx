@@ -3410,6 +3410,12 @@ TODO
 
 1.  Configure Blender: BLD BkColor and BLD Premultiply
 
+    ```text
+    Configure Blender
+    BLD BkColor: 0x1101088 = 0xff000000
+    BLD Premultiply: 0x1101084 = 0x0
+    ```
+
 1.  For Layers 0 to 3...
 
     1.  If Layer is unused, disable Overlay, Pipe and Scaler. Skip to next Layer
@@ -3418,15 +3424,80 @@ TODO
 
     1.  Set Overlay: UI Config Attr, UI Config Top LAddr, UI Config Pitch, UI Config Size, UI Overlay Size, IO Config Coord
 
+        ```text
+        Layer 0: Set Overlay
+        UI Config Attr: 0x1103000 = 0xff000405
+        UI Config Top LAddr: 0x1103010 = 0x4064a6ac
+        UI Config Pitch: 0x110300c = 0xb40
+        UI Config Size: 0x1103004 = 0x59f02cf
+        UI Overlay Size: 0x1103088 = 0x59f02cf
+        IO Config Coord: 0x1103008 = 0x0
+
+        Layer 1: Set Overlay
+        UI Config Attr: 0x1104000 = 0xff000005
+        UI Config Top LAddr: 0x1104010 = 0x404eadac
+        UI Config Pitch: 0x110400c = 0x960
+        UI Config Size: 0x1104004 = 0x2570257
+        UI Overlay Size: 0x1104088 = 0x2570257
+        IO Config Coord: 0x1104008 = 0x0
+
+        Layer 2: Set Overlay
+        UI Config Attr: 0x1105000 = 0x7f000005
+        UI Config Top LAddr: 0x1105010 = 0x400f65ac
+        UI Config Pitch: 0x110500c = 0xb40
+        UI Config Size: 0x1105004 = 0x59f02cf
+        UI Overlay Size: 0x1105088 = 0x59f02cf
+        IO Config Coord: 0x1105008 = 0x0
+        ```
+
     1.  For Layer 0: Set Blender Output: BLD Output Size, GLB Size
 
+        ```text
+        Layer 0: Set Blender Output
+        BLD Output Size: 0x110108c = 0x59f02cf
+        GLB Size: 0x110000c = 0x59f02cf
+        ```
+
     1.  Set Blender Input Pipe: BLD Pipe InSize, BLD Pipe FColor, BLD Pipe Offset, BLD Pipe Mode
+
+        ```text
+        Layer 0: Set Blender Input Pipe 0
+        BLD Pipe InSize: 0x1101008 = 0x59f02cf
+        BLD Pipe FColor: 0x1101004 = 0xff000000
+        BLD Pipe Offset: 0x110100c = 0x0
+        BLD Pipe Mode: 0x1101090 = 0x3010301
+
+        Layer 1: Set Blender Input Pipe 1
+        BLD Pipe InSize: 0x1101018 = 0x2570257
+        BLD Pipe FColor: 0x1101014 = 0xff000000
+        BLD Pipe Offset: 0x110101c = 0x340034
+        BLD Pipe Mode: 0x1101094 = 0x3010301
+
+        Layer 2: Set Blender Input Pipe 2
+        BLD Pipe InSize: 0x1101028 = 0x59f02cf
+        BLD Pipe FColor: 0x1101024 = 0xff000000
+        BLD Pipe Offset: 0x110102c = 0x0
+        BLD Pipe Mode: 0x1101098 = 0x3010301
+        ```
 
     1.  Disable Scaler (assuming we're not using Scaler)
 
 1.  Set BLD Route and BLD FColor Control
 
+    ```text
+    Set BLD Route and BLD FColor Control
+    BLD Route: 0x1101080 = 0x321
+    BLD FColor Control: 0x1101000 = 0x701
+    ```
+
 1.  Apply Settings: GLB DBuff
+
+    ```text
+    Apply Settings
+    GLB DBuff: 0x1100008 = 0x1
+    ```
+
+[(See the Complete Log)](https://github.com/lupyuen/pinephone-nuttx#testing-p-boot-display-engine-on-pinephone)
 
 # Timing Controller in Allwinner A64
 
