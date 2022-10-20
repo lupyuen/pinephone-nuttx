@@ -3371,18 +3371,20 @@ TODO
 DE RT-MIXER: (Page 87)
 > The RT-mixer Core consist of dma, overlay, scaler and blender block. It supports 4 layers overlay in one pipe, and its result can scaler up or down to blender in the next processing.
 
-DE RT-MIXER0 has 4 Layers (Offset 0x100000, Page 87)
--   Layer 0: DMA0, Video Overlay, Video Scaler
--   Layers 1, 2, 3: DMA1 / 2 / 3, UI Overlays, UI Scalers, UI Blenders
--   Layer priority is Layer 3 > Layer2 > Layer 1 > Layer0 (Page 89)
--   Layer 0 has format XRGB 8888
--   Layers 1 to 3 have format ARGB 8888
+DE RT-MIXER0 has 4 Channels (Offset 0x100000, Page 87)
+-   Channel 0: DMA0, Video Overlay, Video Scaler
+-   Channels 1, 2, 3: DMA1 / 2 / 3, UI Overlays, UI Scalers, UI Blenders
+-   4 Overlay Layers per Channel
+-   Layer priority is Layer 3 > Layer2 > Layer 1 > Layer 0 (Page 89)
+-   Channel 0 is unused (video)
+-   Channel 1 has format XRGB 8888
+-   Channels 2 and 3 have format ARGB 8888
 -   GLB at Offset 0x00000 (de_glb_regs)
 -   BLD at Offset 0x01000 (de_bld_regs)
--   OVL_V(CH0) at Offset 0x02000 (de_ui_regs for Layer 0)
--   OVL_UI(CH1) at Offset 0x03000 (de_ui_regs for Layer 1)
--   OVL_UI(CH2) at Offset 0x04000 (de_ui_regs for Layer 2)
--   OVL_UI(CH3) at Offset 0x05000 (de_ui_regs for Layer 3)
+-   OVL_V(CH0) at Offset 0x02000 (Unused for Channel 0 / video)
+-   OVL_UI(CH1) at Offset 0x03000 (de_ui_regs for Channel 1)
+-   OVL_UI(CH2) at Offset 0x04000 (de_ui_regs for Channel 2)
+-   OVL_UI(CH3) at Offset 0x05000 (de_ui_regs for Channel 3)
 -   POST_PROC2 at Offset 0xB0000 (de_csc_regs)
 
 DE RT-MIXER1 has 2 DMA Inputs (Offset 0x200000, Page 23)
@@ -3408,7 +3410,9 @@ DE Rotation: (Page 137)
 
 TODO
 
-1.  Configure Blender: BLD BkColor and BLD Premultiply
+1.  Configure Blender...
+    -   BLD BkColor (BLD_BK_COLOR Offset 0x88): BLD background color register
+    -   BLD Premultiply (BLD_PREMUL_CTL Offset 0x84): BLD pre-multiply control register
 
     ```text
     Configure Blender
@@ -3416,16 +3420,22 @@ TODO
     BLD Premultiply: 0x1101084 = 0x0
     ```
 
-1.  For Layers 0 to 3...
+1.  For Channels 1 to 3 (Non-Video)...
 
-    1.  If Layer is unused, disable Overlay, Pipe and Scaler. Skip to next Layer
+    1.  If Channel is unused, disable Overlay, Pipe and Scaler. Skip to next Channel
 
-    1.  Layer 0 has format XRGB 8888, Layers 1 to 3 have format ARGB 8888
+    1.  Channel 1 has format XRGB 8888, Channel 2 and 3 have format ARGB 8888
 
-    1.  Set Overlay: UI Config Attr, UI Config Top LAddr, UI Config Pitch, UI Config Size, UI Overlay Size, IO Config Coord
+    1.  Set Overlay (Assume Layer = 0)
+        -   UI Config Attr (OVL_UI_ATTCTL @ OVL_UI Offset 0x00): OVL_UI attribute control register
+        -   UI Config Top LAddr (OVL_UI_TOP_LADD @ OVL_UI Offset 0x10): OVL_UI top field memory block low address register
+        -   UI Config Pitch (OVL_UI_PITCH @ OVL_UI Offset 0x0C): OVL_UI memory pitch register
+        -   UI Config Size (OVL_UI_MBSIZE @ OVL_UI Offset 0x04): OVL_UI memory block size register
+        -   UI Overlay Size (OVL_UI_SIZE @ OVL_UI Offset 0x88): OVL_UI overlay window size register
+        -   IO Config Coord (OVL_UI_COOR @ OVL_UI Offset 0x08): OVL_UI memory block coordinate register
 
         ```text
-        Layer 0: Set Overlay
+        Channel 1: Set Overlay
         UI Config Attr: 0x1103000 = 0xff000405
         UI Config Top LAddr: 0x1103010 = 0x4064a6ac
         UI Config Pitch: 0x110300c = 0xb40
@@ -3433,7 +3443,7 @@ TODO
         UI Overlay Size: 0x1103088 = 0x59f02cf
         IO Config Coord: 0x1103008 = 0x0
 
-        Layer 1: Set Overlay
+        Channel 2: Set Overlay
         UI Config Attr: 0x1104000 = 0xff000005
         UI Config Top LAddr: 0x1104010 = 0x404eadac
         UI Config Pitch: 0x110400c = 0x960
@@ -3441,7 +3451,7 @@ TODO
         UI Overlay Size: 0x1104088 = 0x2570257
         IO Config Coord: 0x1104008 = 0x0
 
-        Layer 2: Set Overlay
+        Channel 3: Set Overlay
         UI Config Attr: 0x1105000 = 0x7f000005
         UI Config Top LAddr: 0x1105010 = 0x400f65ac
         UI Config Pitch: 0x110500c = 0xb40
@@ -3450,30 +3460,36 @@ TODO
         IO Config Coord: 0x1105008 = 0x0
         ```
 
-    1.  For Layer 0: Set Blender Output: BLD Output Size, GLB Size
+    1.  For Channel 1: Set Blender Output
+        -   BLD Output Size (BLD_SIZE @ BLD Offset 0x08C): BLD output size setting register
+        -   GLB Size (GLB_SIZE @ GLB Offset 0x00C): Global size register
 
         ```text
-        Layer 0: Set Blender Output
+        Channel 1: Set Blender Output
         BLD Output Size: 0x110108c = 0x59f02cf
         GLB Size: 0x110000c = 0x59f02cf
         ```
 
-    1.  Set Blender Input Pipe: BLD Pipe InSize, BLD Pipe FColor, BLD Pipe Offset, BLD Pipe Mode
+    1.  Set Blender Input Pipe
+        -   BLD Pipe InSize (BLD_CH_ISIZE @ BLD Offset 0x008 + N*0x14): BLD input memory size register(N=0,1,2,3,4)
+        -   BLD Pipe FColor (BLD_FILL_COLOR @ BLD Offset 0x004 + N*0x14): BLD fill color register(N=0,1,2,3,4)
+        -   BLD Pipe Offset (BLD_CH_OFFSET @ BLD Offset 0x00C + N*0x14): BLD input memory offset register(N=0,1,2,3,4)
+        -   BLD Pipe Mode (BLD_CTL @ BLD Offset 0x090 – 0x09C): BLD control register
 
         ```text
-        Layer 0: Set Blender Input Pipe 0
+        Channel 1: Set Blender Input Pipe 0
         BLD Pipe InSize: 0x1101008 = 0x59f02cf
         BLD Pipe FColor: 0x1101004 = 0xff000000
         BLD Pipe Offset: 0x110100c = 0x0
         BLD Pipe Mode: 0x1101090 = 0x3010301
 
-        Layer 1: Set Blender Input Pipe 1
+        Channel 2: Set Blender Input Pipe 1
         BLD Pipe InSize: 0x1101018 = 0x2570257
         BLD Pipe FColor: 0x1101014 = 0xff000000
         BLD Pipe Offset: 0x110101c = 0x340034
         BLD Pipe Mode: 0x1101094 = 0x3010301
 
-        Layer 2: Set Blender Input Pipe 2
+        Channel 3: Set Blender Input Pipe 2
         BLD Pipe InSize: 0x1101028 = 0x59f02cf
         BLD Pipe FColor: 0x1101024 = 0xff000000
         BLD Pipe Offset: 0x110102c = 0x0
@@ -3483,6 +3499,8 @@ TODO
     1.  Disable Scaler (assuming we're not using Scaler)
 
 1.  Set BLD Route and BLD FColor Control
+    -   BLD Route (BLD_CH_RTCTL @ BLD Offset 0x080): BLD routing control register
+    -   BLD FColor Control (BLD_FILLCOLOR_CTL @ BLD Offset 0x000): BLD fill color control register
 
     ```text
     Set BLD Route and BLD FColor Control
@@ -3491,6 +3509,7 @@ TODO
     ```
 
 1.  Apply Settings: GLB DBuff
+    -   GLB DBuff (GLB_DBUFFER @ GLB Offset 0x008): Global double buffer control register
 
     ```text
     Apply Settings
@@ -3498,6 +3517,8 @@ TODO
     ```
 
 [(See the Complete Log)](https://github.com/lupyuen/pinephone-nuttx#testing-p-boot-display-engine-on-pinephone)
+
+(See Memory Mapping List and Register List at Page 90)
 
 # Timing Controller in Allwinner A64
 
@@ -3988,7 +4009,7 @@ Configure Blender
   BLD BkColor: 0x1101088 = 0xff000000
   BLD Premultiply: 0x1101084 = 0x0
 
-Layer 0: Set Overlay
+Channel 1: Set Overlay
   UI Config Attr: 0x1103000 = 0xff000405
   UI Config Top LAddr: 0x1103010 = 0x4064a6ac
   UI Config Pitch: 0x110300c = 0xb40
@@ -3996,19 +4017,19 @@ Layer 0: Set Overlay
   UI Overlay Size: 0x1103088 = 0x59f02cf
   IO Config Coord: 0x1103008 = 0x0
 
-Layer 0: Set Blender Output
+Channel 1: Set Blender Output
   BLD Output Size: 0x110108c = 0x59f02cf
   GLB Size: 0x110000c = 0x59f02cf
 
-Layer 0: Set Blender Input Pipe 0
+Channel 1: Set Blender Input Pipe 0
   BLD Pipe InSize: 0x1101008 = 0x59f02cf
   BLD Pipe FColor: 0x1101004 = 0xff000000
   BLD Pipe Offset: 0x110100c = 0x0
   BLD Pipe Mode: 0x1101090 = 0x3010301
 
-Layer 0: Disable Scaler
+Channel 1: Disable Scaler
 
-Layer 1: Set Overlay
+Channel 2: Set Overlay
   UI Config Attr: 0x1104000 = 0xff000005
   UI Config Top LAddr: 0x1104010 = 0x404eadac
   UI Config Pitch: 0x110400c = 0x960
@@ -4016,15 +4037,15 @@ Layer 1: Set Overlay
   UI Overlay Size: 0x1104088 = 0x2570257
   IO Config Coord: 0x1104008 = 0x0
 
-Layer 1: Set Blender Input Pipe 1
+Channel 2: Set Blender Input Pipe 1
   BLD Pipe InSize: 0x1101018 = 0x2570257
   BLD Pipe FColor: 0x1101014 = 0xff000000
   BLD Pipe Offset: 0x110101c = 0x340034
   BLD Pipe Mode: 0x1101094 = 0x3010301
 
-Layer 1: Disable Scaler
+Channel 2: Disable Scaler
 
-Layer 2: Set Overlay
+Channel 3: Set Overlay
   UI Config Attr: 0x1105000 = 0x7f000005
   UI Config Top LAddr: 0x1105010 = 0x400f65ac
   UI Config Pitch: 0x110500c = 0xb40
@@ -4032,13 +4053,13 @@ Layer 2: Set Overlay
   UI Overlay Size: 0x1105088 = 0x59f02cf
   IO Config Coord: 0x1105008 = 0x0
 
-Layer 2: Set Blender Input Pipe 2
+Channel 3: Set Blender Input Pipe 2
   BLD Pipe InSize: 0x1101028 = 0x59f02cf
   BLD Pipe FColor: 0x1101024 = 0xff000000
   BLD Pipe Offset: 0x110102c = 0x0
   BLD Pipe Mode: 0x1101098 = 0x3010301
 
-Layer 2: Disable Scaler
+Channel 3: Disable Scaler
 
 Set BLD Route and BLD FColor Control
   BLD Route: 0x1101080 = 0x321
