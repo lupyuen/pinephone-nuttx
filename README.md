@@ -3348,18 +3348,20 @@ We'll implement DE and TCON next.
 
 # Display Engine in Allwinner A64
 
-TODO
+Let's look inside PinePhone's Allwinner A64 Display Engine ... And render some graphics with Apache NuttX RTOS.
 
-Based on...
+Here's the doc for the Display Engine...
+
 -   [__Allwinner Display Engine 2.0 Specifications__](https://linux-sunxi.org/images/7/7b/Allwinner_DE2.0_Spec_V1.0.pdf)
 
-Which Display Engine for A64 (sun50iw1): H8, H3, H5 or A83?
+_Which Display Engine for A64 (sun50iw1): H8, H3, H5 or A83?_
 
-Should be H3:
+We shoud look at H3...
+
 > The A64 is basically an Allwinner H3 with the Cortex-A7 cores replaced with Cortex-A53 cores (ARM64 architecture). They share most of the memory map, clocks, interrupts and also uses the same IP blocks.
 [(Source)](https://linux-sunxi.org/A64)
 
-Refer to "H3 Display_Engine_Top" (Page 22)
+From "H3 Display_Engine_Top" (Page 22):
 
 DE Base Address: 0x01000000 (Page 24)
 
