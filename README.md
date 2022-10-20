@@ -3372,24 +3372,24 @@ DE RT-MIXER: (Page 87)
 > The RT-mixer Core consist of dma, overlay, scaler and blender block. It supports 4 layers overlay in one pipe, and its result can scaler up or down to blender in the next processing.
 
 DE RT-MIXER0 has 4 Channels (Offset 0x100000, Page 87)
--   Channel 0: DMA0, Video Overlay, Video Scaler
--   Channels 1, 2, 3: DMA1 / 2 / 3, UI Overlays, UI Scalers, UI Blenders
+-   Channel 0 for Video: DMA0, Video Overlay, Video Scaler
+-   Channels 1, 2, 3 for UI: DMA1 / 2 / 3, UI Overlays, UI Scalers, UI Blenders
 -   4 Overlay Layers per Channel
 -   Layer priority is Layer 3 > Layer2 > Layer 1 > Layer 0 (Page 89)
 -   Channel 0 is unused (video)
 -   Channel 1 has format XRGB 8888
 -   Channels 2 and 3 have format ARGB 8888
 -   GLB at Offset 0x00000 (de_glb_regs)
--   BLD at Offset 0x01000 (de_bld_regs)
--   OVL_V(CH0) at Offset 0x02000 (Unused for Channel 0 / video)
--   OVL_UI(CH1) at Offset 0x03000 (de_ui_regs for Channel 1)
--   OVL_UI(CH2) at Offset 0x04000 (de_ui_regs for Channel 2)
--   OVL_UI(CH3) at Offset 0x05000 (de_ui_regs for Channel 3)
+-   BLD (Blender) at Offset 0x01000 (de_bld_regs)
+-   OVL_V(CH0) (Video Overlay / Channel 0) at Offset 0x02000 (Unused)
+-   OVL_UI(CH1) (UI Overlay / Channel 1) at Offset 0x03000
+-   OVL_UI(CH2) (UI Overlay / Channel 2) at Offset 0x04000
+-   OVL_UI(CH3) (UI Overlay / Channel 3) at Offset 0x05000
 -   POST_PROC2 at Offset 0xB0000 (de_csc_regs)
 
-DE RT-MIXER1 has 2 DMA Inputs (Offset 0x200000, Page 23)
--   DMA0 for Video Overlay + Video Scaler
--   DMA1 for UI Overlay + UI Scaler + UI Blender
+DE RT-MIXER1 has 2 Channels (Offset 0x200000, Page 23)
+-   Channel 0 for Video: DMA0, Video Overlay, Video Scaler
+-   Channel 1 for UI: DMA1, UI Overlay, UI Scaler, UI Blender
 
 RT-MIXER0 and RT-MIXER1 are muxed to TCON0
 
@@ -3420,7 +3420,7 @@ TODO
     BLD Premultiply: 0x1101084 = 0x0
     ```
 
-1.  For Channels 1 to 3 (Non-Video)...
+1.  For Channels 1 to 3 (UI)...
 
     1.  If Channel is unused, disable Overlay, Pipe and Scaler. Skip to next Channel
 
@@ -3470,11 +3470,13 @@ TODO
         GLB Size: 0x110000c = 0x59f02cf
         ```
 
-    1.  Set Blender Input Pipe
+    1.  Set Blender Input Pipe (N = Pipe Number, from 0 to 2 for Channels 1 to 3)
         -   BLD Pipe InSize (BLD_CH_ISIZE @ BLD Offset 0x008 + N*0x14): BLD input memory size register(N=0,1,2,3,4)
         -   BLD Pipe FColor (BLD_FILL_COLOR @ BLD Offset 0x004 + N*0x14): BLD fill color register(N=0,1,2,3,4)
         -   BLD Pipe Offset (BLD_CH_OFFSET @ BLD Offset 0x00C + N*0x14): BLD input memory offset register(N=0,1,2,3,4)
         -   BLD Pipe Mode (BLD_CTL @ BLD Offset 0x090 – 0x09C): BLD control register
+
+        (Should `N*0x14` be `N*0x10` instead?)
 
         ```text
         Channel 1: Set Blender Input Pipe 0
