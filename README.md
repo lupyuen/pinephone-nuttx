@@ -3416,7 +3416,7 @@ TODO
 
     1.  Layer 0 has format XRGB 8888, Layers 1 to 3 have format ARGB 8888
 
-    1.  Set Overlay: UI Config Attr, UI Config Top Laddr, UI Config Pitch, UI Config Size, UI Overlay Size, IO Config Coord
+    1.  Set Overlay: UI Config Attr, UI Config Top LAddr, UI Config Pitch, UI Config Size, UI Overlay Size, IO Config Coord
 
     1.  For Layer 0: Set Blender Output: BLD Output Size, GLB Size
 
