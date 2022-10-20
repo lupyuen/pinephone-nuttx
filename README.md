@@ -3424,11 +3424,9 @@ TODO
 
     1.  Disable Scaler (assuming we're not using Scaler)
 
-1.  Set BLD Route
+1.  Set BLD Route and BLD FColor Control
 
-1.  Set BLD FColor Control
-
-1.  Apply Setting
+1.  Apply Settings: GLB DBuff
 
 # Timing Controller in Allwinner A64
 
