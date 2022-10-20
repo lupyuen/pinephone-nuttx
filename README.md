@@ -3424,6 +3424,20 @@ TODO
 
     1.  If Channel is unused, disable Overlay, Pipe and Scaler. Skip to next Channel
 
+        ```text
+        Channel 2: Disable Overlay and Pipe
+        UI Config Attr: 0x1104000 = 0x0
+
+        Channel 2: Disable Scaler
+        Mixer: 0x1150000 = 0x0
+
+        Channel 3: Disable Overlay and Pipe
+        UI Config Attr: 0x1105000 = 0x0
+
+        Channel 3: Disable Scaler
+        Mixer: 0x1160000 = 0x0
+        ```
+
     1.  Channel 1 has format XRGB 8888, Channel 2 and 3 have format ARGB 8888
 
     1.  Set Overlay (Assume Layer = 0)
@@ -3500,6 +3514,17 @@ TODO
 
     1.  Disable Scaler (assuming we're not using Scaler)
 
+        ```text
+        Channel 1: Disable Scaler
+        Mixer: 0x1140000 = 0x0
+
+        Channel 2: Disable Scaler
+        Mixer: 0x1150000 = 0x0
+        
+        Channel 3: Disable Scaler
+        Mixer: 0x1160000 = 0x0
+        ```
+
 1.  Set BLD Route and BLD FColor Control
     -   BLD Route (BLD_CH_RTCTL @ BLD Offset 0x080): BLD routing control register
     -   BLD FColor Control (BLD_FILLCOLOR_CTL @ BLD Offset 0x000): BLD fill color control register
@@ -3533,7 +3558,7 @@ PinePhone Logs captured from various tests...
 ## Testing p-boot Display Engine on PinePhone
 
 ```text
-DRAM: 2048 MiB
+...DRAM: 2048 MiB
 Trying to boot from MMC1
 NOTICE:  BL31: v2.2(release):v2.2-904-gf9ea3a629
 NOTICE:  BL31: Built : 15:32:12, Apr  9 2020
@@ -3559,7 +3584,7 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-214344 bytes read in 14 ms (14.6 MiB/s)
+214380 bytes read in 14 ms (14.6 MiB/s)
 Uncompressed size: 10240000 = 0x9C4000
 36162 bytes read in 5 ms (6.9 MiB/s)
 1078500 bytes read in 50 ms (20.6 MiB/s)
@@ -3599,7 +3624,7 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009d2a4 file_actions=0x40a49580 attr=0x40a49588 argv=0x40a496d0
+task_spawn: name=hello entry=0x4009d2fc file_actions=0x40a49580 attr=0x40a49588 argv=0x40a496d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
@@ -4030,6 +4055,7 @@ Channel 1: Set Blender Input Pipe 0
   BLD Pipe Mode: 0x1101090 = 0x3010301
 
 Channel 1: Disable Scaler
+  Mixer: 0x1140000 = 0x0
 
 Channel 2: Set Overlay
   UI Config Attr: 0x1104000 = 0xff000005
@@ -4046,6 +4072,7 @@ Channel 2: Set Blender Input Pipe 1
   BLD Pipe Mode: 0x1101094 = 0x3010301
 
 Channel 2: Disable Scaler
+  Mixer: 0x1150000 = 0x0
 
 Channel 3: Set Overlay
   UI Config Attr: 0x1105000 = 0x7f000005
@@ -4062,10 +4089,61 @@ Channel 3: Set Blender Input Pipe 2
   BLD Pipe Mode: 0x1101098 = 0x3010301
 
 Channel 3: Disable Scaler
+  Mixer: 0x1160000 = 0x0
 
 Set BLD Route and BLD FColor Control
   BLD Route: 0x1101080 = 0x321
   BLD FColor Control: 0x1101000 = 0x701
+
+Apply Settings
+  GLB DBuff: 0x1100008 = 0x1
+```
+
+If we enable Channel 1 and disable Channels 2 and 3...
+
+```text
+display_commit
+
+Configure Blender
+  BLD BkColor: 0x1101088 = 0xff000000
+  BLD Premultiply: 0x1101084 = 0x0
+
+Channel 1: Set Overlay
+  UI Config Attr: 0x1103000 = 0xff000405
+  UI Config Top LAddr: 0x1103010 = 0x400f65ac
+  UI Config Pitch: 0x110300c = 0xb40
+  UI Config Size: 0x1103004 = 0x59f02cf
+  UI Overlay Size: 0x1103088 = 0x59f02cf
+  IO Config Coord: 0x1103008 = 0x0
+
+Channel 1: Set Blender Output
+  BLD Output Size: 0x110108c = 0x59f02cf
+  GLB Size: 0x110000c = 0x59f02cf
+
+Channel 1: Set Blender Input Pipe 0
+  BLD Pipe InSize: 0x1101008 = 0x59f02cf
+  BLD Pipe FColor: 0x1101004 = 0xff000000
+  BLD Pipe Offset: 0x110100c = 0x0
+  BLD Pipe Mode: 0x1101090 = 0x3010301
+
+Channel 1: Disable Scaler
+  Mixer: 0x1140000 = 0x0
+
+Channel 2: Disable Overlay and Pipe
+  UI Config Attr: 0x1104000 = 0x0
+
+Channel 2: Disable Scaler
+  Mixer: 0x1150000 = 0x0
+
+Channel 3: Disable Overlay and Pipe
+  UI Config Attr: 0x1105000 = 0x0
+
+Channel 3: Disable Scaler
+  Mixer: 0x1160000 = 0x0
+
+Set BLD Route and BLD FColor Control
+  BLD Route: 0x1101080 = 0x1
+  BLD FColor Control: 0x1101000 = 0x101
 
 Apply Settings
   GLB DBuff: 0x1100008 = 0x1
