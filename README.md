@@ -3359,11 +3359,14 @@ _Which Display Engine for A64 (sun50iw1): H8, H3, H5 or A83?_
 We shoud look at H3...
 
 > The A64 is basically an Allwinner H3 with the Cortex-A7 cores replaced with Cortex-A53 cores (ARM64 architecture). They share most of the memory map, clocks, interrupts and also uses the same IP blocks.
+
 [(Source)](https://linux-sunxi.org/A64)
 
-From "H3 Display_Engine_Top" (Page 22):
+DE Base Address is 0x01000000 (Page 24)
 
-DE Base Address: 0x01000000 (Page 24)
+# Display Engine Mixers
+
+TODO
 
 DE RT-MIXER: (Page 87)
 > The RT-mixer Core consist of dma, overlay, scaler and blender block. It supports 4 layers overlay in one pipe, and its result can scaler up or down to blender in the next processing.
@@ -3400,6 +3403,32 @@ DE VSU: (Page 128)
 
 DE Rotation: (Page 137)
 > There are several types of rotation: clockwise 0/90/180/270 degree Rotation and H-Flip/V-Flip. Operation of Copy is the same as a 0 degree rotation.
+
+# Display Engine Steps
+
+TODO
+
+1.  Configure Blender: BLD BkColor and Premultiply
+
+1.  For Layers 0 to 3...
+
+    1.  If Layer is unused, disable Overlay, Pipe and Scaler. Skip to next Layer
+
+    1.  Layer 0 has format XRGB 8888, Layers 1 to 3 have format ARGB 8888
+
+    1.  Set Overlay: UI Config Attr, UI Config Top Laddr, UI Config Pitch, UI Config Size, UI Overlay Size, IO Config Coord
+
+    1.  For Layer 0: Set Blender Output: BLD Output Size, GLB Size
+
+    1.  Set Blender Input Pipe: BLD Pipe InSize, BLD Pipe FColor, BLD Pipe Offset, BLD Pipe Mode
+
+    1.  Disable Scaler (assuming we're not using Scaler)
+
+1.  Set BLD Route
+
+1.  Set BLD FColor Control
+
+1.  Apply Setting
 
 # Timing Controller in Allwinner A64
 
