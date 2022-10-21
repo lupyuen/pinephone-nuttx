@@ -3338,7 +3338,7 @@ modifyreg32: addr=0x010, val=0x00000001
 
 Our NuttX Zig Display Driver powers on the PinePhone Display and works exactly like the C Driver! 🎉
 
-![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/dsi2-title.jpg)
+![Test Pattern on PinePhone](https://lupyuen.github.io/images/dsi2-title.jpg)
 
 _Can our driver render graphics on PinePhone Display?_
 
@@ -3346,7 +3346,7 @@ Our PinePhone Display Driver isn't complete. It handles MIPI DSI (for initialisi
 
 We'll implement DE and TCON next.
 
-![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/de-title.jpg)
+![Mandelbrot Set on PinePhone](https://lupyuen.github.io/images/de-title.jpg)
 
 # Display Engine in Allwinner A64
 
@@ -3407,7 +3407,7 @@ So MIXER0 mixes 1 Video Channel with 3 UI Channels over DMA ... And pumps the pi
 
 Let's use the 3 UI Channels to render: 1️⃣ Mandelbrot Set 2️⃣ Blue Square 3️⃣ Green Circle
 
-![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
+![Mandelbrot Set with UI Overlays on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
 
 _Why 2 mixers?_
 
@@ -3482,6 +3482,10 @@ d->planes[2].fb_start = 0;  // To Disable Channel
 display_commit(d);
 ```
 
+We should see this...
+
+![Blue, Green, Red Blocks on PinePhone](https://lupyuen.github.io/images/de-rgb.jpg)
+
 # Render Mandelbrot Set
 
 TODO
@@ -3521,7 +3525,7 @@ https://github.com/lupyuen/incubator-nuttx-apps/blob/2af14dcb438429a8fbef0a4fc0f
 
 We should see this...
 
-![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/de-title.jpg)
+![Mandelbrot Set on PinePhone](https://lupyuen.github.io/images/de-title.jpg)
 
 # Animate Madelbrot Set
 
@@ -3565,6 +3569,10 @@ for (;;) {
     y_end   -= (y_end  - y_dest)  * 0.05;
 }
 ```
+
+We should see this...
+
+-   [Demo Video on YouTube](https://youtu.be/toC9iiPRwRI)
 
 # Render Square Overlay
 
@@ -3643,7 +3651,7 @@ d->planes[2].alpha    = 128;   // Dest Alpha
 
 We should see this...
 
-![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
+![Mandelbrot Set with Blue Square and Green Circle on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
 
 # Test PinePhone Display Engine
 
@@ -3670,13 +3678,11 @@ nuttx
 │   ├── LICENSE
 │   ├── NEWS
 ...
-├── pinephone-nuttx (Zig Display Driver for PinePhone)
-│   ├── LICENSE
-│   ├── README.md
-│   ├── display.o
-│   └── display.zig
-...
-└── test_display.c (Test Zig Display Driver)
+└── pinephone-nuttx (Zig Display Driver for PinePhone)
+    ├── LICENSE
+    ├── README.md
+    ├── display.o
+    └── display.zig
 ```
 
 1.  Create the NuttX Directory...
@@ -3686,7 +3692,7 @@ nuttx
     cd nuttx
     ```
 
-1.  Download the Modified p-boot Display Code `p-boot.6.zip` from...
+1.  Download the Modified Instrumented p-boot Display Code `p-boot.6.zip` from...
 
     [pinephone-nuttx/releases/tag/pboot6](https://github.com/lupyuen/pinephone-nuttx/releases/tag/pboot6)
 
@@ -3705,7 +3711,7 @@ nuttx
         https://github.com/lupyuen/incubator-nuttx \
         nuttx
 
-    ## Download NuttX Apps for PinePhone including Display Engine
+    ## Download NuttX Apps for PinePhone including Display Engine (Version 2)
     git clone \
         --recursive \
         --branch de2 \
@@ -3753,7 +3759,7 @@ nuttx
 
 We should see this...
 
-![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
+![Mandelbrot Set with Blue Square and Green Circle on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
 
 # Display Engine Usage
 
