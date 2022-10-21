@@ -3397,7 +3397,13 @@ RT-MIXER0 and RT-MIXER1 are multiplexed to TCON0.
 
 (TCON0 is connected to ST7703 over MIPI DSI)
 
-(Why 2 mixers?)
+_Why 2 mixers?_
+
+Maybe because A64 was designed for Set-Top Boxes with Picture-In-Picture Overlay Videos?
+
+The 3 UI Overlay Channels would be useful for overlaying a Text UI on top of a Video Channel.
+
+(Is that why Allwinner calls them "Channels"?)
 
 # Display Engine Usage
 
