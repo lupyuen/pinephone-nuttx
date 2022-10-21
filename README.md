@@ -3695,7 +3695,7 @@ nuttx
 │   ├── LICENSE
 │   ├── NEWS
 ...
-└── pinephone-nuttx (Zig Display Driver for PinePhone)
+└── pinephone-nuttx (Zig MIPI DSI Driver for PinePhone)
     ├── LICENSE
     ├── README.md
     ├── display.o
@@ -3745,7 +3745,7 @@ nuttx
     make
     ```
 
-1.  Follow these steps to compile our Zig App and link into NuttX...
+1.  Follow these steps to compile our Zig MIPI DSI Driver and link into NuttX...
 
     -   ["Zig on PinePhone"](https://github.com/lupyuen/pinephone-nuttx#zig-on-pinephone)
 
