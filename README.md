@@ -3464,7 +3464,7 @@ memset(&disp, 0, sizeof(disp));
 struct display *d = &disp;
 ```
 
-Init 3 Channels and render them: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
+We init the 3 Channels and render them: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
 // Init UI Channel 1: (Base Channel)
@@ -3494,11 +3494,13 @@ We should see this...
 
 ![Blue, Green, Red Blocks on PinePhone](https://lupyuen.github.io/images/de-rgb.jpg)
 
+(Why the black lines?)
+
+Channels 2 and 3 are disabled for now. We'll use them to render UI Overlays later.
+
 # Render Mandelbrot Set
 
-TODO
-
-Render Mandelbrot Set: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
+Let's render something more interesting... Mandelbrot Set: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
 // Fill with Mandelbrot Set
@@ -3527,9 +3529,7 @@ for (int y = 0; y < 1440; y++) {
 }
 ```
 
-`mandelbrot` and `hsvToRgb` are defined as...
-
-https://github.com/lupyuen/incubator-nuttx-apps/blob/2af14dcb438429a8fbef0a4fc0fa18076bbf31d8/examples/hello/test_display.c#L330-L426
+`mandelbrot` and `hsvToRgb` are defined here: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c#L330-L426)
 
 We should see this...
 
@@ -3537,11 +3537,14 @@ We should see this...
 
 # Animate Madelbrot Set
 
-TODO
-
-Animate Mandelbrot Set: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
+Now we animate the Mandelbrot Set: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
+// Omitted: Init UI Channels 1, 2 and 3
+...
+// Render the UI Channels
+display_commit(d);
+
 // Animate the Mandelbrot Set forever...
 for (;;) {
     // Fill with Mandelbrot Set
@@ -3581,6 +3584,12 @@ for (;;) {
 We should see this...
 
 -   [Demo Video on YouTube](https://youtu.be/toC9iiPRwRI)
+
+_Don't we need to call `display_commit` after every frame?_
+
+Nope, remember that the Display Engine reads our Framebuffer directly via DMA.
+
+So any updates to the Framebuffer will be pushed to the display instantly.
 
 # Render Square Overlay
 
