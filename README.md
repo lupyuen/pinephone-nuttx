@@ -3395,19 +3395,6 @@ RT-MIXER0 and RT-MIXER1 are multiplexed to TCON0 (which is connected to ST7703 o
 
 (Why 2 mixers?)
 
-# Other Display Engine Features
-
-__DE RT-WB:__ (Page 116)
-> The Real-time write-back controller (RT-WB) provides data capture function for display engine. It captures data from RT-mixer module, performs the image resizing function, and then write-back to SDRAM.
-
-(For screen capture?)
-
-__DE VSU:__ (Page 128)
-> The Video Scaler (VS) provides YUV format image resizing function for display engine. It receives data from overlay module, performs the image resizing function, and outputs to video post-processing modules. 
-
-__DE Rotation:__ (Page 137)
-> There are several types of rotation: clockwise 0/90/180/270 degree Rotation and H-Flip/V-Flip. Operation of Copy is the same as a 0 degree rotation.
-
 # Display Engine Usage
 
 Here are the steps to render 3 UI Channels (1 to 3) with the Display Engine, based on the log captured from [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)...
@@ -3422,9 +3409,12 @@ Here are the steps to render 3 UI Channels (1 to 3) with the Display Engine, bas
     BLD Premultiply: 0x110 1084 = 0x0
     ```
 
-1.  For Channels 1 to 3 (UI)...
+1.  For Channels 1 to 3...
 
     1.  If Channel is unused, disable Overlay, Pipe and Scaler. Skip to next Channel
+
+        -   UI Config Attr (OVL_UI_ATTCTL @ OVL_UI Offset 0x00): OVL_UI attribute control register
+        -   Mixer (??? @ 0x113 0000 + 0x10000 * Channel)
 
         ```text
         Channel 2: Disable Overlay and Pipe
@@ -3548,6 +3538,19 @@ Here are the steps to render 3 UI Channels (1 to 3) with the Display Engine, bas
 [(See the Complete Log)](https://github.com/lupyuen/pinephone-nuttx#testing-p-boot-display-engine-on-pinephone)
 
 (See Memory Mapping List and Register List at Page 90)
+
+# Other Display Engine Features
+
+__DE RT-WB:__ (Page 116)
+> The Real-time write-back controller (RT-WB) provides data capture function for display engine. It captures data from RT-mixer module, performs the image resizing function, and then write-back to SDRAM.
+
+(For screen capture?)
+
+__DE VSU:__ (Page 128)
+> The Video Scaler (VS) provides YUV format image resizing function for display engine. It receives data from overlay module, performs the image resizing function, and outputs to video post-processing modules. 
+
+__DE Rotation:__ (Page 137)
+> There are several types of rotation: clockwise 0/90/180/270 degree Rotation and H-Flip/V-Flip. Operation of Copy is the same as a 0 degree rotation.
 
 # Timing Controller in Allwinner A64
 
