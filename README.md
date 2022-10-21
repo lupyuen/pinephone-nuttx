@@ -3828,7 +3828,7 @@ This is how we'll create a NuttX Driver for PinePhone's A64 Display Engine that 
         -   IO Config Coord (OVL_UI_COOR @ OVL_UI Offset 0x08): OVL_UI memory block coordinate register
 
         ```text
-        Channel 1: Set Overlay
+        Channel 1: Set Overlay (fb0 is 720 x 1440)
         UI Config Attr:      0x110 3000 = 0xff00 0405
         UI Config Top LAddr: 0x110 3010 = 0x4064 a6ac (Address of fb0)
         UI Config Pitch:     0x110 300c = 0xb40 (720 * 4)
@@ -3836,7 +3836,7 @@ This is how we'll create a NuttX Driver for PinePhone's A64 Display Engine that 
         UI Overlay Size:     0x110 3088 = 0x59f 02cf (1439 << 16 + 719)
         IO Config Coord:     0x110 3008 = 0x0
 
-        Channel 2: Set Overlay
+        Channel 2: Set Overlay (fb1 is 600 x 600)
         UI Config Attr:      0x110 4000 = 0xff00 0005
         UI Config Top LAddr: 0x110 4010 = 0x404e adac (Address of fb1)
         UI Config Pitch:     0x110 400c = 0x960 (600 * 4)
@@ -3844,7 +3844,7 @@ This is how we'll create a NuttX Driver for PinePhone's A64 Display Engine that 
         UI Overlay Size:     0x110 4088 = 0x257 0257 (599 << 16 + 599)
         IO Config Coord:     0x110 4008 = 0x0
 
-        Channel 3: Set Overlay
+        Channel 3: Set Overlay (fb2 is 720 x 1440)
         UI Config Attr:      0x110 5000 = 0x7f00 0005
         UI Config Top LAddr: 0x110 5010 = 0x400f 65ac (Address of fb2)
         UI Config Pitch:     0x110 500c = 0xb40 (720 * 4)
@@ -3852,6 +3852,8 @@ This is how we'll create a NuttX Driver for PinePhone's A64 Display Engine that 
         UI Overlay Size:     0x110 5088 = 0x59f 02cf (1439 << 16 + 719)
         IO Config Coord:     0x110 5008 = 0x0
         ```
+
+        Note that UI Config Size and UI Overlay Size are `(height-1) << 16 + (width-1)`
 
     1.  For Channel 1: Set Blender Output
         -   BLD Output Size (BLD_SIZE @ BLD Offset 0x08C): BLD output size setting register
@@ -3872,24 +3874,26 @@ This is how we'll create a NuttX Driver for PinePhone's A64 Display Engine that 
         (Should `N*0x14` be `N*0x10` instead?)
 
         ```text
-        Channel 1: Set Blender Input Pipe 0
+        Channel 1: Set Blender Input Pipe 0 (fb0 is 720 x 1440)
         BLD Pipe InSize: 0x110 1008 = 0x59f 02cf (1439 * 16 + 719)
         BLD Pipe FColor: 0x110 1004 = 0xff00 0000
         BLD Pipe Offset: 0x110 100c = 0x0
         BLD Pipe Mode:   0x110 1090 = 0x301 0301
 
-        Channel 2: Set Blender Input Pipe 1
+        Channel 2: Set Blender Input Pipe 1 (fb1 is 600 x 600)
         BLD Pipe InSize: 0x110 1018 = 0x257 0257 (599 << 16 + 599)
         BLD Pipe FColor: 0x110 1014 = 0xff00 0000
         BLD Pipe Offset: 0x110 101c = 0x34 0034
         BLD Pipe Mode:   0x110 1094 = 0x301 0301
 
-        Channel 3: Set Blender Input Pipe 2
+        Channel 3: Set Blender Input Pipe 2 (fb2 is 720 x 1440)
         BLD Pipe InSize: 0x110 1028 = 0x59f 02cf (1439 * 16 + 719)
         BLD Pipe FColor: 0x110 1024 = 0xff00 0000
         BLD Pipe Offset: 0x110 102c = 0x0
         BLD Pipe Mode:   0x110 1098 = 0x301 0301
         ```
+
+        Note that BLD Pipe InSize is `(height-1) << 16 + (width-1)`
 
     1.  Disable Scaler (assuming we're not using Scaler)
 
