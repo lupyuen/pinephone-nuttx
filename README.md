@@ -1,4 +1,4 @@
-![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/dsi2-title.jpg)
+![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/de-title.jpg)
 
 [__Watch the Demo on YouTube__](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
 
@@ -3346,6 +3346,8 @@ Our PinePhone Display Driver isn't complete. It handles MIPI DSI (for initialisi
 
 We'll implement DE and TCON next.
 
+![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/de-title.jpg)
+
 # Display Engine in Allwinner A64
 
 Let's look inside PinePhone's Allwinner A64 Display Engine ... And render some graphics with Apache NuttX RTOS.
@@ -3398,6 +3400,10 @@ RT-MIXER0 and RT-MIXER1 are multiplexed to Timing Controller TCON0.
 (TCON0 is connected to ST7703 over MIPI DSI)
 
 So MIXER0 mixes 1 Video Channel with 3 UI Channels over DMA ... And pumps the pixels continuously to ST7703 LCD Controller (via the Timing Controller)
+
+Let's use the 3 UI Channels to render: 1️⃣ Mandelbrot Set 2️⃣ Blue Box 3️⃣ Green Circle
+
+![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
 
 _Why 2 mixers?_
 
