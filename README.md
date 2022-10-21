@@ -3393,13 +3393,15 @@ __DE RT-MIXER1__ has 2 Channels (DE Offset 0x20 0000, Page 23)
 -   Channel 1 for UI: DMA1, UI Overlay, UI Scaler, UI Blender
 -   We don't use MIXER1 right now
 
-RT-MIXER0 and RT-MIXER1 are multiplexed to TCON0.
+RT-MIXER0 and RT-MIXER1 are multiplexed to Timing Controller TCON0.
 
 (TCON0 is connected to ST7703 over MIPI DSI)
 
+So MIXER0 mixes 1 Video Channel with 3 UI Channels over DMA ... And pumps the pixels continuously to ST7703 LCD Controller (via the Timing Controller)
+
 _Why 2 mixers?_
 
-Maybe because A64 was designed for Set-Top Boxes with Picture-In-Picture Overlay Videos?
+Maybe because A64 (or H3) was designed for Set-Top Boxes with Picture-In-Picture Overlay Videos?
 
 The 3 UI Overlay Channels would be useful for overlaying a Text UI on top of a Video Channel.
 
