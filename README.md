@@ -3405,13 +3405,13 @@ RT-MIXER0 and RT-MIXER1 are multiplexed to Timing Controller TCON0.
 
 So MIXER0 mixes 1 Video Channel with 3 UI Channels over DMA ... And pumps the pixels continuously to ST7703 LCD Controller (via the Timing Controller)
 
-Let's use the 3 UI Channels to render: 1️⃣ Mandelbrot Set 2️⃣ Blue Box 3️⃣ Green Circle
+Let's use the 3 UI Channels to render: 1️⃣ Mandelbrot Set 2️⃣ Blue Square 3️⃣ Green Circle
 
 ![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
 
 _Why 2 mixers?_
 
-Maybe because A64 (or H3) was designed for Set-Top Boxes with Picture-In-Picture Overlay Videos?
+Maybe because A64 (or H3) was designed for [Set-Top Boxes](https://linux-sunxi.org/H3) with Picture-In-Picture Overlay Videos?
 
 The 3 UI Overlay Channels would be useful for overlaying a Text UI on top of a Video Channel.
 
