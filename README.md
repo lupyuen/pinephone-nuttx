@@ -3421,7 +3421,7 @@ The 3 UI Overlay Channels would be useful for overlaying a Text UI on top of a V
 
 TODO
 
-Init Framebuffer:
+Init Framebuffer: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
 // Init Framebuffer 0:
@@ -3430,7 +3430,7 @@ static uint32_t fb0[720 * 1440];
 int fb0_len = sizeof(fb0) / sizeof(fb0[0]);
 ```
 
-Fill with Blue, Green and Red:
+Fill with Blue, Green and Red: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
 // Fill with Blue, Green and Red
@@ -3449,7 +3449,7 @@ for (int i = 0; i < fb0_len; i++) {
 }
 ```
 
-Allocate 3 Channels:
+Allocate 3 Channels: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
 // Allocate 3 Display Channels
@@ -3458,7 +3458,7 @@ memset(&disp, 0, sizeof(disp));
 struct display *d = &disp;
 ```
 
-Init 3 Channels and render them:
+Init 3 Channels and render them: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
 // Init Display Channel 1: (Base Channel)
@@ -3485,6 +3485,8 @@ display_commit(d);
 # Render Mandelbrot Set
 
 TODO
+
+Render Mandelbrot Set: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
 // Fill with Mandelbrot Set
@@ -3516,6 +3518,8 @@ for (int y = 0; y < 1440; y++) {
 # Animate Madelbrot Set
 
 TODO
+
+Animate Mandelbrot Set: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
 // Animate the Mandelbrot Set forever...
@@ -3554,52 +3558,79 @@ for (;;) {
 }
 ```
 
-# Render UI Overlay
+# Render Square Overlay
 
 TODO
 
-Blue Square:
+Blue Square: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
-    // Init Framebuffer 1:
-    // Square 600 x 600 (4 bytes per RGBA pixel)
-    static uint32_t fb1[600 * 600];
-    int fb1_len = sizeof(fb1) / sizeof(fb1[0]);
+// Init Framebuffer 1:
+// Square 600 x 600 (4 bytes per RGBA pixel)
+static uint32_t fb1[600 * 600];
+int fb1_len = sizeof(fb1) / sizeof(fb1[0]);
 
-    // Fill with Blue
-    for (int i = 0; i < fb1_len; i++) {
-        // Colours are in ARGB format
-        fb1[i] = 0x80000080;
-    }
+// Fill with Blue
+for (int i = 0; i < fb1_len; i++) {
+    // Colours are in ARGB format
+    fb1[i] = 0x80000080;
+}
+
+// Init Display Channel 2: (First Overlay)
+// Square 600 x 600
+d->planes[1].fb_start = (uintptr_t) fb1;  // Framebuffer Address
+d->planes[1].fb_pitch = 600 * 4;  // Framebuffer Pitch
+d->planes[1].src_w    = 600;  // Source Width
+d->planes[1].src_h    = 600;  // Source Height
+d->planes[1].dst_w    = 600;  // Dest Width
+d->planes[1].dst_h    = 600;  // Dest Height
+d->planes[1].dst_x    = 52;   // Dest X
+d->planes[1].dst_y    = 52;   // Dest Y
 ```
 
-Green Circle:
+# Render Circle Overlay
+
+TODO
+
+Green Circle: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
-    // Init Framebuffer 2:
-    // Fullscreen 720 x 1440 (4 bytes per RGBA pixel)
-    static uint32_t fb2[720 * 1440];
-    int fb2_len = sizeof(fb2) / sizeof(fb2[0]);
+// Init Framebuffer 2:
+// Fullscreen 720 x 1440 (4 bytes per RGBA pixel)
+static uint32_t fb2[720 * 1440];
+int fb2_len = sizeof(fb2) / sizeof(fb2[0]);
 
-    // Fill with Green Circle
-    for (int y = 0; y < 1440; y++) {
-        for (int x = 0; x < 720; x++) {
-            // Get pixel index
-            int p = (y * 720) + x;
-            assert(p < fb2_len);
+// Fill with Green Circle
+for (int y = 0; y < 1440; y++) {
+    for (int x = 0; x < 720; x++) {
+        // Get pixel index
+        int p = (y * 720) + x;
+        assert(p < fb2_len);
 
-            // Shift coordinates so that centre of screen is (0,0)
-            int x_shift = x - 360;
-            int y_shift = y - 720;
+        // Shift coordinates so that centre of screen is (0,0)
+        int x_shift = x - 360;
+        int y_shift = y - 720;
 
-            // If x^2 + y^2 < radius^2, set the pixel to Green
-            if (x_shift*x_shift + y_shift*y_shift < 360*360) {
-                fb2[p] = 0x80008000;  // Green in ARGB Format
-            } else {  // Otherwise set to Black
-                fb2[p] = 0x00000000;  // Black in ARGB Format
-            }
+        // If x^2 + y^2 < radius^2, set the pixel to Green
+        if (x_shift*x_shift + y_shift*y_shift < 360*360) {
+            fb2[p] = 0x80008000;  // Green in ARGB Format
+        } else {  // Otherwise set to Black
+            fb2[p] = 0x00000000;  // Black in ARGB Format
         }
     }
+}
+
+// Init Display Channel 3: (Second Overlay)
+// Fullscreen 720 x 1440 with Alpha Blending
+d->planes[2].fb_start = (uintptr_t) fb2;  // Framebuffer Address
+d->planes[2].fb_pitch = 720 * 4;  // Framebuffer Pitch
+d->planes[2].src_w    = 720;   // Source Width
+d->planes[2].src_h    = 1440;  // Source Height
+d->planes[2].dst_w    = 720;   // Dest Width
+d->planes[2].dst_h    = 1440;  // Dest Height
+d->planes[2].dst_x    = 0;     // Dest X
+d->planes[2].dst_y    = 0;     // Dest Y
+d->planes[2].alpha    = 128;   // Dest Alpha
 ```
 
 # Display Engine Usage
