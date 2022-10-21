@@ -3376,7 +3376,7 @@ __DE RT-MIXER0__ has 4 Channels (DE Offset 0x10 0000, Page 87)
 -   Channels 1, 2, 3 for UI: DMA1 / 2 / 3, UI Overlays, UI Scalers, UI Blenders
 -   4 Overlay Layers per Channel
 -   Layer priority is Layer 3 > Layer2 > Layer 1 > Layer 0 (Page 89)
--   Channel 0 is unused (video)
+-   Channel 0 is unused (we don't use video right now)
 -   Channel 1 has format XRGB 8888
 -   Channels 2 and 3 have format ARGB 8888
 -   MIXER0 Registers:
@@ -3391,6 +3391,7 @@ __DE RT-MIXER0__ has 4 Channels (DE Offset 0x10 0000, Page 87)
 __DE RT-MIXER1__ has 2 Channels (DE Offset 0x20 0000, Page 23)
 -   Channel 0 for Video: DMA0, Video Overlay, Video Scaler
 -   Channel 1 for UI: DMA1, UI Overlay, UI Scaler, UI Blender
+-   We don't use MIXER1 right now
 
 RT-MIXER0 and RT-MIXER1 are multiplexed to TCON0.
 
