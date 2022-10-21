@@ -3830,7 +3830,7 @@ This is how we'll create a NuttX Driver for PinePhone's A64 Display Engine that 
         ```text
         Channel 1: Set Overlay
         UI Config Attr:      0x110 3000 = 0xff00 0405
-        UI Config Top LAddr: 0x110 3010 = 0x4064 a6ac (Address of fb0)
+        UI Config Top LAddr: 0x110 3010 = 0x4064 a6ac (End Address of fb0)
         UI Config Pitch:     0x110 300c = 0xb40 (720 * 4)
         UI Config Size:      0x110 3004 = 0x59f 02cf (1439 << 16 + 719)
         UI Overlay Size:     0x110 3088 = 0x59f 02cf (1439 << 16 + 719)
@@ -3838,7 +3838,7 @@ This is how we'll create a NuttX Driver for PinePhone's A64 Display Engine that 
 
         Channel 2: Set Overlay
         UI Config Attr:      0x110 4000 = 0xff00 0005
-        UI Config Top LAddr: 0x110 4010 = 0x404e adac (Address of fb1)
+        UI Config Top LAddr: 0x110 4010 = 0x404e adac (End Address of fb1)
         UI Config Pitch:     0x110 400c = 0x960 (600 * 4)
         UI Config Size:      0x110 4004 = 0x257 0257 (599 << 16 + 599)
         UI Overlay Size:     0x110 4088 = 0x257 0257 (599 << 16 + 599)
@@ -3846,7 +3846,7 @@ This is how we'll create a NuttX Driver for PinePhone's A64 Display Engine that 
 
         Channel 3: Set Overlay
         UI Config Attr:      0x110 5000 = 0x7f00 0005
-        UI Config Top LAddr: 0x110 5010 = 0x400f 65ac (Address of fb2)
+        UI Config Top LAddr: 0x110 5010 = 0x400f 65ac (End Address of fb2)
         UI Config Pitch:     0x110 500c = 0xb40 (720 * 4)
         UI Config Size:      0x110 5004 = 0x59f 02cf (1439 << 16 + 719)
         UI Overlay Size:     0x110 5088 = 0x59f 02cf (1439 << 16 + 719)
