@@ -3417,6 +3417,191 @@ The 3 UI Overlay Channels would be useful for overlaying a Text UI on top of a V
 
 (Is that why Allwinner calls them "Channels"?)
 
+# Render Colours
+
+TODO
+
+Init Framebuffer:
+
+```c
+// Init Framebuffer 0:
+// Fullscreen 720 x 1440 (4 bytes per RGBA pixel)
+static uint32_t fb0[720 * 1440];
+int fb0_len = sizeof(fb0) / sizeof(fb0[0]);
+```
+
+Fill with Blue, Green and Red:
+
+```c
+// Fill with Blue, Green and Red
+for (int i = 0; i < fb0_len; i++) {
+    // Colours are in ARGB format
+    if (i < fb0_len / 4) {
+        // Blue for top quarter
+        fb0[i] = 0x80000080;
+    } else if (i < fb0_len / 2) {
+        // Green for next quarter
+        fb0[i] = 0x80008000;
+    } else {
+        // Red for lower half
+        fb0[i] = 0x80800000;
+    }
+}
+```
+
+Allocate 3 Channels:
+
+```c
+// Allocate 3 Display Channels
+static struct display disp;
+memset(&disp, 0, sizeof(disp));
+struct display *d = &disp;
+```
+
+Init 3 Channels and render them:
+
+```c
+// Init Display Channel 1: (Base Channel)
+// Fullscreen 720 x 1440
+d->planes[0].fb_start = (uintptr_t) fb0;  // Framebuffer Address
+d->planes[0].fb_pitch = 720 * 4;  // Framebuffer Pitch
+d->planes[0].src_w    = 720;   // Source Width
+d->planes[0].src_h    = 1440;  // Source Height
+d->planes[0].dst_w    = 720;   // Dest Width
+d->planes[0].dst_h    = 1440;  // Dest Height
+
+// Init Display Channel 2: (First Overlay)
+// Square 600 x 600
+d->planes[1].fb_start = 0;  // To Disable Channel
+
+// Init Display Channel 3: (Second Overlay)
+// Fullscreen 720 x 1440 with Alpha Blending
+d->planes[2].fb_start = 0;  // To Disable Channel
+
+// Render the Display Channels
+display_commit(d);
+```
+
+# Render Mandelbrot Set
+
+TODO
+
+```c
+// Fill with Mandelbrot Set
+for (int y = 0; y < 1440; y++) {
+    for (int x = 0; x < 720; x++) {
+        // Convert Pixel Coordinates to a Complex Number
+        float cx = x_start + (y / 1440.0) * (x_end - x_start);
+        float cy = y_start + (x / 720.0)  * (y_end - y_start);
+
+        // Compute Manelbrot Set
+        int m = mandelbrot(cx, cy);
+
+        // Color depends on the number of iterations
+        uint8_t hue = 255.0 * m / MAX_ITER;
+        uint8_t saturation = 255;
+        uint8_t value = (m < MAX_ITER) ? 255 : 0;
+
+        // Convert Hue / Saturation / Value to RGB
+        uint32_t rgb = hsvToRgb(hue, saturation, value);
+
+        // Set the Pixel Colour (ARGB Format)
+        int p = (y * 720) + x;
+        assert(p < fb0_len);
+        fb0[p] = 0x80000000 | rgb;
+    }
+}
+```
+
+# Animate Madelbrot Set
+
+TODO
+
+```c
+// Animate the Mandelbrot Set forever...
+for (;;) {
+    // Fill with Mandelbrot Set
+    for (int y = 0; y < 1440; y++) {
+        for (int x = 0; x < 720; x++) {
+            // Convert Pixel Coordinates to a Complex Number
+            float cx = x_start + (y / 1440.0) * (x_end - x_start);
+            float cy = y_start + (x / 720.0)  * (y_end - y_start);
+
+            // Compute Manelbrot Set
+            int m = mandelbrot(cx, cy);
+
+            // Color depends on the number of iterations
+            uint8_t hue = 255.0 * m / MAX_ITER;
+            uint8_t saturation = 255;
+            uint8_t value = (m < MAX_ITER) ? 255 : 0;
+
+            // Convert Hue / Saturation / Value to RGB
+            uint32_t rgb = hsvToRgb(hue, saturation, value);
+
+            // Set the Pixel Colour (ARGB Format)
+            int p = (y * 720) + x;
+            assert(p < fb0_len);
+            fb0[p] = 0x80000000 | rgb;
+        }
+    }
+    // Zoom in to (-1.4, 0)
+    float x_dest = -1.4;
+    float y_dest = 0;
+    x_start += (x_dest - x_start) * 0.05;
+    x_end   -= (x_end  - x_dest)  * 0.05;
+    y_start += (y_dest - y_start) * 0.05;
+    y_end   -= (y_end  - y_dest)  * 0.05;
+}
+```
+
+# Render UI Overlay
+
+TODO
+
+Blue Square:
+
+```c
+    // Init Framebuffer 1:
+    // Square 600 x 600 (4 bytes per RGBA pixel)
+    static uint32_t fb1[600 * 600];
+    int fb1_len = sizeof(fb1) / sizeof(fb1[0]);
+
+    // Fill with Blue
+    for (int i = 0; i < fb1_len; i++) {
+        // Colours are in ARGB format
+        fb1[i] = 0x80000080;
+    }
+```
+
+Green Circle:
+
+```c
+    // Init Framebuffer 2:
+    // Fullscreen 720 x 1440 (4 bytes per RGBA pixel)
+    static uint32_t fb2[720 * 1440];
+    int fb2_len = sizeof(fb2) / sizeof(fb2[0]);
+
+    // Fill with Green Circle
+    for (int y = 0; y < 1440; y++) {
+        for (int x = 0; x < 720; x++) {
+            // Get pixel index
+            int p = (y * 720) + x;
+            assert(p < fb2_len);
+
+            // Shift coordinates so that centre of screen is (0,0)
+            int x_shift = x - 360;
+            int y_shift = y - 720;
+
+            // If x^2 + y^2 < radius^2, set the pixel to Green
+            if (x_shift*x_shift + y_shift*y_shift < 360*360) {
+                fb2[p] = 0x80008000;  // Green in ARGB Format
+            } else {  // Otherwise set to Black
+                fb2[p] = 0x00000000;  // Black in ARGB Format
+            }
+        }
+    }
+```
+
 # Display Engine Usage
 
 Here are the steps to render 3 UI Channels (1 to 3) with the Display Engine, based on the log captured from [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)...
