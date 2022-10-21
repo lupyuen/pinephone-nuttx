@@ -3415,11 +3415,13 @@ Let's use the 3 UI Channels to render: 1️⃣ Mandelbrot Set 2️⃣ Blue Squar
 
 _Why 2 mixers?_
 
-Maybe because A64 (or H3) was designed for [Set-Top Boxes](https://linux-sunxi.org/H3) with Picture-In-Picture Overlay Videos?
+Maybe because A64 (or H3) was designed for [OTT Set-Top Boxes](https://linux-sunxi.org/H3) with Picture-In-Picture Overlay Videos?
 
 The 3 UI Overlay Channels would be useful for overlaying a Text UI on top of a Video Channel.
 
 (Is that why Allwinner calls them "Channels"?)
+
+[(Wait... Wasn't Pine64 created thanks to OTT Boxes? 🤔)](https://en.wikipedia.org/wiki/Pine64#:~:text=Pine64%20initially%20operated%20as%20Pine%20Microsystems%20Inc.%20(Fremont%2C%20California)%2C%20founded%20by%20TL%20Lim%2C%20the%20inventor%20of%20the%20PopBox%20and%20Popcorn%20Hour%20series%20of%20media%20players%20sold%20under%20the%20Syabas%20and%20Cloud%20Media%20brands.%5B2%5D)
 
 # Render Colours
 
