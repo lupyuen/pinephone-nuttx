@@ -3358,15 +3358,19 @@ Here's the doc for the Display Engine...
 
 _Which Display Engine for A64 (sun50iw1): H8, H3, H5 or A83?_
 
-We shoud look at H3...
+PinePhone's A64 Display Engine is hidden in the Allwinner H3 Docs, because Allwinner A64 is actually a H3 upgraded with 64-bit Cores...
 
 > The A64 is basically an Allwinner H3 with the Cortex-A7 cores replaced with Cortex-A53 cores (ARM64 architecture). They share most of the memory map, clocks, interrupts and also uses the same IP blocks.
 
 [(Source)](https://linux-sunxi.org/A64)
 
-DE Base Address is 0x0100 0000 (Page 24)
+According to the doc, DE Base Address is 0x0100 0000 (Page 24)
+
+Let's look at the DE Mixers...
 
 # Display Engine Mixers
+
+_What's a Display Engine Mixer?_
 
 __DE RT-MIXER:__ (Page 87)
 > The RT-mixer Core consist of dma, overlay, scaler and blender block. It supports 4 layers overlay in one pipe, and its result can scaler up or down to blender in the next processing.
