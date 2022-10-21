@@ -3368,6 +3368,8 @@ According to the doc, DE Base Address is 0x0100 0000 (Page 24)
 
 Let's look at the DE Mixers...
 
+![A64 Display Engine](https://lupyuen.github.io/images/de-block1a.jpg)
+
 # Display Engine Mixers
 
 _What's a Display Engine Mixer?_
@@ -3393,6 +3395,8 @@ __DE RT-MIXER0__ has 4 Channels (DE Offset 0x10 0000, Page 87)
     -   OVL_UI(CH2) (UI Overlay / Channel 2) at MIXER0 Offset 0x4000
     -   OVL_UI(CH3) (UI Overlay / Channel 3) at MIXER0 Offset 0x5000
     -   POST_PROC2 at MIXER0 Offset 0xB0000 (de_csc_regs)
+
+![A64 Display Engine MIXER0](https://lupyuen.github.io/images/de-mixer1a.jpg)
 
 __DE RT-MIXER1__ has 2 Channels (DE Offset 0x20 0000, Page 23)
 -   Channel 0 for Video: DMA0, Video Overlay, Video Scaler
@@ -3481,6 +3485,8 @@ d->planes[2].fb_start = 0;  // To Disable Channel
 // Render the Display Channels
 display_commit(d);
 ```
+
+`display_commit` is defined in the p-boot Display Code: [display.c](https://megous.com/git/p-boot/tree/src/display.c#n2017)
 
 We should see this...
 
@@ -3763,9 +3769,9 @@ We should see this...
 
 # Display Engine Usage
 
-Based on the log captured from our instrumented [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c), we have identified the steps to render 3 UI Channels (1 to 3) with the Display Engine (`display_commit`).
+Based on the log captured from our instrumented [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c), we have identified the steps to render 3 UI Channels (1 to 3) with the Display Engine [(`display_commit`)](https://megous.com/git/p-boot/tree/src/display.c#n2017)
 
-This is how we will create an NuttX Driver for PinePhone's A64 Display Engine that implements Display Rendering...
+This is how we'll create a NuttX Driver for PinePhone's A64 Display Engine that implements Display Rendering...
 
 1.  Configure Blender...
     -   BLD BkColor (BLD_BK_COLOR Offset 0x88): BLD background color register
