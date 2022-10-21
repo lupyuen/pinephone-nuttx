@@ -3425,7 +3425,7 @@ The 3 UI Overlay Channels would be useful for overlaying a Text UI on top of a V
 
 # Render Colours
 
-Let's render simple colours on the PinePhone Display.
+Let's render simple colour blocks on the PinePhone Display.
 
 We allocate the Framebuffer: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
@@ -3490,7 +3490,7 @@ display_commit(d);
 
 `display_commit` is defined in the p-boot Display Code: [display.c](https://megous.com/git/p-boot/tree/src/display.c#n2017)
 
-We should see this...
+We should see these Blue, Green and Red Blocks...
 
 ![Blue, Green, Red Blocks on PinePhone](https://lupyuen.github.io/images/de-rgb.jpg)
 
@@ -3531,7 +3531,7 @@ for (int y = 0; y < 1440; y++) {
 
 `mandelbrot` and `hsvToRgb` are defined here: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c#L330-L426)
 
-We should see this...
+We should see this Mandelbrot Set...
 
 ![Mandelbrot Set on PinePhone](https://lupyuen.github.io/images/de-title.jpg)
 
@@ -3581,7 +3581,7 @@ for (;;) {
 }
 ```
 
-We should see this...
+We should see the Animated Mandelbrot Set...
 
 -   [Demo Video on YouTube](https://youtu.be/toC9iiPRwRI)
 
@@ -3593,9 +3593,7 @@ So any updates to the Framebuffer will be pushed to the display instantly.
 
 # Render Square Overlay
 
-TODO
-
-Blue Square: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
+This is how we render a Blue Square as an Overlay on UI Channel 2: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
 // Init Framebuffer 1:
@@ -3623,9 +3621,7 @@ d->planes[1].dst_y    = 52;   // Dest Y
 
 # Render Circle Overlay
 
-TODO
-
-Green Circle: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
+This is how we render a Green Circle as an Overlay on UI Channel 3: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
 // Init Framebuffer 2:
@@ -3666,21 +3662,25 @@ d->planes[2].dst_y    = 0;     // Dest Y
 d->planes[2].alpha    = 128;   // Dest Alpha
 ```
 
-We should see this...
+Note that we set the Destination Alpha. So the black pixels will appear transparent.
+
+We should see the Animated Mandelbrot Set, with Blue Square and Green Circle as Overlays...
 
 ![Mandelbrot Set with Blue Square and Green Circle on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
 
+(Why the missing horizontal lines in the Blue Square and Green Circle?)
+
 # Test PinePhone Display Engine
 
-To test our Zig Display Driver with NuttX on PinePhone, we'll run this p-boot Display Code...
+To test the A64 Display Engine with NuttX on PinePhone, we'll run this p-boot Display Code...
 
--   [p-boot Display Code](https://gist.github.com/lupyuen/ee3adf76e76881609845d0ab0f768a95)
+-   [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
-Here are the steps to download these files and build the Zig Display Driver for PinePhone...
+Here are the steps to download these files and build them...
 
 ```text
 nuttx
-├── apps (NuttX Apps for PinePhone including Display Engine)
+├── apps (NuttX Apps for PinePhone including Display Engine Version 2)
 │   ├── Application.mk
 │   ├── DISCLAIMER
 │   ├── Directory.mk
@@ -3774,9 +3774,11 @@ nuttx
 
 1.  At the NuttX Shell, enter `hello`
 
-We should see this...
+We should see the Animated Mandelbrot Set, with Blue Square and Green Circle as Overlays...
 
 ![Mandelbrot Set with Blue Square and Green Circle on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
+
+(Why the missing horizontal lines in the Blue Square and Green Circle?)
 
 # Display Engine Usage
 
@@ -3925,6 +3927,8 @@ This is how we'll create a NuttX Driver for PinePhone's A64 Display Engine that 
 (See Memory Mapping List and Register List at Page 90)
 
 # Other Display Engine Features
+
+We won't use these Display Engine Features today...
 
 __DE RT-WB:__ (Page 116)
 > The Real-time write-back controller (RT-WB) provides data capture function for display engine. It captures data from RT-mixer module, performs the image resizing function, and then write-back to SDRAM.
