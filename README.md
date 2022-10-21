@@ -3379,19 +3379,22 @@ __DE RT-MIXER0__ has 4 Channels (DE Offset 0x10 0000, Page 87)
 -   Channel 0 is unused (video)
 -   Channel 1 has format XRGB 8888
 -   Channels 2 and 3 have format ARGB 8888
--   GLB at Offset 0x00000 (de_glb_regs)
--   BLD (Blender) at Offset 0x01000 (de_bld_regs)
--   OVL_V(CH0) (Video Overlay / Channel 0) at MIXER0 Offset 0x2000 (Unused)
--   OVL_UI(CH1) (UI Overlay / Channel 1) at MIXER0 Offset 0x3000
--   OVL_UI(CH2) (UI Overlay / Channel 2) at MIXER0 Offset 0x4000
--   OVL_UI(CH3) (UI Overlay / Channel 3) at MIXER0 Offset 0x5000
--   POST_PROC2 at MIXER0 Offset 0xB0000 (de_csc_regs)
+-   MIXER0 Registers:
+    -   GLB at MIXER0 Offset 0x00000 (de_glb_regs)
+    -   BLD (Blender) at MIXER0 Offset 0x01000 (de_bld_regs)
+    -   OVL_V(CH0) (Video Overlay / Channel 0) at MIXER0 Offset 0x2000 (Unused)
+    -   OVL_UI(CH1) (UI Overlay / Channel 1) at MIXER0 Offset 0x3000
+    -   OVL_UI(CH2) (UI Overlay / Channel 2) at MIXER0 Offset 0x4000
+    -   OVL_UI(CH3) (UI Overlay / Channel 3) at MIXER0 Offset 0x5000
+    -   POST_PROC2 at MIXER0 Offset 0xB0000 (de_csc_regs)
 
 __DE RT-MIXER1__ has 2 Channels (DE Offset 0x20 0000, Page 23)
 -   Channel 0 for Video: DMA0, Video Overlay, Video Scaler
 -   Channel 1 for UI: DMA1, UI Overlay, UI Scaler, UI Blender
 
-RT-MIXER0 and RT-MIXER1 are multiplexed to TCON0 (which is connected to ST7703 over MIPI DSI)
+RT-MIXER0 and RT-MIXER1 are multiplexed to TCON0.
+
+(TCON0 is connected to ST7703 over MIPI DSI)
 
 (Why 2 mixers?)
 
