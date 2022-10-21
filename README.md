@@ -3362,16 +3362,16 @@ We shoud look at H3...
 
 [(Source)](https://linux-sunxi.org/A64)
 
-DE Base Address is 0x01000000 (Page 24)
+DE Base Address is 0x0100 0000 (Page 24)
 
 # Display Engine Mixers
 
-TODO
-
-DE RT-MIXER: (Page 87)
+__DE RT-MIXER:__ (Page 87)
 > The RT-mixer Core consist of dma, overlay, scaler and blender block. It supports 4 layers overlay in one pipe, and its result can scaler up or down to blender in the next processing.
 
-DE RT-MIXER0 has 4 Channels (Offset 0x100000, Page 87)
+The Display Engine has 2 Mixers: RT-MIXER0 and RT-MIXER1...
+
+__DE RT-MIXER0__ has 4 Channels (DE Offset 0x10 0000, Page 87)
 -   Channel 0 for Video: DMA0, Video Overlay, Video Scaler
 -   Channels 1, 2, 3 for UI: DMA1 / 2 / 3, UI Overlays, UI Scalers, UI Blenders
 -   4 Overlay Layers per Channel
@@ -3381,34 +3381,36 @@ DE RT-MIXER0 has 4 Channels (Offset 0x100000, Page 87)
 -   Channels 2 and 3 have format ARGB 8888
 -   GLB at Offset 0x00000 (de_glb_regs)
 -   BLD (Blender) at Offset 0x01000 (de_bld_regs)
--   OVL_V(CH0) (Video Overlay / Channel 0) at Offset 0x02000 (Unused)
--   OVL_UI(CH1) (UI Overlay / Channel 1) at Offset 0x03000
--   OVL_UI(CH2) (UI Overlay / Channel 2) at Offset 0x04000
--   OVL_UI(CH3) (UI Overlay / Channel 3) at Offset 0x05000
--   POST_PROC2 at Offset 0xB0000 (de_csc_regs)
+-   OVL_V(CH0) (Video Overlay / Channel 0) at MIXER0 Offset 0x2000 (Unused)
+-   OVL_UI(CH1) (UI Overlay / Channel 1) at MIXER0 Offset 0x3000
+-   OVL_UI(CH2) (UI Overlay / Channel 2) at MIXER0 Offset 0x4000
+-   OVL_UI(CH3) (UI Overlay / Channel 3) at MIXER0 Offset 0x5000
+-   POST_PROC2 at MIXER0 Offset 0xB0000 (de_csc_regs)
 
-DE RT-MIXER1 has 2 Channels (Offset 0x200000, Page 23)
+__DE RT-MIXER1__ has 2 Channels (DE Offset 0x20 0000, Page 23)
 -   Channel 0 for Video: DMA0, Video Overlay, Video Scaler
 -   Channel 1 for UI: DMA1, UI Overlay, UI Scaler, UI Blender
 
-RT-MIXER0 and RT-MIXER1 are muxed to TCON0
+RT-MIXER0 and RT-MIXER1 are multiplexed to TCON0 (which is connected to ST7703 over MIPI DSI)
 
 (Why 2 mixers?)
 
-DE RT-WB: (Page 116)
+# Other Display Engine Features
+
+__DE RT-WB:__ (Page 116)
 > The Real-time write-back controller (RT-WB) provides data capture function for display engine. It captures data from RT-mixer module, performs the image resizing function, and then write-back to SDRAM.
 
 (For screen capture?)
 
-DE VSU: (Page 128)
+__DE VSU:__ (Page 128)
 > The Video Scaler (VS) provides YUV format image resizing function for display engine. It receives data from overlay module, performs the image resizing function, and outputs to video post-processing modules. 
 
-DE Rotation: (Page 137)
+__DE Rotation:__ (Page 137)
 > There are several types of rotation: clockwise 0/90/180/270 degree Rotation and H-Flip/V-Flip. Operation of Copy is the same as a 0 degree rotation.
 
-# Display Engine Steps
+# Display Engine Usage
 
-TODO
+Here are the steps to render 3 UI Channels (1 to 3) with the Display Engine, based on the log captured from [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)...
 
 1.  Configure Blender...
     -   BLD BkColor (BLD_BK_COLOR Offset 0x88): BLD background color register
@@ -3416,8 +3418,8 @@ TODO
 
     ```text
     Configure Blender
-    BLD BkColor: 0x1101088 = 0xff000000
-    BLD Premultiply: 0x1101084 = 0x0
+    BLD BkColor:     0x110 1088 = 0xff000000
+    BLD Premultiply: 0x110 1084 = 0x0
     ```
 
 1.  For Channels 1 to 3 (UI)...
@@ -3426,16 +3428,16 @@ TODO
 
         ```text
         Channel 2: Disable Overlay and Pipe
-        UI Config Attr: 0x1104000 = 0x0
-
-        Channel 2: Disable Scaler
-        Mixer: 0x1150000 = 0x0
+        UI Config Attr: 0x110 4000 = 0x0
 
         Channel 3: Disable Overlay and Pipe
-        UI Config Attr: 0x1105000 = 0x0
+        UI Config Attr: 0x110 5000 = 0x0
+
+        Channel 2: Disable Scaler
+        Mixer: 0x115 0000 = 0x0
 
         Channel 3: Disable Scaler
-        Mixer: 0x1160000 = 0x0
+        Mixer: 0x116 0000 = 0x0
         ```
 
     1.  Channel 1 has format XRGB 8888, Channel 2 and 3 have format ARGB 8888
@@ -3450,28 +3452,28 @@ TODO
 
         ```text
         Channel 1: Set Overlay
-        UI Config Attr: 0x1103000 = 0xff000405
-        UI Config Top LAddr: 0x1103010 = 0x4064a6ac
-        UI Config Pitch: 0x110300c = 0xb40
-        UI Config Size: 0x1103004 = 0x59f02cf
-        UI Overlay Size: 0x1103088 = 0x59f02cf
-        IO Config Coord: 0x1103008 = 0x0
+        UI Config Attr:      0x110 3000 = 0xff00 0405
+        UI Config Top LAddr: 0x110 3010 = 0x4064 a6ac
+        UI Config Pitch:     0x110 300c = 0xb40
+        UI Config Size:      0x110 3004 = 0x59f 02cf
+        UI Overlay Size:     0x110 3088 = 0x59f 02cf
+        IO Config Coord:     0x110 3008 = 0x0
 
         Channel 2: Set Overlay
-        UI Config Attr: 0x1104000 = 0xff000005
-        UI Config Top LAddr: 0x1104010 = 0x404eadac
-        UI Config Pitch: 0x110400c = 0x960
-        UI Config Size: 0x1104004 = 0x2570257
-        UI Overlay Size: 0x1104088 = 0x2570257
-        IO Config Coord: 0x1104008 = 0x0
+        UI Config Attr:      0x110 4000 = 0xff00 0005
+        UI Config Top LAddr: 0x110 4010 = 0x404e adac
+        UI Config Pitch:     0x110 400c = 0x960
+        UI Config Size:      0x110 4004 = 0x257 0257
+        UI Overlay Size:     0x110 4088 = 0x257 0257
+        IO Config Coord:     0x110 4008 = 0x0
 
         Channel 3: Set Overlay
-        UI Config Attr: 0x1105000 = 0x7f000005
-        UI Config Top LAddr: 0x1105010 = 0x400f65ac
-        UI Config Pitch: 0x110500c = 0xb40
-        UI Config Size: 0x1105004 = 0x59f02cf
-        UI Overlay Size: 0x1105088 = 0x59f02cf
-        IO Config Coord: 0x1105008 = 0x0
+        UI Config Attr:      0x110 5000 = 0x7f00 0005
+        UI Config Top LAddr: 0x110 5010 = 0x400f 65ac
+        UI Config Pitch:     0x110 500c = 0xb40
+        UI Config Size:      0x110 5004 = 0x59f 02cf
+        UI Overlay Size:     0x110 5088 = 0x59f 02cf
+        IO Config Coord:     0x110 5008 = 0x0
         ```
 
     1.  For Channel 1: Set Blender Output
@@ -3480,8 +3482,8 @@ TODO
 
         ```text
         Channel 1: Set Blender Output
-        BLD Output Size: 0x110108c = 0x59f02cf
-        GLB Size: 0x110000c = 0x59f02cf
+        BLD Output Size: 0x110 108c = 0x59f 02cf
+        GLB Size:        0x110 000c = 0x59f 02cf
         ```
 
     1.  Set Blender Input Pipe (N = Pipe Number, from 0 to 2 for Channels 1 to 3)
@@ -3494,35 +3496,35 @@ TODO
 
         ```text
         Channel 1: Set Blender Input Pipe 0
-        BLD Pipe InSize: 0x1101008 = 0x59f02cf
-        BLD Pipe FColor: 0x1101004 = 0xff000000
-        BLD Pipe Offset: 0x110100c = 0x0
-        BLD Pipe Mode: 0x1101090 = 0x3010301
+        BLD Pipe InSize: 0x110 1008 = 0x59f 02cf
+        BLD Pipe FColor: 0x110 1004 = 0xff00 0000
+        BLD Pipe Offset: 0x110 100c = 0x0
+        BLD Pipe Mode:   0x110 1090 = 0x301 0301
 
         Channel 2: Set Blender Input Pipe 1
-        BLD Pipe InSize: 0x1101018 = 0x2570257
-        BLD Pipe FColor: 0x1101014 = 0xff000000
-        BLD Pipe Offset: 0x110101c = 0x340034
-        BLD Pipe Mode: 0x1101094 = 0x3010301
+        BLD Pipe InSize: 0x110 1018 = 0x257 0257
+        BLD Pipe FColor: 0x110 1014 = 0xff00 0000
+        BLD Pipe Offset: 0x110 101c = 0x34 0034
+        BLD Pipe Mode:   0x110 1094 = 0x301 0301
 
         Channel 3: Set Blender Input Pipe 2
-        BLD Pipe InSize: 0x1101028 = 0x59f02cf
-        BLD Pipe FColor: 0x1101024 = 0xff000000
-        BLD Pipe Offset: 0x110102c = 0x0
-        BLD Pipe Mode: 0x1101098 = 0x3010301
+        BLD Pipe InSize: 0x110 1028 = 0x59f 02cf
+        BLD Pipe FColor: 0x110 1024 = 0xff00 0000
+        BLD Pipe Offset: 0x110 102c = 0x0
+        BLD Pipe Mode:   0x110 1098 = 0x301 0301
         ```
 
     1.  Disable Scaler (assuming we're not using Scaler)
 
         ```text
         Channel 1: Disable Scaler
-        Mixer: 0x1140000 = 0x0
+        Mixer: 0x114 0000 = 0x0
 
         Channel 2: Disable Scaler
-        Mixer: 0x1150000 = 0x0
-        
+        Mixer: 0x115 0000 = 0x0
+
         Channel 3: Disable Scaler
-        Mixer: 0x1160000 = 0x0
+        Mixer: 0x116 0000 = 0x0
         ```
 
 1.  Set BLD Route and BLD FColor Control
@@ -3531,8 +3533,8 @@ TODO
 
     ```text
     Set BLD Route and BLD FColor Control
-    BLD Route: 0x1101080 = 0x321
-    BLD FColor Control: 0x1101000 = 0x701
+    BLD Route:          0x110 1080 = 0x321
+    BLD FColor Control: 0x110 1000 = 0x701
     ```
 
 1.  Apply Settings: GLB DBuff
@@ -3540,7 +3542,7 @@ TODO
 
     ```text
     Apply Settings
-    GLB DBuff: 0x1100008 = 0x1
+    GLB DBuff: 0x110 0008 = 0x1
     ```
 
 [(See the Complete Log)](https://github.com/lupyuen/pinephone-nuttx#testing-p-boot-display-engine-on-pinephone)
