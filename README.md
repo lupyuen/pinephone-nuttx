@@ -3635,7 +3635,9 @@ d->planes[2].alpha    = 128;   // Dest Alpha
 
 # Display Engine Usage
 
-Here are the steps to render 3 UI Channels (1 to 3) with the Display Engine, based on the log captured from [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)...
+Based on the log captured from our instrumented [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c), we have identified the steps to render 3 UI Channels (1 to 3) with the Display Engine (`display_commit`).
+
+This is how we will create an NuttX Driver for PinePhone's A64 Display Engine that implements Display Rendering...
 
 1.  Configure Blender...
     -   BLD BkColor (BLD_BK_COLOR Offset 0x88): BLD background color register
