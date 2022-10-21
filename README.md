@@ -3413,7 +3413,7 @@ Let's use the 3 UI Channels to render: 1️⃣ Mandelbrot Set 2️⃣ Blue Squar
 
 ![Mandelbrot Set with UI Overlays on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
 
-_Why 2 mixers?_
+_Why 2 Mixers in A64 Display Engine?_
 
 Maybe because A64 (or H3) was designed for [OTT Set-Top Boxes](https://linux-sunxi.org/H3) with Picture-In-Picture Overlay Videos?
 
@@ -3425,9 +3425,9 @@ The 3 UI Overlay Channels would be useful for overlaying a Text UI on top of a V
 
 # Render Colours
 
-TODO
+Let's render simple colours on the PinePhone Display.
 
-Init Framebuffer: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
+We allocate the Framebuffer: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
 // Init Framebuffer 0:
@@ -3436,7 +3436,7 @@ static uint32_t fb0[720 * 1440];
 int fb0_len = sizeof(fb0) / sizeof(fb0[0]);
 ```
 
-Fill with Blue, Green and Red: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
+We fill the Framebuffer with Blue, Green and Red: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
 // Fill with Blue, Green and Red
@@ -3455,10 +3455,10 @@ for (int i = 0; i < fb0_len; i++) {
 }
 ```
 
-Allocate 3 Channels: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
+We allocate 3 UI Channels: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
-// Allocate 3 Display Channels
+// Allocate 3 UI Channels
 static struct display disp;
 memset(&disp, 0, sizeof(disp));
 struct display *d = &disp;
@@ -3467,7 +3467,7 @@ struct display *d = &disp;
 Init 3 Channels and render them: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 ```c
-// Init Display Channel 1: (Base Channel)
+// Init UI Channel 1: (Base Channel)
 // Fullscreen 720 x 1440
 d->planes[0].fb_start = (uintptr_t) fb0;  // Framebuffer Address
 d->planes[0].fb_pitch = 720 * 4;  // Framebuffer Pitch
@@ -3476,15 +3476,15 @@ d->planes[0].src_h    = 1440;  // Source Height
 d->planes[0].dst_w    = 720;   // Dest Width
 d->planes[0].dst_h    = 1440;  // Dest Height
 
-// Init Display Channel 2: (First Overlay)
+// Init UI Channel 2: (First Overlay)
 // Square 600 x 600
 d->planes[1].fb_start = 0;  // To Disable Channel
 
-// Init Display Channel 3: (Second Overlay)
+// Init UI Channel 3: (Second Overlay)
 // Fullscreen 720 x 1440 with Alpha Blending
 d->planes[2].fb_start = 0;  // To Disable Channel
 
-// Render the Display Channels
+// Render the UI Channels
 display_commit(d);
 ```
 
@@ -3600,7 +3600,7 @@ for (int i = 0; i < fb1_len; i++) {
     fb1[i] = 0x80000080;
 }
 
-// Init Display Channel 2: (First Overlay)
+// Init UI Channel 2: (First Overlay)
 // Square 600 x 600
 d->planes[1].fb_start = (uintptr_t) fb1;  // Framebuffer Address
 d->planes[1].fb_pitch = 600 * 4;  // Framebuffer Pitch
@@ -3644,7 +3644,7 @@ for (int y = 0; y < 1440; y++) {
     }
 }
 
-// Init Display Channel 3: (Second Overlay)
+// Init UI Channel 3: (Second Overlay)
 // Fullscreen 720 x 1440 with Alpha Blending
 d->planes[2].fb_start = (uintptr_t) fb2;  // Framebuffer Address
 d->planes[2].fb_pitch = 720 * 4;  // Framebuffer Pitch
