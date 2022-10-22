@@ -3674,6 +3674,10 @@ We should see the Animated Mandelbrot Set, with Blue Square and Green Circle as 
 
 To test the A64 Display Engine with NuttX on PinePhone, we'll run this p-boot Display Code...
 
+-   [display.c](https://megous.com/git/p-boot/tree/src/display.c#n2017)
+
+With our Test App...
+
 -   [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
 Here are the steps to download these files and build them...
