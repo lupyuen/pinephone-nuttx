@@ -3778,6 +3778,8 @@ nuttx
 
 1.  At the NuttX Shell, enter `hello`
 
+(The steps look messy today, hopefully we'll remove p-boot after we have created our NuttX Display Driver)
+
 We should see the Animated Mandelbrot Set, with Blue Square and Green Circle as Overlays...
 
 ![Mandelbrot Set with Blue Square and Green Circle on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
