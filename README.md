@@ -22,6 +22,8 @@ Read the articles...
 
 -   ["NuttX RTOS for PinePhone: Display Driver in Zig"](https://lupyuen.github.io/articles/dsi2)
 
+-   ["Rendering PinePhone's Display (DE and TCON0)"](https://lupyuen.github.io/articles/de)
+
 [Apache NuttX RTOS](https://nuttx.apache.org/docs/latest/) now runs on Arm Cortex-A53 with Multi-Core SMP...
 
 -   [nuttx/boards/arm64/qemu/qemu-a53](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53)
