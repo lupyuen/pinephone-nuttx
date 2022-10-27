@@ -3988,7 +3988,7 @@ PinePhone Logs captured from various tests...
 ## Testing p-boot Display Engine on PinePhone
 
 ```text
-...DRAM: 2048 MiB
+DRAM: 2048 MiB
 Trying to boot from MMC1
 NOTICE:  BL31: v2.2(release):v2.2-904-gf9ea3a629
 NOTICE:  BL31: Built : 15:32:12, Apr  9 2020
@@ -4014,10 +4014,10 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-214380 bytes read in 14 ms (14.6 MiB/s)
+214451 bytes read in 12 ms (17 MiB/s)
 Uncompressed size: 10240000 = 0x9C4000
-36162 bytes read in 5 ms (6.9 MiB/s)
-1078500 bytes read in 50 ms (20.6 MiB/s)
+36162 bytes read in 4 ms (8.6 MiB/s)
+1078500 bytes read in 51 ms (20.2 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
    Booting using the fdt blob at 0x4fa00000
    Loading Ramdisk to 49ef8000, end 49fff4e4 ... OK
@@ -4460,6 +4460,10 @@ modifyreg32: addr=0x010, val=0x00000001
 dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000
 .{ 0x0048, 0x63f07006 },
 .{ MAGIC_COMMIT, 0 },
+Framebuffers:
+  fb0=0x4064a6ac, len=0xfd200
+  fb1=0x404eadac, len=0x57e40
+  fb2=0x400f65ac, len=0xfd200
 display_commit
 
 Configure Blender
@@ -4505,7 +4509,7 @@ Channel 2: Disable Scaler
   Mixer: 0x1150000 = 0x0
 
 Channel 3: Set Overlay
-  UI Config Attr: 0x1105000 = 0x7f000005
+  UI Config Attr: 0x1105000 = 0xff000005
   UI Config Top LAddr: 0x1105010 = 0x400f65ac
   UI Config Pitch: 0x110500c = 0xb40
   UI Config Size: 0x1105004 = 0x59f02cf
