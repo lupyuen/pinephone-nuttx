@@ -3664,7 +3664,7 @@ d->planes[2].dst_y    = 0;     // Dest Y
 d->planes[2].alpha    = 128;   // Dest Alpha
 ```
 
-Note that we set the Destination Alpha. So the black pixels will appear transparent.
+Note that we set the Destination Alpha. So the green will appear nearly invisible.
 
 We should see the Animated Mandelbrot Set, with Blue Square and Green Circle as Overlays...
 
