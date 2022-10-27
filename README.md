@@ -3208,7 +3208,58 @@ To test our Zig Display Driver with NuttX on PinePhone, we'll run this p-boot Di
 
 -   [p-boot Display Code](https://gist.github.com/lupyuen/ee3adf76e76881609845d0ab0f768a95)
 
-Here are the steps to download these files and build the Zig Display Driver for PinePhone...
+Here are the steps to download and run the NuttX Binary Image on PinePhone...
+
+1.  Download the compressed NuttX Binary Image...
+
+    [Image.gz](https://github.com/lupyuen/pinephone-nuttx/releases/download/v1.1.0/Image.gz)
+
+1.  Copy the compressed NuttX Binary Image to Jumpdrive microSD...
+
+    ```bash
+    ## Copy compressed NuttX Binary Image to Jumpdrive microSD.
+    ## How to create Jumpdrive microSD: https://lupyuen.github.io/articles/uboot#pinephone-jumpdrive
+    ## TODO: Change the microSD Path
+    cp Image.gz "/Volumes/NO NAME"
+    ```
+
+1.  To access the UART Port on PinePhone, we'll connect this USB Serial Debug Cable (at 115.2 kbps)...
+
+    [PinePhone Serial Debug Cable](https://wiki.pine64.org/index.php/PinePhone#Serial_console)
+
+1.  Insert the Jumpdrive microSD into PinePhone and power up
+
+1.  At the NuttX Shell, enter `hello`
+
+We should see...
+
+```text
+HELLO NUTTX ON PINEPHONE!
+...
+Shell (NSH) NuttX-11.0.0-RC2
+nsh> hello
+...
+writeDcs: len=4
+b9 f1 12 83 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
+composeLongPacket: channel=0, cmd=0x39, len=4
+packet: len=10
+39 04 00 2c b9 f1 12 83 
+84 5d 
+modifyreg32: addr=0x300, val=0x2c000439
+modifyreg32: addr=0x304, val=0x8312f1b9
+modifyreg32: addr=0x308, val=0x00005d84
+modifyreg32: addr=0x200, val=0x00000009
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+...
+```
+
+[(Source)](https://github.com/lupyuen/pinephone-nuttx#testing-nuttx-zig-driver-for-mipi-dsi-on-pinephone)
+
+Our NuttX Zig Display Driver powers on the PinePhone Display and works exactly like the C Driver! 🎉
+
+If we prefer to build the NuttX Binary Image ourselves, here are the steps to download the following Source Files and build them...
 
 ```text
 nuttx
@@ -3295,52 +3346,13 @@ nuttx
     gzip Image
     ```
 
-1.  Copy the compressed NuttX Binary Image to Jumpdrive microSD...
+1.  Copy the compressed NuttX Binary Image `Image.gz` to Jumpdrive microSD according to the steps above.
 
-    ```bash
-    ## Copy compressed NuttX Binary Image to Jumpdrive microSD.
-    ## How to create Jumpdrive microSD: https://lupyuen.github.io/articles/uboot#pinephone-jumpdrive
-    ## TODO: Change the microSD Path
-    cp Image.gz "/Volumes/NO NAME"
-    ```
+    Insert the Jumpdrive microSD into PinePhone and power up.
 
-1.  To access the UART Port on PinePhone, we'll connect this USB Serial Debug Cable (at 115.2 kbps)...
+    At the NuttX Shell, enter `hello`
 
-    [PinePhone Serial Debug Cable](https://wiki.pine64.org/index.php/PinePhone#Serial_console)
-
-1.  Insert the Jumpdrive microSD into PinePhone and power up
-
-1.  At the NuttX Shell, enter `hello`
-
-We should see...
-
-```text
-HELLO NUTTX ON PINEPHONE!
-...
-Shell (NSH) NuttX-11.0.0-RC2
-nsh> hello
-...
-writeDcs: len=4
-b9 f1 12 83 
-mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
-composeLongPacket: channel=0, cmd=0x39, len=4
-packet: len=10
-39 04 00 2c b9 f1 12 83 
-84 5d 
-modifyreg32: addr=0x300, val=0x2c000439
-modifyreg32: addr=0x304, val=0x8312f1b9
-modifyreg32: addr=0x308, val=0x00005d84
-modifyreg32: addr=0x200, val=0x00000009
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
-...
-```
-
-[(Source)](https://github.com/lupyuen/pinephone-nuttx#testing-nuttx-zig-driver-for-mipi-dsi-on-pinephone)
-
-Our NuttX Zig Display Driver powers on the PinePhone Display and works exactly like the C Driver! 🎉
-
-![Test Pattern on PinePhone](https://lupyuen.github.io/images/dsi2-title.jpg)
+(The steps look messy today, hopefully we'll remove p-boot after we have created our NuttX Display Driver)
 
 _Can our driver render graphics on PinePhone Display?_
 
@@ -3682,7 +3694,36 @@ With our Test App...
 
 -   [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
-Here are the steps to download these files and build them...
+Here are the steps to download and run the NuttX Binary Image on PinePhone...
+
+1.  Download the compressed NuttX Binary Image...
+
+    [Image.gz](https://github.com/lupyuen/pinephone-nuttx/releases/download/v1.1.0/Image.gz)
+
+1.  Copy the compressed NuttX Binary Image to Jumpdrive microSD...
+
+    ```bash
+    ## Copy compressed NuttX Binary Image to Jumpdrive microSD.
+    ## How to create Jumpdrive microSD: https://lupyuen.github.io/articles/uboot#pinephone-jumpdrive
+    ## TODO: Change the microSD Path
+    cp Image.gz "/Volumes/NO NAME"
+    ```
+
+1.  To access the UART Port on PinePhone, we'll connect this USB Serial Debug Cable (at 115.2 kbps)...
+
+    [PinePhone Serial Debug Cable](https://wiki.pine64.org/index.php/PinePhone#Serial_console)
+
+1.  Insert the Jumpdrive microSD into PinePhone and power up
+
+1.  At the NuttX Shell, enter `hello`
+
+We should see the Animated Mandelbrot Set, with Blue Square and Green Circle as Overlays...
+
+![Mandelbrot Set with Blue Square and Green Circle on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
+
+(Why the missing horizontal lines in the Blue Square and Green Circle?)
+
+If we prefer to build the NuttX Binary Image ourselves, here are the steps to download the following Source Files and build them...
 
 ```text
 nuttx
@@ -3763,30 +3804,13 @@ nuttx
     gzip Image
     ```
 
-1.  Copy the compressed NuttX Binary Image to Jumpdrive microSD...
+1.  Copy the compressed NuttX Binary Image `Image.gz` to Jumpdrive microSD according to the steps above.
 
-    ```bash
-    ## Copy compressed NuttX Binary Image to Jumpdrive microSD.
-    ## How to create Jumpdrive microSD: https://lupyuen.github.io/articles/uboot#pinephone-jumpdrive
-    ## TODO: Change the microSD Path
-    cp Image.gz "/Volumes/NO NAME"
-    ```
+    Insert the Jumpdrive microSD into PinePhone and power up.
 
-1.  To access the UART Port on PinePhone, we'll connect this USB Serial Debug Cable (at 115.2 kbps)...
-
-    [PinePhone Serial Debug Cable](https://wiki.pine64.org/index.php/PinePhone#Serial_console)
-
-1.  Insert the Jumpdrive microSD into PinePhone and power up
-
-1.  At the NuttX Shell, enter `hello`
+    At the NuttX Shell, enter `hello`
 
 (The steps look messy today, hopefully we'll remove p-boot after we have created our NuttX Display Driver)
-
-We should see the Animated Mandelbrot Set, with Blue Square and Green Circle as Overlays...
-
-![Mandelbrot Set with Blue Square and Green Circle on PinePhone](https://lupyuen.github.io/images/de-overlay.jpg)
-
-(Why the missing horizontal lines in the Blue Square and Green Circle?)
 
 # Display Engine Usage
 
