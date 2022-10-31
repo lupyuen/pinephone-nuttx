@@ -105,21 +105,21 @@ pub export fn test_render() void {
 
 /// Hardware Registers for PinePhone's A64 Display Engine.
 /// See https://lupyuen.github.io/articles/de#appendix-overview-of-allwinner-a64-display-engine
-/// __Display Engine Base Address__ is __`0x0100` `0000`__
+/// Display Engine Base Address is 0x0100 0000
 const DISPLAY_ENGINE_BASE_ADDRESS = 0x0100_0000;
 
 /// RT-MIXER0 is at DE Offset 0x10 0000 (Page 87)
 const MIXER0_BASE_ADDRESS = DISPLAY_ENGINE_BASE_ADDRESS + 0x10_0000;
 
-// |__GLB__ | __`0x0000`__
+// |GLB | 0x0000
 const GLB_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0000;
 
-// |__BLD__ (Blender) | __`0x1000`__
+// |BLD (Blender) | 0x1000
 const BLD_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x1000;
 
-// |__OVL_UI(CH1)__ (UI Overlay / Channel 1) | __`0x3000`__
-// |__OVL_UI(CH2)__ (UI Overlay / Channel 2) | __`0x4000`__
-// |__OVL_UI(CH3)__ (UI Overlay / Channel 3) | __`0x5000`__
+// |OVL_UI(CH1) (UI Overlay / Channel 1) | 0x3000
+// |OVL_UI(CH2) (UI Overlay / Channel 2) | 0x4000
+// |OVL_UI(CH3) (UI Overlay / Channel 3) | 0x5000
 const OVL_UI_CH1_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x3000;
 
 /// Initialise the UI Blender for PinePhone's A64 Display Engine.
@@ -141,16 +141,22 @@ fn initUiBlender() void {
 /// TODO
 fn applySettings() void {
     debug("applySettings", .{});
-    // __Set BLD Route and BLD FColor Control__
-    // -   BLD Route (__BLD_CH_RTCTL__ @ BLD Offset `0x080`): _BLD routing control register_
-    //     Set to `0x321` _(Why?)_
+    // Set BLD Route and BLD FColor Control
+    // -   BLD Route (BLD_CH_RTCTL @ BLD Offset 0x080): _BLD routing control register_
+    //     Set to 0x321 (Why?)
+    const BLD_CH_RTCTL = BLD_BASE_ADDRESS + 0x080;
+    putreg32(0x321, BLD_CH_RTCTL);
 
-    // -   BLD FColor Control (__BLD_FILLCOLOR_CTL__ @ BLD Offset `0x000`): _BLD fill color control register_
-    //     Set to `0x701` _(Why?)_
+    // -   BLD FColor Control (BLD_FILLCOLOR_CTL @ BLD Offset 0x000): _BLD fill color control register_
+    //     Set to 0x701 (Why?)
+    const BLD_FILLCOLOR_CTL = BLD_BASE_ADDRESS + 0x000;
+    putreg32(0x701, BLD_FILLCOLOR_CTL);
 
-    // __Apply Settings__
-    // -   GLB DBuff (__GLB_DBUFFER__ @ GLB Offset `0x008`): _Global double buffer control register_
-    //     Set to 1 _(Why?)_
+    // Apply Settings
+    // -   GLB DBuff (GLB_DBUFFER @ GLB Offset 0x008): _Global double buffer control register_
+    //     Set to 1 (Why?)
+    const GLB_DBUFFER = GLB_BASE_ADDRESS + 0x008;
+    putreg32(1, GLB_DBUFFER);
 }
 
 /// Initialise a UI Channel for PinePhone's A64 Display Engine.
@@ -173,70 +179,70 @@ fn initUiChannel(
 
     // If UI Channel should be disabled...
     if (fbmem == null) {
-        // UI Config Attr (__OVL_UI_ATTCTL__ @ OVL_UI Offset `0x00`): _OVL_UI attribute control register_
+        // UI Config Attr (OVL_UI_ATTCTL @ OVL_UI Offset 0x00): _OVL_UI attribute control register_
         // TODO: Set to 0
 
-        // Mixer (__???__ @ `0x113` `0000` + `0x10000` * Channel)
+        // Mixer (??? @ 0x113 0000 + 0x10000 * Channel)
         // TODO: Set to 0
         
         return;  // Skip to next UI Channel
     }
 
-    // |__OVL_UI(CH1)__ (UI Overlay / Channel 1) | __`0x3000`__
-    // |__OVL_UI(CH2)__ (UI Overlay / Channel 2) | __`0x4000`__
-    // |__OVL_UI(CH3)__ (UI Overlay / Channel 3) | __`0x5000`__
+    // |OVL_UI(CH1) (UI Overlay / Channel 1) | 0x3000
+    // |OVL_UI(CH2) (UI Overlay / Channel 2) | 0x4000
+    // |OVL_UI(CH3) (UI Overlay / Channel 3) | 0x5000
     const ovl_ui_base_address = OVL_UI_CH1_BASE_ADDRESS +
         @intCast(u64, channel - 1) * 0x1000;
 
-    // 1.  __Set Overlay__ (Assume Layer = 0)
-    //     -   UI Config Attr (__OVL_UI_ATTCTL__ @ OVL_UI Offset `0x00`): _OVL_UI attribute control register_
-    //         __For Channel 1:__ Set to `0xff00` `0405` _(Why?)_
-    //         __For Channel 2:__ `0xff00` `0005` _(Why?)_
-    //         __For Channel 3:__ `0x7f00` `0005` _(Why?)_
+    // 1.  Set Overlay (Assume Layer = 0)
+    //     -   UI Config Attr (OVL_UI_ATTCTL @ OVL_UI Offset 0x00): _OVL_UI attribute control register_
+    //         For Channel 1: Set to 0xff00 0405 (Why?)
+    //         For Channel 2: 0xff00 0005 (Why?)
+    //         For Channel 3: 0x7f00 0005 (Why?)
     const OVL_UI_ATTCTL = ovl_ui_base_address + 0x00;
     if (channel == 1) { putreg32(0xff00_0405, OVL_UI_ATTCTL); }
     else if (channel == 2) { putreg32(0xff00_0005, OVL_UI_ATTCTL); }
     else if (channel == 3) { putreg32(0x7f00_0005, OVL_UI_ATTCTL); }
 
-    //     -   UI Config Top LAddr (__OVL_UI_TOP_LADD__ @ OVL_UI Offset `0x10`): _OVL_UI top field memory block low address register_
-    //         Set to Framebuffer Address: `fb0`, `fb1` or `fb2`
+    //     -   UI Config Top LAddr (OVL_UI_TOP_LADD @ OVL_UI Offset 0x10): _OVL_UI top field memory block low address register_
+    //         Set to Framebuffer Address: fb0, fb1 or fb2
 
-    //     -   UI Config Pitch (__OVL_UI_PITCH__ @ OVL_UI Offset `0x0C`): _OVL_UI memory pitch register_
-    //         Set to `(width * 4)`
+    //     -   UI Config Pitch (OVL_UI_PITCH @ OVL_UI Offset 0x0C): _OVL_UI memory pitch register_
+    //         Set to (width * 4)
 
-    //     -   UI Config Size (__OVL_UI_MBSIZE__ @ OVL_UI Offset `0x04`): _OVL_UI memory block size register_
-    //         Set to `(height-1) << 16 + (width-1)`
+    //     -   UI Config Size (OVL_UI_MBSIZE @ OVL_UI Offset 0x04): _OVL_UI memory block size register_
+    //         Set to (height-1) << 16 + (width-1)
 
-    //     -   UI Overlay Size (__OVL_UI_SIZE__ @ OVL_UI Offset `0x88`): _OVL_UI overlay window size register_
-    //         Set to `(height-1) << 16 + (width-1)`
+    //     -   UI Overlay Size (OVL_UI_SIZE @ OVL_UI Offset 0x88): _OVL_UI overlay window size register_
+    //         Set to (height-1) << 16 + (width-1)
 
-    //     -   IO Config Coord (__OVL_UI_COOR__ @ OVL_UI Offset `0x08`): _OVL_UI memory block coordinate register_
+    //     -   IO Config Coord (OVL_UI_COOR @ OVL_UI Offset 0x08): _OVL_UI memory block coordinate register_
     //         Set to 0
 
-    // 1.  __For Channel 1:__ Set Blender Output
-    //     -   BLD Output Size (__BLD_SIZE__ @ BLD Offset `0x08C`): _BLD output size setting register_
-    //         Set to `(height-1) << 16 + (width-1)`
+    // 1.  For Channel 1: Set Blender Output
+    //     -   BLD Output Size (BLD_SIZE @ BLD Offset 0x08C): _BLD output size setting register_
+    //         Set to (height-1) << 16 + (width-1)
             
-    //     -   GLB Size (__GLB_SIZE__ @ GLB Offset `0x00C`): _Global size register_
-    //         Set to `(height-1) << 16 + (width-1)`
+    //     -   GLB Size (GLB_SIZE @ GLB Offset 0x00C): _Global size register_
+    //         Set to (height-1) << 16 + (width-1)
 
-    // 1.  __Set Blender Input Pipe__ (N = Pipe Number, from 0 to 2 for Channels 1 to 3)
-    //     -   BLD Pipe InSize (__BLD_CH_ISIZE__ @ BLD Offset `0x008` + `N*0x10`): _BLD input memory size register(N=0,1,2,3,4)_
-    //         Set to `(height-1) << 16 + (width-1)`
+    // 1.  Set Blender Input Pipe (N = Pipe Number, from 0 to 2 for Channels 1 to 3)
+    //     -   BLD Pipe InSize (BLD_CH_ISIZE @ BLD Offset 0x008 + N*0x10): _BLD input memory size register(N=0,1,2,3,4)_
+    //         Set to (height-1) << 16 + (width-1)
 
-    //     -   BLD Pipe FColor (__BLD_FILL_COLOR__ @ BLD Offset `0x004` + `N*0x10`): _BLD fill color register(N=0,1,2,3,4)_
-    //         Set to `0xff00` `0000` _(Why?)_
+    //     -   BLD Pipe FColor (BLD_FILL_COLOR @ BLD Offset 0x004 + N*0x10): _BLD fill color register(N=0,1,2,3,4)_
+    //         Set to 0xff00 0000 (Why?)
 
-    //     -   BLD Pipe Offset (__BLD_CH_OFFSET__ @ BLD Offset `0x00C` + `N*0x10`): _BLD input memory offset register(N=0,1,2,3,4)_
-    //         Set to 0 or `0x34` `0034` _(Why?)_
+    //     -   BLD Pipe Offset (BLD_CH_OFFSET @ BLD Offset 0x00C + N*0x10): _BLD input memory offset register(N=0,1,2,3,4)_
+    //         Set to 0 or 0x34 0034 (Why?)
 
-    //     -   BLD Pipe Mode (__BLD_CTL__ @ BLD Offset `0x090` – `0x09C`): _BLD control register_
-    //         Set to `0x301` `0301` _(Why?)_
+    //     -   BLD Pipe Mode (BLD_CTL @ BLD Offset 0x090 – 0x09C): _BLD control register_
+    //         Set to 0x301 0301 (Why?)
 
-    //     __Note: Log shows `N*0x10`, doc says `N*0x14`__
+    //     Note: Log shows N*0x10, doc says N*0x14
 
-    // 1.  __Disable Scaler__ (Assume we're not scaling)
-    //     -   Mixer (__???__ @ `0x113` `0000` + `0x10000` * Channel)
+    // 1.  Disable Scaler (Assume we're not scaling)
+    //     -   Mixer (??? @ 0x113 0000 + 0x10000 * Channel)
     //         Set to 0
 
     _ = xoffset; ////
