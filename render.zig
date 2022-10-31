@@ -55,7 +55,7 @@ const c = @cImport({
 pub export fn test_render() void {
     _ = videoInfo;
     _ = planeInfo;
-    ////_ = overlayInfo;
+    _ = overlayInfo;
 }
 
 /// Force MIPI DSI Interface to be exported to C. (Why is this needed?)
@@ -65,11 +65,11 @@ pub export fn export_dsi() void {
 
 /// NuttX Video Controller (3 UI Channels)
 const videoInfo = c.fb_videoinfo_s {
-    .fmt  = c.FB_FMT_RGBA32,  // Pixel format (RGBA 8888)
-    .xres = 720,  // Horizontal resolution in pixel columns
-    .yres = 1440, // Vertical resolution in pixel rows
-    .nplanes   = 1,  // Number of color planes supported (Base UI Channel)
-    .noverlays = 2,  // Number of overlays supported (2 Overlay UI Channels)
+    .fmt       = c.FB_FMT_RGBA32,  // Pixel format (RGBA 8888)
+    .xres      = 720,   // Horizontal resolution in pixel columns
+    .yres      = 1440,  // Vertical resolution in pixel rows
+    .nplanes   = 1,     // Number of color planes supported (Base UI Channel)
+    .noverlays = 2,     // Number of overlays supported (2 Overlay UI Channels)
 };
 
 /// NuttX Color Plane (Base UI Channel)
@@ -81,30 +81,40 @@ const planeInfo = c.fb_planeinfo_s {
   .bpp     = 32,       // Bits per pixel (ARGB 8888)
   .xres_virtual = 720,   // Virtual Horizontal resolution in pixel columns
   .yres_virtual = 1440,  // Virtual Vertical resolution in pixel rows
-  .xoffset = 0,          // Offset from virtual to visible resolution
-  .yoffset = 0,          // Offset from virtual to visible resolution
+  .xoffset      = 0,     // Offset from virtual to visible resolution
+  .yoffset      = 0,     // Offset from virtual to visible resolution
 };
 
 /// NuttX Overlay (2 Overlay UI Channels)
-// const overlayInfo = [_] c.fb_overlayinfo_s {
-//     // First Overlay UI Channel
-//     .{
-// //   FAR void   *fbmem;          /* Start of frame buffer memory */
-// // .fblen = 0, //           /* Length of frame buffer memory in bytes */
-// //   fb_coord_t stride;          /* Length of a line in bytes */
-// //   uint8_t    overlay;         /* Overlay number */
-// //   uint8_t    bpp;             /* Bits per pixel */
-// //   uint8_t    blank;           /* Blank or unblank */
-// //   uint32_t   chromakey;       /* Chroma key argb8888 formatted */
-// //   uint32_t   color;           /* Color argb8888 formatted */
-// //   struct fb_transp_s transp;  /* Transparency */
-// //   struct fb_area_s sarea;     /* Selected area within the overlay */
-// //   uint32_t   accl;            /* Supported hardware acceleration */
-//     },
-//     // Second Overlay UI Channel
-//     .{
-//     },
-// };
+const overlayInfo = [2] c.fb_overlayinfo_s {
+    // First Overlay UI Channel:
+    // Square 600 x 600 (4 bytes per ARGB pixel)
+    .{
+        .fbmem = &fb1,          // Start of frame buffer memory
+        .fblen = fb1.len,       // Length of frame buffer memory in bytes
+        .stride = 600 * 4,      // Length of a line in bytes
+        .overlay = 0,         // Overlay number (First Overlay)
+        .bpp = 32,             // Bits per pixel
+        .blank = 0,           // TODO: Blank or unblank
+        .chromakey = 0,       // TODO: Chroma key argb8888 formatted
+        .color = 0,           // TODO: Color argb8888 formatted
+//   struct fb_transp_s transp,  // Transparency
+//   struct fb_area_s sarea,     // Selected area within the overlay
+//   uint32_t   accl,            // Supported hardware acceleration
+    },
+    // Second Overlay UI Channel:
+    // Fullscreen 720 x 1440 (4 bytes per ARGB pixel)
+    .{
+        .fbmem = &fb2,          // Start of frame buffer memory
+        .fblen = fb2.len,       // Length of frame buffer memory in bytes
+        .stride = 720 * 4,      // Length of a line in bytes
+        .overlay = 1,         // Overlay number (Second Overlay)
+        .bpp = 32,             // Bits per pixel
+        .blank = 0,           // TODO: Blank or unblank
+        .chromakey = 0,       // TODO: Chroma key argb8888 formatted
+        .color = 0,           // TODO: Color argb8888 formatted
+    },
+};
 
 // Framebuffer 0: (Base UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per XRGB pixel)
