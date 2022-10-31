@@ -66,8 +66,9 @@ pub export fn test_render() void {
     }
 }
 
-/// Force MIPI DSI Functions to be exported to C. (Why is this needed?)
-pub export fn export_dsi() void {
+/// Export MIPI DSI Functions to C. (Why is this needed?)
+pub export fn export_dsi_functions() void {
+    // Export Panel Init Function
     dsi.nuttx_panel_init();
 }
 
@@ -82,15 +83,15 @@ const videoInfo = c.fb_videoinfo_s {
 
 /// NuttX Color Plane (Base UI Channel)
 const planeInfo = c.fb_planeinfo_s {
-  .fbmem   = &fb0,     // Start of frame buffer memory
-  .fblen   = @sizeOf( @TypeOf(fb0) ),  // Length of frame buffer memory in bytes
-  .stride  = 720 * 4,  // Length of a line in bytes (4 bytes per pixel)
-  .display = 0,        // Display number (Unused)
-  .bpp     = 32,       // Bits per pixel (ARGB 8888)
-  .xres_virtual = 720,   // Virtual Horizontal resolution in pixel columns
-  .yres_virtual = 1440,  // Virtual Vertical resolution in pixel rows
-  .xoffset      = 0,     // Offset from virtual to visible resolution
-  .yoffset      = 0,     // Offset from virtual to visible resolution
+    .fbmem   = &fb0,     // Start of frame buffer memory
+    .fblen   = @sizeOf( @TypeOf(fb0) ),  // Length of frame buffer memory in bytes
+    .stride  = 720 * 4,  // Length of a line in bytes (4 bytes per pixel)
+    .display = 0,        // Display number (Unused)
+    .bpp     = 32,       // Bits per pixel (ARGB 8888)
+    .xres_virtual = 720,   // Virtual Horizontal resolution in pixel columns
+    .yres_virtual = 1440,  // Virtual Vertical resolution in pixel rows
+    .xoffset      = 0,     // Offset from virtual to visible resolution
+    .yoffset      = 0,     // Offset from virtual to visible resolution
 };
 
 /// NuttX Overlays (2 Overlay UI Channels)
