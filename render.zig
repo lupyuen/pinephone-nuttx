@@ -128,7 +128,7 @@ fn initUiBlender() void {
     debug("initUiBlender", .{});
 
     // BLD_BK_COLOR @ BLD Offset 0x88: BLD background color register
-    // Set to 0xff00 0000
+    // Set to 0xff00 0000 (Why?)
     const BLD_BK_COLOR = BLD_BASE_ADDRESS + 0x88;
     putreg32(0xff00_0000, BLD_BK_COLOR);
 
@@ -191,10 +191,12 @@ fn initUiChannel(
     // 1.  __Set Overlay__ (Assume Layer = 0)
     //     -   UI Config Attr (__OVL_UI_ATTCTL__ @ OVL_UI Offset `0x00`): _OVL_UI attribute control register_
     //         __For Channel 1:__ Set to `0xff00` `0405` _(Why?)_
-    //         __For Channels 2 and 3:__ `0xff00` `0005` _(Why?)_
+    //         __For Channel 2:__ `0xff00` `0005` _(Why?)_
+    //         __For Channel 3:__ `0x7f00` `0005` _(Why?)_
     const OVL_UI_ATTCTL = ovl_ui_base_address + 0x00;
     if (channel == 1) { putreg32(0xff00_0405, OVL_UI_ATTCTL); }
-    else { putreg32(0xff00_0005, OVL_UI_ATTCTL); }
+    else if (channel == 2) { putreg32(0xff00_0005, OVL_UI_ATTCTL); }
+    else if (channel == 3) { putreg32(0x7f00_0005, OVL_UI_ATTCTL); }
 
     //     -   UI Config Top LAddr (__OVL_UI_TOP_LADD__ @ OVL_UI Offset `0x10`): _OVL_UI top field memory block low address register_
     //         Set to Framebuffer Address: `fb0`, `fb1` or `fb2`
