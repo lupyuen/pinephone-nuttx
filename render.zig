@@ -53,12 +53,20 @@ const c = @cImport({
 /// Render a Test Pattern on PinePhone's Display.
 /// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
 pub export fn test_render() void {
-    _ = videoInfo;
-    _ = planeInfo;
-    _ = overlayInfo;
+    // Validate the Framebuffer Sizes at Compile Time
+    comptime {
+        assert(planeInfo.xres_virtual == videoInfo.xres);
+        assert(planeInfo.yres_virtual == videoInfo.yres);
+        assert(planeInfo.fblen  == planeInfo.xres_virtual * planeInfo.yres_virtual * 4);
+        assert(planeInfo.stride == planeInfo.xres_virtual * 4);
+        assert(overlayInfo[0].fblen  == @intCast(usize, overlayInfo[0].sarea.w) * overlayInfo[0].sarea.h * 4);
+        assert(overlayInfo[0].stride == overlayInfo[0].sarea.w * 4);
+        assert(overlayInfo[1].fblen  == @intCast(usize, overlayInfo[1].sarea.w) * overlayInfo[1].sarea.h * 4);
+        assert(overlayInfo[1].stride == overlayInfo[1].sarea.w * 4);
+    }
 }
 
-/// Force MIPI DSI Interface to be exported to C. (Why is this needed?)
+/// Force MIPI DSI Functions to be exported to C. (Why is this needed?)
 pub export fn export_dsi() void {
     dsi.nuttx_panel_init();
 }
@@ -75,7 +83,7 @@ const videoInfo = c.fb_videoinfo_s {
 /// NuttX Color Plane (Base UI Channel)
 const planeInfo = c.fb_planeinfo_s {
   .fbmem   = &fb0,     // Start of frame buffer memory
-  .fblen   = fb0.len,  // Length of frame buffer memory in bytes
+  .fblen   = @sizeOf( @TypeOf(fb0) ),  // Length of frame buffer memory in bytes
   .stride  = 720 * 4,  // Length of a line in bytes (4 bytes per pixel)
   .display = 0,        // Display number (Unused)
   .bpp     = 32,       // Bits per pixel (ARGB 8888)
@@ -91,7 +99,7 @@ const overlayInfo = [2] c.fb_overlayinfo_s {
     // Square 600 x 600 (4 bytes per ARGB pixel)
     .{
         .fbmem     = &fb1,     // Start of frame buffer memory
-        .fblen     = fb1.len,  // Length of frame buffer memory in bytes
+        .fblen     = @sizeOf( @TypeOf(fb1) ),  // Length of frame buffer memory in bytes
         .stride    = 600 * 4,  // Length of a line in bytes
         .overlay   = 0,        // Overlay number (First Overlay)
         .bpp       = 32,       // Bits per pixel
@@ -106,7 +114,7 @@ const overlayInfo = [2] c.fb_overlayinfo_s {
     // Fullscreen 720 x 1440 (4 bytes per ARGB pixel)
     .{
         .fbmem     = &fb2,     // Start of frame buffer memory
-        .fblen     = fb2.len,  // Length of frame buffer memory in bytes
+        .fblen     = @sizeOf( @TypeOf(fb2) ),  // Length of frame buffer memory in bytes
         .stride    = 720 * 4,  // Length of a line in bytes
         .overlay   = 1,        // Overlay number (Second Overlay)
         .bpp       = 32,       // Bits per pixel
@@ -130,3 +138,73 @@ var fb1 = std.mem.zeroes([600 * 600] u32);
 // Framebuffer 2: (Second Overlay UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per ARGB pixel)
 var fb2 = std.mem.zeroes([720 * 1440] u32);
+
+///////////////////////////////////////////////////////////////////////////////
+//  Panic Handler
+
+/// Called by Zig when it hits a Panic. We print the Panic Message, Stack Trace and halt. See 
+/// https://andrewkelley.me/post/zig-stack-traces-kernel-panic-bare-bones-os.html
+/// https://github.com/ziglang/zig/blob/master/lib/std/builtin.zig#L763-L847
+pub fn panic(
+    message: []const u8, 
+    _stack_trace: ?*std.builtin.StackTrace
+) noreturn {
+    // Print the Panic Message
+    _ = _stack_trace;
+    _ = puts("\n!ZIG PANIC!");
+    _ = puts(@ptrCast([*c]const u8, message));
+
+    // Print the Stack Trace
+    _ = puts("Stack Trace:");
+    var it = std.debug.StackIterator.init(@returnAddress(), null);
+    while (it.next()) |return_address| {
+        _ = printf("%p\n", return_address);
+    }
+
+    // Halt
+    c.exit(1);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//  Logging
+
+/// Called by Zig for `std.log.debug`, `std.log.info`, `std.log.err`, ...
+/// https://gist.github.com/leecannon/d6f5d7e5af5881c466161270347ce84d
+pub fn log(
+    comptime _message_level: std.log.Level,
+    comptime _scope: @Type(.EnumLiteral),
+    comptime format: []const u8,
+    args: anytype,
+) void {
+    _ = _message_level;
+    _ = _scope;
+
+    // Format the message
+    var buf: [100]u8 = undefined;  // Limit to 100 chars
+    var slice = std.fmt.bufPrint(&buf, format, args)
+        catch { _ = puts("*** log error: buf too small"); return; };
+    
+    // Terminate the formatted message with a null
+    var buf2: [buf.len + 1 : 0]u8 = undefined;
+    std.mem.copy(
+        u8, 
+        buf2[0..slice.len], 
+        slice[0..slice.len]
+    );
+    buf2[slice.len] = 0;
+
+    // Print the formatted message
+    _ = puts(&buf2);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//  Imported Functions and Variables
+
+/// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
+/// We changed `[*c]const u8` to `[*:0]const u8`
+extern fn printf(format: [*:0]const u8, ...) c_int;
+extern fn puts(str: [*:0]const u8) c_int;
+
+/// Aliases for Zig Standard Library
+const assert = std.debug.assert;
+const debug  = std.log.debug;
