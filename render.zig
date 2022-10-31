@@ -55,10 +55,7 @@ const c = @cImport({
 pub export fn test_render() void {
     _ = videoInfo;
     _ = planeInfo;
-
-    // This structure describes one overlay
-    const o = std.mem.zeroes(c.fb_overlayinfo_s);
-    _ = o;
+    _ = overlayInfo;
 }
 
 /// Force MIPI DSI Interface to be exported. (Why is this needed?)
@@ -66,7 +63,7 @@ pub export fn export_dsi() void {
     dsi.nuttx_panel_init();
 }
 
-/// NuttX Video Controller for 3 x A64 UI Channels
+/// NuttX Video Controller (3 UI Channels)
 const videoInfo = c.fb_videoinfo_s {
     .fmt  = c.FB_FMT_RGBA32,  // Pixel format (RGBA 8888)
     .xres = 720,  // Horizontal resolution in pixel columns
@@ -82,8 +79,27 @@ const planeInfo = c.fb_planeinfo_s {
   .stride = 720 * 4,       // Length of a line in bytes (4 bytes per pixel)
   .display = 0,      // Display number
   .bpp = 32,             // Bits per pixel (ARGB 8888)
-  .xres_virtual = 720,   // Virtual Horizontal resolution in pixel columns */
-  .yres_virtual = 1440,  // Virtual Vertical resolution in pixel rows */
-  .xoffset = 0,          // Offset from virtual to visible resolution */
-  .yoffset = 0,          // Offset from virtual to visible resolution */
+  .xres_virtual = 720,   // Virtual Horizontal resolution in pixel columns
+  .yres_virtual = 1440,  // Virtual Vertical resolution in pixel rows
+  .xoffset = 0,          // Offset from virtual to visible resolution
+  .yoffset = 0,          // Offset from virtual to visible resolution
+};
+
+/// NuttX Overlay
+const overlayInfo = [_] c.fb_overlayinfo_s {
+    .{
+//   FAR void   *fbmem;          /* Start of frame buffer memory */
+// .fblen = 0, //           /* Length of frame buffer memory in bytes */
+//   fb_coord_t stride;          /* Length of a line in bytes */
+//   uint8_t    overlay;         /* Overlay number */
+//   uint8_t    bpp;             /* Bits per pixel */
+//   uint8_t    blank;           /* Blank or unblank */
+//   uint32_t   chromakey;       /* Chroma key argb8888 formatted */
+//   uint32_t   color;           /* Color argb8888 formatted */
+//   struct fb_transp_s transp;  /* Transparency */
+//   struct fb_area_s sarea;     /* Selected area within the overlay */
+//   uint32_t   accl;            /* Supported hardware acceleration */
+    },
+    .{
+    },
 };
