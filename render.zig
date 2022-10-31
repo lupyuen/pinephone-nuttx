@@ -85,34 +85,37 @@ const planeInfo = c.fb_planeinfo_s {
   .yoffset      = 0,     // Offset from virtual to visible resolution
 };
 
-/// NuttX Overlay (2 Overlay UI Channels)
+/// NuttX Overlays (2 Overlay UI Channels)
 const overlayInfo = [2] c.fb_overlayinfo_s {
     // First Overlay UI Channel:
     // Square 600 x 600 (4 bytes per ARGB pixel)
     .{
-        .fbmem = &fb1,          // Start of frame buffer memory
-        .fblen = fb1.len,       // Length of frame buffer memory in bytes
-        .stride = 600 * 4,      // Length of a line in bytes
-        .overlay = 0,         // Overlay number (First Overlay)
-        .bpp = 32,             // Bits per pixel
-        .blank = 0,           // TODO: Blank or unblank
-        .chromakey = 0,       // TODO: Chroma key argb8888 formatted
-        .color = 0,           // TODO: Color argb8888 formatted
-//   struct fb_transp_s transp,  // Transparency
-//   struct fb_area_s sarea,     // Selected area within the overlay
-//   uint32_t   accl,            // Supported hardware acceleration
+        .fbmem     = &fb1,     // Start of frame buffer memory
+        .fblen     = fb1.len,  // Length of frame buffer memory in bytes
+        .stride    = 600 * 4,  // Length of a line in bytes
+        .overlay   = 0,        // Overlay number (First Overlay)
+        .bpp       = 32,       // Bits per pixel
+        .blank     = 0,        // TODO: Blank or unblank
+        .chromakey = 0,        // TODO: Chroma key argb8888 formatted
+        .color     = 0,        // TODO: Color argb8888 formatted
+        .transp    = c.fb_transp_s { .transp = 0, .transp_mode = 0 },  // TODO: Transparency
+        .sarea     = c.fb_area_s { .x = 52, .y = 52, .w = 600, .h = 600 },  // Selected area within the overlay
+        .accl      = 0,        // TODO: Supported hardware acceleration
     },
     // Second Overlay UI Channel:
     // Fullscreen 720 x 1440 (4 bytes per ARGB pixel)
     .{
-        .fbmem = &fb2,          // Start of frame buffer memory
-        .fblen = fb2.len,       // Length of frame buffer memory in bytes
-        .stride = 720 * 4,      // Length of a line in bytes
-        .overlay = 1,         // Overlay number (Second Overlay)
-        .bpp = 32,             // Bits per pixel
-        .blank = 0,           // TODO: Blank or unblank
-        .chromakey = 0,       // TODO: Chroma key argb8888 formatted
-        .color = 0,           // TODO: Color argb8888 formatted
+        .fbmem     = &fb2,     // Start of frame buffer memory
+        .fblen     = fb2.len,  // Length of frame buffer memory in bytes
+        .stride    = 720 * 4,  // Length of a line in bytes
+        .overlay   = 1,        // Overlay number (Second Overlay)
+        .bpp       = 32,       // Bits per pixel
+        .blank     = 0,        // TODO: Blank or unblank
+        .chromakey = 0,        // TODO: Chroma key argb8888 formatted
+        .color     = 0,        // TODO: Color argb8888 formatted
+        .transp    = c.fb_transp_s { .transp = 0, .transp_mode = 0 },  // TODO: Transparency
+        .sarea     = c.fb_area_s { .x = 0, .y = 0, .w = 720, .h = 1440 },  // Selected area within the overlay
+        .accl      = 0,        // TODO: Supported hardware acceleration
     },
 };
 
