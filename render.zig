@@ -64,6 +64,8 @@ pub export fn test_render() void {
         assert(overlayInfo[1].fblen  == @intCast(usize, overlayInfo[1].sarea.w) * overlayInfo[1].sarea.h * 4);
         assert(overlayInfo[1].stride == overlayInfo[1].sarea.w * 4);
     }
+
+    // TODO: Render graphics
 }
 
 /// Export MIPI DSI Functions to C. (Why is this needed?)
@@ -72,7 +74,7 @@ pub export fn export_dsi_functions() void {
     dsi.nuttx_panel_init();
 }
 
-/// NuttX Video Controller (3 UI Channels)
+/// NuttX Video Controller for PinePhone (3 UI Channels)
 const videoInfo = c.fb_videoinfo_s {
     .fmt       = c.FB_FMT_RGBA32,  // Pixel format (RGBA 8888)
     .xres      = 720,   // Horizontal resolution in pixel columns
@@ -81,7 +83,7 @@ const videoInfo = c.fb_videoinfo_s {
     .noverlays = 2,     // Number of overlays supported (2 Overlay UI Channels)
 };
 
-/// NuttX Color Plane (Base UI Channel)
+/// NuttX Color Plane for PinePhone (Base UI Channel)
 const planeInfo = c.fb_planeinfo_s {
     .fbmem   = &fb0,     // Start of frame buffer memory
     .fblen   = @sizeOf( @TypeOf(fb0) ),  // Length of frame buffer memory in bytes
@@ -94,7 +96,7 @@ const planeInfo = c.fb_planeinfo_s {
     .yoffset      = 0,     // Offset from virtual to visible resolution
 };
 
-/// NuttX Overlays (2 Overlay UI Channels)
+/// NuttX Overlays for PinePhone (2 Overlay UI Channels)
 const overlayInfo = [2] c.fb_overlayinfo_s {
     // First Overlay UI Channel:
     // Square 600 x 600 (4 bytes per ARGB pixel)
