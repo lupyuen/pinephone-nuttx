@@ -58,7 +58,7 @@ pub export fn test_render() void {
     _ = overlayInfo;
 }
 
-/// Force MIPI DSI Interface to be exported. (Why is this needed?)
+/// Force MIPI DSI Interface to be exported to C. (Why is this needed?)
 pub export fn export_dsi() void {
     dsi.nuttx_panel_init();
 }
@@ -72,7 +72,7 @@ const videoInfo = c.fb_videoinfo_s {
     .noverlays = 2,  // Number of overlays supported (2 Overlay UI Channels)
 };
 
-/// NuttX Color Plane
+/// NuttX Color Plane (Base UI Channel)
 const planeInfo = c.fb_planeinfo_s {
   ////FAR void  *fbmem;        // Start of frame buffer memory
   ////size_t     fblen;        // Length of frame buffer memory in bytes
@@ -85,8 +85,9 @@ const planeInfo = c.fb_planeinfo_s {
   .yoffset = 0,          // Offset from virtual to visible resolution
 };
 
-/// NuttX Overlay
+/// NuttX Overlay (2 Overlay UI Channels)
 const overlayInfo = [_] c.fb_overlayinfo_s {
+    // First Overlay UI Channel
     .{
 //   FAR void   *fbmem;          /* Start of frame buffer memory */
 // .fblen = 0, //           /* Length of frame buffer memory in bytes */
@@ -100,6 +101,7 @@ const overlayInfo = [_] c.fb_overlayinfo_s {
 //   struct fb_area_s sarea;     /* Selected area within the overlay */
 //   uint32_t   accl;            /* Supported hardware acceleration */
     },
+    // Second Overlay UI Channel
     .{
     },
 };
