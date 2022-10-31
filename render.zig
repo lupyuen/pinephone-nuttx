@@ -17,9 +17,9 @@
 //
 //***************************************************************************
 
-//! PinePhone MIPI DSI Driver for Apache NuttX RTOS.
-//! This MIPI DSI Interface is compatible with Zephyr MIPI DSI:
-//! https://github.com/zephyrproject-rtos/zephyr/blob/main/include/zephyr/drivers/mipi_dsi.h
+//! PinePhone Display Engine Render Driver for Apache NuttX RTOS.
+//! This Framebuffer Interface is compatible with NuttX Framebuffers:
+//! https://github.com/lupyuen/incubator-nuttx/blob/master/include/nuttx/video/fb.h
 
 /// Import the Zig Standard Library
 const std = @import("std");
@@ -48,10 +48,10 @@ const c = @cImport({
 });
 
 pub export fn test_render() void {
-    const v = std.mem.zeroes(c.struct_fb_videoinfo_s);
+    const v = std.mem.zeroes(c.fb_videoinfo_s);
     _ = v;
     const p = std.mem.zeroes(c.fb_planeinfo_s);
     _ = p;
-    const o = std.mem.zeroes(c.struct_fb_overlayinfo_s);
+    const o = std.mem.zeroes(c.fb_overlayinfo_s);
     _ = o;
 }

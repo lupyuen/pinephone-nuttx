@@ -2958,6 +2958,7 @@ cd pinephone-nuttx
 #  (armv8-a with cortex-a53)
 #  TODO: Change "$HOME/nuttx" to your NuttX Project Directory
 zig build-obj \
+  --verbose-cimport \
   -target aarch64-freestanding-none \
   -mcpu cortex_a53 \
   -isystem "$HOME/nuttx/nuttx/include" \
