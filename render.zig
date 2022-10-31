@@ -70,10 +70,10 @@ pub export fn test_render() void {
     // TODO: Populate the Framebuffers
 
     // Init the UI Blender for PinePhone's A64 Display Engine
-    try initUiBlender();
+    initUiBlender();
 
     // Init the Base UI Channel
-    try initUiChannel(
+    initUiChannel(
         1,  // UI Channel Number (1 for Base UI Channel)
         planeInfo.fbmem,    // Start of frame buffer memory
         planeInfo.fblen,    // Length of frame buffer memory in bytes
@@ -86,7 +86,7 @@ pub export fn test_render() void {
 
     // Init the 2 Overlay UI Channels
     for (overlayInfo) | ov, i | {
-        try initUiChannel(
+        initUiChannel(
             @intCast(u8, i + 2),  // UI Channel Number (2 and 3 for Overlay UI Channels)
             ov.fbmem,    // Start of frame buffer memory
             ov.fblen,    // Length of frame buffer memory in bytes
@@ -100,7 +100,7 @@ pub export fn test_render() void {
 }
 
 /// Initialise the UI Blender for PinePhone's A64 Display Engine
-fn initUiBlender() !void {
+fn initUiBlender() void {
     // BLD_BK_COLOR @ BLD Offset 0x88: BLD background color register
     // TODO: Set to `0xff00` `0000` _(Why?)_
 
@@ -119,7 +119,7 @@ fn initUiChannel(
     yres:    c.fb_coord_t,  // Vertical resolution in pixel rows
     xoffset: c.fb_coord_t,  // Horizontal offset in pixel columns
     yoffset: c.fb_coord_t,  // Vertical offset in pixel rows
-) !void {
+) void {
     assert(channel >= 1 and channel <= 3);
 
     // TODO: Init UI Channel
