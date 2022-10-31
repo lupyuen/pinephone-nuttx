@@ -55,7 +55,7 @@ const c = @cImport({
 pub export fn test_render() void {
     _ = videoInfo;
     _ = planeInfo;
-    _ = overlayInfo;
+    ////_ = overlayInfo;
 }
 
 /// Force MIPI DSI Interface to be exported to C. (Why is this needed?)
@@ -74,11 +74,11 @@ const videoInfo = c.fb_videoinfo_s {
 
 /// NuttX Color Plane (Base UI Channel)
 const planeInfo = c.fb_planeinfo_s {
-  ////FAR void  *fbmem;        // Start of frame buffer memory
-  ////size_t     fblen;        // Length of frame buffer memory in bytes
-  .stride = 720 * 4,       // Length of a line in bytes (4 bytes per pixel)
-  .display = 0,      // Display number
-  .bpp = 32,             // Bits per pixel (ARGB 8888)
+  .fbmem   = &fb0,     // Start of frame buffer memory
+  .fblen   = fb0.len,  // Length of frame buffer memory in bytes
+  .stride  = 720 * 4,  // Length of a line in bytes (4 bytes per pixel)
+  .display = 0,        // Display number (Unused)
+  .bpp     = 32,       // Bits per pixel (ARGB 8888)
   .xres_virtual = 720,   // Virtual Horizontal resolution in pixel columns
   .yres_virtual = 1440,  // Virtual Vertical resolution in pixel rows
   .xoffset = 0,          // Offset from virtual to visible resolution
@@ -86,22 +86,34 @@ const planeInfo = c.fb_planeinfo_s {
 };
 
 /// NuttX Overlay (2 Overlay UI Channels)
-const overlayInfo = [_] c.fb_overlayinfo_s {
-    // First Overlay UI Channel
-    .{
-//   FAR void   *fbmem;          /* Start of frame buffer memory */
-// .fblen = 0, //           /* Length of frame buffer memory in bytes */
-//   fb_coord_t stride;          /* Length of a line in bytes */
-//   uint8_t    overlay;         /* Overlay number */
-//   uint8_t    bpp;             /* Bits per pixel */
-//   uint8_t    blank;           /* Blank or unblank */
-//   uint32_t   chromakey;       /* Chroma key argb8888 formatted */
-//   uint32_t   color;           /* Color argb8888 formatted */
-//   struct fb_transp_s transp;  /* Transparency */
-//   struct fb_area_s sarea;     /* Selected area within the overlay */
-//   uint32_t   accl;            /* Supported hardware acceleration */
-    },
-    // Second Overlay UI Channel
-    .{
-    },
-};
+// const overlayInfo = [_] c.fb_overlayinfo_s {
+//     // First Overlay UI Channel
+//     .{
+// //   FAR void   *fbmem;          /* Start of frame buffer memory */
+// // .fblen = 0, //           /* Length of frame buffer memory in bytes */
+// //   fb_coord_t stride;          /* Length of a line in bytes */
+// //   uint8_t    overlay;         /* Overlay number */
+// //   uint8_t    bpp;             /* Bits per pixel */
+// //   uint8_t    blank;           /* Blank or unblank */
+// //   uint32_t   chromakey;       /* Chroma key argb8888 formatted */
+// //   uint32_t   color;           /* Color argb8888 formatted */
+// //   struct fb_transp_s transp;  /* Transparency */
+// //   struct fb_area_s sarea;     /* Selected area within the overlay */
+// //   uint32_t   accl;            /* Supported hardware acceleration */
+//     },
+//     // Second Overlay UI Channel
+//     .{
+//     },
+// };
+
+// Framebuffer 0: (Base UI Channel)
+// Fullscreen 720 x 1440 (4 bytes per XRGB pixel)
+var fb0 = std.mem.zeroes([720 * 1440] u32);
+
+// Framebuffer 1: (First Overlay UI Channel)
+// Square 600 x 600 (4 bytes per ARGB pixel)
+var fb1 = std.mem.zeroes([600 * 600] u32);
+
+// Framebuffer 2: (Second Overlay UI Channel)
+// Fullscreen 720 x 1440 (4 bytes per ARGB pixel)
+var fb2 = std.mem.zeroes([720 * 1440] u32);
