@@ -140,6 +140,8 @@ fn initUiChannel(
     yoffset: c.fb_coord_t,  // Vertical offset in pixel rows
 ) void {
     assert(channel >= 1 and channel <= 3);
+    assert(fblen == @intCast(usize, xres) * yres * 4);
+    assert(stride == @intCast(usize, xres) * 4);
 
     // If UI Channel should be disabled...
     if (fbmem == null) {
@@ -153,10 +155,6 @@ fn initUiChannel(
     }
 
     // TODO: Init UI Channel
-    _ = fblen;
-    _ = stride;
-    _ = xres;
-    _ = yres;
     _ = xoffset;
     _ = yoffset;
 
@@ -205,6 +203,13 @@ fn initUiChannel(
     // 1.  __Disable Scaler__ (Assume we're not scaling)
     //     -   Mixer (__???__ @ `0x113` `0000` + `0x10000` * Channel)
     //         Set to 0
+}
+
+/// Set the 32-bit value at the address
+fn putreg32(val: u32, addr: u64) void {
+    debug("  *0x{x} = 0x{x}", .{ addr, val });
+    const ptr = @intToPtr(*volatile u32, addr);
+    ptr.* = val;
 }
 
 /// Export MIPI DSI Functions to C. (Why is this needed?)
