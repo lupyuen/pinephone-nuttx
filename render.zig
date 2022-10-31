@@ -50,6 +50,8 @@ const c = @cImport({
     @cInclude("nuttx/video/fb.h");
 });
 
+/// Render a Test Pattern on PinePhone's Display.
+/// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
 pub export fn test_render() void {
     const v = std.mem.zeroes(c.fb_videoinfo_s);
     _ = v;
@@ -57,4 +59,9 @@ pub export fn test_render() void {
     _ = p;
     const o = std.mem.zeroes(c.fb_overlayinfo_s);
     _ = o;
+}
+
+/// Force MIPI DSI Interface to be exported. (Why is this needed?)
+pub export fn export_dsi() void {
+    dsi.nuttx_panel_init();
 }
