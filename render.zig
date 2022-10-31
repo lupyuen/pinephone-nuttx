@@ -65,6 +65,11 @@ pub export fn test_render() void {
         assert(overlayInfo[1].stride == overlayInfo[1].sarea.w * 4);
     }
 
+    // TODO: Populate the Framebuffers
+
+    // Init the UI Blender for PinePhone's A64 Display Engine
+    try initUiBlender();
+
     // Init the Base UI Channel
     try initUiChannel(
         1,  // UI Channel Number (1 for Base UI Channel)
@@ -90,8 +95,15 @@ pub export fn test_render() void {
             ov.sarea.y,  // Vertical offset in pixel rows
         );
     }
+}
 
-    // TODO: Render graphics
+/// Initialise the UI Blender for PinePhone's A64 Display Engine
+fn initUiBlender() !void {
+    // BLD_BK_COLOR @ BLD Offset 0x88: BLD background color register
+    // TODO: Set to `0xff00` `0000` _(Why?)_
+
+    // BLD_PREMUL_CTL @ BLD Offset 0x84: BLD pre-multiply control register
+    // TODO: Set to 0
 }
 
 /// Initialise a UI Channel for PinePhone's A64 Display Engine.
