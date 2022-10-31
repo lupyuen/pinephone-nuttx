@@ -52,6 +52,7 @@ const c = @cImport({
 
 /// Render a Test Pattern on PinePhone's Display.
 /// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
+/// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 pub export fn test_render() void {
     debug("test_render", .{});
 
@@ -99,7 +100,8 @@ pub export fn test_render() void {
     }
 }
 
-/// Initialise the UI Blender for PinePhone's A64 Display Engine
+/// Initialise the UI Blender for PinePhone's A64 Display Engine.
+/// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 fn initUiBlender() void {
     // BLD_BK_COLOR @ BLD Offset 0x88: BLD background color register
     // TODO: Set to `0xff00` `0000` _(Why?)_
@@ -109,10 +111,11 @@ fn initUiBlender() void {
 }
 
 /// Initialise a UI Channel for PinePhone's A64 Display Engine.
-/// We use 3 UI Channels: Base UI Channel (#1) plus 2 Overlay UI Channels (#2, #3)
+/// We use 3 UI Channels: Base UI Channel (#1) plus 2 Overlay UI Channels (#2, #3).
+/// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 fn initUiChannel(
     channel: u8,            // UI Channel Number: 1, 2 or 3
-    fbmem: ?*anyopaque,     // Start of frame buffer memory
+    fbmem: ?*anyopaque,     // Start of frame buffer memory, or null if this channel should be disabled
     fblen: usize,           // Length of frame buffer memory in bytes
     stride:  c.fb_coord_t,  // Length of a line in bytes (4 bytes per pixel)
     xres:    c.fb_coord_t,  // Horizontal resolution in pixel columns
@@ -121,6 +124,17 @@ fn initUiChannel(
     yoffset: c.fb_coord_t,  // Vertical offset in pixel rows
 ) void {
     assert(channel >= 1 and channel <= 3);
+
+    // If UI Channel should be disabled...
+    if (fbmem == null) {
+        // UI Config Attr (__OVL_UI_ATTCTL__ @ OVL_UI Offset `0x00`): _OVL_UI attribute control register_
+        // TODO: Set to 0
+
+        // Mixer (__???__ @ `0x113` `0000` + `0x10000` * Channel)
+        // TODO: Set to 0
+        
+        return;  // Skip to next UI Channel
+    }
 
     // TODO: Init UI Channel
     _ = fbmem;
