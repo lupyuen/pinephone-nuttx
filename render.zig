@@ -177,22 +177,27 @@ fn initUiChannel(
     assert(fblen == @intCast(usize, xres) * yres * 4);
     assert(stride == @intCast(usize, xres) * 4);
 
-    // If UI Channel should be disabled...
-    if (fbmem == null) {
-        // UI Config Attr (OVL_UI_ATTCTL @ OVL_UI Offset 0x00): _OVL_UI attribute control register_
-        // TODO: Set to 0
-
-        // Mixer (??? @ 0x113 0000 + 0x10000 * Channel)
-        // TODO: Set to 0
-        
-        return;  // Skip to next UI Channel
-    }
-
     // |OVL_UI(CH1) (UI Overlay / Channel 1) | 0x3000
     // |OVL_UI(CH2) (UI Overlay / Channel 2) | 0x4000
     // |OVL_UI(CH3) (UI Overlay / Channel 3) | 0x5000
     const ovl_ui_base_address = OVL_UI_CH1_BASE_ADDRESS +
         @intCast(u64, channel - 1) * 0x1000;
+
+    // If UI Channel should be disabled...
+    if (fbmem == null) {
+        // UI Config Attr (OVL_UI_ATTCTL @ OVL_UI Offset 0x00): _OVL_UI attribute control register_
+        // Set to 0
+        const OVL_UI_ATTCTL = ovl_ui_base_address + 0x00;
+        putreg32(0, OVL_UI_ATTCTL);
+
+        // Mixer (??? @ 0x113 0000 + 0x10000 * Channel)
+        // Set to 0
+        const MIXER = 0x113_0000 + 0x10000 * @intCast(u64, channel);
+        putreg32(0, MIXER);
+        
+        // Skip to next UI Channel
+        return;
+    }
 
     // 1.  Set Overlay (Assume Layer = 0)
     //     -   UI Config Attr (OVL_UI_ATTCTL @ OVL_UI Offset 0x00): _OVL_UI attribute control register_
@@ -206,47 +211,78 @@ fn initUiChannel(
 
     //     -   UI Config Top LAddr (OVL_UI_TOP_LADD @ OVL_UI Offset 0x10): _OVL_UI top field memory block low address register_
     //         Set to Framebuffer Address: fb0, fb1 or fb2
+    const OVL_UI_TOP_LADD = ovl_ui_base_address + 0x10;
+    putreg32(@intCast(u32, @ptrToInt(fbmem.?)), OVL_UI_TOP_LADD);
 
     //     -   UI Config Pitch (OVL_UI_PITCH @ OVL_UI Offset 0x0C): _OVL_UI memory pitch register_
     //         Set to (width * 4)
+    const OVL_UI_PITCH = ovl_ui_base_address + 0x0C;
+    putreg32(xres * 4, OVL_UI_PITCH);
 
     //     -   UI Config Size (OVL_UI_MBSIZE @ OVL_UI Offset 0x04): _OVL_UI memory block size register_
     //         Set to (height-1) << 16 + (width-1)
+    const OVL_UI_MBSIZE = ovl_ui_base_address + 0x04;
+    putreg32(@intCast(u32, yres-1) << @intCast(u32, 16) + @intCast(u32, xres-1), OVL_UI_MBSIZE);
 
     //     -   UI Overlay Size (OVL_UI_SIZE @ OVL_UI Offset 0x88): _OVL_UI overlay window size register_
     //         Set to (height-1) << 16 + (width-1)
+    const OVL_UI_SIZE = ovl_ui_base_address + 0x88;
+    putreg32((yres-1) << 16 + (xres-1), OVL_UI_SIZE);
 
     //     -   IO Config Coord (OVL_UI_COOR @ OVL_UI Offset 0x08): _OVL_UI memory block coordinate register_
     //         Set to 0
+    const OVL_UI_COOR = ovl_ui_base_address + 0x08;
+    putreg32(0, OVL_UI_COOR);
 
     // 1.  For Channel 1: Set Blender Output
-    //     -   BLD Output Size (BLD_SIZE @ BLD Offset 0x08C): _BLD output size setting register_
-    //         Set to (height-1) << 16 + (width-1)
-            
-    //     -   GLB Size (GLB_SIZE @ GLB Offset 0x00C): _Global size register_
-    //         Set to (height-1) << 16 + (width-1)
+        if (channel == 1) {
+        //     -   BLD Output Size (BLD_SIZE @ BLD Offset 0x08C): _BLD output size setting register_
+        //         Set to (height-1) << 16 + (width-1)
+        const BLD_SIZE = BLD_BASE_ADDRESS + 0x08C;
+        putreg32((yres-1) << 16 + (xres-1), BLD_SIZE);
+                
+        //     -   GLB Size (GLB_SIZE @ GLB Offset 0x00C): _Global size register_
+        //         Set to (height-1) << 16 + (width-1)
+        const GLB_SIZE = GLB_BASE_ADDRESS + 0x00C;
+        putreg32((yres-1) << 16 + (xres-1), GLB_SIZE);
+    }
 
     // 1.  Set Blender Input Pipe (N = Pipe Number, from 0 to 2 for Channels 1 to 3)
+    const pipe: u64 = channel - 1;
+
     //     -   BLD Pipe InSize (BLD_CH_ISIZE @ BLD Offset 0x008 + N*0x10): _BLD input memory size register(N=0,1,2,3,4)_
     //         Set to (height-1) << 16 + (width-1)
+    const BLD_CH_ISIZE = BLD_BASE_ADDRESS + 0x008 + pipe * 0x10;
+    putreg32((yres-1) << 16 + (xres-1), BLD_CH_ISIZE);
 
     //     -   BLD Pipe FColor (BLD_FILL_COLOR @ BLD Offset 0x004 + N*0x10): _BLD fill color register(N=0,1,2,3,4)_
     //         Set to 0xff00 0000 (Why?)
+    const BLD_FILL_COLOR = BLD_BASE_ADDRESS + 0x004 + pipe * 0x10;
+    putreg32(0xff00_0000, BLD_FILL_COLOR);
 
     //     -   BLD Pipe Offset (BLD_CH_OFFSET @ BLD Offset 0x00C + N*0x10): _BLD input memory offset register(N=0,1,2,3,4)_
-    //         Set to 0 or 0x34 0034 (Why?)
+    //         For Channel 1: Set to 0 (Why?)
+    //         For Channel 2: Set to 0x34 0034 (Why?)
+    //         For Channel 3: Set to 0 (Why?)
+    _ = xoffset; ////
+    _ = yoffset; ////
+    const BLD_CH_OFFSET = BLD_BASE_ADDRESS + 0x00C + pipe * 0x10;
+    if (channel == 1) { putreg32(0, BLD_CH_OFFSET); }
+    else if (channel == 2) { putreg32(0x34_0034, BLD_CH_OFFSET); }
+    else if (channel == 3) { putreg32(0, BLD_CH_OFFSET); }
 
     //     -   BLD Pipe Mode (BLD_CTL @ BLD Offset 0x090 – 0x09C): _BLD control register_
     //         Set to 0x301 0301 (Why?)
+    ////const BLD_CTL = BLD_BASE_ADDRESS + bbbb;
+    ////putreg32(0x301_0301, BLD_CTL);
 
     //     Note: Log shows N*0x10, doc says N*0x14
 
     // 1.  Disable Scaler (Assume we're not scaling)
     //     -   Mixer (??? @ 0x113 0000 + 0x10000 * Channel)
     //         Set to 0
-
-    _ = xoffset; ////
-    _ = yoffset; ////
+    const MIXER = 0x113_0000 + 0x10000 * @intCast(u64, channel);
+    putreg32(0, MIXER);
 }
 
 /// Set the 32-bit value at the address
