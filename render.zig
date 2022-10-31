@@ -53,6 +53,8 @@ const c = @cImport({
 /// Render a Test Pattern on PinePhone's Display.
 /// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
 pub export fn test_render() void {
+    debug("test_render", .{});
+
     // Validate the Framebuffer Sizes at Compile Time
     comptime {
         assert(planeInfo.xres_virtual == videoInfo.xres);
