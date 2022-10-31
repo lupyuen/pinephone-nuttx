@@ -65,7 +65,57 @@ pub export fn test_render() void {
         assert(overlayInfo[1].stride == overlayInfo[1].sarea.w * 4);
     }
 
+    // Init the Base UI Channel
+    try initUiChannel(
+        1,  // UI Channel Number (1 for Base UI Channel)
+        planeInfo.fbmem,    // Start of frame buffer memory
+        planeInfo.fblen,    // Length of frame buffer memory in bytes
+        planeInfo.stride,   // Length of a line in bytes (4 bytes per pixel)
+        planeInfo.xres_virtual,  // Horizontal resolution in pixel columns
+        planeInfo.yres_virtual,  // Vertical resolution in pixel rows
+        planeInfo.xoffset,  // Horizontal offset in pixel columns
+        planeInfo.yoffset,  // Vertical offset in pixel rows
+    );
+
+    // Init the 2 Overlay UI Channels
+    for (overlayInfo) | ov, i | {
+        try initUiChannel(
+            @intCast(u8, i + 2),  // UI Channel Number (2 and 3 for Overlay UI Channels)
+            ov.fbmem,    // Start of frame buffer memory
+            ov.fblen,    // Length of frame buffer memory in bytes
+            ov.stride,   // Length of a line in bytes (4 bytes per pixel)
+            ov.sarea.w,  // Horizontal resolution in pixel columns
+            ov.sarea.h,  // Vertical resolution in pixel rows
+            ov.sarea.x,  // Horizontal offset in pixel columns
+            ov.sarea.y,  // Vertical offset in pixel rows
+        );
+    }
+
     // TODO: Render graphics
+}
+
+/// Initialise a UI Channel for PinePhone's A64 Display Engine.
+/// We use 3 UI Channels: Base UI Channel (#1) plus 2 Overlay UI Channels (#2, #3)
+fn initUiChannel(
+    channel: u8,            // UI Channel Number: 1, 2 or 3
+    fbmem: ?*anyopaque,     // Start of frame buffer memory
+    fblen: usize,           // Length of frame buffer memory in bytes
+    stride:  c.fb_coord_t,  // Length of a line in bytes (4 bytes per pixel)
+    xres:    c.fb_coord_t,  // Horizontal resolution in pixel columns
+    yres:    c.fb_coord_t,  // Vertical resolution in pixel rows
+    xoffset: c.fb_coord_t,  // Horizontal offset in pixel columns
+    yoffset: c.fb_coord_t,  // Vertical offset in pixel rows
+) !void {
+    assert(channel >= 1 and channel <= 3);
+
+    // TODO: Init UI Channel
+    _ = fbmem;
+    _ = fblen;
+    _ = stride;
+    _ = xres;
+    _ = yres;
+    _ = xoffset;
+    _ = yoffset;
 }
 
 /// Export MIPI DSI Functions to C. (Why is this needed?)
