@@ -122,6 +122,7 @@ const BLD_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x1000;
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 fn initUiBlender() void {
     debug("initUiBlender", .{});
+
     // BLD_BK_COLOR @ BLD Offset 0x88: BLD background color register
     // Set to 0xff00 0000
     const BLD_BK_COLOR = BLD_BASE_ADDRESS + 0x88;
