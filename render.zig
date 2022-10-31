@@ -126,20 +126,21 @@ pub export fn export_dsi_functions() void {
 
 /// NuttX Video Controller for PinePhone (3 UI Channels)
 const videoInfo = c.fb_videoinfo_s {
-    .fmt       = c.FB_FMT_RGBA32,  // Pixel format (RGBA 8888)
+    .fmt       = c.FB_FMT_RGBA32,  // Pixel format (XRGB 8888)
     .xres      = 720,   // Horizontal resolution in pixel columns
     .yres      = 1440,  // Vertical resolution in pixel rows
     .nplanes   = 1,     // Number of color planes supported (Base UI Channel)
     .noverlays = 2,     // Number of overlays supported (2 Overlay UI Channels)
 };
 
-/// NuttX Color Plane for PinePhone (Base UI Channel)
+/// NuttX Color Plane for PinePhone (Base UI Channel):
+/// Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
 const planeInfo = c.fb_planeinfo_s {
     .fbmem   = &fb0,     // Start of frame buffer memory
     .fblen   = @sizeOf( @TypeOf(fb0) ),  // Length of frame buffer memory in bytes
     .stride  = 720 * 4,  // Length of a line in bytes (4 bytes per pixel)
     .display = 0,        // Display number (Unused)
-    .bpp     = 32,       // Bits per pixel (ARGB 8888)
+    .bpp     = 32,       // Bits per pixel (XRGB 8888)
     .xres_virtual = 720,   // Virtual Horizontal resolution in pixel columns
     .yres_virtual = 1440,  // Virtual Vertical resolution in pixel rows
     .xoffset      = 0,     // Offset from virtual to visible resolution
@@ -149,13 +150,13 @@ const planeInfo = c.fb_planeinfo_s {
 /// NuttX Overlays for PinePhone (2 Overlay UI Channels)
 const overlayInfo = [2] c.fb_overlayinfo_s {
     // First Overlay UI Channel:
-    // Square 600 x 600 (4 bytes per ARGB pixel)
+    // Square 600 x 600 (4 bytes per ARGB 8888 pixel)
     .{
         .fbmem     = &fb1,     // Start of frame buffer memory
         .fblen     = @sizeOf( @TypeOf(fb1) ),  // Length of frame buffer memory in bytes
         .stride    = 600 * 4,  // Length of a line in bytes
         .overlay   = 0,        // Overlay number (First Overlay)
-        .bpp       = 32,       // Bits per pixel
+        .bpp       = 32,       // Bits per pixel (ARGB 8888)
         .blank     = 0,        // TODO: Blank or unblank
         .chromakey = 0,        // TODO: Chroma key argb8888 formatted
         .color     = 0,        // TODO: Color argb8888 formatted
@@ -164,13 +165,13 @@ const overlayInfo = [2] c.fb_overlayinfo_s {
         .accl      = 0,        // TODO: Supported hardware acceleration
     },
     // Second Overlay UI Channel:
-    // Fullscreen 720 x 1440 (4 bytes per ARGB pixel)
+    // Fullscreen 720 x 1440 (4 bytes per ARGB 8888 pixel)
     .{
         .fbmem     = &fb2,     // Start of frame buffer memory
         .fblen     = @sizeOf( @TypeOf(fb2) ),  // Length of frame buffer memory in bytes
         .stride    = 720 * 4,  // Length of a line in bytes
         .overlay   = 1,        // Overlay number (Second Overlay)
-        .bpp       = 32,       // Bits per pixel
+        .bpp       = 32,       // Bits per pixel (ARGB 8888)
         .blank     = 0,        // TODO: Blank or unblank
         .chromakey = 0,        // TODO: Chroma key argb8888 formatted
         .color     = 0,        // TODO: Color argb8888 formatted
@@ -181,15 +182,15 @@ const overlayInfo = [2] c.fb_overlayinfo_s {
 };
 
 // Framebuffer 0: (Base UI Channel)
-// Fullscreen 720 x 1440 (4 bytes per XRGB pixel)
+// Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
 var fb0 = std.mem.zeroes([720 * 1440] u32);
 
 // Framebuffer 1: (First Overlay UI Channel)
-// Square 600 x 600 (4 bytes per ARGB pixel)
+// Square 600 x 600 (4 bytes per ARGB 8888 pixel)
 var fb1 = std.mem.zeroes([600 * 600] u32);
 
 // Framebuffer 2: (Second Overlay UI Channel)
-// Fullscreen 720 x 1440 (4 bytes per ARGB pixel)
+// Fullscreen 720 x 1440 (4 bytes per ARGB 8888 pixel)
 var fb2 = std.mem.zeroes([720 * 1440] u32);
 
 ///////////////////////////////////////////////////////////////////////////////
