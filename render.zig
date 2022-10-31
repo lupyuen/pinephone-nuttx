@@ -103,21 +103,43 @@ pub export fn test_render() void {
     applySettings();
 }
 
+/// From https://lupyuen.github.io/articles/de#appendix-overview-of-allwinner-a64-display-engine
+/// __Display Engine Base Address__ is __`0x0100` `0000`__
+const DISPLAY_ENGINE_BASE_ADDRESS = 0x0100_0000;
+
+/// RT-MIXER0 is at DE Offset 0x10 0000 (Page 87)
+const MIXER0_BASE_ADDRESS = DISPLAY_ENGINE_BASE_ADDRESS + 0x10_0000;
+
+// |__GLB__ | __`0x0000`__
+const GLB_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0000;
+
+// |__BLD__ (Blender) | __`0x1000`__
+const BLD_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x1000;
+
+// TODO: |__OVL_UI(CH1)__ (UI Overlay / Channel 1) | __`0x3000`__
+
 /// Initialise the UI Blender for PinePhone's A64 Display Engine.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 fn initUiBlender() void {
+    debug("initUiBlender", .{});
     // BLD_BK_COLOR @ BLD Offset 0x88: BLD background color register
-    // TODO: Set to `0xff00` `0000` _(Why?)_
+    // Set to 0xff00 0000
+    const BLD_BK_COLOR = BLD_BASE_ADDRESS + 0x88;
+    putreg32(0xff00_0000, BLD_BK_COLOR);
 
     // BLD_PREMUL_CTL @ BLD Offset 0x84: BLD pre-multiply control register
-    // TODO: Set to 0
+    // Set to 0
+    const BLD_PREMUL_CTL = BLD_BASE_ADDRESS + 0x84;
+    putreg32(0, BLD_PREMUL_CTL);
 }
 
 /// TODO
 fn applySettings() void {
+    debug("applySettings", .{});
     // __Set BLD Route and BLD FColor Control__
     // -   BLD Route (__BLD_CH_RTCTL__ @ BLD Offset `0x080`): _BLD routing control register_
     //     Set to `0x321` _(Why?)_
+
     // -   BLD FColor Control (__BLD_FILLCOLOR_CTL__ @ BLD Offset `0x000`): _BLD fill color control register_
     //     Set to `0x701` _(Why?)_
 
@@ -139,6 +161,7 @@ fn initUiChannel(
     xoffset: c.fb_coord_t,  // Horizontal offset in pixel columns
     yoffset: c.fb_coord_t,  // Vertical offset in pixel rows
 ) void {
+    debug("initUiChannel", .{});
     assert(channel >= 1 and channel <= 3);
     assert(fblen == @intCast(usize, xres) * yres * 4);
     assert(stride == @intCast(usize, xres) * 4);
