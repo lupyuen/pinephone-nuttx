@@ -98,6 +98,9 @@ pub export fn test_render() void {
             ov.sarea.y,  // Vertical offset in pixel rows
         );
     }
+
+    // TODO
+    applySettings();
 }
 
 /// Initialise the UI Blender for PinePhone's A64 Display Engine.
@@ -108,6 +111,19 @@ fn initUiBlender() void {
 
     // BLD_PREMUL_CTL @ BLD Offset 0x84: BLD pre-multiply control register
     // TODO: Set to 0
+}
+
+/// TODO
+fn applySettings() void {
+    // __Set BLD Route and BLD FColor Control__
+    // -   BLD Route (__BLD_CH_RTCTL__ @ BLD Offset `0x080`): _BLD routing control register_
+    //     Set to `0x321` _(Why?)_
+    // -   BLD FColor Control (__BLD_FILLCOLOR_CTL__ @ BLD Offset `0x000`): _BLD fill color control register_
+    //     Set to `0x701` _(Why?)_
+
+    // __Apply Settings__
+    // -   GLB DBuff (__GLB_DBUFFER__ @ GLB Offset `0x008`): _Global double buffer control register_
+    //     Set to 1 _(Why?)_
 }
 
 /// Initialise a UI Channel for PinePhone's A64 Display Engine.
@@ -137,13 +153,58 @@ fn initUiChannel(
     }
 
     // TODO: Init UI Channel
-    _ = fbmem;
     _ = fblen;
     _ = stride;
     _ = xres;
     _ = yres;
     _ = xoffset;
     _ = yoffset;
+
+    // 1.  __Set Overlay__ (Assume Layer = 0)
+    //     -   UI Config Attr (__OVL_UI_ATTCTL__ @ OVL_UI Offset `0x00`): _OVL_UI attribute control register_
+    //         __For Channel 1:__ Set to `0xff00` `0405` _(Why?)_
+    //         __For Channels 2 and 3:__ `0xff00` `0005` _(Why?)_
+
+    //     -   UI Config Top LAddr (__OVL_UI_TOP_LADD__ @ OVL_UI Offset `0x10`): _OVL_UI top field memory block low address register_
+    //         Set to Framebuffer Address: `fb0`, `fb1` or `fb2`
+
+    //     -   UI Config Pitch (__OVL_UI_PITCH__ @ OVL_UI Offset `0x0C`): _OVL_UI memory pitch register_
+    //         Set to `(width * 4)`
+
+    //     -   UI Config Size (__OVL_UI_MBSIZE__ @ OVL_UI Offset `0x04`): _OVL_UI memory block size register_
+    //         Set to `(height-1) << 16 + (width-1)`
+
+    //     -   UI Overlay Size (__OVL_UI_SIZE__ @ OVL_UI Offset `0x88`): _OVL_UI overlay window size register_
+    //         Set to `(height-1) << 16 + (width-1)`
+
+    //     -   IO Config Coord (__OVL_UI_COOR__ @ OVL_UI Offset `0x08`): _OVL_UI memory block coordinate register_
+    //         Set to 0
+
+    // 1.  __For Channel 1:__ Set Blender Output
+    //     -   BLD Output Size (__BLD_SIZE__ @ BLD Offset `0x08C`): _BLD output size setting register_
+    //         Set to `(height-1) << 16 + (width-1)`
+            
+    //     -   GLB Size (__GLB_SIZE__ @ GLB Offset `0x00C`): _Global size register_
+    //         Set to `(height-1) << 16 + (width-1)`
+
+    // 1.  __Set Blender Input Pipe__ (N = Pipe Number, from 0 to 2 for Channels 1 to 3)
+    //     -   BLD Pipe InSize (__BLD_CH_ISIZE__ @ BLD Offset `0x008` + `N*0x10`): _BLD input memory size register(N=0,1,2,3,4)_
+    //         Set to `(height-1) << 16 + (width-1)`
+
+    //     -   BLD Pipe FColor (__BLD_FILL_COLOR__ @ BLD Offset `0x004` + `N*0x10`): _BLD fill color register(N=0,1,2,3,4)_
+    //         Set to `0xff00` `0000` _(Why?)_
+
+    //     -   BLD Pipe Offset (__BLD_CH_OFFSET__ @ BLD Offset `0x00C` + `N*0x10`): _BLD input memory offset register(N=0,1,2,3,4)_
+    //         Set to 0 or `0x34` `0034` _(Why?)_
+
+    //     -   BLD Pipe Mode (__BLD_CTL__ @ BLD Offset `0x090` – `0x09C`): _BLD control register_
+    //         Set to `0x301` `0301` _(Why?)_
+
+    //     __Note: Log shows `N*0x10`, doc says `N*0x14`__
+
+    // 1.  __Disable Scaler__ (Assume we're not scaling)
+    //     -   Mixer (__???__ @ `0x113` `0000` + `0x10000` * Channel)
+    //         Set to 0
 }
 
 /// Export MIPI DSI Functions to C. (Why is this needed?)
