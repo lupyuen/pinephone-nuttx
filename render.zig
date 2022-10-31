@@ -53,10 +53,10 @@ const c = @cImport({
 /// Render a Test Pattern on PinePhone's Display.
 /// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
 pub export fn test_render() void {
-    const v = std.mem.zeroes(c.fb_videoinfo_s);
-    _ = v;
-    const p = std.mem.zeroes(c.fb_planeinfo_s);
-    _ = p;
+    _ = videoInfo;
+    _ = planeInfo;
+
+    // This structure describes one overlay
     const o = std.mem.zeroes(c.fb_overlayinfo_s);
     _ = o;
 }
@@ -65,3 +65,25 @@ pub export fn test_render() void {
 pub export fn export_dsi() void {
     dsi.nuttx_panel_init();
 }
+
+/// NuttX Video Controller for 3 x A64 UI Channels
+const videoInfo = c.fb_videoinfo_s {
+    .fmt  = c.FB_FMT_RGBA32,  // Pixel format (RGBA 8888)
+    .xres = 720,  // Horizontal resolution in pixel columns
+    .yres = 1440, // Vertical resolution in pixel rows
+    .nplanes   = 1,  // Number of color planes supported (Base UI Channel)
+    .noverlays = 2,  // Number of overlays supported (2 Overlay UI Channels)
+};
+
+/// NuttX Color Plane
+const planeInfo = c.fb_planeinfo_s {
+  ////FAR void  *fbmem;        // Start of frame buffer memory
+  ////size_t     fblen;        // Length of frame buffer memory in bytes
+  .stride = 720 * 4,       // Length of a line in bytes (4 bytes per pixel)
+  .display = 0,      // Display number
+  .bpp = 32,             // Bits per pixel (ARGB 8888)
+  .xres_virtual = 720,   // Virtual Horizontal resolution in pixel columns */
+  .yres_virtual = 1440,  // Virtual Vertical resolution in pixel rows */
+  .xoffset = 0,          // Offset from virtual to visible resolution */
+  .yoffset = 0,          // Offset from virtual to visible resolution */
+};
