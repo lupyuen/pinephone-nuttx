@@ -17,12 +17,15 @@
 //
 //***************************************************************************
 
-//! PinePhone Display Engine Render Driver for Apache NuttX RTOS.
+//! PinePhone Display Engine Driver for Apache NuttX RTOS.
 //! This Framebuffer Interface is compatible with NuttX Framebuffers:
 //! https://github.com/lupyuen/incubator-nuttx/blob/master/include/nuttx/video/fb.h
 
 /// Import the Zig Standard Library
 const std = @import("std");
+
+/// Import the MIPI Display Serial Interface Module
+const dsi = @import("./display.zig");
 
 /// Import the LoRaWAN Library from C
 const c = @cImport({
