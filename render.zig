@@ -103,7 +103,8 @@ pub export fn test_render() void {
     applySettings();
 }
 
-/// From https://lupyuen.github.io/articles/de#appendix-overview-of-allwinner-a64-display-engine
+/// Hardware Registers for PinePhone's A64 Display Engine.
+/// See https://lupyuen.github.io/articles/de#appendix-overview-of-allwinner-a64-display-engine
 /// __Display Engine Base Address__ is __`0x0100` `0000`__
 const DISPLAY_ENGINE_BASE_ADDRESS = 0x0100_0000;
 
@@ -116,7 +117,10 @@ const GLB_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0000;
 // |__BLD__ (Blender) | __`0x1000`__
 const BLD_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x1000;
 
-// TODO: |__OVL_UI(CH1)__ (UI Overlay / Channel 1) | __`0x3000`__
+// |__OVL_UI(CH1)__ (UI Overlay / Channel 1) | __`0x3000`__
+// |__OVL_UI(CH2)__ (UI Overlay / Channel 2) | __`0x4000`__
+// |__OVL_UI(CH3)__ (UI Overlay / Channel 3) | __`0x5000`__
+const OVL_UI_CH1_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x3000;
 
 /// Initialise the UI Blender for PinePhone's A64 Display Engine.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
@@ -178,14 +182,19 @@ fn initUiChannel(
         return;  // Skip to next UI Channel
     }
 
-    // TODO: Init UI Channel
-    _ = xoffset;
-    _ = yoffset;
+    // |__OVL_UI(CH1)__ (UI Overlay / Channel 1) | __`0x3000`__
+    // |__OVL_UI(CH2)__ (UI Overlay / Channel 2) | __`0x4000`__
+    // |__OVL_UI(CH3)__ (UI Overlay / Channel 3) | __`0x5000`__
+    const ovl_ui_base_address = OVL_UI_CH1_BASE_ADDRESS +
+        @intCast(u64, channel - 1) * 0x1000;
 
     // 1.  __Set Overlay__ (Assume Layer = 0)
     //     -   UI Config Attr (__OVL_UI_ATTCTL__ @ OVL_UI Offset `0x00`): _OVL_UI attribute control register_
     //         __For Channel 1:__ Set to `0xff00` `0405` _(Why?)_
     //         __For Channels 2 and 3:__ `0xff00` `0005` _(Why?)_
+    const OVL_UI_ATTCTL = ovl_ui_base_address + 0x00;
+    if (channel == 1) { putreg32(0xff00_0405, OVL_UI_ATTCTL); }
+    else { putreg32(0xff00_0005, OVL_UI_ATTCTL); }
 
     //     -   UI Config Top LAddr (__OVL_UI_TOP_LADD__ @ OVL_UI Offset `0x10`): _OVL_UI top field memory block low address register_
     //         Set to Framebuffer Address: `fb0`, `fb1` or `fb2`
@@ -227,6 +236,9 @@ fn initUiChannel(
     // 1.  __Disable Scaler__ (Assume we're not scaling)
     //     -   Mixer (__???__ @ `0x113` `0000` + `0x10000` * Channel)
     //         Set to 0
+
+    _ = xoffset; ////
+    _ = yoffset; ////
 }
 
 /// Set the 32-bit value at the address
