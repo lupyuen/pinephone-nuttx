@@ -68,16 +68,16 @@ pub export fn test_render() void {
         assert(overlayInfo[1].stride == overlayInfo[1].sarea.w * 4);
     }
 
-    // TODO: Call tcon0_init
+    // TODO: Init PinePhone's Allwinner A64 Timing Controller TCON0 (tcon0_init)
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#tcon0_init
 
-    // TODO: Call dsi_init
+    // TODO: Init PinePhone's Allwinner A64 MIPI Display Serial Interface (dsi_init)
     // Call https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
 
-    // TODO: Call de2_init
+    // TODO: Init PinePhone's Allwinner A64 Display Engine (de2_init)
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#de2_init
 
-    // TODO: Call backlight_enable
+    // TODO: Turn on PinePhone's Backlight (backlight_enable)
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#backlight_enable
 
     // Init Framebuffer 0:
