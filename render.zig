@@ -125,7 +125,7 @@ const OVL_UI_CH1_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x3000;
 /// Initialise the UI Blender for PinePhone's A64 Display Engine.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 fn initUiBlender() void {
-    debug("initUiBlender", .{});
+    debug("initUiBlender:\nConfigure Blender", .{});
 
     // BLD_BK_COLOR @ BLD Offset 0x88: BLD background color register
     // Set to 0xff00 0000 (Why?)
@@ -140,7 +140,7 @@ fn initUiBlender() void {
 
 /// TODO
 fn applySettings() void {
-    debug("applySettings", .{});
+    debug("applySettings:\nSet BLD Route and BLD FColor Control", .{});
     // Set BLD Route and BLD FColor Control
     // -   BLD Route (BLD_CH_RTCTL @ BLD Offset 0x080): _BLD routing control register_
     //     Set to 0x321 (Why?)
@@ -155,6 +155,7 @@ fn applySettings() void {
     // Apply Settings
     // -   GLB DBuff (GLB_DBUFFER @ GLB Offset 0x008): _Global double buffer control register_
     //     Set to 1 (Why?)
+    debug("Apply Settings", .{});
     const GLB_DBUFFER = GLB_BASE_ADDRESS + 0x008;
     putreg32(1, GLB_DBUFFER);
 }
@@ -185,13 +186,17 @@ fn initUiChannel(
 
     // If UI Channel should be disabled...
     if (fbmem == null) {
+        // Disable Overlay and Pipe:
         // UI Config Attr (OVL_UI_ATTCTL @ OVL_UI Offset 0x00): _OVL_UI attribute control register_
         // Set to 0
+        debug("Channel {}: Disable Overlay and Pipe", .{ channel });
         const OVL_UI_ATTCTL = OVL_UI_BASE_ADDRESS + 0x00;
         putreg32(0, OVL_UI_ATTCTL);
 
+        // Disable Scaler:
         // Mixer (??? @ 0x113 0000 + 0x10000 * Channel)
         // Set to 0
+        debug("Channel {}: Disable Scaler", .{ channel });
         const MIXER = 0x113_0000 + 0x10000 * @intCast(u64, channel);
         putreg32(0, MIXER);
         
@@ -204,6 +209,7 @@ fn initUiChannel(
     //         For Channel 1: Set to 0xff00 0405 (Why?)
     //         For Channel 2: 0xff00 0005 (Why?)
     //         For Channel 3: 0x7f00 0005 (Why?)
+    debug("Channel {}: Set Overlay ({} x {})", .{ channel, xres, yres });
     const OVL_UI_ATTCTL = OVL_UI_BASE_ADDRESS + 0x00;
     if (channel == 1) { putreg32(0xff00_0405, OVL_UI_ATTCTL); }
     else if (channel == 2) { putreg32(0xff00_0005, OVL_UI_ATTCTL); }
@@ -237,9 +243,10 @@ fn initUiChannel(
     putreg32(0, OVL_UI_COOR);
 
     // 1.  For Channel 1: Set Blender Output
-        if (channel == 1) {
+    if (channel == 1) {
         //     -   BLD Output Size (BLD_SIZE @ BLD Offset 0x08C): _BLD output size setting register_
         //         Set to (height-1) << 16 + (width-1)
+        debug("Channel {}: Set Blender Output", .{ channel });
         const BLD_SIZE = BLD_BASE_ADDRESS + 0x08C;
         putreg32(height_width, BLD_SIZE);
                 
@@ -251,6 +258,7 @@ fn initUiChannel(
 
     // 1.  Set Blender Input Pipe (N = Pipe Number, from 0 to 2 for Channels 1 to 3)
     const pipe: u64 = channel - 1;
+    debug("Channel {}: Set Blender Input Pipe {} ({} x {})", .{ channel, pipe, xres, yres });
 
     //     -   BLD Pipe InSize (BLD_CH_ISIZE @ BLD Offset 0x008 + N*0x10): _BLD input memory size register(N=0,1,2,3,4)_
     //         Set to (height-1) << 16 + (width-1)
@@ -283,6 +291,7 @@ fn initUiChannel(
     // 1.  Disable Scaler (Assume we're not scaling)
     //     -   Mixer (??? @ 0x113 0000 + 0x10000 * Channel)
     //         Set to 0
+    debug("Channel {}: Disable Scaler", .{ channel });
     const MIXER = 0x113_0000 + 0x10000 * @intCast(u64, channel);
     putreg32(0, MIXER);
 }
