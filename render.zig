@@ -283,7 +283,7 @@ fn initUiChannel(
 
     //     -   BLD Pipe Mode (BLD_CTL @ BLD Offset 0x090 + N*4): _BLD control register_
     //         Set to 0x301 0301 (Why?)
-    const BLD_CTL = BLD_BASE_ADDRESS + pipe * 4;
+    const BLD_CTL = BLD_BASE_ADDRESS + 0x090 + pipe * 4;
     putreg32(0x301_0301, BLD_CTL);
 
     //     Note: Log shows BLD_CH_ISIZE, BLD_FILL_COLOR and BLD_CH_OFFSET are at N*0x10, but doc says N*0x14
