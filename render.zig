@@ -68,7 +68,53 @@ pub export fn test_render() void {
         assert(overlayInfo[1].stride == overlayInfo[1].sarea.w * 4);
     }
 
-    // TODO: Populate the Framebuffers
+    // Init Framebuffer 0:
+    // Fill with Blue, Green and Red
+    var i: usize = 0;
+    while (i < fb0.len) : (i += 1) {
+        // Colours are in XRGB 8888 format
+        if (i < fb0.len / 4) {
+            // Blue for top quarter
+            fb0[i] = 0x80000080;
+        } else if (i < fb0.len / 2) {
+            // Green for next quarter
+            fb0[i] = 0x80008000;
+        } else {
+            // Red for lower half
+            fb0[i] = 0x80800000;
+        }
+    }
+
+    // Init Framebuffer 1:
+    // Fill with Semi-Transparent Blue
+    i = 0;
+    while (i < fb1.len) : (i += 1) {
+        // Colours are in ARGB 8888 format
+        fb1[i] = 0x80000080;
+    }
+
+    // Init Framebuffer 2:
+    // Fill with Semi-Transparent Green Circle
+    var y: usize = 0;
+    while (y < 1440) : (y += 1) {
+        var x: usize = 0;
+        while (x < 720) : (x += 1) {
+            // Get pixel index
+            const p = (y * 720) + x;
+            assert(p < fb2.len);
+
+            // Shift coordinates so that centre of screen is (0,0)
+            const x_shift = x - 360;
+            const y_shift = y - 720;
+
+            // If x^2 + y^2 < radius^2, set the pixel to Semi-Transparent Green
+            if (x_shift*x_shift + y_shift*y_shift < 360*360) {
+                fb2[p] = 0x80008000;  // Semi-Transparent Green in ARGB 8888 Format
+            } else {  // Otherwise set to Transparent Black
+                fb2[p] = 0x00000000;  // Transparent Black in ARGB 8888 Format
+            }
+        }
+    }
 
     // Init the UI Blender for PinePhone's A64 Display Engine
     initUiBlender();
@@ -86,9 +132,9 @@ pub export fn test_render() void {
     );
 
     // Init the 2 Overlay UI Channels
-    for (overlayInfo) | ov, i | {
+    for (overlayInfo) | ov, ov_index | {
         initUiChannel(
-            @intCast(u8, i + 2),  // UI Channel Number (2 and 3 for Overlay UI Channels)
+            @intCast(u8, ov_index + 2),  // UI Channel Number (2 and 3 for Overlay UI Channels)
             ov.fbmem,    // Start of frame buffer memory
             ov.fblen,    // Length of frame buffer memory in bytes
             ov.stride,   // Length of a line in bytes (4 bytes per pixel)
