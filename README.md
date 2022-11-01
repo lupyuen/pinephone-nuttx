@@ -4015,10 +4015,10 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-218861 bytes read in 14 ms (14.9 MiB/s)
+219146 bytes read in 14 ms (14.9 MiB/s)
 Uncompressed size: 10260480 = 0x9C9000
 36162 bytes read in 4 ms (8.6 MiB/s)
-1078500 bytes read in 50 ms (20.6 MiB/s)
+1078500 bytes read in 51 ms (20.2 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
    Booting using the fdt blob at 0x4fa00000
    Loading Ramdisk to 49ef8000, end 49fff4e4 ... OK
@@ -4055,13 +4055,17 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009ce3c file_actions=0x40a4e580 attr=0x40a4e588 argv=0x40a4e6d0
+task_spawn: name=hello entry=0x4009cf48 file_actions=0x40a4e580 attr=0x40a4e588 argv=0x40a4e6d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
 ph_data_reg=0x400
 pd_cfg2_reg=0x77711177
 pd_data_reg=0x1c0000
+sunxi_gpio_set_cfgpin: pin=0x77, val=1
+sunxi_gpio_set_cfgbank: bank_offset=119, val=1
+  clrsetbits 0x1c20874, 0xf0000000, 0x10000000
+sunxi_gpio_output: pin=0x77, val=0
 struct reg_inst dsi_init_seq[] = {
 .{ 0x0000, 0x00000001 },
 .{ 0x0010, 0x00030000 },
@@ -4105,6 +4109,10 @@ display_malloc: size=2330
 .{ 0x00e8, 0x1a000019 },
 .{ 0x00ec, 0xffff0000 },
 };
+sunxi_gpio_set_cfgpin: pin=0x77, val=1
+sunxi_gpio_set_cfgbank: bank_offset=119, val=1
+  clrsetbits 0x1c20874, 0xf0000000, 0x10000000
+sunxi_gpio_output: pin=0x77, val=1
 
 struct reg_inst dsi_panel_init_seq[] = {
 nuttx_panel_init
@@ -4494,6 +4502,20 @@ Clear all registers
   0x11b0000 = 0x0
 Enable mixer
   0x1100000 = 0x1
+backlight_enable: pct=0x5a
+1.0 has incorrectly documented non-presence of PH10, the circuit is in fact the same as on 1.1+
+configure pwm: GPL(10), GPL_R_PWM
+sunxi_gpio_set_cfgpin: pin=0x16a, val=2
+sunxi_gpio_set_cfgbank: bank_offset=362, val=2
+  clrsetbits 0x1f02c04, 0xf00, 0x200
+  clrbits 0x1f03800, 0x40
+  0x1f03804 = 0x4af0437
+  0x1f03800 = 0x5f
+enable backlight: GPH(10), 1
+sunxi_gpio_set_cfgpin: pin=0xea, val=1
+sunxi_gpio_set_cfgbank: bank_offset=234, val=1
+  clrsetbits 0x1c20900, 0xf00, 0x100
+sunxi_gpio_output: pin=0xea, val=1
 test_render
 initUiBlender
 Configure Blender
