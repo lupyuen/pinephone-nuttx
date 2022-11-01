@@ -24,7 +24,7 @@
 /// Import the Zig Standard Library
 const std = @import("std");
 
-/// Import the LoRaWAN Library from C
+/// Import NuttX Functions from C
 const c = @cImport({
     // NuttX Defines
     @cDefine("__NuttX__",  "");

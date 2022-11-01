@@ -27,7 +27,7 @@ const std = @import("std");
 /// Import the MIPI Display Serial Interface Module
 const dsi = @import("./display.zig");
 
-/// Import the LoRaWAN Library from C
+/// Import NuttX Functions from C
 const c = @cImport({
     // NuttX Defines
     @cDefine("__NuttX__",  "");
