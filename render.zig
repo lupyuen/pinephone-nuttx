@@ -281,12 +281,12 @@ fn initUiChannel(
     else if (channel == 2) { putreg32(0x34_0034, BLD_CH_OFFSET); }
     else if (channel == 3) { putreg32(0, BLD_CH_OFFSET); }
 
-    //     -   BLD Pipe Mode (BLD_CTL @ BLD Offset 0x090 – 0x09C): _BLD control register_
+    //     -   BLD Pipe Mode (BLD_CTL @ BLD Offset 0x090 + N*4): _BLD control register_
     //         Set to 0x301 0301 (Why?)
-    ////const BLD_CTL = BLD_BASE_ADDRESS + bbbb;
-    ////putreg32(0x301_0301, BLD_CTL);
+    const BLD_CTL = BLD_BASE_ADDRESS + pipe * 4;
+    putreg32(0x301_0301, BLD_CTL);
 
-    //     Note: Log shows N*0x10, doc says N*0x14
+    //     Note: Log shows BLD_CH_ISIZE, BLD_FILL_COLOR and BLD_CH_OFFSET are at N*0x10, but doc says N*0x14
 
     // 1.  Disable Scaler (Assume we're not scaling)
     //     -   Mixer (??? @ 0x113 0000 + 0x10000 * Channel)
