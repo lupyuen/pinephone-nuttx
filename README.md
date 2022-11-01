@@ -4015,10 +4015,10 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-218386 bytes read in 14 ms (14.9 MiB/s)
+218861 bytes read in 14 ms (14.9 MiB/s)
 Uncompressed size: 10260480 = 0x9C9000
 36162 bytes read in 4 ms (8.6 MiB/s)
-1078500 bytes read in 51 ms (20.2 MiB/s)
+1078500 bytes read in 50 ms (20.6 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
    Booting using the fdt blob at 0x4fa00000
    Loading Ramdisk to 49ef8000, end 49fff4e4 ... OK
@@ -4055,7 +4055,7 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009cbc0 file_actions=0x40a4e580 attr=0x40a4e588 argv=0x40a4e6d0
+task_spawn: name=hello entry=0x4009ce3c file_actions=0x40a4e580 attr=0x40a4e588 argv=0x40a4e6d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
@@ -4461,6 +4461,39 @@ modifyreg32: addr=0x010, val=0x00000001
 dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000
 .{ 0x0048, 0x63f07006 },
 .{ MAGIC_COMMIT, 0 },
+de2_init
+Set SRAM for video use
+  0x1c00004 = 0x0
+Setup DE2 PLL
+clock_set_pll_de: clk=297000000
+PLL10 rate = 24000000 * n / m
+  0x1c20048 = 0x81001701
+  while (!(readl(0x1c20048) & 0x10000000))
+Enable DE2 special clock
+  clrsetbits 0x1c20104, 0x3000000, 0x81000000
+Enable DE2 ahb
+  setbits 0x1c202c4, 0x1000
+  setbits 0x1c20064, 0x1000
+Enable clock for mixer 0, set route MIXER0->TCON0
+  setbits 0x1000000, 0x1
+  setbits 0x1000008, 0x1
+  setbits 0x1000004, 0x1
+  clrbits 0x1000010, 0x1
+Clear all registers
+  0x1100000 to 0x1105fff = 0x0
+  0x1120000 = 0x0
+  0x1130000 = 0x0
+  0x1140000 = 0x0
+  0x1150000 = 0x0
+  0x11a0000 = 0x0
+  0x11a2000 = 0x0
+  0x11a4000 = 0x0
+  0x11a6000 = 0x0
+  0x11a8000 = 0x0
+  0x11aa000 = 0x0
+  0x11b0000 = 0x0
+Enable mixer
+  0x1100000 = 0x1
 test_render
 initUiBlender
 Configure Blender
