@@ -104,8 +104,8 @@ pub export fn test_render() void {
             assert(p < fb2.len);
 
             // Shift coordinates so that centre of screen is (0,0)
-            const x_shift = x - 360;
-            const y_shift = y - 720;
+            const x_shift = @intCast(isize, x) - 360;
+            const y_shift = @intCast(isize, y) - 720;
 
             // If x^2 + y^2 < radius^2, set the pixel to Semi-Transparent Green
             if (x_shift*x_shift + y_shift*y_shift < 360*360) {
