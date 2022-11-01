@@ -125,7 +125,7 @@ const OVL_UI_CH1_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x3000;
 /// Initialise the UI Blender for PinePhone's A64 Display Engine.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 fn initUiBlender() void {
-    debug("initUiBlender:\nConfigure Blender", .{});
+    debug("initUiBlender\nConfigure Blender", .{});
 
     // BLD_BK_COLOR @ BLD Offset 0x88: BLD background color register
     // Set to 0xff00 0000 (Why?)
@@ -140,7 +140,7 @@ fn initUiBlender() void {
 
 /// TODO
 fn applySettings() void {
-    debug("applySettings:\nSet BLD Route and BLD FColor Control", .{});
+    debug("applySettings\nSet BLD Route and BLD FColor Control", .{});
     // Set BLD Route and BLD FColor Control
     // -   BLD Route (BLD_CH_RTCTL @ BLD Offset 0x080): _BLD routing control register_
     //     Set to 0x321 (Why?)
