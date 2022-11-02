@@ -160,7 +160,9 @@ pub export fn test_render() void {
     }
 
     // TODO
-    applySettings();
+    applySettings(3);
+
+    // TODO: Why the flickering with 3 UI Channels? C version doesn't flicker, but lines are missing
 }
 
 /// Hardware Registers for PinePhone's A64 Display Engine.
@@ -199,18 +201,28 @@ fn initUiBlender() void {
 }
 
 /// TODO
-fn applySettings() void {
+fn applySettings(
+    channels: u8  // Number of enabled UI Channels
+) void {
     debug("applySettings\nSet BLD Route and BLD FColor Control", .{});
+    assert(channels == 1 or channels == 3);
+
     // Set BLD Route and BLD FColor Control
     // -   BLD Route (BLD_CH_RTCTL @ BLD Offset 0x080): _BLD routing control register_
-    //     Set to 0x321 (Why?)
+    //     For 3 UI Channels: Set to 0x321 (Why?)
+    //     For 1 UI Channel: Set to 1 (Why?)
     const BLD_CH_RTCTL = BLD_BASE_ADDRESS + 0x080;
-    putreg32(0x321, BLD_CH_RTCTL);  // TODO: DMB
+    if (channels == 3) { putreg32(0x321, BLD_CH_RTCTL); }  // TODO: DMB
+    else if (channels == 1) { putreg32(0x1, BLD_CH_RTCTL); }  // TODO: DMB
+    else { unreachable; }
 
     // -   BLD FColor Control (BLD_FILLCOLOR_CTL @ BLD Offset 0x000): _BLD fill color control register_
-    //     Set to 0x701 (Why?)
+    //     For 3 UI Channels: Set to 0x701 (Why?)
+    //     For 1 UI Channel: Set to 0x101 (Why?)
     const BLD_FILLCOLOR_CTL = BLD_BASE_ADDRESS + 0x000;
-    putreg32(0x701, BLD_FILLCOLOR_CTL);  // TODO: DMB
+    if (channels == 3) { putreg32(0x701, BLD_FILLCOLOR_CTL); }  // TODO: DMB
+    else if (channels == 1) { putreg32(0x101, BLD_FILLCOLOR_CTL); }  // TODO: DMB
+    else { unreachable; }
 
     // Apply Settings
     // -   GLB DBuff (GLB_DBUFFER @ GLB Offset 0x008): _Global double buffer control register_
