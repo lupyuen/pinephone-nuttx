@@ -4019,9 +4019,9 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-220067 bytes read in 13 ms (16.1 MiB/s)
+220236 bytes read in 14 ms (15 MiB/s)
 Uncompressed size: 10268672 = 0x9CB000
-36162 bytes read in 4 ms (8.6 MiB/s)
+36162 bytes read in 5 ms (6.9 MiB/s)
 1078500 bytes read in 50 ms (20.6 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
    Booting using the fdt blob at 0x4fa00000
@@ -4059,7 +4059,7 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009d3bc file_actions=0x40a50580 attr=0x40a50588 argv=0x40a506d0
+task_spawn: name=hello entry=0x4009d490 file_actions=0x40a50580 attr=0x40a50588 argv=0x40a506d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
@@ -4132,11 +4132,16 @@ dldo2 1.8V
 wait for power supplies and power-on init
   udelay 15000
 display_board_init: end
+mipi dsi bus enable
+  setbits 0x1c20060, 0x2 (DMB)
+  setbits 0x1c202c0, 0x2 (DMB)
+Enable the DSI block
 struct reg_inst dsi_init_seq[] = {
 .{ 0x0000, 0x00000001 },  // DMB
 .{ 0x0010, 0x00030000 },  // DMB
 .{ 0x0060, 0x0000000a },  // DMB
 .{ 0x0078, 0x00000000 },  // DMB
+inst_init
 .{ 0x0020, 0x0000001f },  // DMB
 .{ 0x0024, 0x10000001 },  // DMB
 .{ 0x0028, 0x20000010 },  // DMB
@@ -4147,15 +4152,20 @@ struct reg_inst dsi_init_seq[] = {
 .{ 0x003c, 0x5000001f },  // DMB
 .{ 0x004c, 0x00560001 },  // DMB
 .{ 0x02f8, 0x000000ff },  // DMB
+get_video_start_delay
 .{ 0x0014, 0x00005bc7 },  // DMB
+setup_burst
 .{ 0x007c, 0x10000007 },  // DMB
+setup_inst_loop
 .{ 0x0040, 0x30000002 },  // DMB
 .{ 0x0044, 0x00310031 },  // DMB
 .{ 0x0054, 0x00310031 },  // DMB
+setup_format
 .{ 0x0090, 0x1308703e },  // DMB
 .{ 0x0098, 0x0000ffff },  // DMB
 .{ 0x009c, 0xffffffff },  // DMB
 .{ 0x0080, 0x00010008 },  // DMB
+setup_timings
 display_malloc: size=2330
 .{ 0x000c, 0x00000000 },  // DMB
 .{ 0x00b0, 0x12000021 },  // DMB
@@ -4201,12 +4211,15 @@ dphy_enable: start
   update_bits 0x1ca1050, 0x80000000, 0x80000000 (DMB)
   update_bits 0x1ca1054, 0xf000000, 0xf000000 (DMB)
 dphy_enable: end
+deassert reset: GPD(23), 1  // PD23 - LCD-RST (active low)
 sunxi_gpio_set_cfgpin: pin=0x77, val=1
 sunxi_gpio_set_cfgbank: bank_offset=119, val=1
   clrsetbits 0x1c20874, 0xf0000000, 0x10000000
 sunxi_gpio_output: pin=0x77, val=1
   before: 0x1c2087c = 0x1c0000
   after: 0x1c2087c = 0x9c0000 (DMB)
+wait for initialization
+udelay 15000
 
 struct reg_inst dsi_panel_init_seq[] = {
 nuttx_panel_init
@@ -4558,9 +4571,12 @@ modifyreg32: addr=0x200, val=0x00000003
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
 };
+dsi_start DSI_START_HSC
 .{ 0x0048, 0x00000f02 },  // DMB
 .{ MAGIC_COMMIT, 0 },  // DMB
 dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000 (DMB)
+udelay 1000
+dsi_start DSI_START_HSD
 .{ 0x0048, 0x63f07006 },  // DMB
 .{ MAGIC_COMMIT, 0 },  // DMB
 dsi_init: end
