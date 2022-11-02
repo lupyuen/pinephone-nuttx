@@ -50,6 +50,9 @@ const c = @cImport({
     @cInclude("nuttx/video/fb.h");
 });
 
+/// Number of UI Channels to test: 1 or 3
+const NUM_CHANNELS = 1;
+
 /// Render a Test Pattern on PinePhone's Display.
 /// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
@@ -58,6 +61,7 @@ pub export fn test_render() void {
 
     // Validate the Framebuffer Sizes at Compile Time
     comptime {
+        assert(NUM_CHANNELS == 1 or NUM_CHANNELS == 3);
         assert(planeInfo.xres_virtual == videoInfo.xres);
         assert(planeInfo.yres_virtual == videoInfo.yres);
         assert(planeInfo.fblen  == planeInfo.xres_virtual * planeInfo.yres_virtual * 4);
@@ -149,7 +153,7 @@ pub export fn test_render() void {
     for (overlayInfo) | ov, ov_index | {
         initUiChannel(
             @intCast(u8, ov_index + 2),  // UI Channel Number (2 and 3 for Overlay UI Channels)
-            null, ////ov.fbmem,    // Start of frame buffer memory
+            if (NUM_CHANNELS == 3) ov.fbmem else null,  // Start of frame buffer memory
             ov.fblen,    // Length of frame buffer memory in bytes
             ov.stride,   // Length of a line in bytes (4 bytes per pixel)
             ov.sarea.w,  // Horizontal resolution in pixel columns
@@ -160,8 +164,7 @@ pub export fn test_render() void {
     }
 
     // TODO
-    ////applySettings(3);
-    applySettings(1);
+    applySettings(NUM_CHANNELS);
 
     // TODO: Why the flickering with 3 UI Channels? C version doesn't flicker, but lines are missing
 }
