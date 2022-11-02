@@ -4586,7 +4586,7 @@ Set SRAM for video use
 Setup DE2 PLL
 clock_set_pll_de: clk=297000000
 PLL10 rate = 24000000 * n / m
-  0x1c20048 = 0x81001701
+  0x1c20048 = 0x81001701 (DMB)
   while (!(readl(0x1c20048) & 0x10000000))
 Enable DE2 special clock
   clrsetbits 0x1c20104, 0x3000000, 0x81000000
