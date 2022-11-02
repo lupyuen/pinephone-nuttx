@@ -3989,63 +3989,15 @@ PinePhone Logs captured from various tests...
 ## Testing Zig Display Engine Driver on PinePhone
 
 ```text
-DRAM: 2048 MiB
-Trying to boot from MMC1
-NOTICE:  BL31: v2.2(release):v2.2-904-gf9ea3a629
-NOTICE:  BL31: Built : 15:32:12, Apr  9 2020
-NOTICE:  BL31: Detected Allwinner A64/H64/R18 SoC (1689)
-NOTICE:  BL31: Found U-Boot DTB at 0x4064410, model: PinePhone
-NOTICE:  PSCI: System suspend is unavailable
-
-
-U-Boot 2020.07 (Nov 08 2020 - 00:15:12 +0100)
-
-DRAM:  2 GiB
-MMC:   Device 'mmc@1c11000': seq 1 is in use by 'mmc@1c10000'
-mmc@1c0f000: 0, mmc@1c10000: 2, mmc@1c11000: 1
-Loading Environment from FAT... *** Warning - bad CRC, using default environment
-
-starting USB...
-No working controllers found
-Hit any key to stop autoboot:  0 
-switch to partitions #0, OK
-mmc0 is current device
-Scanning mmc 0:1...
-Found U-Boot script /boot.scr
-653 bytes read in 3 ms (211.9 KiB/s)
-## Executing script at 4fc00000
-gpio: pin 114 (gpio 114) value is 1
-219146 bytes read in 14 ms (14.9 MiB/s)
-Uncompressed size: 10260480 = 0x9C9000
-36162 bytes read in 4 ms (8.6 MiB/s)
-1078500 bytes read in 51 ms (20.2 MiB/s)
-## Flattened Device Tree blob at 4fa00000
-   Booting using the fdt blob at 0x4fa00000
-   Loading Ramdisk to 49ef8000, end 49fff4e4 ... OK
-   Loading Device Tree to 0000000049eec000, end 0000000049ef7d41 ... OK
-
-Starting kernel ...
-
-HELLO NUTTX ON PINEPHONE!
-- Ready to Boot CPU
-- Boot from EL2
-- Boot from EL1
-- Boot to C runtime for OS Initialize
-nx_start: Entry
-up_allocate_heap: heap_start=0x0x40a49000, heap_size=0x75b7000
-arm64_gic_initialize: TODO: Init GIC for PinePhone
-arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
-arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
-arm64_gic_initialize: GIC Version is 2
-up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-up_timer_initialize: _vector_table=0x400d6000
-up_timer_initialize: Before writing: vbar_el1=0x40256000
-up_timer_initialize: After writing: vbar_el1=0x400d6000
+ialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+up_timer_initialize: _vector_table=0x400d7000
+up_timer_initialize: Before writing: vbar_el1=0x40257000
+up_timer_initialize: After writing: vbar_el1=0x400d7000
 uart_register: Registering /dev/console
 uart_register: Registering /dev/ttyS0
 work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400d6000 _einit: 0x400d6000 _stext: 0x40080000 _etext: 0x400d7000
+lib_cxx_initialize: _sinit: 0x400d7000 _einit: 0x400d7000 _stext: 0x40080000 _etext: 0x400d8000
 nsh: sysinit: fopen failed: 2
 nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
 e
@@ -4055,64 +4007,129 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009cf48 file_actions=0x40a4e580 attr=0x40a4e588 argv=0x40a4e6d0
+task_spawn: name=hello entry=0x4009d2d4 file_actions=0x40a50580 attr=0x40a50588 argv=0x40a506d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
 ph_data_reg=0x400
 pd_cfg2_reg=0x77711177
 pd_data_reg=0x1c0000
+tcon0_init
+PLL_VIDEO0
+  0x1c20010 = 0x81006207 (DMB)
+PLL_MIPI
+  0x1c20040 = 0xc00000 (DMB)
+  udelay 100
+  0x1c20040 = 0x80c0071a (DMB)
+TCON0 source MIPI_PLL
+  0x1c20118 = 0x80000000 (DMB)
+Clock on
+  0x1c20064 = 0x8 (DMB)
+Reset off
+  0x1c202c4 = 0x8 (DMB)
+Init lcdc: Disable tcon, Disable all interrupts
+  0x1c0c000 = 0x0 (DMB)
+  0x1c0c004 = 0x0
+  0x1c0c008 = 0x0
+Set all io lines to tristate
+  0x1c0c08c = 0xffffffff
+  0x1c0c0f4 = 0xffffffff
+mode set: DCLK = MIPI_PLL / 6
+  0x1c0c044 = 0x80000006
+  0x1c0c040 = 0x81000000
+  0x1c0c048 = 0x2cf059f
+  0x1c0c0f8 = 0x8
+  0x1c0c060 = 0x10010005
+The datasheet says that this should be set higher than 20 * pixel cycle, but it's not clear what a pixel cycle is.
+  0x1c0c160 = 0x2f02cf
+  0x1c0c164 = 0x59f
+  0x1c0c168 = 0x1bc2000a
+The Allwinner BSP has a comment that the period should be the display clock * 15, but uses an hardcoded 3000
+  0x1c0c1f0 = 0xbb80003
+Enable the output on the pins
+  0x1c0c08c = 0xe0000000 (DMB)
+enable tcon as a whole
+  setbits 0x1c0c000, 0x80000000 (DMB)
+dsi_init: start
+display_board_init: start
+assert reset: GPD(23), 0  // PD23 - LCD-RST (active low)
 sunxi_gpio_set_cfgpin: pin=0x77, val=1
 sunxi_gpio_set_cfgbank: bank_offset=119, val=1
   clrsetbits 0x1c20874, 0xf0000000, 0x10000000
 sunxi_gpio_output: pin=0x77, val=0
+  before: 0x1c2087c = 0x1c0000
+  after: 0x1c2087c = 0x1c0000 (DMB)
+dldo1 3.3V
+  pmic_write: reg=0x15, val=0x1a
+  rsb_write: rt_addr=0x2d, reg_addr=0x15, value=0x1a
+  pmic_clrsetbits: reg=0x12, clr_mask=0x0, set_mask=0x8
+  rsb_read: rt_addr=0x2d, reg_addr=0x12
+  rsb_write: rt_addr=0x2d, reg_addr=0x12, value=0xd9
+ldo_io0 3.3V
+  pmic_write: reg=0x91, val=0x1a
+  rsb_write: rt_addr=0x2d, reg_addr=0x91, value=0x1a
+  pmic_write: reg=0x90, val=0x3
+  rsb_write: rt_addr=0x2d, reg_addr=0x90, value=0x3
+dldo2 1.8V
+  pmic_write: reg=0x16, val=0xb
+  rsb_write: rt_addr=0x2d, reg_addr=0x16, value=0xb
+  pmic_clrsetbits: reg=0x12, clr_mask=0x0, set_mask=0x10
+  rsb_read: rt_addr=0x2d, reg_addr=0x12
+  rsb_write: rt_addr=0x2d, reg_addr=0x12, value=0xd9
+wait for power supplies and power-on init
+  udelay 15000
+display_board_init: end
 struct reg_inst dsi_init_seq[] = {
-.{ 0x0000, 0x00000001 },
-.{ 0x0010, 0x00030000 },
-.{ 0x0060, 0x0000000a },
-.{ 0x0078, 0x00000000 },
-.{ 0x0020, 0x0000001f },
-.{ 0x0024, 0x10000001 },
-.{ 0x0028, 0x20000010 },
-.{ 0x002c, 0x2000000f },
-.{ 0x0030, 0x30100001 },
-.{ 0x0034, 0x40000010 },
-.{ 0x0038, 0x0000000f },
-.{ 0x003c, 0x5000001f },
-.{ 0x004c, 0x00560001 },
-.{ 0x02f8, 0x000000ff },
-.{ 0x0014, 0x00005bc7 },
-.{ 0x007c, 0x10000007 },
-.{ 0x0040, 0x30000002 },
-.{ 0x0044, 0x00310031 },
-.{ 0x0054, 0x00310031 },
-.{ 0x0090, 0x1308703e },
-.{ 0x0098, 0x0000ffff },
-.{ 0x009c, 0xffffffff },
-.{ 0x0080, 0x00010008 },
+.{ 0x0000, 0x00000001 },  // DMB
+.{ 0x0010, 0x00030000 },  // DMB
+.{ 0x0060, 0x0000000a },  // DMB
+.{ 0x0078, 0x00000000 },  // DMB
+.{ 0x0020, 0x0000001f },  // DMB
+.{ 0x0024, 0x10000001 },  // DMB
+.{ 0x0028, 0x20000010 },  // DMB
+.{ 0x002c, 0x2000000f },  // DMB
+.{ 0x0030, 0x30100001 },  // DMB
+.{ 0x0034, 0x40000010 },  // DMB
+.{ 0x0038, 0x0000000f },  // DMB
+.{ 0x003c, 0x5000001f },  // DMB
+.{ 0x004c, 0x00560001 },  // DMB
+.{ 0x02f8, 0x000000ff },  // DMB
+.{ 0x0014, 0x00005bc7 },  // DMB
+.{ 0x007c, 0x10000007 },  // DMB
+.{ 0x0040, 0x30000002 },  // DMB
+.{ 0x0044, 0x00310031 },  // DMB
+.{ 0x0054, 0x00310031 },  // DMB
+.{ 0x0090, 0x1308703e },  // DMB
+.{ 0x0098, 0x0000ffff },  // DMB
+.{ 0x009c, 0xffffffff },  // DMB
+.{ 0x0080, 0x00010008 },  // DMB
 display_malloc: size=2330
-.{ 0x000c, 0x00000000 },
-.{ 0x00b0, 0x12000021 },
-.{ 0x00b4, 0x01000031 },
-.{ 0x00b8, 0x07000001 },
-.{ 0x00bc, 0x14000011 },
-.{ 0x0018, 0x0011000a },
-.{ 0x001c, 0x05cd05a0 },
-.{ 0x00c0, 0x09004a19 },
-.{ 0x00c4, 0x50b40000 },
-.{ 0x00c8, 0x35005419 },
-.{ 0x00cc, 0x757a0000 },
-.{ 0x00d0, 0x09004a19 },
-.{ 0x00d4, 0x50b40000 },
-.{ 0x00e0, 0x0c091a19 },
-.{ 0x00e4, 0x72bd0000 },
-.{ 0x00e8, 0x1a000019 },
-.{ 0x00ec, 0xffff0000 },
+.{ 0x000c, 0x00000000 },  // DMB
+.{ 0x00b0, 0x12000021 },  // DMB
+.{ 0x00b4, 0x01000031 },  // DMB
+.{ 0x00b8, 0x07000001 },  // DMB
+.{ 0x00bc, 0x14000011 },  // DMB
+.{ 0x0018, 0x0011000a },  // DMB
+.{ 0x001c, 0x05cd05a0 },  // DMB
+.{ 0x00c0, 0x09004a19 },  // DMB
+.{ 0x00c4, 0x50b40000 },  // DMB
+.{ 0x00c8, 0x35005419 },  // DMB
+.{ 0x00cc, 0x757a0000 },  // DMB
+.{ 0x00d0, 0x09004a19 },  // DMB
+.{ 0x00d4, 0x50b40000 },  // DMB
+.{ 0x00e0, 0x0c091a19 },  // DMB
+.{ 0x00e4, 0x72bd0000 },  // DMB
+.{ 0x00e8, 0x1a000019 },  // DMB
+.{ 0x00ec, 0xffff0000 },  // DMB
 };
+dphy_enable: start
+dphy_enable: end
 sunxi_gpio_set_cfgpin: pin=0x77, val=1
 sunxi_gpio_set_cfgbank: bank_offset=119, val=1
   clrsetbits 0x1c20874, 0xf0000000, 0x10000000
 sunxi_gpio_output: pin=0x77, val=1
+  before: 0x1c2087c = 0x1c0000
+  after: 0x1c2087c = 0x9c0000 (DMB)
 
 struct reg_inst dsi_panel_init_seq[] = {
 nuttx_panel_init
@@ -4464,14 +4481,15 @@ modifyreg32: addr=0x200, val=0x00000003
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
 };
-.{ 0x0048, 0x00000f02 },
-.{ MAGIC_COMMIT, 0 },
-dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000
-.{ 0x0048, 0x63f07006 },
-.{ MAGIC_COMMIT, 0 },
+.{ 0x0048, 0x00000f02 },  // DMB
+.{ MAGIC_COMMIT, 0 },  // DMB
+dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000 (DMB)
+.{ 0x0048, 0x63f07006 },  // DMB
+.{ MAGIC_COMMIT, 0 },  // DMB
+dsi_init: end
 de2_init
 Set SRAM for video use
-  0x1c00004 = 0x0
+  0x1c00004 = 0x0 (DMB)
 Setup DE2 PLL
 clock_set_pll_de: clk=297000000
 PLL10 rate = 24000000 * n / m
@@ -4501,21 +4519,23 @@ Clear all registers
   0x11aa000 = 0x0
   0x11b0000 = 0x0
 Enable mixer
-  0x1100000 = 0x1
+  0x1100000 = 0x1 (DMB)
 backlight_enable: pct=0x5a
 1.0 has incorrectly documented non-presence of PH10, the circuit is in fact the same as on 1.1+
 configure pwm: GPL(10), GPL_R_PWM
 sunxi_gpio_set_cfgpin: pin=0x16a, val=2
 sunxi_gpio_set_cfgbank: bank_offset=362, val=2
   clrsetbits 0x1f02c04, 0xf00, 0x200
-  clrbits 0x1f03800, 0x40
-  0x1f03804 = 0x4af0437
-  0x1f03800 = 0x5f
+  clrbits 0x1f03800, 0x40 (DMB)
+  0x1f03804 = 0x4af0437 (DMB)
+  0x1f03800 = 0x5f (DMB)
 enable backlight: GPH(10), 1
 sunxi_gpio_set_cfgpin: pin=0xea, val=1
 sunxi_gpio_set_cfgbank: bank_offset=234, val=1
   clrsetbits 0x1c20900, 0xf00, 0x100
 sunxi_gpio_output: pin=0xea, val=1
+  before: 0x1c2090c = 0x400
+  after: 0x1c2090c = 0x400 (DMB)
 test_render
 initUiBlender
 Configure Blender
@@ -4524,7 +4544,7 @@ Configure Blender
 initUiChannel
 Channel 1: Set Overlay (720 x 1440)
   *0x1103000 = 0xff000405
-  *0x1103010 = 0x400fb524
+  *0x1103010 = 0x400fd524
   *0x110300c = 0xb40
   *0x1103004 = 0x59f02cf
   *0x1103088 = 0x59f02cf
@@ -4542,7 +4562,7 @@ Channel 1: Disable Scaler
 initUiChannel
 Channel 2: Set Overlay (600 x 600)
   *0x1104000 = 0xff000005
-  *0x1104010 = 0x404efd24
+  *0x1104010 = 0x404f1d24
   *0x110400c = 0x960
   *0x1104004 = 0x2570257
   *0x1104088 = 0x2570257
@@ -4557,7 +4577,7 @@ Channel 2: Disable Scaler
 initUiChannel
 Channel 3: Set Overlay (720 x 1440)
   *0x1105000 = 0x7f000005
-  *0x1105010 = 0x4064f624
+  *0x1105010 = 0x40651624
   *0x110500c = 0xb40
   *0x1105004 = 0x59f02cf
   *0x1105088 = 0x59f02cf
