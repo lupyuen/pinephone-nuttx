@@ -149,7 +149,7 @@ pub export fn test_render() void {
     for (overlayInfo) | ov, ov_index | {
         initUiChannel(
             @intCast(u8, ov_index + 2),  // UI Channel Number (2 and 3 for Overlay UI Channels)
-            ov.fbmem,    // Start of frame buffer memory
+            null, ////ov.fbmem,    // Start of frame buffer memory
             ov.fblen,    // Length of frame buffer memory in bytes
             ov.stride,   // Length of a line in bytes (4 bytes per pixel)
             ov.sarea.w,  // Horizontal resolution in pixel columns
@@ -160,7 +160,8 @@ pub export fn test_render() void {
     }
 
     // TODO
-    applySettings(3);
+    ////applySettings(3);
+    applySettings(1);
 
     // TODO: Why the flickering with 3 UI Channels? C version doesn't flicker, but lines are missing
 }
@@ -440,15 +441,18 @@ const overlayInfo = [2] c.fb_overlayinfo_s {
 
 // Framebuffer 0: (Base UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
-var fb0 = std.mem.zeroes([720 * 1440] u32);
+// Must be aligned to 0x1000 bytes to prevent flicker
+var fb0 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
 
 // Framebuffer 1: (First Overlay UI Channel)
 // Square 600 x 600 (4 bytes per ARGB 8888 pixel)
-var fb1 = std.mem.zeroes([600 * 600] u32);
+// Must be aligned to 0x1000 bytes to prevent flicker
+var fb1 align(0x1000) = std.mem.zeroes([600 * 600] u32);
 
 // Framebuffer 2: (Second Overlay UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per ARGB 8888 pixel)
-var fb2 = std.mem.zeroes([720 * 1440] u32);
+// Must be aligned to 0x1000 bytes to prevent flicker
+var fb2 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Panic Handler
