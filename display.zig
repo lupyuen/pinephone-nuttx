@@ -394,13 +394,13 @@ pub export fn nuttx_mipi_dsi_dcs_write(
 
         // Write the 32-bit value
         assert(addr <= DSI_BASE_ADDRESS + 0x3FC);
-        modifyreg32(addr, 0xFFFF_FFFF, v);
+        modifyreg32(addr, 0xFFFF_FFFF, v);  // TODO: DMB
         addr += 4;
     }
 
     // Set Packet Length - 1 in Bits 0 to 7 (TX_Size) of
     // DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200
-    modifyreg32(DSI_CMD_CTL_REG, 0xFF, @intCast(u32, pkt.len) - 1);
+    modifyreg32(DSI_CMD_CTL_REG, 0xFF, @intCast(u32, pkt.len) - 1);  // TODO: DMB
 
     // Set DSI_INST_JUMP_SEL_REG (Offset 0x48, undocumented) 
     // to begin the Low Power Transmission (LPTX)
@@ -451,13 +451,13 @@ fn waitForTransmit() isize {
 /// Disable DSI Processing. See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
 fn disableDsiProcessing() void {
     // Set Instru_En to 0
-    modifyreg32(DSI_BASIC_CTL0_REG, Instru_En, 0);
+    modifyreg32(DSI_BASIC_CTL0_REG, Instru_En, 0);  // TODO: DMB
 }
 
 /// Enable DSI Processing. See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
 fn enableDsiProcessing() void {
     // Set Instru_En to 1
-    modifyreg32(DSI_BASIC_CTL0_REG, Instru_En, Instru_En);
+    modifyreg32(DSI_BASIC_CTL0_REG, Instru_En, Instru_En);  // TODO: DMB
 }
 
 /// Atomically modify the specified bits in a memory mapped register.

@@ -5435,11 +5435,11 @@ Channel 3: Disable Scaler
   Mixer: 0x1160000 = 0x0
 
 Set BLD Route and BLD FColor Control
-  BLD Route: 0x1101080 = 0x321
-  BLD FColor Control: 0x1101000 = 0x701
+  BLD Route: 0x1101080 = 0x321 (DMB)
+  BLD FColor Control: 0x1101000 = 0x701 (DMB)
 
 Apply Settings
-  GLB DBuff: 0x1100008 = 0x1
+  GLB DBuff: 0x1100008 = 0x1 (DMB)
 ```
 
 If we enable Channel 1 and disable Channels 2 and 3...

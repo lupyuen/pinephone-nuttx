@@ -205,19 +205,19 @@ fn applySettings() void {
     // -   BLD Route (BLD_CH_RTCTL @ BLD Offset 0x080): _BLD routing control register_
     //     Set to 0x321 (Why?)
     const BLD_CH_RTCTL = BLD_BASE_ADDRESS + 0x080;
-    putreg32(0x321, BLD_CH_RTCTL);
+    putreg32(0x321, BLD_CH_RTCTL);  // TODO: DMB
 
     // -   BLD FColor Control (BLD_FILLCOLOR_CTL @ BLD Offset 0x000): _BLD fill color control register_
     //     Set to 0x701 (Why?)
     const BLD_FILLCOLOR_CTL = BLD_BASE_ADDRESS + 0x000;
-    putreg32(0x701, BLD_FILLCOLOR_CTL);
+    putreg32(0x701, BLD_FILLCOLOR_CTL);  // TODO: DMB
 
     // Apply Settings
     // -   GLB DBuff (GLB_DBUFFER @ GLB Offset 0x008): _Global double buffer control register_
     //     Set to 1 (Why?)
     debug("Apply Settings", .{});
     const GLB_DBUFFER = GLB_BASE_ADDRESS + 0x008;
-    putreg32(1, GLB_DBUFFER);
+    putreg32(1, GLB_DBUFFER);  // TODO: DMB
 }
 
 /// Initialise a UI Channel for PinePhone's A64 Display Engine.
