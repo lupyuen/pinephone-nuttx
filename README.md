@@ -3990,16 +3990,10 @@ PinePhone Logs captured from various tests...
 
 ## Testing Zig Display Engine Driver on PinePhone
 
+See ["p-boot Display Code"](https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70)
+
 ```text
-ialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-up_timer_initialize: _vector_table=0x400d7000
-up_timer_initialize: Before writing: vbar_el1=0x40257000
-up_timer_initialize: After writing: vbar_el1=0x400d7000
-uart_register: Registering /dev/console
-uart_register: Registering /dev/ttyS0
-work_start_highpri: Starting high-priority kernel worker thread(s)
-nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400d7000 _einit: 0x400d7000 _stext: 0x40080000 _etext: 0x400d8000
+x400d7000 _stext: 0x40080000 _etext: 0x400d8000
 nsh: sysinit: fopen failed: 2
 nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
 e
@@ -4009,14 +4003,14 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009d2d4 file_actions=0x40a50580 attr=0x40a50588 argv=0x40a506d0
+task_spawn: name=hello entry=0x4009d368 file_actions=0x40a50580 attr=0x40a50588 argv=0x40a506d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
 ph_data_reg=0x400
 pd_cfg2_reg=0x77711177
 pd_data_reg=0x1c0000
-tcon0_init
+tcon0_init: start
 PLL_VIDEO0
   0x1c20010 = 0x81006207 (DMB)
 PLL_MIPI
@@ -4052,6 +4046,7 @@ Enable the output on the pins
   0x1c0c08c = 0xe0000000 (DMB)
 enable tcon as a whole
   setbits 0x1c0c000, 0x80000000 (DMB)
+tcon0_init: end
 dsi_init: start
 display_board_init: start
 assert reset: GPD(23), 0  // PD23 - LCD-RST (active low)
@@ -4125,6 +4120,25 @@ display_malloc: size=2330
 .{ 0x00ec, 0xffff0000 },  // DMB
 };
 dphy_enable: start
+150MHz (600 / 4)
+  0x1c20168 = 0x8203 (DMB)
+  0x1ca1004 = 0x10000000 (DMB)
+  0x1ca1010 = 0xa06000e (DMB)
+  0x1ca1014 = 0xa033207 (DMB)
+  0x1ca1018 = 0x1e (DMB)
+  0x1ca101c = 0x0 (DMB)
+  0x1ca1020 = 0x303 (DMB)
+  0x1ca1000 = 0x31 (DMB)
+  0x1ca104c = 0x9f007f00 (DMB)
+  0x1ca1050 = 0x17000000 (DMB)
+  0x1ca105c = 0x1f01555 (DMB)
+  0x1ca1054 = 0x2 (DMB)
+  udelay 5
+  0x1ca1058 = 0x3040000 (DMB)
+  udelay 1
+  udelay 1
+  udelay 1
+  udelay 1
 dphy_enable: end
 sunxi_gpio_set_cfgpin: pin=0x77, val=1
 sunxi_gpio_set_cfgbank: bank_offset=119, val=1
