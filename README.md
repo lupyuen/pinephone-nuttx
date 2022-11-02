@@ -3982,6 +3982,8 @@ __DE Rotation:__ (Page 137)
 
 TODO
 
+See ["p-boot Display Code"](https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70)
+
 # Test Logs
 
 PinePhone Logs captured from various tests...
