@@ -3993,7 +3993,63 @@ PinePhone Logs captured from various tests...
 See ["p-boot Display Code"](https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70)
 
 ```text
-x400d7000 _stext: 0x40080000 _etext: 0x400d8000
+DRAM: 2048 MiB
+Trying to boot from MMC1
+NOTICE:  BL31: v2.2(release):v2.2-904-gf9ea3a629
+NOTICE:  BL31: Built : 15:32:12, Apr  9 2020
+NOTICE:  BL31: Detected Allwinner A64/H64/R18 SoC (1689)
+NOTICE:  BL31: Found U-Boot DTB at 0x4064410, model: PinePhone
+NOTICE:  PSCI: System suspend is unavailable
+
+
+U-Boot 2020.07 (Nov 08 2020 - 00:15:12 +0100)
+
+DRAM:  2 GiB
+MMC:   Device 'mmc@1c11000': seq 1 is in use by 'mmc@1c10000'
+mmc@1c0f000: 0, mmc@1c10000: 2, mmc@1c11000: 1
+Loading Environment from FAT... *** Warning - bad CRC, using default environment
+
+starting USB...
+No working controllers found
+Hit any key to stop autoboot:  0 
+switch to partitions #0, OK
+mmc0 is current device
+Scanning mmc 0:1...
+Found U-Boot script /boot.scr
+653 bytes read in 3 ms (211.9 KiB/s)
+## Executing script at 4fc00000
+gpio: pin 114 (gpio 114) value is 1
+220067 bytes read in 13 ms (16.1 MiB/s)
+Uncompressed size: 10268672 = 0x9CB000
+36162 bytes read in 4 ms (8.6 MiB/s)
+1078500 bytes read in 50 ms (20.6 MiB/s)
+## Flattened Device Tree blob at 4fa00000
+   Booting using the fdt blob at 0x4fa00000
+   Loading Ramdisk to 49ef8000, end 49fff4e4 ... OK
+   Loading Device Tree to 0000000049eec000, end 0000000049ef7d41 ... OK
+
+Starting kernel ...
+
+HELLO NUTTX ON PINEPHONE!
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+nx_start: Entry
+up_allocate_heap: heap_start=0x0x40a4b000, heap_size=0x75b5000
+arm64_gic_initialize: TODO: Init GIC for PinePhone
+arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
+arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
+arm64_gic_initialize: GIC Version is 2
+up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+up_timer_initialize: _vector_table=0x400d7000
+up_timer_initialize: Before writing: vbar_el1=0x40257000
+up_timer_initialize: After writing: vbar_el1=0x400d7000
+uart_register: Registering /dev/console
+uart_register: Registering /dev/ttyS0
+work_start_highpri: Starting high-priority kernel worker thread(s)
+nx_start_application: Starting init thread
+lib_cxx_initialize: _sinit: 0x400d7000 _einit: 0x400d7000 _stext: 0x40080000 _etext: 0x400d8000
 nsh: sysinit: fopen failed: 2
 nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
 e
@@ -4003,7 +4059,7 @@ oNoupt
 t
 Shell (NSH) NuttX-11.0.0-RC2
 nsh> hello
-task_spawn: name=hello entry=0x4009d368 file_actions=0x40a50580 attr=0x40a50588 argv=0x40a506d0
+task_spawn: name=hello entry=0x4009d3bc file_actions=0x40a50580 attr=0x40a50588 argv=0x40a506d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 ph_cfg1_reg=0x7177
@@ -4136,9 +4192,14 @@ dphy_enable: start
   udelay 5
   0x1ca1058 = 0x3040000 (DMB)
   udelay 1
+  update_bits 0x1ca1058, 0xf8000000, 0xf8000000 (DMB)
   udelay 1
+  update_bits 0x1ca1058, 0x4000000, 0x4000000 (DMB)
   udelay 1
+  update_bits 0x1ca1054, 0x10, 0x10 (DMB)
   udelay 1
+  update_bits 0x1ca1050, 0x80000000, 0x80000000 (DMB)
+  update_bits 0x1ca1054, 0xf000000, 0xf000000 (DMB)
 dphy_enable: end
 sunxi_gpio_set_cfgpin: pin=0x77, val=1
 sunxi_gpio_set_cfgbank: bank_offset=119, val=1
