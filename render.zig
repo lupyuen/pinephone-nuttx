@@ -436,19 +436,6 @@ fn initUiChannel(
     putreg32(0, MIXER);
 }
 
-/// Set the 32-bit value at the address
-fn putreg32(val: u32, addr: u64) void {
-    debug("  *0x{x} = 0x{x}", .{ addr, val });
-    const ptr = @intToPtr(*volatile u32, addr);
-    ptr.* = val;
-}
-
-/// Export MIPI DSI Functions to C. (Why is this needed?)
-pub export fn export_dsi_functions() void {
-    // Export Panel Init Function
-    dsi.nuttx_panel_init();
-}
-
 /// NuttX Video Controller for PinePhone (3 UI Channels)
 const videoInfo = c.fb_videoinfo_s {
     .fmt       = c.FB_FMT_RGBA32,  // Pixel format (XRGB 8888)
@@ -529,43 +516,143 @@ var fb2 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
 pub export fn de2_init() void {
     // Set SRAM for video use
     //   0x1c00004 = 0x0 (DMB)
+    debug("Set SRAM for video use", .{});
+    const _1c00004 = 0x1c00004;
+    putreg32(0x0, _1c00004);  // TODO: DMB
 
     // Setup DE2 PLL
     // clock_set_pll_de: clk=297000000
     // PLL10 rate = 24000000 * n / m
     //   0x1c20048 = 0x81001701 (DMB)
+    debug("Setup DE2 PLL", .{});
+    const _1c20048 = 0x1c20048;
+    putreg32(0x81001701, _1c20048);  // TODO: DMB
+
     //   while (!(readl(0x1c20048) & 0x10000000))
+    // TODO
 
     // Enable DE2 special clock
     //   clrsetbits 0x1c20104, 0x3000000, 0x81000000
+    // TODO
+    debug("Enable DE2 special clock", .{});
 
     // Enable DE2 ahb
     //   setbits 0x1c202c4, 0x1000
+    // TODO
+    debug("Enable DE2 ahb", .{});
     //   setbits 0x1c20064, 0x1000
+    // TODO
 
     // Enable clock for mixer 0, set route MIXER0->TCON0
     //   setbits 0x1000000, 0x1
+    debug("Enable clock for mixer 0, set route MIXER0->TCON0", .{});
+    // TODO
     //   setbits 0x1000008, 0x1
+    // TODO
     //   setbits 0x1000004, 0x1
+    // TODO
     //   clrbits 0x1000010, 0x1
+    // TODO
 
     // Clear all registers
     //   0x1100000 to 0x1105fff = 0x0
+    debug("Clear all registers 0x1100000 to 0x1105fff", .{});
+    const _1100000 = 0x1100000;
+    var i: usize = 0;
+    while (i < 0x6000) : (i += 1) {
+        putreg32(0x0, _1100000 + i);
+        enableLog = false;
+    }
+    enableLog = true;
+
     //   0x1120000 = 0x0
+    const _1120000 = 0x1120000;
+    putreg32(0x0, _1120000);
+
     //   0x1130000 = 0x0
+    const _1130000 = 0x1130000;
+    putreg32(0x0, _1130000);
+
     //   0x1140000 = 0x0
+    const _1140000 = 0x1140000;
+    putreg32(0x0, _1140000);
+
     //   0x1150000 = 0x0
+    const _1150000 = 0x1150000;
+    putreg32(0x0, _1150000);
+
     //   0x11a0000 = 0x0
+    const _11a0000 = 0x11a0000;
+    putreg32(0x0, _11a0000);
+
     //   0x11a2000 = 0x0
+    const _11a2000 = 0x11a2000;
+    putreg32(0x0, _11a2000);
+
     //   0x11a4000 = 0x0
+    const _11a4000 = 0x11a4000;
+    putreg32(0x0, _11a4000);
+
     //   0x11a6000 = 0x0
+    const _11a6000 = 0x11a6000;
+    putreg32(0x0, _11a6000);
+
     //   0x11a8000 = 0x0
+    const _11a8000 = 0x11a8000;
+    putreg32(0x0, _11a8000);
+
     //   0x11aa000 = 0x0
+    const _11aa000 = 0x11aa000;
+    putreg32(0x0, _11aa000);
+
     //   0x11b0000 = 0x0
+    const _11b0000 = 0x11b0000;
+    putreg32(0x0, _11b0000);
 
     // Enable mixer
     //   0x1100000 = 0x1 (DMB)    
+    debug("Enable mixer", .{});
+    const MIXER = 0x1100000;
+    putreg32(0x1, MIXER);  // TODO: DMB
 }
+
+/// Export MIPI DSI Functions to C. (Why is this needed?)
+pub export fn export_dsi_functions() void {
+    // Export Panel Init Function
+    dsi.nuttx_panel_init();
+}
+
+/// Atomically modify the specified bits in a memory mapped register.
+/// Based on https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/common/arm_modifyreg32.c#L38-L57
+fn modifyreg32(
+    addr: u64,       // Address to modify
+    clearbits: u32,  // Bits to clear, like (1 << bit)
+    setbits: u32     // Bit to set, like (1 << bit)
+) void {
+    debug("modifyreg32: addr=0x{x:0>3}, val=0x{x:0>8}", .{ addr, setbits & clearbits });
+    // TODO: flags = spin_lock_irqsave(NULL);
+    var regval = getreg32(addr);
+    regval &= ~clearbits;
+    regval |= setbits;
+    putreg32(regval, addr);
+    // TODO: spin_unlock_irqrestore(NULL, flags);
+}
+
+/// Get the 32-bit value at the address
+fn getreg32(addr: u64) u32 {
+    const ptr = @intToPtr(*const volatile u32, addr);
+    return ptr.*;
+}
+
+/// Set the 32-bit value at the address
+fn putreg32(val: u32, addr: u64) void {
+    if (enableLog) { debug("  *0x{x} = 0x{x}", .{ addr, val }); }
+    const ptr = @intToPtr(*volatile u32, addr);
+    ptr.* = val;
+}
+
+/// Set to False to disable log 
+var enableLog = true;
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Panic Handler
