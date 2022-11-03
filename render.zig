@@ -529,12 +529,14 @@ pub export fn de2_init() void {
     putreg32(0x81001701, _1c20048);  // TODO: DMB
 
     //   while (!(readl(0x1c20048) & 0x10000000))
-    // TODO
+    while (getreg32(_1c20048) & 0x10000000 == 0) {}
 
     // Enable DE2 special clock
     //   clrsetbits 0x1c20104, 0x3000000, 0x81000000
     // TODO
     debug("Enable DE2 special clock", .{});
+    const _1c20104 = 0x1c20104;
+    modifyreg32(_1c20104, 0x3000000, 0x81000000);
 
     // Enable DE2 ahb
     //   setbits 0x1c202c4, 0x1000
