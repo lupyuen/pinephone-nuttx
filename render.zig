@@ -550,13 +550,20 @@ pub export fn de2_init() void {
     // Enable clock for mixer 0, set route MIXER0->TCON0
     //   setbits 0x1000000, 0x1
     debug("Enable clock for mixer 0, set route MIXER0->TCON0", .{});
-    // TODO
+    const _1000000 = 0x1000000;
+    modifyreg32(_1000000, 0, 0x1);
+
     //   setbits 0x1000008, 0x1
-    // TODO
+    const _1000008 = 0x1000008;
+    modifyreg32(_1000008, 0, 0x1);
+
     //   setbits 0x1000004, 0x1
-    // TODO
+    const _1000004 = 0x1000004;
+    modifyreg32(_1000004, 0, 0x1);
+
     //   clrbits 0x1000010, 0x1
-    // TODO
+    const _1000010 = 0x1000010;
+    modifyreg32(_1000010, 0x1, 0);
 
     // Clear all registers
     //   0x1100000 to 0x1105fff = 0x0
