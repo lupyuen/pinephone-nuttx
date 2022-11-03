@@ -51,7 +51,7 @@ const c = @cImport({
 });
 
 /// Number of UI Channels to test: 1 or 3
-const NUM_CHANNELS = 1;
+const NUM_CHANNELS = 3;
 
 /// Render a Test Pattern on PinePhone's Display.
 /// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
@@ -165,11 +165,9 @@ pub export fn test_render() void {
 
     // TODO
     applySettings(NUM_CHANNELS);
-
-    // TODO: Why the flickering with 3 UI Channels? C version doesn't flicker, but lines are missing
 }
 
-/// Render a Test Pattern on PinePhone's Display.
+/// Render a Test Pattern on PinePhone's Display. Framebuffer passed from C.
 /// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 pub export fn test_render2(p0: [*c]u8) void {
@@ -233,8 +231,6 @@ pub export fn test_render2(p0: [*c]u8) void {
 
     // TODO
     applySettings(NUM_CHANNELS);
-
-    // TODO: Why the flickering with 3 UI Channels? C version doesn't flicker, but lines are missing
 }
 
 /// Hardware Registers for PinePhone's A64 Display Engine.
@@ -512,17 +508,17 @@ const overlayInfo = [2] c.fb_overlayinfo_s {
 
 // Framebuffer 0: (Base UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
-// TODO: Alignment
+// TODO: Does alignment prevent flickering?
 var fb0 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
 
 // Framebuffer 1: (First Overlay UI Channel)
 // Square 600 x 600 (4 bytes per ARGB 8888 pixel)
-// TODO: Alignment
+// TODO: Does alignment prevent flickering?
 var fb1 align(0x1000) = std.mem.zeroes([600 * 600] u32);
 
 // Framebuffer 2: (Second Overlay UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per ARGB 8888 pixel)
-// TODO: Alignment
+// TODO: Does alignment prevent flickering?
 var fb2 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
 
 ///////////////////////////////////////////////////////////////////////////////
