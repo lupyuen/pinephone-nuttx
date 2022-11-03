@@ -444,17 +444,17 @@ const overlayInfo = [2] c.fb_overlayinfo_s {
 
 // Framebuffer 0: (Base UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
-// Must be aligned to 0x1000 bytes to prevent flicker
+// TODO: Alignment
 var fb0 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
 
 // Framebuffer 1: (First Overlay UI Channel)
 // Square 600 x 600 (4 bytes per ARGB 8888 pixel)
-// Must be aligned to 0x1000 bytes to prevent flicker
+// TODO: Alignment
 var fb1 align(0x1000) = std.mem.zeroes([600 * 600] u32);
 
 // Framebuffer 2: (Second Overlay UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per ARGB 8888 pixel)
-// Must be aligned to 0x1000 bytes to prevent flicker
+// TODO: Alignment
 var fb2 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
 
 ///////////////////////////////////////////////////////////////////////////////
