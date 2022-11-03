@@ -533,17 +533,19 @@ pub export fn de2_init() void {
 
     // Enable DE2 special clock
     //   clrsetbits 0x1c20104, 0x3000000, 0x81000000
-    // TODO
     debug("Enable DE2 special clock", .{});
     const _1c20104 = 0x1c20104;
     modifyreg32(_1c20104, 0x3000000, 0x81000000);
 
     // Enable DE2 ahb
     //   setbits 0x1c202c4, 0x1000
-    // TODO
     debug("Enable DE2 ahb", .{});
+    const _1c202c4 = 0x1c202c4;
+    modifyreg32(_1c202c4, 0, 0x1000);
+
     //   setbits 0x1c20064, 0x1000
-    // TODO
+    const _1c20064 = 0x1c20064;
+    modifyreg32(_1c20064, 0, 0x1000);
 
     // Enable clock for mixer 0, set route MIXER0->TCON0
     //   setbits 0x1000000, 0x1
