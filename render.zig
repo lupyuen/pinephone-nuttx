@@ -522,6 +522,52 @@ var fb1 align(0x1000) = std.mem.zeroes([600 * 600] u32);
 var fb2 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
 
 ///////////////////////////////////////////////////////////////////////////////
+//  Display Engine
+
+// Init PinePhone's Allwinner A64 Display Engine.
+// Based on the log: https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#de2_init
+pub export fn de2_init() void {
+    // Set SRAM for video use
+    //   0x1c00004 = 0x0 (DMB)
+
+    // Setup DE2 PLL
+    // clock_set_pll_de: clk=297000000
+    // PLL10 rate = 24000000 * n / m
+    //   0x1c20048 = 0x81001701 (DMB)
+    //   while (!(readl(0x1c20048) & 0x10000000))
+
+    // Enable DE2 special clock
+    //   clrsetbits 0x1c20104, 0x3000000, 0x81000000
+
+    // Enable DE2 ahb
+    //   setbits 0x1c202c4, 0x1000
+    //   setbits 0x1c20064, 0x1000
+
+    // Enable clock for mixer 0, set route MIXER0->TCON0
+    //   setbits 0x1000000, 0x1
+    //   setbits 0x1000008, 0x1
+    //   setbits 0x1000004, 0x1
+    //   clrbits 0x1000010, 0x1
+
+    // Clear all registers
+    //   0x1100000 to 0x1105fff = 0x0
+    //   0x1120000 = 0x0
+    //   0x1130000 = 0x0
+    //   0x1140000 = 0x0
+    //   0x1150000 = 0x0
+    //   0x11a0000 = 0x0
+    //   0x11a2000 = 0x0
+    //   0x11a4000 = 0x0
+    //   0x11a6000 = 0x0
+    //   0x11a8000 = 0x0
+    //   0x11aa000 = 0x0
+    //   0x11b0000 = 0x0
+
+    // Enable mixer
+    //   0x1100000 = 0x1 (DMB)    
+}
+
+///////////////////////////////////////////////////////////////////////////////
 //  Panic Handler
 
 /// Called by Zig when it hits a Panic. We print the Panic Message, Stack Trace and halt. See 
