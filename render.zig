@@ -169,6 +169,74 @@ pub export fn test_render() void {
     // TODO: Why the flickering with 3 UI Channels? C version doesn't flicker, but lines are missing
 }
 
+/// Render a Test Pattern on PinePhone's Display.
+/// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
+/// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
+pub export fn test_render2(p0: [*c]u8) void {
+    debug("test_render2", .{});
+
+    // Validate the Framebuffer Sizes at Compile Time
+    comptime {
+        assert(NUM_CHANNELS == 1 or NUM_CHANNELS == 3);
+        assert(planeInfo.xres_virtual == videoInfo.xres);
+        assert(planeInfo.yres_virtual == videoInfo.yres);
+        assert(planeInfo.fblen  == planeInfo.xres_virtual * planeInfo.yres_virtual * 4);
+        assert(planeInfo.stride == planeInfo.xres_virtual * 4);
+        assert(overlayInfo[0].fblen  == @intCast(usize, overlayInfo[0].sarea.w) * overlayInfo[0].sarea.h * 4);
+        assert(overlayInfo[0].stride == overlayInfo[0].sarea.w * 4);
+        assert(overlayInfo[1].fblen  == @intCast(usize, overlayInfo[1].sarea.w) * overlayInfo[1].sarea.h * 4);
+        assert(overlayInfo[1].stride == overlayInfo[1].sarea.w * 4);
+    }
+
+    // TODO: Handle non-relaxed write
+
+    // TODO: Init PinePhone's Allwinner A64 Timing Controller TCON0 (tcon0_init)
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#tcon0_init
+
+    // TODO: Init PinePhone's Allwinner A64 MIPI Display Serial Interface (dsi_init)
+    // Call https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
+
+    // TODO: Init PinePhone's Allwinner A64 Display Engine (de2_init)
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#de2_init
+
+    // TODO: Turn on PinePhone's Backlight (backlight_enable)
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#backlight_enable
+
+    // Init the UI Blender for PinePhone's A64 Display Engine
+    initUiBlender();
+
+    // Init the Base UI Channel
+    initUiChannel(
+        1,  // UI Channel Number (1 for Base UI Channel)
+        p0,    // Start of frame buffer memory
+        planeInfo.fblen,    // Length of frame buffer memory in bytes
+        planeInfo.stride,   // Length of a line in bytes (4 bytes per pixel)
+        planeInfo.xres_virtual,  // Horizontal resolution in pixel columns
+        planeInfo.yres_virtual,  // Vertical resolution in pixel rows
+        planeInfo.xoffset,  // Horizontal offset in pixel columns
+        planeInfo.yoffset,  // Vertical offset in pixel rows
+    );
+
+    // Init the 2 Overlay UI Channels
+    for (overlayInfo) | ov, ov_index | {
+        initUiChannel(
+            @intCast(u8, ov_index + 2),  // UI Channel Number (2 and 3 for Overlay UI Channels)
+            if (NUM_CHANNELS == 3) ov.fbmem else null,  // Start of frame buffer memory
+            ov.fblen,    // Length of frame buffer memory in bytes
+            ov.stride,   // Length of a line in bytes (4 bytes per pixel)
+            ov.sarea.w,  // Horizontal resolution in pixel columns
+            ov.sarea.h,  // Vertical resolution in pixel rows
+            ov.sarea.x,  // Horizontal offset in pixel columns
+            ov.sarea.y,  // Vertical offset in pixel rows
+        );
+    }
+
+    // TODO
+    applySettings(NUM_CHANNELS);
+
+    // TODO: Why the flickering with 3 UI Channels? C version doesn't flicker, but lines are missing
+}
+
 /// Hardware Registers for PinePhone's A64 Display Engine.
 /// See https://lupyuen.github.io/articles/de#appendix-overview-of-allwinner-a64-display-engine
 /// Display Engine Base Address is 0x0100 0000
