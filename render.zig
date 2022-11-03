@@ -57,7 +57,8 @@ const NUM_CHANNELS = 3;
 /// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 pub export fn test_render() void {
-    debug("test_render", .{});
+    debug("test_render: start", .{});
+    defer { debug("test_render: end", .{}); }
 
     // Validate the Framebuffer Sizes at Compile Time
     comptime {
@@ -171,7 +172,8 @@ pub export fn test_render() void {
 /// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 pub export fn test_render2(p0: [*c]u8) void {
-    debug("test_render2", .{});
+    debug("test_render2: start", .{});
+    defer { debug("test_render2: end", .{}); }
 
     // Validate the Framebuffer Sizes at Compile Time
     comptime {
@@ -255,10 +257,12 @@ const OVL_UI_CH1_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x3000;
 /// Initialise the UI Blender for PinePhone's A64 Display Engine.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 fn initUiBlender() void {
-    debug("initUiBlender\nConfigure Blender", .{});
+    debug("initUiBlender: start", .{});
+    defer { debug("initUiBlender: end", .{}); }
 
     // BLD_BK_COLOR @ BLD Offset 0x88: BLD background color register
     // Set to 0xff00 0000 (Why?)
+    debug("Configure Blender", .{});
     const BLD_BK_COLOR = BLD_BASE_ADDRESS + 0x88;
     putreg32(0xff00_0000, BLD_BK_COLOR);
 
@@ -272,13 +276,15 @@ fn initUiBlender() void {
 fn applySettings(
     channels: u8  // Number of enabled UI Channels
 ) void {
-    debug("applySettings\nSet BLD Route and BLD FColor Control", .{});
+    debug("applySettings: start", .{});
+    defer { debug("applySettings: end", .{}); }
     assert(channels == 1 or channels == 3);
 
     // Set BLD Route and BLD FColor Control
     // -   BLD Route (BLD_CH_RTCTL @ BLD Offset 0x080): _BLD routing control register_
     //     For 3 UI Channels: Set to 0x321 (Why?)
     //     For 1 UI Channel: Set to 1 (Why?)
+    debug("Set BLD Route and BLD FColor Control", .{});
     const BLD_CH_RTCTL = BLD_BASE_ADDRESS + 0x080;
     if (channels == 3) { putreg32(0x321, BLD_CH_RTCTL); }  // TODO: DMB
     else if (channels == 1) { putreg32(0x1, BLD_CH_RTCTL); }  // TODO: DMB
@@ -313,7 +319,9 @@ fn initUiChannel(
     xoffset: c.fb_coord_t,  // Horizontal offset in pixel columns
     yoffset: c.fb_coord_t,  // Vertical offset in pixel rows
 ) void {
-    debug("initUiChannel", .{});
+    debug("initUiChannel: start", .{});
+    defer { debug("initUiChannel: end", .{}); }
+
     assert(channel >= 1 and channel <= 3);
     assert(fblen == @intCast(usize, xres) * yres * 4);
     assert(stride == @intCast(usize, xres) * 4);
@@ -514,6 +522,10 @@ var fb2 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
 // Init PinePhone's Allwinner A64 Display Engine.
 // Based on the log: https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#de2_init
 pub export fn de2_init() void {
+    debug("de2_init: start", .{});
+    defer { debug("de2_init: end", .{}); }
+
+    // TODO: Document the Display Engine Registers
     // Set SRAM for video use
     //   0x1c00004 = 0x0 (DMB)
     debug("Set SRAM for video use", .{});
@@ -570,7 +582,7 @@ pub export fn de2_init() void {
     debug("Clear all registers 0x1100000 to 0x1105fff", .{});
     const _1100000 = 0x1100000;
     var i: usize = 0;
-    while (i < 0x6000) : (i += 1) {
+    while (i < 0x6000) : (i += 4) {
         putreg32(0x0, _1100000 + i);
         enableLog = false;
     }
