@@ -520,12 +520,12 @@ var fb2 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
 //  Display Engine
 
 // Init PinePhone's Allwinner A64 Display Engine.
-// Based on the log: https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#de2_init
+// See https://lupyuen.github.io/articles/de#appendix-initialising-the-allwinner-a64-display-engine
 pub export fn de2_init() void {
     debug("de2_init: start", .{});
     defer { debug("de2_init: end", .{}); }
 
-    // TODO: Document the Display Engine Registers
+    // TODO: Document the Display Engine Registers: https://lupyuen.github.io/articles/de#appendix-initialising-the-allwinner-a64-display-engine
     // Set SRAM for video use
     //   0x1c00004 = 0x0 (DMB)
     debug("Set SRAM for video use", .{});
