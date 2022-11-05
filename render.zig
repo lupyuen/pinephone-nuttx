@@ -826,7 +826,7 @@ fn modifyreg32(
     clearbits: u32,  // Bits to clear, like (1 << bit)
     setbits: u32     // Bit to set, like (1 << bit)
 ) void {
-    debug("modifyreg32: addr=0x{x:0>3}, val=0x{x:0>8}", .{ addr, setbits & clearbits });
+    debug("  0x{x}: clear 0x{x}, set 0x{x}", .{ addr, clearbits, setbits });
     // TODO: flags = spin_lock_irqsave(NULL);
     var regval = getreg32(addr);
     regval &= ~clearbits;
