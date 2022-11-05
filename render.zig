@@ -734,60 +734,82 @@ pub export fn de2_init() void {
     comptime{ assert(UIS_CTRL_REG2 == 0x115_0000); }
     putreg32(0, UIS_CTRL_REG2);
 
-    // Disable MIXER0 aaaa
-    // Set to 0: 
-    debug("Disable MIXER0 aaaa", .{});
-    const _11a0000 = 0x11a0000;
-    comptime{ assert(_11a0000 == 0x11a0000); }
-    putreg32(0, _11a0000);
+    // TODO: Missing UI_SCALER3(CH3) at MIXER0 Offset 0x06 0000 (DE Page 90, 0x116 0000)
+    // Is there a mixup with 0x113 0000 above?
 
-    // Disable MIXER0 aaaa
-    // Set to 0: 
-    debug("Disable MIXER0 aaaa", .{});
-    const _11a2000 = 0x11a2000;
-    comptime{ assert(_11a2000 == 0x11a2000); }
-    putreg32(0, _11a2000);
+    // Disable MIXER0 FCE
+    // Set to 0: GCTRL_REG(FCE) at FCE Offset 0
+    // EN (Bit 0) = 0 (Disable FCE)
+    // (DE Page 62, 0x11A 0000)
+    debug("Disable MIXER0 FCE", .{});
+    const GCTRL_REG_FCE = FCE_BASE_ADDRESS + 0;
+    comptime{ assert(GCTRL_REG_FCE == 0x11A_0000); }
+    putreg32(0, GCTRL_REG_FCE);
 
-    // Disable MIXER0 aaaa
-    // Set to 0: 
-    debug("Disable MIXER0 aaaa", .{});
-    const _11a4000 = 0x11a4000;
-    comptime{ assert(_11a4000 == 0x11a4000); }
-    putreg32(0, _11a4000);
+    // Disable MIXER0 BWS
+    // Set to 0: GCTRL_REG(BWS) at BWS Offset 0
+    // EN (Bit 0) = 0 (Disable BWS)
+    // (DE Page 42, 0x11A 2000)
+    debug("Disable MIXER0 BWS", .{});
+    const GCTRL_REG_BWS = BWS_BASE_ADDRESS + 0;
+    comptime{ assert(GCTRL_REG_BWS == 0x11A_2000); }
+    putreg32(0, GCTRL_REG_BWS);
 
-    // Disable MIXER0 aaaa
-    // Set to 0: 
-    debug("Disable MIXER0 aaaa", .{});
-    const _11a6000 = 0x11a6000;
-    comptime{ assert(_11a6000 == 0x11a6000); }
-    putreg32(0, _11a6000);
+    // Disable MIXER0 LTI
+    // Set to 0: LTI_CTL at LTI Offset 0
+    // LTI_EN (Bit 0) = 0 (Close LTI)
+    // (DE Page 72, 0x11A 4000)
+    debug("Disable MIXER0 LTI", .{});
+    const LTI_CTL = LTI_BASE_ADDRESS + 0;
+    comptime{ assert(LTI_CTL == 0x11A_4000); }
+    putreg32(0, LTI_CTL);
 
-    // Disable MIXER0 aaaa
-    // Set to 0: 
-    debug("Disable MIXER0 aaaa", .{});
-    const _11a8000 = 0x11a8000;
-    comptime{ assert(_11a8000 == 0x11a8000); }
-    putreg32(0, _11a8000);
+    // Disable MIXER0 PEAKING
+    // Set to 0: LP_CTRL_REG at PEAKING Offset 0
+    // EN (Bit 0) = 0 (Disable PEAKING)
+    // (DE Page 80, 0x11A 6000)
+    debug("Disable MIXER0 PEAKING", .{});
+    const LP_CTRL_REG = PEAKING_BASE_ADDRESS + 0;
+    comptime{ assert(LP_CTRL_REG == 0x11A_6000); }
+    putreg32(0, LP_CTRL_REG);
 
-    // Disable MIXER0 aaaa
-    // Set to 0: 
-    debug("Disable MIXER0 aaaa", .{});
-    const _11aa000 = 0x11aa000;
-    comptime{ assert(_11aa000 == 0x11aa000); }
-    putreg32(0, _11aa000);
+    // Disable MIXER0 ASE
+    // Set to 0: ASE_CTL_REG at ASE Offset 0
+    // ASE_EN (Bit 0) = 0 (Disable ASE)
+    // (DE Page 40, 0x11A 8000)
+    debug("Disable MIXER0 ASE", .{});
+    const ASE_CTL_REG = ASE_BASE_ADDRESS + 0;
+    comptime{ assert(ASE_CTL_REG == 0x11A_8000); }
+    putreg32(0, ASE_CTL_REG);
 
-    // Disable MIXER0 aaaa
-    // Set to 0: 
-    debug("Disable MIXER0 aaaa", .{});
-    const _11b0000 = 0x11b0000;
-    comptime{ assert(_11b0000 == 0x11b0000); }
-    putreg32(0, _11b0000);
+    // Disable MIXER0 FCC
+    // Set to 0: FCC_CTL_REG at FCC Offset 0
+    // Enable (Bit 0) = 0 (Disable FCC)
+    // (DE Page 56, 0x11A A000)
+    debug("Disable MIXER0 FCC", .{});
+    const FCC_CTL_REG = FCC_BASE_ADDRESS + 0;
+    comptime{ assert(FCC_CTL_REG == 0x11A_A000); }
+    putreg32(0, FCC_CTL_REG);
 
-    // Enable mixer
-    //   0x1100000 = 0x1 (DMB)    
-    debug("Enable mixer", .{});
-    const MIXER = 0x1100000;
-    putreg32(1, MIXER);  // TODO: DMB
+    // Disable MIXER0 DRC
+    // Set to 0: GNECTL_REG at DRC Offset 0
+    // BIST_EN (Bit 0) = 0 (Disable BIST)
+    // (DE Page 49, 0x11B 0000)
+    debug("Disable MIXER0 DRC", .{});
+    const GNECTL_REG = DRC_BASE_ADDRESS + 0;
+    comptime{ assert(GNECTL_REG == 0x11B_0000); }
+    putreg32(0, GNECTL_REG);
+
+    // Enable MIXER0
+    // Set GLB_CTL to 1 (DMB)
+    // EN (Bit 0) = 1 (Enable Mixer)
+    // (DE Page 92)
+    // GLB_CTL is at MIXER0 Offset 0
+    // (DE Page 90, 0x110 0000)
+    debug("Enable MIXER0", .{});
+    const GLB_CTL = MIXER0_BASE_ADDRESS + 0;
+    comptime{ assert(GLB_CTL == 0x110_0000); }
+    putreg32(1, GLB_CTL);  // TODO: DMB
 }
 
 /// Export MIPI DSI Functions to C. (Why is this needed?)
