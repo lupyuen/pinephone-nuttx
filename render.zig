@@ -551,14 +551,14 @@ pub export fn de2_init() void {
     // PLL_DE_CTRL_REG (PLL Display Engine Control Register) is at CCU Offset 0x0048
     // (A64 Page 96, 0x1C2 0048)
     debug("Set Display Engine PLL to 297 MHz", .{});
-    const PLL_ENABLE    = 1;  // Bit 31: Enable PLL
-    const PLL_MODE_SEL  = 1;  // Bit 24: Integer Mode
-    const PLL_FACTOR_N  = 23; // Bits 8 to 14: N = 24
-    const PLL_PRE_DIV_M = 1;  // Bits 0 to 3:  M = 2
-    const pll = PLL_ENABLE << 31
-        | PLL_MODE_SEL  << 24
-        | PLL_FACTOR_N  << 8
-        | PLL_PRE_DIV_M << 0;
+    const PLL_ENABLE    = 1  << 31;  // Enable PLL
+    const PLL_MODE_SEL  = 1  << 24;  // Integer Mode
+    const PLL_FACTOR_N  = 23 <<  8;  // N = 24
+    const PLL_PRE_DIV_M = 1  <<  0;  // M = 2
+    const pll = PLL_ENABLE
+        | PLL_MODE_SEL
+        | PLL_FACTOR_N
+        | PLL_PRE_DIV_M;
     comptime{ assert(pll == 0x8100_1701); }
     const PLL_DE_CTRL_REG = CCU_BASE_ADDRESS + 0x0048;
     comptime{ assert(PLL_DE_CTRL_REG == 0x1C2_0048); }
@@ -580,10 +580,10 @@ pub export fn de2_init() void {
     debug("Set Special Clock to Display Engine PLL", .{});
     const DE_CLK_REG = CCU_BASE_ADDRESS + 0x0104;
     comptime{ assert(DE_CLK_REG == 0x1C2_0104); }
-    const SCLK_GATING = 1;  // Bit 31: Enable Special Clock
-    const CLK_SRC_SEL = 1;  // Bits 24 to 26: Clock Source is Display Engine PLL
-    const clk = SCLK_GATING << 31
-        | CLK_SRC_SEL << 24;
+    const SCLK_GATING = 1 << 31;  // Enable Special Clock
+    const CLK_SRC_SEL = 1 << 24;  // Clock Source is Display Engine PLL
+    const clk = SCLK_GATING
+        | CLK_SRC_SEL;
     comptime{ assert(clk == 0x8100_0000); }
     modifyreg32(DE_CLK_REG, 0b11 << 24, clk);
 
@@ -593,10 +593,10 @@ pub export fn de2_init() void {
     // BUS_SOFT_RST_REG1 (Bus Software Reset Register 1) is at CCU Offset 0x02C4
     // (A64 Page 140, 0x1C2 02C4)
     debug("Enable AHB for Display Engine: De-Assert Display Engine", .{});
-    const DE_RST = 1;  // Bit 12: De-Assert Display Engine
+    const DE_RST = 1 << 12;  // De-Assert Display Engine
     const BUS_SOFT_RST_REG1 = CCU_BASE_ADDRESS + 0x02C4;
     comptime{ assert(BUS_SOFT_RST_REG1 == 0x1C2_02C4); }
-    modifyreg32(BUS_SOFT_RST_REG1, 0, DE_RST << 12);
+    modifyreg32(BUS_SOFT_RST_REG1, 0, DE_RST);
 
     // Enable AHB (AMBA High-speed Bus) for Display Engine: Pass Display Engine
     // Set BUS_CLK_GATING_REG1 bits 0x1000
@@ -604,10 +604,10 @@ pub export fn de2_init() void {
     // BUS_CLK_GATING_REG1 (Bus Clock Gating Register 1) is at CCU Offset 0x0064
     // (A64 Page 102, 0x1C2 0064)
     debug("Enable AHB for Display Engine: Pass Display Engine", .{});
-    const DE_GATING = 1;  // Bit 12: Pass Display Engine
+    const DE_GATING = 1 << 12;  // Pass Display Engine
     const BUS_CLK_GATING_REG1 = CCU_BASE_ADDRESS + 0x0064;
     comptime{ assert(BUS_CLK_GATING_REG1 == 0x1C2_0064); }
-    modifyreg32(BUS_CLK_GATING_REG1, 0, DE_GATING << 12);
+    modifyreg32(BUS_CLK_GATING_REG1, 0, DE_GATING);
 
     // Enable clock for mixer 0, set route MIXER0->TCON0
     //   setbits 0x1000000, 0x1
