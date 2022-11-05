@@ -807,9 +807,10 @@ pub export fn de2_init() void {
     // GLB_CTL is at MIXER0 Offset 0
     // (DE Page 90, 0x110 0000)
     debug("Enable MIXER0", .{});
+    const EN_MIXER = 1 << 0;  // Enable Mixer
     const GLB_CTL = MIXER0_BASE_ADDRESS + 0;
     comptime{ assert(GLB_CTL == 0x110_0000); }
-    putreg32(1, GLB_CTL);  // TODO: DMB
+    putreg32(EN_MIXER, GLB_CTL);  // TODO: DMB
 }
 
 /// Export MIPI DSI Functions to C. (Why is this needed?)
