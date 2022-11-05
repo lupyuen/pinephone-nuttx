@@ -525,6 +525,9 @@ const SRAM_REGISTERS_BASE_ADDRESS = 0x01C0_0000;
 // CCU (Clock Control Unit) Base Address is 0x01C2 0000 (A64 Page 81)
 const CCU_BASE_ADDRESS = 0x01C2_0000;
 
+// VIDEO_SCALER(CH0) is at MIXER0 Offset 0x02 0000 (DE Page 90, 0x112 0000)
+const VIDEO_SCALER_CH0_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x02_0000;
+
 // Init PinePhone's Allwinner A64 Display Engine.
 // See https://lupyuen.github.io/articles/de#appendix-initialising-the-allwinner-a64-display-engine
 pub export fn de2_init() void {
@@ -666,71 +669,85 @@ pub export fn de2_init() void {
     debug("Clear MIXER0 Registers: GLB, BLD, OVL_V, OVL_UI", .{});
     var i: usize = 0;
     while (i < 0x6000) : (i += 4) {
-        putreg32(0x0, MIXER0_BASE_ADDRESS + i);
+        putreg32(0, MIXER0_BASE_ADDRESS + i);
         enableLog = false;
     }
     enableLog = true;
 
-    //   0x1120000 = 0x0
-    debug("aaaa", .{});
-    const _1120000 = 0x1120000;
-    putreg32(0x0, _1120000);
+    // Disable MIXER0 Video Scaler (VSU)
+    // Set to 0: VS_CTRL_REG at VIDEO_SCALER(CH0) Offset 0
+    // EN (Bit 0) = 0 (Disable Video Scaler)
+    // (DE Page 130, 0x112 0000)
+    debug("Disable MIXER0 VSU", .{});
+    const VS_CTRL_REG = VIDEO_SCALER_CH0_BASE_ADDRESS + 0;
+    comptime{ assert(VS_CTRL_REG == 0x112_0000); }
+    putreg32(0, VS_CTRL_REG);
 
-    //   0x1130000 = 0x0
+    // Disable MIXER0 aaaa
+    // Set to 0: 
     debug("aaaa", .{});
     const _1130000 = 0x1130000;
-    putreg32(0x0, _1130000);
+    putreg32(0, _1130000);
 
-    //   0x1140000 = 0x0
+    // Disable MIXER0 aaaa
+    // Set to 0: 
     debug("aaaa", .{});
     const _1140000 = 0x1140000;
-    putreg32(0x0, _1140000);
+    putreg32(0, _1140000);
 
-    //   0x1150000 = 0x0
+    // Disable MIXER0 aaaa
+    // Set to 0: 
     debug("aaaa", .{});
     const _1150000 = 0x1150000;
-    putreg32(0x0, _1150000);
+    putreg32(0, _1150000);
 
-    //   0x11a0000 = 0x0
+    // Disable MIXER0 aaaa
+    // Set to 0: 
     debug("aaaa", .{});
     const _11a0000 = 0x11a0000;
-    putreg32(0x0, _11a0000);
+    putreg32(0, _11a0000);
 
-    //   0x11a2000 = 0x0
+    // Disable MIXER0 aaaa
+    // Set to 0: 
     debug("aaaa", .{});
     const _11a2000 = 0x11a2000;
-    putreg32(0x0, _11a2000);
+    putreg32(0, _11a2000);
 
-    //   0x11a4000 = 0x0
+    // Disable MIXER0 aaaa
+    // Set to 0: 
     debug("aaaa", .{});
     const _11a4000 = 0x11a4000;
-    putreg32(0x0, _11a4000);
+    putreg32(0, _11a4000);
 
-    //   0x11a6000 = 0x0
+    // Disable MIXER0 aaaa
+    // Set to 0: 
     debug("aaaa", .{});
     const _11a6000 = 0x11a6000;
-    putreg32(0x0, _11a6000);
+    putreg32(0, _11a6000);
 
-    //   0x11a8000 = 0x0
+    // Disable MIXER0 aaaa
+    // Set to 0: 
     debug("aaaa", .{});
     const _11a8000 = 0x11a8000;
-    putreg32(0x0, _11a8000);
+    putreg32(0, _11a8000);
 
-    //   0x11aa000 = 0x0
+    // Disable MIXER0 aaaa
+    // Set to 0: 
     debug("aaaa", .{});
     const _11aa000 = 0x11aa000;
-    putreg32(0x0, _11aa000);
+    putreg32(0, _11aa000);
 
-    //   0x11b0000 = 0x0
+    // Disable MIXER0 aaaa
+    // Set to 0: 
     debug("aaaa", .{});
     const _11b0000 = 0x11b0000;
-    putreg32(0x0, _11b0000);
+    putreg32(0, _11b0000);
 
     // Enable mixer
     //   0x1100000 = 0x1 (DMB)    
     debug("Enable mixer", .{});
     const MIXER = 0x1100000;
-    putreg32(0x1, MIXER);  // TODO: DMB
+    putreg32(1, MIXER);  // TODO: DMB
 }
 
 /// Export MIPI DSI Functions to C. (Why is this needed?)
