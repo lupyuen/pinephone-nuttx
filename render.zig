@@ -519,29 +519,53 @@ var fb2 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
 ///////////////////////////////////////////////////////////////////////////////
 //  Display Engine
 
+// SRAM Registers Base Address is 0x01C0 0000 (A31 Page 191)
+const SRAM_REGISTERS_BASE_ADDRESS = 0x01C0_0000;
+
+// CCU (Clock Control Unit) Base Address is 0x01C2 0000 (A64 Page 81)
+const CCU_BASE_ADDRESS = 0x01C2_0000;
+
 // Init PinePhone's Allwinner A64 Display Engine.
 // See https://lupyuen.github.io/articles/de#appendix-initialising-the-allwinner-a64-display-engine
 pub export fn de2_init() void {
     debug("de2_init: start", .{});
     defer { debug("de2_init: end", .{}); }
 
-    // TODO: Document the Display Engine Registers: https://lupyuen.github.io/articles/de#appendix-initialising-the-allwinner-a64-display-engine
-    // Set SRAM for video use
-    //   0x1c00004 = 0x0 (DMB)
-    debug("Set SRAM for video use", .{});
-    const _1c00004 = 0x1c00004;
-    putreg32(0x0, _1c00004);  // TODO: DMB
+    // Set High Speed SRAM to DMA Mode
+    // Set BIST_DMA_CTRL_SEL to 0 for DMA (DMB) (A31 Page 191, 0x1C0 0004)
+    // BIST_DMA_CTRL_SEL (Bist and DMA Control Select) is Bit 0 of SRAM_CTRL_REG1
+    // SRAM_CTRL_REG1 (SRAM Control Register 1) is at SRAM Registers Offset 0x4
+    debug("Set High Speed SRAM to DMA Mode", .{});
+    const SRAM_CTRL_REG1 = SRAM_REGISTERS_BASE_ADDRESS + 0x4;
+    comptime{ assert(SRAM_CTRL_REG1 == 0x1C0_0004); }
+    putreg32(0x0, SRAM_CTRL_REG1);  // TODO: DMB
 
-    // Setup DE2 PLL
-    // clock_set_pll_de: clk=297000000
-    // PLL10 rate = 24000000 * n / m
-    //   0x1c20048 = 0x81001701 (DMB)
+    // Set Display Engine PLL to 297 MHz
+    // Set PLL_DE_CTRL_REG to 0x8100 1701 (DMB)
+    //   PLL_ENABLE    (Bit 31)       = 1  (Enable PLL)
+    //   PLL_MODE_SEL  (Bit 24)       = 1  (Integer Mode)
+    //   PLL_FACTOR_N  (Bits 8 to 14) = 23 (N = 24)
+    //   PLL_PRE_DIV_M (Bits 0 to 3)  = 1  (M = 2)
+    // Actual PLL Output = 24 MHz * N / M = 288 MHz
+    // (Slighltly below 297 MHz due to truncation)
+    // PLL_DE_CTRL_REG (PLL Display Engine Control Register) is at CCU Offset 0x0048
+    // (A64 Page 96, 0x1C2 0048)
     debug("Setup DE2 PLL", .{});
-    const _1c20048 = 0x1c20048;
-    putreg32(0x81001701, _1c20048);  // TODO: DMB
+    const PLL_ENABLE    = 1;  // Bit 31: Enable PLL
+    const PLL_MODE_SEL  = 1;  // Bit 24: Integer Mode
+    const PLL_FACTOR_N  = 23; // Bits 8 to 14: N = 24
+    const PLL_PRE_DIV_M = 1;  // Bits 0 to 3:  M = 2
+    const pll = PLL_ENABLE << 31
+        | PLL_MODE_SEL  << 24
+        | PLL_FACTOR_N  << 8
+        | PLL_PRE_DIV_M << 0;
+    comptime{ assert(pll == 0x8100_1701); }
+    const PLL_DE_CTRL_REG = CCU_BASE_ADDRESS + 0x0048;
+    comptime{ assert(PLL_DE_CTRL_REG == 0x1C2_0048); }
+    putreg32(pll, PLL_DE_CTRL_REG);  // TODO: DMB
 
     //   while (!(readl(0x1c20048) & 0x10000000))
-    while (getreg32(_1c20048) & 0x10000000 == 0) {}
+    while (getreg32(PLL_DE_CTRL_REG) & 0x10000000 == 0) {}
 
     // Enable DE2 special clock
     //   clrsetbits 0x1c20104, 0x3000000, 0x81000000
