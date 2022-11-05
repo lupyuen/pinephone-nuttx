@@ -526,7 +526,34 @@ const SRAM_REGISTERS_BASE_ADDRESS = 0x01C0_0000;
 const CCU_BASE_ADDRESS = 0x01C2_0000;
 
 // VIDEO_SCALER(CH0) is at MIXER0 Offset 0x02 0000 (DE Page 90, 0x112 0000)
-const VIDEO_SCALER_CH0_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x02_0000;
+const VIDEO_SCALER_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x02_0000;
+
+// UI_SCALER1(CH1) is at MIXER0 Offset 0x04 0000 (DE Page 90, 0x114 0000)
+const UI_SCALER1_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x114_0000;
+
+// UI_SCALER2(CH2) is at MIXER0 Offset 0x05 0000 (DE Page 90, 0x115 0000)
+const UI_SCALER2_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x115_0000;
+
+// FCE (Fresh and Contrast Enhancement) is at MIXER0 Offset 0x0A 0000 (DE Page 61, 0x11A 0000)
+const FCE_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_0000;
+
+// BWS (Black and White Stetch) is at MIXER0 Offset 0x0A 2000 (DE Page 42, 0x11A 2000)
+const BWS_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_2000;
+
+// LTI (Luminance Transient Improvement) is at MIXER0 Offset 0x0A 4000 (DE Page 71, 0x11A 4000)
+const LTI_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_4000;
+
+// PEAKING (Luma Peaking) is at MIXER0 Offset 0x0A 6000 (DE Page 80, 0x11A 6000)
+const PEAKING_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x11A_6000;
+
+// ASE (Adaptive Saturation Enhancement) is at MIXER0 Offset 0x0A 8000 (DE Page 40, 0x11A 8000)
+const ASE_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_8000;
+
+// FCC (Fancy Color Curvature Change) is at MIXER0 Offset 0x0A A000 (DE Page 56, 0x11A A000)
+const FCC_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_A000;
+
+// DRC (Dynamic Range Controller) is at Address 0x011B 0000 (DE Page 48, 0x11B 0000)
+const DRC_BASE_ADDRESS = 0x011B_0000;
 
 // Init PinePhone's Allwinner A64 Display Engine.
 // See https://lupyuen.github.io/articles/de#appendix-initialising-the-allwinner-a64-display-engine
@@ -679,7 +706,7 @@ pub export fn de2_init() void {
     // EN (Bit 0) = 0 (Disable Video Scaler)
     // (DE Page 130, 0x112 0000)
     debug("Disable MIXER0 VSU", .{});
-    const VS_CTRL_REG = VIDEO_SCALER_CH0_BASE_ADDRESS + 0;
+    const VS_CTRL_REG = VIDEO_SCALER_BASE_ADDRESS + 0;
     comptime{ assert(VS_CTRL_REG == 0x112_0000); }
     putreg32(0, VS_CTRL_REG);
 
