@@ -609,23 +609,50 @@ pub export fn de2_init() void {
     comptime{ assert(BUS_CLK_GATING_REG1 == 0x1C2_0064); }
     modifyreg32(BUS_CLK_GATING_REG1, 0, DE_GATING);
 
-    // Enable clock for mixer 0, set route MIXER0->TCON0
-    //   setbits 0x1000000, 0x1
-    debug("Enable clock for mixer 0, set route MIXER0->TCON0", .{});
-    const _1000000 = 0x1000000;
-    modifyreg32(_1000000, 0, 0x1);
+    // Enable Clock for MIXER0: SCLK Clock Pass
+    // Set SCLK_GATE bits 0x1
+    // CORE0_SCLK_GATE (Bit 0) = 1 (Clock Pass)
+    // SCLK_GATE is at DE Offset 0x000
+    // (DE Page 25, 0x100 0000)
+    debug("Enable Clock for MIXER0: SCLK Clock Pass", .{});
+    const CORE0_SCLK_GATE = 1 << 0;  // Clock Pass
+    const SCLK_GATE = DISPLAY_ENGINE_BASE_ADDRESS + 0x000;
+    comptime{ assert(SCLK_GATE == 0x100_0000); }
+    modifyreg32(SCLK_GATE, 0, CORE0_SCLK_GATE);
 
-    //   setbits 0x1000008, 0x1
-    const _1000008 = 0x1000008;
-    modifyreg32(_1000008, 0, 0x1);
+    // Enable Clock for MIXER0: HCLK Clock Reset Off
+    // Set AHB_RESET bits 0x1
+    // CORE0_HCLK_RESET (Bit 0) = 1 (Reset Off)
+    // AHB_RESET is at DE Offset 0x008
+    // (DE Page 25, 0x100 0008)
+    debug("Enable Clock for MIXER0: HCLK Clock Reset Off", .{});
+    const CORE0_HCLK_RESET = 1 << 0;  // Reset Off
+    const AHB_RESET = DISPLAY_ENGINE_BASE_ADDRESS + 0x008;
+    comptime{ assert(AHB_RESET == 0x100_0008); }
+    modifyreg32(AHB_RESET, 0, CORE0_HCLK_RESET);
 
-    //   setbits 0x1000004, 0x1
-    const _1000004 = 0x1000004;
-    modifyreg32(_1000004, 0, 0x1);
+    // Enable Clock for MIXER0: HCLK Clock Pass
+    // Set HCLK_GATE bits 0x1
+    // CORE0_HCLK_GATE (Bit 0) = 1 (Clock Pass)
+    // HCLK_GATE is at DE Offset 0x004
+    // (DE Page 25, 0x100 0004)
+    debug("Enable Clock for MIXER0: HCLK Clock Pass", .{});
+    const CORE0_HCLK_GATE = 1 << 0;  // Clock Pass
+    const HCLK_GATE = DISPLAY_ENGINE_BASE_ADDRESS + 0x004;
+    comptime{ assert(HCLK_GATE == 0x100_0004); }
+    modifyreg32(HCLK_GATE, 0, CORE0_HCLK_GATE);
 
-    //   clrbits 0x1000010, 0x1
-    const _1000010 = 0x1000010;
-    modifyreg32(_1000010, 0x1, 0);
+    // Route MIXER0 to TCON0
+    // Clear DE2TCON_MUX bits 0x1
+    // DE2TCON_MUX (Bit 0) = 0
+    // (Route MIXER0 to TCON0; Route MIXER1 to TCON1)
+    // DE2TCON_MUX is at DE Offset 0x010
+    // (DE Page 26, 0x100 0010)
+    debug("Route MIXER0 to TCON0", .{});
+    const DE2TCON_MUX_MASK = 1 << 0;  // Route MIXER0 to TCON0; Route MIXER1 to TCON1
+    const DE2TCON_MUX = DISPLAY_ENGINE_BASE_ADDRESS + 0x010;
+    comptime{ assert(DE2TCON_MUX == 0x100_0010); }
+    modifyreg32(DE2TCON_MUX, DE2TCON_MUX_MASK, 0);
 
     // Clear all registers
     //   0x1100000 to 0x1105fff = 0x0
@@ -639,46 +666,57 @@ pub export fn de2_init() void {
     enableLog = true;
 
     //   0x1120000 = 0x0
+    debug("aaaa", .{});
     const _1120000 = 0x1120000;
     putreg32(0x0, _1120000);
 
     //   0x1130000 = 0x0
+    debug("aaaa", .{});
     const _1130000 = 0x1130000;
     putreg32(0x0, _1130000);
 
     //   0x1140000 = 0x0
+    debug("aaaa", .{});
     const _1140000 = 0x1140000;
     putreg32(0x0, _1140000);
 
     //   0x1150000 = 0x0
+    debug("aaaa", .{});
     const _1150000 = 0x1150000;
     putreg32(0x0, _1150000);
 
     //   0x11a0000 = 0x0
+    debug("aaaa", .{});
     const _11a0000 = 0x11a0000;
     putreg32(0x0, _11a0000);
 
     //   0x11a2000 = 0x0
+    debug("aaaa", .{});
     const _11a2000 = 0x11a2000;
     putreg32(0x0, _11a2000);
 
     //   0x11a4000 = 0x0
+    debug("aaaa", .{});
     const _11a4000 = 0x11a4000;
     putreg32(0x0, _11a4000);
 
     //   0x11a6000 = 0x0
+    debug("aaaa", .{});
     const _11a6000 = 0x11a6000;
     putreg32(0x0, _11a6000);
 
     //   0x11a8000 = 0x0
+    debug("aaaa", .{});
     const _11a8000 = 0x11a8000;
     putreg32(0x0, _11a8000);
 
     //   0x11aa000 = 0x0
+    debug("aaaa", .{});
     const _11aa000 = 0x11aa000;
     putreg32(0x0, _11aa000);
 
     //   0x11b0000 = 0x0
+    debug("aaaa", .{});
     const _11b0000 = 0x11b0000;
     putreg32(0x0, _11b0000);
 
