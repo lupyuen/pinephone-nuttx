@@ -654,13 +654,19 @@ pub export fn de2_init() void {
     comptime{ assert(DE2TCON_MUX == 0x100_0010); }
     modifyreg32(DE2TCON_MUX, DE2TCON_MUX_MASK, 0);
 
-    // Clear all registers
-    //   0x1100000 to 0x1105fff = 0x0
-    debug("Clear all registers 0x1100000 to 0x1105fff", .{});
-    const _1100000 = 0x1100000;
+    // Clear MIXER0 Registers: Global Registers (GLB), Blender (BLD), Video Overlay (OVL_V), UI Overlay (OVL_UI)
+    // Set MIXER0 Offsets 0x0000 - 0x5FFF to 0
+    // GLB (Global Regisers) at MIXER0 Offset 0x0000
+    // BLD (Blender) at MIXER0 Offset 0x1000
+    // OVL_V(CH0) (Video Overlay) at MIXER0 Offset 0x2000
+    // OVL_UI(CH1) (UI Overlay 1) at MIXER0 Offset 0x3000
+    // OVL_UI(CH2) (UI Overlay 2) at MIXER0 Offset 0x4000
+    // OVL_UI(CH3) (UI Overlay 3) at MIXER0 Offset 0x5000
+    // (DE Page 90, 0x110 0000 - 0x110 5FFF)
+    debug("Clear MIXER0 Registers: GLB, BLD, OVL_V, OVL_UI", .{});
     var i: usize = 0;
     while (i < 0x6000) : (i += 4) {
-        putreg32(0x0, _1100000 + i);
+        putreg32(0x0, MIXER0_BASE_ADDRESS + i);
         enableLog = false;
     }
     enableLog = true;
