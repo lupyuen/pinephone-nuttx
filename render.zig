@@ -529,10 +529,10 @@ const CCU_BASE_ADDRESS = 0x01C2_0000;
 const VIDEO_SCALER_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x02_0000;
 
 // UI_SCALER1(CH1) is at MIXER0 Offset 0x04 0000 (DE Page 90, 0x114 0000)
-const UI_SCALER1_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x114_0000;
+const UI_SCALER1_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x04_0000;
 
 // UI_SCALER2(CH2) is at MIXER0 Offset 0x05 0000 (DE Page 90, 0x115 0000)
-const UI_SCALER2_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x115_0000;
+const UI_SCALER2_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x05_0000;
 
 // FCE (Fresh and Contrast Enhancement) is at MIXER0 Offset 0x0A 0000 (DE Page 61, 0x11A 0000)
 const FCE_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_0000;
@@ -544,7 +544,7 @@ const BWS_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_2000;
 const LTI_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_4000;
 
 // PEAKING (Luma Peaking) is at MIXER0 Offset 0x0A 6000 (DE Page 80, 0x11A 6000)
-const PEAKING_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x11A_6000;
+const PEAKING_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_6000;
 
 // ASE (Adaptive Saturation Enhancement) is at MIXER0 Offset 0x0A 8000 (DE Page 40, 0x11A 8000)
 const ASE_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_8000;
@@ -710,63 +710,67 @@ pub export fn de2_init() void {
     comptime{ assert(VS_CTRL_REG == 0x112_0000); }
     putreg32(0, VS_CTRL_REG);
 
-    // Disable MIXER0 aaaa
-    // Set to 0: 
-    debug("aaaa", .{});
+    // TODO: 0x113 0000 is undocumented
+    // Is there a mixup with UI_SCALER3?
+    debug("Disable MIXER0 Undocumented", .{});
     const _1130000 = 0x1130000;
     putreg32(0, _1130000);
 
-    // Disable MIXER0 aaaa
+    // Disable MIXER0 UI_SCALER1
     // Set to 0: 
-    debug("aaaa", .{});
-    const _1140000 = 0x1140000;
-    putreg32(0, _1140000);
+    // UIS_CTRL_REG at UI_SCALER1(CH1) Offset 0
+    // EN (Bit 0) = 0 (Disable UI Scaler)
+    // (DE Page 66, 0x114 0000)
+    debug("Disable MIXER0 UI_SCALER1", .{});
+    const UIS_CTRL_REG = UI_SCALER1_BASE_ADDRESS + 0;
+    comptime{ assert(UIS_CTRL_REG == 0x114_0000); }
+    putreg32(0, UIS_CTRL_REG);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
-    debug("aaaa", .{});
+    debug("Disable MIXER0 aaaa", .{});
     const _1150000 = 0x1150000;
     putreg32(0, _1150000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
-    debug("aaaa", .{});
+    debug("Disable MIXER0 aaaa", .{});
     const _11a0000 = 0x11a0000;
     putreg32(0, _11a0000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
-    debug("aaaa", .{});
+    debug("Disable MIXER0 aaaa", .{});
     const _11a2000 = 0x11a2000;
     putreg32(0, _11a2000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
-    debug("aaaa", .{});
+    debug("Disable MIXER0 aaaa", .{});
     const _11a4000 = 0x11a4000;
     putreg32(0, _11a4000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
-    debug("aaaa", .{});
+    debug("Disable MIXER0 aaaa", .{});
     const _11a6000 = 0x11a6000;
     putreg32(0, _11a6000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
-    debug("aaaa", .{});
+    debug("Disable MIXER0 aaaa", .{});
     const _11a8000 = 0x11a8000;
     putreg32(0, _11a8000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
-    debug("aaaa", .{});
+    debug("Disable MIXER0 aaaa", .{});
     const _11aa000 = 0x11aa000;
     putreg32(0, _11aa000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
-    debug("aaaa", .{});
+    debug("Disable MIXER0 aaaa", .{});
     const _11b0000 = 0x11b0000;
     putreg32(0, _11b0000);
 
