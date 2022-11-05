@@ -717,61 +717,70 @@ pub export fn de2_init() void {
     putreg32(0, _1130000);
 
     // Disable MIXER0 UI_SCALER1
-    // Set to 0: 
-    // UIS_CTRL_REG at UI_SCALER1(CH1) Offset 0
+    // Set to 0: UIS_CTRL_REG at UI_SCALER1(CH1) Offset 0
     // EN (Bit 0) = 0 (Disable UI Scaler)
     // (DE Page 66, 0x114 0000)
     debug("Disable MIXER0 UI_SCALER1", .{});
-    const UIS_CTRL_REG = UI_SCALER1_BASE_ADDRESS + 0;
-    comptime{ assert(UIS_CTRL_REG == 0x114_0000); }
-    putreg32(0, UIS_CTRL_REG);
+    const UIS_CTRL_REG1 = UI_SCALER1_BASE_ADDRESS + 0;
+    comptime{ assert(UIS_CTRL_REG1 == 0x114_0000); }
+    putreg32(0, UIS_CTRL_REG1);
 
-    // Disable MIXER0 aaaa
-    // Set to 0: 
-    debug("Disable MIXER0 aaaa", .{});
-    const _1150000 = 0x1150000;
-    putreg32(0, _1150000);
+    // Disable MIXER0 UI_SCALER2
+    // Set to 0: UIS_CTRL_REG at UI_SCALER2(CH2) Offset 0
+    // EN (Bit 0) = 0 (Disable UI Scaler)
+    // (DE Page 66, 0x115 0000)
+    debug("Disable MIXER0 UI_SCALER2", .{});
+    const UIS_CTRL_REG2 = UI_SCALER2_BASE_ADDRESS + 0;
+    comptime{ assert(UIS_CTRL_REG2 == 0x115_0000); }
+    putreg32(0, UIS_CTRL_REG2);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
     debug("Disable MIXER0 aaaa", .{});
     const _11a0000 = 0x11a0000;
+    comptime{ assert(_11a0000 == 0x11a0000); }
     putreg32(0, _11a0000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
     debug("Disable MIXER0 aaaa", .{});
     const _11a2000 = 0x11a2000;
+    comptime{ assert(_11a2000 == 0x11a2000); }
     putreg32(0, _11a2000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
     debug("Disable MIXER0 aaaa", .{});
     const _11a4000 = 0x11a4000;
+    comptime{ assert(_11a4000 == 0x11a4000); }
     putreg32(0, _11a4000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
     debug("Disable MIXER0 aaaa", .{});
     const _11a6000 = 0x11a6000;
+    comptime{ assert(_11a6000 == 0x11a6000); }
     putreg32(0, _11a6000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
     debug("Disable MIXER0 aaaa", .{});
     const _11a8000 = 0x11a8000;
+    comptime{ assert(_11a8000 == 0x11a8000); }
     putreg32(0, _11a8000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
     debug("Disable MIXER0 aaaa", .{});
     const _11aa000 = 0x11aa000;
+    comptime{ assert(_11aa000 == 0x11aa000); }
     putreg32(0, _11aa000);
 
     // Disable MIXER0 aaaa
     // Set to 0: 
     debug("Disable MIXER0 aaaa", .{});
     const _11b0000 = 0x11b0000;
+    comptime{ assert(_11b0000 == 0x11b0000); }
     putreg32(0, _11b0000);
 
     // Enable mixer
