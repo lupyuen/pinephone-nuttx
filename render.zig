@@ -282,6 +282,7 @@ fn initUiBlender() void {
         | GREEN
         | BLUE;
     comptime{ assert(color == 0xFF00_0000); }
+
     const BLD_BK_COLOR = BLD_BASE_ADDRESS + 0x88;
     comptime{ assert(BLD_BK_COLOR == 0x110_1088); }
     putreg32(color, BLD_BK_COLOR);
@@ -304,6 +305,7 @@ fn initUiBlender() void {
         | P1_ALPHA_MODE
         | P0_ALPHA_MODE;
     comptime{ assert(premultiply == 0); }
+
     const BLD_PREMUL_CTL = BLD_BASE_ADDRESS + 0x84;
     comptime{ assert(BLD_PREMUL_CTL == 0x110_1084); }
     putreg32(premultiply, BLD_PREMUL_CTL);
@@ -386,16 +388,19 @@ fn applySettings(
     comptime{ assert(BLD_FILL_COLOR_CTL == 0x110_1000); }
     putreg32(fill, BLD_FILL_COLOR_CTL);  // TODO: DMB
 
-// TODO: Apply Settings
-// GLB_DBUFFER (Global Double Buffer Control) at GLB Offset 0x008
-// Set to 1 (DMB)
-// DOUBLE_BUFFER_RDY (Bit 0) = 1
-// (Register Value is ready for update)
-// (DE Page 93, 0x110 0008)
-
+    // Apply Settings
+    // GLB_DBUFFER (Global Double Buffer Control) at GLB Offset 0x008
+    // Set to 1 (DMB)
+    // DOUBLE_BUFFER_RDY (Bit 0) = 1
+    // (Register Value is ready for update)
+    // (DE Page 93, 0x110 0008)
     debug("Apply Settings", .{});
+    const DOUBLE_BUFFER_RDY: u1 = 1 << 0;  // Register Value is ready for update
+    comptime{ assert(DOUBLE_BUFFER_RDY == 1); }
+
     const GLB_DBUFFER = GLB_BASE_ADDRESS + 0x008;
-    putreg32(1, GLB_DBUFFER);  // TODO: DMB
+    comptime{ assert(GLB_DBUFFER == 0x110_0008); }
+    putreg32(DOUBLE_BUFFER_RDY, GLB_DBUFFER);  // TODO: DMB
 }
 
 /// Initialise a UI Channel for PinePhone's A64 Display Engine.
