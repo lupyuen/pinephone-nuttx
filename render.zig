@@ -497,6 +497,11 @@ fn initUiChannel(
         else => unreachable,
     } << 8;  // Bits 8 to 12
 
+    // LAY_ALPHA_MODE (Bits 1 to 2) = 2
+    //   (Global Alpha is mixed with Pixel Alpha)
+    //   (Input Alpha Value = Global Alpha Value * Pixel’s Alpha Value)
+    // LAY_EN (Bit 0) = 1 (Enable Layer)
+
     _ = LAY_GLBALPHA;
     _ = LAY_FBFMT;
 
