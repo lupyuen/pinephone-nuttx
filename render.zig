@@ -242,13 +242,13 @@ pub export fn test_render2(p0: [*c]u8) void {
 /// Display Engine Base Address is 0x0100 0000
 const DISPLAY_ENGINE_BASE_ADDRESS = 0x0100_0000;
 
-/// RT-MIXER0 is at DE Offset 0x10 0000 (Page 87)
+/// MIXER0 is at DE Offset 0x10 0000 (Page 87)
 const MIXER0_BASE_ADDRESS = DISPLAY_ENGINE_BASE_ADDRESS + 0x10_0000;
 
-/// |GLB | 0x0000
+/// TODO: GLB | 0x0000
 const GLB_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0000;
 
-/// |BLD (Blender) | 0x1000
+/// TODO: BLD (Blender) | 0x1000
 const BLD_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x1000;
 
 /// OVL_UI(CH1) (UI Overlay 1) is at MIXER0 Offset 0x3000 (DE Page 102, 0x110 3000)
@@ -263,14 +263,28 @@ fn initUiBlender() void {
     debug("initUiBlender: start", .{});
     defer { debug("initUiBlender: end", .{}); }
 
-    // BLD_BK_COLOR @ BLD Offset 0x88: BLD background color register
-    // Set to 0xff00 0000 (Why?)
-    debug("Configure Blender", .{});
+// TODO: Set Blender Background
+// BLD_BK_COLOR (Blender Background Color) at BLD Offset 0x88
+// Set to 0xFF00 0000 (Black Background Color)
+// RED (Bits 16 to 23) = 0
+// GREEN (Bits 8 to 15) = 0
+// BLUE (Bits 0 to 7) = 0
+// (DE Page 109, 0x110 1088)
+
+    debug("Set Blender Background", .{});
     const BLD_BK_COLOR = BLD_BASE_ADDRESS + 0x88;
     putreg32(0xff00_0000, BLD_BK_COLOR);
 
-    // BLD_PREMUL_CTL @ BLD Offset 0x84: BLD pre-multiply control register
-    // Set to 0
+// TODO: Set Blender Pre-Multiply
+// BLD_PREMUL_CTL (Blender Pre-Multiply Control) at BLD Offset 0x84
+// Set to 0 (No Pre-Multiply for Alpha, Pipes 0 to 3)
+// P3_ALPHA_MODE (Bit 3) = 0 (Pipe 3: No Pre-Multiply)
+// P2_ALPHA_MODE (Bit 2) = 0 (Pipe 2: No Pre-Multiply)
+// P1_ALPHA_MODE (Bit 1) = 0 (Pipe 1: No Pre-Multiply)
+// P0_ALPHA_MODE (Bit 0) = 0 (Pipe 0: No Pre-Multiply)
+// (DE Page 109, 0x110 1084)
+
+    debug("Set Blender Pre-Multiply", .{});
     const BLD_PREMUL_CTL = BLD_BASE_ADDRESS + 0x84;
     putreg32(0, BLD_PREMUL_CTL);
 }
@@ -283,27 +297,47 @@ fn applySettings(
     defer { debug("applySettings: end", .{}); }
     assert(channels == 1 or channels == 3);
 
-    // Set BLD Route and BLD FColor Control
-    // -   BLD Route (BLD_CH_RTCTL @ BLD Offset 0x080): _BLD routing control register_
-    //     For 3 UI Channels: Set to 0x321 (Why?)
-    //     For 1 UI Channel: Set to 1 (Why?)
-    debug("Set BLD Route and BLD FColor Control", .{});
+// TODO: Set Blender Route
+// BLD_CH_RTCTL (Blender Routing Control) at BLD Offset 0x080
+// If Rendering 3 UI Channels: Set to 0x321 (DMB)
+//   P2_RTCTL (Bits 8 to 11) = 3 (Pipe 2 from Channel 3)
+//   P1_RTCTL (Bits 4 to 7) = 2 (Pipe 1 from Channel 2)
+//   P0_RTCTL (Bits 0 to 3) = 1 (Pipe 0 from Channel 1)
+// If Rendering 1 UI Channel: Set to 1 (DMB)
+//   P0_RTCTL (Bits 0 to 3) = 1 (Pipe 0 from Channel 1)
+// (DE Page 108, 0x110 1080)
+
+    debug("Set Blender Route", .{});
     const BLD_CH_RTCTL = BLD_BASE_ADDRESS + 0x080;
     if (channels == 3) { putreg32(0x321, BLD_CH_RTCTL); }  // TODO: DMB
     else if (channels == 1) { putreg32(0x1, BLD_CH_RTCTL); }  // TODO: DMB
     else { unreachable; }
 
-    // -   BLD FColor Control (BLD_FILLCOLOR_CTL @ BLD Offset 0x000): _BLD fill color control register_
-    //     For 3 UI Channels: Set to 0x701 (Why?)
-    //     For 1 UI Channel: Set to 0x101 (Why?)
-    const BLD_FILLCOLOR_CTL = BLD_BASE_ADDRESS + 0x000;
-    if (channels == 3) { putreg32(0x701, BLD_FILLCOLOR_CTL); }  // TODO: DMB
-    else if (channels == 1) { putreg32(0x101, BLD_FILLCOLOR_CTL); }  // TODO: DMB
+// TODO: Set Fill Color
+// BLD_FILL_COLOR_CTL (Blender Fill Color Control) at BLD Offset 0x000
+// If Rendering 3 UI Channels: Set to 0x701 (DMB)
+//   P2_EN (Bit 10) = 1 (Enable Pipe 2)
+//   P1_EN (Bit 9) = 1 (Enable Pipe 1)
+//   P0_EN (Bit 8) = 1 (Enable Pipe 0)
+//   P0_FCEN (Bit 0) = 1 (Enable Pipe 0 Fill Color)
+// If Rendering 1 UI Channel: Set to 0x101 (DMB)
+//   P0_EN (Bit 8) = 1 (Enable Pipe 0)
+//   P0_FCEN (Bit 0) = 1 (Enable Pipe 0 Fill Color)
+// (DE Page 106, 0x110 1000)
+
+    debug("Set Fill Color", .{});
+    const BLD_FILL_COLOR_CTL = BLD_BASE_ADDRESS + 0x000;
+    if (channels == 3) { putreg32(0x701, BLD_FILL_COLOR_CTL); }  // TODO: DMB
+    else if (channels == 1) { putreg32(0x101, BLD_FILL_COLOR_CTL); }  // TODO: DMB
     else { unreachable; }
 
-    // Apply Settings
-    // -   GLB DBuff (GLB_DBUFFER @ GLB Offset 0x008): _Global double buffer control register_
-    //     Set to 1 (Why?)
+// TODO: Apply Settings
+// GLB_DBUFFER (Global Double Buffer Control) at GLB Offset 0x008
+// Set to 1 (DMB)
+// DOUBLE_BUFFER_RDY (Bit 0) = 1
+// (Register Value is ready for update)
+// (DE Page 93, 0x110 0008)
+
     debug("Apply Settings", .{});
     const GLB_DBUFFER = GLB_BASE_ADDRESS + 0x008;
     putreg32(1, GLB_DBUFFER);  // TODO: DMB
@@ -370,7 +404,7 @@ fn initUiChannel(
         return;
     }
 
-// Set Overlay (Assume Layer = 0)
+// TODO: Set Overlay (Assume Layer = 0)
 // OVL_UI_ATTR_CTL (UI Overlay Attribute Control) at OVL_UI Offset 0x00
 // For Channel 1: Set to 0xFF00 0405
 // For Channel 2: Set to 0xFF00 0005
@@ -391,7 +425,7 @@ fn initUiChannel(
     else if (channel == 2) { putreg32(0xff00_0005, OVL_UI_ATTR_CTL); }
     else if (channel == 3) { putreg32(0x7f00_0005, OVL_UI_ATTR_CTL); }
 
-// OVL_UI_TOP_LADD (UI Overlay Top Field Memory Block Low Address) at OVL_UI Offset 0x10
+// TODO: OVL_UI_TOP_LADD (UI Overlay Top Field Memory Block Low Address) at OVL_UI Offset 0x10
 // Set to Framebuffer Address: fb0, fb1 or fb2
 // (DE Page 104, 0x110 3010 / 0x110 4010 / 0x110 5010)
 
@@ -399,14 +433,14 @@ fn initUiChannel(
     const ptr = @ptrToInt(fbmem.?);
     putreg32(@intCast(u32, ptr), OVL_UI_TOP_LADD);
 
-// OVL_UI_PITCH (UI Overlay Memory Pitch) at OVL_UI Offset 0x0C
+// TODO: OVL_UI_PITCH (UI Overlay Memory Pitch) at OVL_UI Offset 0x0C
 // Set to (width * 4), number of bytes per row
 // (DE Page 104, 0x110 300C / 0x110 400C / 0x110 500C)
 
     const OVL_UI_PITCH = OVL_UI_BASE_ADDRESS + 0x0C;
     putreg32(xres * 4, OVL_UI_PITCH);
 
-// OVL_UI_MBSIZE (UI Overlay Memory Block Size) at OVL_UI Offset 0x04
+// TODO: OVL_UI_MBSIZE (UI Overlay Memory Block Size) at OVL_UI Offset 0x04
 // Set to (height-1) << 16 + (width-1)
 // (DE Page 104, 0x110 3004 / 0x110 4004 / 0x110 5004)
 
@@ -415,52 +449,67 @@ fn initUiChannel(
         | (xres - 1);
     putreg32(height_width, OVL_UI_MBSIZE);
 
-// OVL_UI_SIZE (UI Overlay Overlay Window Size) at OVL_UI Offset 0x88
+// TODO: OVL_UI_SIZE (UI Overlay Overlay Window Size) at OVL_UI Offset 0x88
 // Set to (height-1) << 16 + (width-1)
 // (DE Page 106, 0x110 3088 / 0x110 4088 / 0x110 5088)
 
     const OVL_UI_SIZE = OVL_UI_BASE_ADDRESS + 0x88;
     putreg32(height_width, OVL_UI_SIZE);
 
-// OVL_UI_COOR (UI Overlay Memory Block Coordinate) at OVL_UI Offset 0x08
+// TODO: OVL_UI_COOR (UI Overlay Memory Block Coordinate) at OVL_UI Offset 0x08
 // Set to 0 (Overlay at X=0, Y=0)
 // (DE Page 104, 0x110 3008 / 0x110 4008 / 0x110 5008)
 
     const OVL_UI_COOR = OVL_UI_BASE_ADDRESS + 0x08;
     putreg32(0, OVL_UI_COOR);
 
-    // 1.  For Channel 1: Set Blender Output
+// For Channel 1: Set Blender Output
+
     if (channel == 1) {
-        //     -   BLD Output Size (BLD_SIZE @ BLD Offset 0x08C): _BLD output size setting register_
-        //         Set to (height-1) << 16 + (width-1)
+// TODO: BLD_SIZE (Blender Output Size Setting) at BLD Offset 0x08C
+// Set to (height-1) << 16 + (width-1)
+// (DE Page 110, 0x110 108C)
         debug("Channel {}: Set Blender Output", .{ channel });
         const BLD_SIZE = BLD_BASE_ADDRESS + 0x08C;
         putreg32(height_width, BLD_SIZE);
                 
-        //     -   GLB Size (GLB_SIZE @ GLB Offset 0x00C): _Global size register_
-        //         Set to (height-1) << 16 + (width-1)
+// TODO: GLB_SIZE (Global Size) at GLB Offset 0x00C
+// Set to (height-1) << 16 + (width-1)
+// (DE Page 93, 0x110 000C)
         const GLB_SIZE = GLB_BASE_ADDRESS + 0x00C;
         putreg32(height_width, GLB_SIZE);
     }
 
-    // 1.  Set Blender Input Pipe (N = Pipe Number, from 0 to 2 for Channels 1 to 3)
+// Set Blender Input Pipe (N = Pipe Number, from 0 to 2 for Channels 1 to 3)
+
     const pipe: u64 = channel - 1;
     debug("Channel {}: Set Blender Input Pipe {} ({} x {})", .{ channel, pipe, xres, yres });
 
-    //     -   BLD Pipe InSize (BLD_CH_ISIZE @ BLD Offset 0x008 + N*0x10): _BLD input memory size register(N=0,1,2,3,4)_
-    //         Set to (height-1) << 16 + (width-1)
+// TODO: BLD_CH_ISIZE (Blender Input Memory Size) at BLD Offset 0x008 + N*0x10 (N=0,1,2,3,4)
+// Set to (height-1) << 16 + (width-1)
+// (DE Page 108, 0x110 1008 / 0x110 1018 / 0x110 1028)
+
     const BLD_CH_ISIZE = BLD_BASE_ADDRESS + 0x008 + pipe * 0x10;
     putreg32(height_width, BLD_CH_ISIZE);
 
-    //     -   BLD Pipe FColor (BLD_FILL_COLOR @ BLD Offset 0x004 + N*0x10): _BLD fill color register(N=0,1,2,3,4)_
-    //         Set to 0xff00 0000 (Why?)
+// TODO: BLD_FILL_COLOR (Blender Fill Color) at BLD Offset 0x004 + N*0x10 (N=0,1,2,3,4)
+// Set to 0xFF00 0000 (Opaque Black)
+// ALPHA (Bits 24 to 31) = 0xFF
+// RED (Bits 16 to 23) = 0
+// GREEN (Bits 8 to 15) = 0
+// BLUE (Bits 0 to 7) = 0
+// (DE Page 107, 0x110 1004 / 0x110 1014 / 0x110 1024)
+
     const BLD_FILL_COLOR = BLD_BASE_ADDRESS + 0x004 + pipe * 0x10;
     putreg32(0xff00_0000, BLD_FILL_COLOR);
 
-    //     -   BLD Pipe Offset (BLD_CH_OFFSET @ BLD Offset 0x00C + N*0x10): _BLD input memory offset register(N=0,1,2,3,4)_
-    //         For Channel 1: Set to 0 (Why?)
-    //         For Channel 2: Set to 0x34 0034 (Why?)
-    //         For Channel 3: Set to 0 (Why?)
+// TODO: BLD_CH_OFFSET (Blender Input Memory Offset) at BLD Offset 0x00C + N*0x10 (N=0,1,2,3,4)
+// Set to y_offset << 16 + x_offset
+// For Channel 1: Set to 0
+// For Channel 2: Set to 0x34 0034
+// For Channel 3: Set to 0
+// (DE Page 108, 0x110 100C / 0x110 101C / 0x110 102C)
+
     _ = xoffset; ////
     _ = yoffset; ////
     const BLD_CH_OFFSET = BLD_BASE_ADDRESS + 0x00C + pipe * 0x10;
@@ -468,19 +517,32 @@ fn initUiChannel(
     else if (channel == 2) { putreg32(0x34_0034, BLD_CH_OFFSET); }
     else if (channel == 3) { putreg32(0, BLD_CH_OFFSET); }
 
-    //     -   BLD Pipe Mode (BLD_CTL @ BLD Offset 0x090 + N*4): _BLD control register_
-    //         Set to 0x301 0301 (Why?)
+// TODO: BLD_CTL (Blender Control) at BLD Offset 0x090 + N*4
+// Set to 0x301 0301
+// BLEND_AFD (Bits 24 to 27) = 3
+//   (Coefficient for destination alpha data Q[d] is 1-A[s])
+// BLEND_AFS (Bits 16 to 19) = 1
+//   (Coefficient for source alpha data Q[s] is 1)
+// BLEND_PFD (Bits 8 to 11) = 3
+//   (Coefficient for destination pixel data F[d] is 1-A[s])
+// BLEND_PFS (Bits 0 to 3) = 1
+//   (Coefficient for source pixel data F[s] is 1)
+// (DE Page 110, 0x110 1090 / 0x110 1094 / 0x110 1098)
+
     const BLD_CTL = BLD_BASE_ADDRESS + 0x090 + pipe * 4;
     putreg32(0x301_0301, BLD_CTL);
 
-    //     Note: Log shows BLD_CH_ISIZE, BLD_FILL_COLOR and BLD_CH_OFFSET are at N*0x10, but doc says N*0x14
+// Note: DE Page 91 shows incorrect offset N*0x14 for BLD_CH_ISIZE, BLD_FILL_COLOR and BLD_CH_OFFSET. Correct offset is N*0x10, see DE Page 108
 
-    // 1.  Disable Scaler (Assume we're not scaling)
-    //     -   Mixer (??? @ 0x113 0000 + 0x10000 * Channel)
-    //         Set to 0
+// TODO: Disable Scaler (Assume we’re not scaling)
+// UIS_CTRL_REG at Offset 0 of UI_SCALER1(CH1) or UI_SCALER2(CH2) or UI_SCALER3(CH3)
+// Set to 0 (Disable UI Scaler)
+// EN (Bit 0) = 0 (Disable UI Scaler)
+// (DE Page 66, 0x114 0000 / 0x115 0000 / 0x116 0000)
+
     debug("Channel {}: Disable Scaler", .{ channel });
-    const MIXER = 0x113_0000 + 0x10000 * @intCast(u64, channel);
-    putreg32(0, MIXER);
+    const UIS_CTRL_REG = 0x113_0000 + 0x10000 * @intCast(u64, channel);
+    putreg32(0, UIS_CTRL_REG);
 }
 
 /// NuttX Video Controller for PinePhone (3 UI Channels)
