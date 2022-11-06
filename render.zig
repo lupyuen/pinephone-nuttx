@@ -153,7 +153,7 @@ pub export fn test_render() void {
     );
 
     // Init the 2 Overlay UI Channels
-    for (overlayInfo) | ov, ov_index | {
+    inline for (overlayInfo) | ov, ov_index | {
         initUiChannel(
             @intCast(u8, ov_index + 2),  // UI Channel Number (2 and 3 for Overlay UI Channels)
             if (NUM_CHANNELS == 3) ov.fbmem else null,  // Start of frame buffer memory
@@ -220,7 +220,7 @@ pub export fn test_render2(p0: [*c]u8) void {
     );
 
     // Init the 2 Overlay UI Channels
-    for (overlayInfo) | ov, ov_index | {
+    inline for (overlayInfo) | ov, ov_index | {
         initUiChannel(
             @intCast(u8, ov_index + 2),  // UI Channel Number (2 and 3 for Overlay UI Channels)
             if (NUM_CHANNELS == 3) ov.fbmem else null,  // Start of frame buffer memory
@@ -311,27 +311,40 @@ fn initUiBlender() void {
 /// Set UI Blender Route, Fill Color and apply the settings for PinePhone's A64 Display Engine.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 fn applySettings(
-    channels: u8  // Number of enabled UI Channels
+    comptime channels: u8  // Number of enabled UI Channels
 ) void {
     debug("applySettings: start", .{});
     defer { debug("applySettings: end", .{}); }
-    assert(channels == 1 or channels == 3);
+    comptime { assert(channels == 1 or channels == 3); }
 
-// TODO: Set Blender Route
-// BLD_CH_RTCTL (Blender Routing Control) at BLD Offset 0x080
-// If Rendering 3 UI Channels: Set to 0x321 (DMB)
-//   P2_RTCTL (Bits 8 to 11) = 3 (Pipe 2 from Channel 3)
-//   P1_RTCTL (Bits 4 to 7) = 2 (Pipe 1 from Channel 2)
-//   P0_RTCTL (Bits 0 to 3) = 1 (Pipe 0 from Channel 1)
-// If Rendering 1 UI Channel: Set to 1 (DMB)
-//   P0_RTCTL (Bits 0 to 3) = 1 (Pipe 0 from Channel 1)
-// (DE Page 108, 0x110 1080)
-
+    // Set Blender Route
+    // BLD_CH_RTCTL (Blender Routing Control) at BLD Offset 0x080
+    // If Rendering 3 UI Channels: Set to 0x321 (DMB)
+    //   P2_RTCTL (Bits 8 to 11) = 3 (Pipe 2 from Channel 3)
+    //   P1_RTCTL (Bits 4 to 7)  = 2 (Pipe 1 from Channel 2)
+    //   P0_RTCTL (Bits 0 to 3)  = 1 (Pipe 0 from Channel 1)
+    // If Rendering 1 UI Channel: Set to 1 (DMB)
+    //   P0_RTCTL (Bits 0 to 3) = 1 (Pipe 0 from Channel 1)
+    // (DE Page 108, 0x110 1080)
     debug("Set Blender Route", .{});
+    const P2_RTCTL = switch (channels) {  // For Pipe 2...
+        3 => 3,  // 3 UI Channels: Select Pipe 2 from UI Channel 3
+        1 => 0,  // 1 UI Channel: Disable Pipe 2
+        else => unreachable,
+    } << 8;
+    const P1_RTCTL = switch (channels) {  // For Pipe 1...
+        3 => 2,  // 3 UI Channels: Select Pipe 1 from UI Channel 2
+        1 => 0,  // 1 UI Channel: Disable Pipe 1
+        else => unreachable,
+    } << 4;
+    const P0_RTCTL = 1 << 0;  // Select Pipe 0 from UI Channel 1
+    const route = P2_RTCTL
+        | P1_RTCTL
+        | P0_RTCTL;
+    comptime{ assert(route == 0x321 or route == 1); }
     const BLD_CH_RTCTL = BLD_BASE_ADDRESS + 0x080;
-    if (channels == 3) { putreg32(0x321, BLD_CH_RTCTL); }  // TODO: DMB
-    else if (channels == 1) { putreg32(0x1, BLD_CH_RTCTL); }  // TODO: DMB
-    else { unreachable; }
+    comptime{ assert(BLD_CH_RTCTL == 0x110_1080); }
+    putreg32(route, BLD_CH_RTCTL);  // TODO: DMB
 
 // TODO: Set Fill Color
 // BLD_FILL_COLOR_CTL (Blender Fill Color Control) at BLD Offset 0x000
@@ -367,21 +380,24 @@ fn applySettings(
 /// We use 3 UI Channels: Base UI Channel (#1) plus 2 Overlay UI Channels (#2, #3).
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 fn initUiChannel(
-    channel: u8,            // UI Channel Number: 1, 2 or 3
+    comptime channel: u8,   // UI Channel Number: 1, 2 or 3
     fbmem: ?*anyopaque,     // Start of frame buffer memory, or null if this channel should be disabled
-    fblen: usize,           // Length of frame buffer memory in bytes
-    stride:  c.fb_coord_t,  // Length of a line in bytes (4 bytes per pixel)
-    xres:    c.fb_coord_t,  // Horizontal resolution in pixel columns
-    yres:    c.fb_coord_t,  // Vertical resolution in pixel rows
-    xoffset: c.fb_coord_t,  // Horizontal offset in pixel columns
-    yoffset: c.fb_coord_t,  // Vertical offset in pixel rows
+    comptime fblen: usize,           // Length of frame buffer memory in bytes
+    comptime stride:  c.fb_coord_t,  // Length of a line in bytes (4 bytes per pixel)
+    comptime xres:    c.fb_coord_t,  // Horizontal resolution in pixel columns
+    comptime yres:    c.fb_coord_t,  // Vertical resolution in pixel rows
+    comptime xoffset: c.fb_coord_t,  // Horizontal offset in pixel columns
+    comptime yoffset: c.fb_coord_t,  // Vertical offset in pixel rows
 ) void {
     debug("initUiChannel: start", .{});
     defer { debug("initUiChannel: end", .{}); }
 
-    assert(channel >= 1 and channel <= 3);
-    assert(fblen == @intCast(usize, xres) * yres * 4);
-    assert(stride == @intCast(usize, xres) * 4);
+    // Validate Framebuffer Size and Stride
+    comptime {
+        assert(channel >= 1 and channel <= 3);
+        assert(fblen == @intCast(usize, xres) * yres * 4);
+        assert(stride == @intCast(usize, xres) * 4);
+    }
 
     // OVL_UI(CH1) (UI Overlay 1) is at MIXER0 Offset 0x3000
     // OVL_UI(CH2) (UI Overlay 2) is at MIXER0 Offset 0x4000
@@ -389,7 +405,7 @@ fn initUiChannel(
     // (DE Page 102, 0x110 3000 / 0x110 4000 / 0x110 5000)
     const OVL_UI_BASE_ADDRESS = OVL_UI_CH1_BASE_ADDRESS
         + @intCast(u64, channel - 1) * 0x1000;
-    assert(OVL_UI_BASE_ADDRESS == 0x110_3000 or OVL_UI_BASE_ADDRESS == 0x110_4000 or OVL_UI_BASE_ADDRESS == 0x110_5000);
+    comptime{ assert(OVL_UI_BASE_ADDRESS == 0x110_3000 or OVL_UI_BASE_ADDRESS == 0x110_4000 or OVL_UI_BASE_ADDRESS == 0x110_5000); }
 
     // UI_SCALER1(CH1) is at MIXER0 Offset 0x04 0000
     // UI_SCALER2(CH2) is at MIXER0 Offset 0x05 0000
@@ -407,7 +423,7 @@ fn initUiChannel(
         // (DE Page 102)
         debug("Channel {}: Disable Overlay and Pipe", .{ channel });
         const OVL_UI_ATTR_CTL = OVL_UI_BASE_ADDRESS + 0x00;
-        assert(OVL_UI_ATTR_CTL == 0x110_3000 or OVL_UI_ATTR_CTL == 0x110_4000 or OVL_UI_ATTR_CTL == 0x110_5000);
+        comptime{ assert(OVL_UI_ATTR_CTL == 0x110_3000 or OVL_UI_ATTR_CTL == 0x110_4000 or OVL_UI_ATTR_CTL == 0x110_5000); }
         putreg32(0, OVL_UI_ATTR_CTL);
 
         // Disable Scaler:
@@ -417,7 +433,7 @@ fn initUiChannel(
         // (DE Page 66)
         debug("Channel {}: Disable Scaler", .{ channel });
         const UIS_CTRL_REG = UI_SCALER_BASE_ADDRESS + 0;
-        assert(UIS_CTRL_REG == 0x114_0000 or UIS_CTRL_REG == 0x115_0000 or UIS_CTRL_REG == 0x116_0000);
+        comptime{ assert(UIS_CTRL_REG == 0x114_0000 or UIS_CTRL_REG == 0x115_0000 or UIS_CTRL_REG == 0x116_0000); }
         putreg32(0, UIS_CTRL_REG);
         
         // Skip to next UI Channel
@@ -563,7 +579,7 @@ fn initUiChannel(
     // (DE Page 66, 0x114 0000 / 0x115 0000 / 0x116 0000)
     debug("Channel {}: Disable Scaler", .{ channel });
     const UIS_CTRL_REG = UI_SCALER_BASE_ADDRESS + 0;
-    assert(UIS_CTRL_REG == 0x114_0000 or UIS_CTRL_REG == 0x115_0000 or UIS_CTRL_REG == 0x116_0000);
+    comptime{ assert(UIS_CTRL_REG == 0x114_0000 or UIS_CTRL_REG == 0x115_0000 or UIS_CTRL_REG == 0x116_0000); }
     putreg32(0, UIS_CTRL_REG);
 }
 
