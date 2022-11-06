@@ -166,10 +166,11 @@ pub export fn test_render() void {
         );
     }
 
-    // TODO
+    // Set UI Blender Route, Fill Color and apply the settings
     applySettings(NUM_CHANNELS);
 }
 
+/// TODO: Remove this
 /// Render a Test Pattern on PinePhone's Display. Framebuffer passed from C.
 /// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
@@ -327,17 +328,17 @@ fn applySettings(
     //   P0_RTCTL (Bits 0 to 3) = 1 (Pipe 0 from Channel 1)
     // (DE Page 108, 0x110 1080)
     debug("Set Blender Route", .{});
-    const P2_RTCTL = switch (channels) {  // For Pipe 2...
+    const P2_RTCTL: u12 = switch (channels) {  // For Pipe 2...
         3 => 3,  // 3 UI Channels: Select Pipe 2 from UI Channel 3
-        1 => 0,  // 1 UI Channel: Disable Pipe 2
+        1 => 0,  // 1 UI Channel:  Unused Pipe 2
         else => unreachable,
-    } << 8;
-    const P1_RTCTL = switch (channels) {  // For Pipe 1...
+    } << 8;  // Bits 8 to 11
+    const P1_RTCTL: u8 = switch (channels) {  // For Pipe 1...
         3 => 2,  // 3 UI Channels: Select Pipe 1 from UI Channel 2
-        1 => 0,  // 1 UI Channel: Disable Pipe 1
+        1 => 0,  // 1 UI Channel:  Unused Pipe 1
         else => unreachable,
-    } << 4;
-    const P0_RTCTL = 1 << 0;  // Select Pipe 0 from UI Channel 1
+    } << 4;  // Bits 4 to 7
+    const P0_RTCTL: u4 = 1 << 0;  // Select Pipe 0 from UI Channel 1
     const route = P2_RTCTL
         | P1_RTCTL
         | P0_RTCTL;
