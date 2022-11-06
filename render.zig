@@ -396,7 +396,8 @@ fn initUiChannel(
 // (DE Page 104, 0x110 3010 / 0x110 4010 / 0x110 5010)
 
     const OVL_UI_TOP_LADD = OVL_UI_BASE_ADDRESS + 0x10;
-    putreg32(@intCast(u32, @ptrToInt(fbmem.?)), OVL_UI_TOP_LADD);
+    const ptr = @ptrToInt(fbmem.?);
+    putreg32(@intCast(u32, ptr), OVL_UI_TOP_LADD);
 
 // OVL_UI_PITCH (UI Overlay Memory Pitch) at OVL_UI Offset 0x0C
 // Set to (width * 4), number of bytes per row
