@@ -233,28 +233,28 @@ pub export fn test_render2(p0: [*c]u8) void {
         );
     }
 
-    // TODO
+    // Set UI Blender Route, Fill Color and apply the settings
     applySettings(NUM_CHANNELS);
 }
 
 /// Hardware Registers for PinePhone's A64 Display Engine.
 /// See https://lupyuen.github.io/articles/de#appendix-overview-of-allwinner-a64-display-engine
-/// Display Engine Base Address is 0x0100 0000
+/// Display Engine Base Address is 0x0100 0000 (DE Page 24)
 const DISPLAY_ENGINE_BASE_ADDRESS = 0x0100_0000;
 
-/// MIXER0 is at DE Offset 0x10 0000 (Page 87)
+/// MIXER0 is at DE Offset 0x10 0000 (DE Page 24, 0x110 0000)
 const MIXER0_BASE_ADDRESS = DISPLAY_ENGINE_BASE_ADDRESS + 0x10_0000;
 
-/// TODO: GLB | 0x0000
+/// GLB (Global Registers) is at MIXER0 Offset 0x0000 (DE Page 90, 0x110 0000)
 const GLB_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0000;
 
-/// TODO: BLD (Blender) | 0x1000
+/// BLD (Blender) is at MIXER0 Offset 0x1000 (DE Page 90, 0x110 1000)
 const BLD_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x1000;
 
 /// OVL_UI(CH1) (UI Overlay 1) is at MIXER0 Offset 0x3000 (DE Page 102, 0x110 3000)
 const OVL_UI_CH1_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x3000;
 
-/// UI_SCALER1(CH1) is at MIXER0 Offset 0x04 0000 (DE Page 90, 0x114 0000)
+/// UI_SCALER1(CH1) (UI Scaler 1) is at MIXER0 Offset 0x04 0000 (DE Page 90, 0x114 0000)
 const UI_SCALER1_CH1_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x04_0000;
 
 /// Initialise the UI Blender for PinePhone's A64 Display Engine.
@@ -263,33 +263,53 @@ fn initUiBlender() void {
     debug("initUiBlender: start", .{});
     defer { debug("initUiBlender: end", .{}); }
 
-// TODO: Set Blender Background
-// BLD_BK_COLOR (Blender Background Color) at BLD Offset 0x88
-// Set to 0xFF00 0000 (Black Background Color)
-// RED (Bits 16 to 23) = 0
-// GREEN (Bits 8 to 15) = 0
-// BLUE (Bits 0 to 7) = 0
-// (DE Page 109, 0x110 1088)
-
+    // Set Blender Background
+    // BLD_BK_COLOR (Blender Background Color) at BLD Offset 0x88
+    // Set to 0xFF00 0000 (Black Background Color)
+    // RESERVED (Bits 24 to 31) = 0xFF (Undocumented)
+    // RED   (Bits 16 to 23) = 0
+    // GREEN (Bits 8  to 15) = 0
+    // BLUE  (Bits 0  to 7)  = 0
+    // (DE Page 109, 0x110 1088)
     debug("Set Blender Background", .{});
+    const RESERVED = 0xFF << 24;
+    const RED      = 0    << 16;
+    const GREEN    = 0    << 8;
+    const BLUE     = 0    << 0;
+    const color = RESERVED
+        | RED
+        | GREEN
+        | BLUE;
+    comptime{ assert(color == 0xFF00_0000); }
     const BLD_BK_COLOR = BLD_BASE_ADDRESS + 0x88;
-    putreg32(0xff00_0000, BLD_BK_COLOR);
+    comptime{ assert(BLD_BK_COLOR == 0x110_1088); }
+    putreg32(color, BLD_BK_COLOR);
 
-// TODO: Set Blender Pre-Multiply
-// BLD_PREMUL_CTL (Blender Pre-Multiply Control) at BLD Offset 0x84
-// Set to 0 (No Pre-Multiply for Alpha, Pipes 0 to 3)
-// P3_ALPHA_MODE (Bit 3) = 0 (Pipe 3: No Pre-Multiply)
-// P2_ALPHA_MODE (Bit 2) = 0 (Pipe 2: No Pre-Multiply)
-// P1_ALPHA_MODE (Bit 1) = 0 (Pipe 1: No Pre-Multiply)
-// P0_ALPHA_MODE (Bit 0) = 0 (Pipe 0: No Pre-Multiply)
-// (DE Page 109, 0x110 1084)
-
+    // Set Blender Pre-Multiply
+    // BLD_PREMUL_CTL (Blender Pre-Multiply Control) at BLD Offset 0x84
+    // Set to 0 (No Pre-Multiply for Alpha, Pipes 0 to 3)
+    // P3_ALPHA_MODE (Bit 3) = 0 (Pipe 3: No Pre-Multiply)
+    // P2_ALPHA_MODE (Bit 2) = 0 (Pipe 2: No Pre-Multiply)
+    // P1_ALPHA_MODE (Bit 1) = 0 (Pipe 1: No Pre-Multiply)
+    // P0_ALPHA_MODE (Bit 0) = 0 (Pipe 0: No Pre-Multiply)
+    // (DE Page 109, 0x110 1084)
     debug("Set Blender Pre-Multiply", .{});
+    const P3_ALPHA_MODE = 0 << 3;  // Pipe 3: No Pre-Multiply
+    const P2_ALPHA_MODE = 0 << 2;  // Pipe 2: No Pre-Multiply
+    const P1_ALPHA_MODE = 0 << 1;  // Pipe 1: No Pre-Multiply
+    const P0_ALPHA_MODE = 0 << 0;  // Pipe 0: No Pre-Multiply
+    const premultiply = P3_ALPHA_MODE
+        | P2_ALPHA_MODE
+        | P1_ALPHA_MODE
+        | P0_ALPHA_MODE;
+    comptime{ assert(premultiply == 0); }
     const BLD_PREMUL_CTL = BLD_BASE_ADDRESS + 0x84;
-    putreg32(0, BLD_PREMUL_CTL);
+    comptime{ assert(BLD_PREMUL_CTL == 0x110_1084); }
+    putreg32(premultiply, BLD_PREMUL_CTL);
 }
 
-/// TODO
+/// Set UI Blender Route, Fill Color and apply the settings for PinePhone's A64 Display Engine.
+/// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 fn applySettings(
     channels: u8  // Number of enabled UI Channels
 ) void {
