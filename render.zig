@@ -273,10 +273,10 @@ fn initUiBlender() void {
     // BLUE  (Bits 0  to 7)  = 0
     // (DE Page 109, 0x110 1088)
     debug("Set Blender Background", .{});
-    const RESERVED = 0xFF << 24;
-    const RED      = 0    << 16;
-    const GREEN    = 0    << 8;
-    const BLUE     = 0    << 0;
+    const RESERVED: u32 = 0xFF << 24;
+    const RED:      u24 = 0    << 16;
+    const GREEN:    u16 = 0    << 8;
+    const BLUE:     u8  = 0    << 0;
     const color = RESERVED
         | RED
         | GREEN
@@ -295,10 +295,10 @@ fn initUiBlender() void {
     // P0_ALPHA_MODE (Bit 0) = 0 (Pipe 0: No Pre-Multiply)
     // (DE Page 109, 0x110 1084)
     debug("Set Blender Pre-Multiply", .{});
-    const P3_ALPHA_MODE = 0 << 3;  // Pipe 3: No Pre-Multiply
-    const P2_ALPHA_MODE = 0 << 2;  // Pipe 2: No Pre-Multiply
-    const P1_ALPHA_MODE = 0 << 1;  // Pipe 1: No Pre-Multiply
-    const P0_ALPHA_MODE = 0 << 0;  // Pipe 0: No Pre-Multiply
+    const P3_ALPHA_MODE: u4 = 0 << 3;  // Pipe 3: No Pre-Multiply
+    const P2_ALPHA_MODE: u3 = 0 << 2;  // Pipe 2: No Pre-Multiply
+    const P1_ALPHA_MODE: u2 = 0 << 1;  // Pipe 1: No Pre-Multiply
+    const P0_ALPHA_MODE: u1 = 0 << 0;  // Pipe 0: No Pre-Multiply
     const premultiply = P3_ALPHA_MODE
         | P2_ALPHA_MODE
         | P1_ALPHA_MODE
@@ -350,23 +350,41 @@ fn applySettings(
     comptime{ assert(BLD_CH_RTCTL == 0x110_1080); }
     putreg32(route, BLD_CH_RTCTL);  // TODO: DMB
 
-// TODO: Set Fill Color
-// BLD_FILL_COLOR_CTL (Blender Fill Color Control) at BLD Offset 0x000
-// If Rendering 3 UI Channels: Set to 0x701 (DMB)
-//   P2_EN (Bit 10) = 1 (Enable Pipe 2)
-//   P1_EN (Bit 9) = 1 (Enable Pipe 1)
-//   P0_EN (Bit 8) = 1 (Enable Pipe 0)
-//   P0_FCEN (Bit 0) = 1 (Enable Pipe 0 Fill Color)
-// If Rendering 1 UI Channel: Set to 0x101 (DMB)
-//   P0_EN (Bit 8) = 1 (Enable Pipe 0)
-//   P0_FCEN (Bit 0) = 1 (Enable Pipe 0 Fill Color)
-// (DE Page 106, 0x110 1000)
-
+    // Set Fill Color
+    // BLD_FILL_COLOR_CTL (Blender Fill Color Control) at BLD Offset 0x000
+    // If Rendering 3 UI Channels: Set to 0x701 (DMB)
+    //   P2_EN   (Bit 10) = 1 (Enable Pipe 2)
+    //   P1_EN   (Bit 9)  = 1 (Enable Pipe 1)
+    //   P0_EN   (Bit 8)  = 1 (Enable Pipe 0)
+    //   P0_FCEN (Bit 0)  = 1 (Enable Pipe 0 Fill Color)
+    // If Rendering 1 UI Channel: Set to 0x101 (DMB)
+    //   P0_EN   (Bit 8)  = 1 (Enable Pipe 0)
+    //   P0_FCEN (Bit 0)  = 1 (Enable Pipe 0 Fill Color)
+    // (DE Page 106, 0x110 1000)
     debug("Set Fill Color", .{});
+    const P2_EN: u11 = switch (channels) {  // For Pipe 2...
+        3 => 1,  // 3 UI Channels: Enable Pipe 2
+        1 => 0,  // 1 UI Channel:  Disable Pipe 2
+        else => unreachable,
+    } << 10;  // Bit 10
+
+    const P1_EN: u10 = switch (channels) {  // For Pipe 1...
+        3 => 1,  // 3 UI Channels: Enable Pipe 1
+        1 => 0,  // 1 UI Channel:  Disable Pipe 1
+        else => unreachable,
+    } << 9;  // Bit 9
+
+    const P0_EN:   u9 = 1 << 8;  // Enable Pipe 0
+    const P0_FCEN: u1 = 1 << 0;  // Enable Pipe 0 Fill Color
+    const fill = P2_EN
+        | P1_EN
+        | P0_EN
+        | P0_FCEN;
+    comptime{ assert(fill == 0x701 or fill == 0x101); }
+
     const BLD_FILL_COLOR_CTL = BLD_BASE_ADDRESS + 0x000;
-    if (channels == 3) { putreg32(0x701, BLD_FILL_COLOR_CTL); }  // TODO: DMB
-    else if (channels == 1) { putreg32(0x101, BLD_FILL_COLOR_CTL); }  // TODO: DMB
-    else { unreachable; }
+    comptime{ assert(BLD_FILL_COLOR_CTL == 0x110_1000); }
+    putreg32(fill, BLD_FILL_COLOR_CTL);  // TODO: DMB
 
 // TODO: Apply Settings
 // GLB_DBUFFER (Global Double Buffer Control) at GLB Offset 0x008
