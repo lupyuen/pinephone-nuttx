@@ -467,22 +467,39 @@ fn initUiChannel(
         return;
     }
 
-// TODO: Set Overlay (Assume Layer = 0)
-// OVL_UI_ATTR_CTL (UI Overlay Attribute Control) at OVL_UI Offset 0x00
-// For Channel 1: Set to 0xFF00 0405
-// For Channel 2: Set to 0xFF00 0005
-// For Channel 3: Set to 0x7F00 0005
-// LAY_GLBALPHA (Bits 24 to 31) = 0xFF or 0x7F
-//   (Global Alpha Value is Opaque or Semi-Transparent)
-// LAY_FBFMT (Bits 8 to 12) = 4 or 0
-//   (Input Data Format is XRGB 8888 or ARGB 8888)
-// LAY_ALPHA_MODE (Bits 1 to 2) = 2
-//   (Global Alpha is mixed with Pixel Alpha)
-//   (Input Alpha Value = Global Alpha Value * Pixel’s Alpha Value)
-// LAY_EN (Bit 0) = 1 (Enable Layer)
-// (DE Page 102, 0x110 3000 / 0x110 4000 / 0x110 5000)
+    // TODO: Set Overlay (Assume Layer = 0)
+    // OVL_UI_ATTR_CTL (UI Overlay Attribute Control) at OVL_UI Offset 0x00
+    // For Channel 1: Set to 0xFF00 0405
+    // For Channel 2: Set to 0xFF00 0005
+    // For Channel 3: Set to 0x7F00 0005
+    // LAY_GLBALPHA (Bits 24 to 31) = 0xFF or 0x7F
+    //   (Global Alpha Value is Opaque or Semi-Transparent)
+    // LAY_FBFMT (Bits 8 to 12) = 4 or 0
+    //   (Input Data Format is XRGB 8888 or ARGB 8888)
+    // LAY_ALPHA_MODE (Bits 1 to 2) = 2
+    //   (Global Alpha is mixed with Pixel Alpha)
+    //   (Input Alpha Value = Global Alpha Value * Pixel’s Alpha Value)
+    // LAY_EN (Bit 0) = 1 (Enable Layer)
+    // (DE Page 102, 0x110 3000 / 0x110 4000 / 0x110 5000)
 
     debug("Channel {}: Set Overlay ({} x {})", .{ channel, xres, yres });
+    const LAY_GLBALPHA: u32 = switch (channel) {  // For Global Alpha Value...
+        1 => 0xFF,  // Channel 1: Opaque
+        2 => 0xFF,  // Channel 2: Opaque
+        3 => 0x7F,  // Channel 3: Semi-Transparent
+        else => unreachable,
+    } << 24;  // Bits 24 to 31
+
+    const LAY_FBFMT: u13 = switch (channel) {  // For Input Data Format...
+        1 => 4,  // Channel 1: XRGB 8888
+        2 => 0,  // Channel 2: ARGB 8888
+        3 => 0,  // Channel 3: ARGB 8888
+        else => unreachable,
+    } << 8;  // Bits 8 to 12
+
+    _ = LAY_GLBALPHA;
+    _ = LAY_FBFMT;
+
     const OVL_UI_ATTR_CTL = OVL_UI_BASE_ADDRESS + 0x00;
     if (channel == 1) { putreg32(0xff00_0405, OVL_UI_ATTR_CTL); }
     else if (channel == 2) { putreg32(0xff00_0005, OVL_UI_ATTR_CTL); }
