@@ -532,16 +532,18 @@ fn initUiChannel(
     const BLD_CTL = BLD_BASE_ADDRESS + 0x090 + pipe * 4;
     putreg32(0x301_0301, BLD_CTL);
 
-// Note: DE Page 91 shows incorrect offset N*0x14 for BLD_CH_ISIZE, BLD_FILL_COLOR and BLD_CH_OFFSET. Correct offset is N*0x10, see DE Page 108
+    // Note: DE Page 91 shows incorrect offset N*0x14 for 
+    // BLD_CH_ISIZE, BLD_FILL_COLOR and BLD_CH_OFFSET. 
+    // Correct offset is N*0x10, see DE Page 108
 
-// TODO: Disable Scaler (Assume we’re not scaling)
-// UIS_CTRL_REG at Offset 0 of UI_SCALER1(CH1) or UI_SCALER2(CH2) or UI_SCALER3(CH3)
-// Set to 0 (Disable UI Scaler)
-// EN (Bit 0) = 0 (Disable UI Scaler)
-// (DE Page 66, 0x114 0000 / 0x115 0000 / 0x116 0000)
-
+    // Disable Scaler (Assume we’re not scaling)
+    // UIS_CTRL_REG at Offset 0 of UI_SCALER1(CH1) or UI_SCALER2(CH2) or UI_SCALER3(CH3)
+    // Set to 0 (Disable UI Scaler)
+    // EN (Bit 0) = 0 (Disable UI Scaler)
+    // (DE Page 66, 0x114 0000 / 0x115 0000 / 0x116 0000)
     debug("Channel {}: Disable Scaler", .{ channel });
-    const UIS_CTRL_REG = 0x113_0000 + 0x10000 * @intCast(u64, channel);
+    const UIS_CTRL_REG = UI_SCALER_BASE_ADDRESS + 0;
+    assert(UIS_CTRL_REG == 0x114_0000 or UIS_CTRL_REG == 0x115_0000 or UIS_CTRL_REG == 0x116_0000);
     putreg32(0, UIS_CTRL_REG);
 }
 
