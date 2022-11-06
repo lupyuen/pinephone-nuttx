@@ -328,27 +328,36 @@ fn initUiChannel(
     assert(fblen == @intCast(usize, xres) * yres * 4);
     assert(stride == @intCast(usize, xres) * 4);
 
-    // |OVL_UI(CH1) (UI Overlay / Channel 1) | 0x3000
-    // |OVL_UI(CH2) (UI Overlay / Channel 2) | 0x4000
-    // |OVL_UI(CH3) (UI Overlay / Channel 3) | 0x5000
+    // OVL_UI(CH1) (UI Overlay 1) is at MIXER0 Offset 0x3000
+    // OVL_UI(CH2) (UI Overlay 2) is at MIXER0 Offset 0x4000
+    // OVL_UI(CH3) (UI Overlay 3) is at MIXER0 Offset 0x5000
+    // (DE Page 102)
     const OVL_UI_BASE_ADDRESS = OVL_UI_CH1_BASE_ADDRESS +
         @intCast(u64, channel - 1) * 0x1000;
+    assert(OVL_UI_BASE_ADDRESS == 0x110_3000 or OVL_UI_BASE_ADDRESS == 0x110_4000 or OVL_UI_BASE_ADDRESS == 0x110_5000);
 
     // If UI Channel should be disabled...
     if (fbmem == null) {
         // Disable Overlay and Pipe:
-        // UI Config Attr (OVL_UI_ATTCTL @ OVL_UI Offset 0x00): _OVL_UI attribute control register_
-        // Set to 0
+        // OVL_UI_ATTR_CTL (UI Overlay Attribute Control) at OVL_UI Offset 0x00
+        // Set to 0 (Disable UI Overlay Channel)
+        // LAY_EN (Bit 0) = 0 (Disable Layer)
+        // (DE Page 102)
         debug("Channel {}: Disable Overlay and Pipe", .{ channel });
-        const OVL_UI_ATTCTL = OVL_UI_BASE_ADDRESS + 0x00;
-        putreg32(0, OVL_UI_ATTCTL);
+        const OVL_UI_ATTR_CTL = OVL_UI_BASE_ADDRESS + 0x00;
+        assert(OVL_UI_ATTR_CTL == 0x110_3000 or OVL_UI_ATTR_CTL == 0x110_4000 or OVL_UI_ATTR_CTL == 0x110_5000);
+        putreg32(0, OVL_UI_ATTR_CTL);
 
         // Disable Scaler:
-        // Mixer (??? @ 0x113 0000 + 0x10000 * Channel)
-        // Set to 0
+        // UIS_CTRL_REG at Offset 0 of UI_SCALER1(CH1) or UI_SCALER2(CH2) or UI_SCALER3(CH3)
+        // Set to 0 (Disable UI Scaler)
+        // EN (Bit 0) = 0 (Disable UI Scaler)
+        // (DE Page 66)
         debug("Channel {}: Disable Scaler", .{ channel });
-        const MIXER = 0x113_0000 + 0x10000 * @intCast(u64, channel);
-        putreg32(0, MIXER);
+        const UI_SCALER_BASE_ADDRESS = 0x113_0000 + 0x10000 * @intCast(u64, channel);
+        const UIS_CTRL_REG = UI_SCALER_BASE_ADDRESS + 0;
+        assert(UIS_CTRL_REG == 0x114_0000 or UIS_CTRL_REG == 0x115_0000 or UIS_CTRL_REG == 0x116_0000);
+        putreg32(0, UIS_CTRL_REG);
         
         // Skip to next UI Channel
         return;
@@ -360,10 +369,10 @@ fn initUiChannel(
     //         For Channel 2: 0xff00 0005 (Why?)
     //         For Channel 3: 0x7f00 0005 (Why?)
     debug("Channel {}: Set Overlay ({} x {})", .{ channel, xres, yres });
-    const OVL_UI_ATTCTL = OVL_UI_BASE_ADDRESS + 0x00;
-    if (channel == 1) { putreg32(0xff00_0405, OVL_UI_ATTCTL); }
-    else if (channel == 2) { putreg32(0xff00_0005, OVL_UI_ATTCTL); }
-    else if (channel == 3) { putreg32(0x7f00_0005, OVL_UI_ATTCTL); }
+    const OVL_UI_ATTR_CTL = OVL_UI_BASE_ADDRESS + 0x00;
+    if (channel == 1) { putreg32(0xff00_0405, OVL_UI_ATTR_CTL); }
+    else if (channel == 2) { putreg32(0xff00_0005, OVL_UI_ATTR_CTL); }
+    else if (channel == 3) { putreg32(0x7f00_0005, OVL_UI_ATTR_CTL); }
 
     //     -   UI Config Top LAddr (OVL_UI_TOP_LADD @ OVL_UI Offset 0x10): _OVL_UI top field memory block low address register_
     //         Set to Framebuffer Address: fb0, fb1 or fb2
