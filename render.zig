@@ -333,16 +333,19 @@ fn applySettings(
         1 => 0,  // 1 UI Channel:  Unused Pipe 2
         else => unreachable,
     } << 8;  // Bits 8 to 11
+
     const P1_RTCTL: u8 = switch (channels) {  // For Pipe 1...
         3 => 2,  // 3 UI Channels: Select Pipe 1 from UI Channel 2
         1 => 0,  // 1 UI Channel:  Unused Pipe 1
         else => unreachable,
     } << 4;  // Bits 4 to 7
+
     const P0_RTCTL: u4 = 1 << 0;  // Select Pipe 0 from UI Channel 1
     const route = P2_RTCTL
         | P1_RTCTL
         | P0_RTCTL;
     comptime{ assert(route == 0x321 or route == 1); }
+
     const BLD_CH_RTCTL = BLD_BASE_ADDRESS + 0x080;
     comptime{ assert(BLD_CH_RTCTL == 0x110_1080); }
     putreg32(route, BLD_CH_RTCTL);  // TODO: DMB
@@ -393,7 +396,7 @@ fn initUiChannel(
     debug("initUiChannel: start", .{});
     defer { debug("initUiChannel: end", .{}); }
 
-    // Validate Framebuffer Size and Stride
+    // Validate Framebuffer Size and Stride at Compile Time
     comptime {
         assert(channel >= 1 and channel <= 3);
         assert(fblen == @intCast(usize, xres) * yres * 4);
