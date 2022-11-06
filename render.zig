@@ -17,9 +17,11 @@
 //
 //***************************************************************************
 
-//! PinePhone Display Engine Driver for Apache NuttX RTOS.
-//! This Framebuffer Interface is compatible with NuttX Framebuffers:
-//! https://github.com/lupyuen/incubator-nuttx/blob/master/include/nuttx/video/fb.h
+//! PinePhone Display Engine Driver for Apache NuttX RTOS, based on NuttX Framebuffers:
+//! https://github.com/apache/incubator-nuttx/blob/master/include/nuttx/video/fb.h
+//! "DE Page ???" refers to Allwinner Display Engine 2.0 Specification: https://linux-sunxi.org/images/7/7b/Allwinner_DE2.0_Spec_V1.0.pdf
+//! "A64 Page ???" refers to Allwinner A64 User Manual: https://linux-sunxi.org/images/b/b4/Allwinner_A64_User_Manual_V1.1.pdf
+//! "A31 Page ???" refers to Allwinner A31 User Manual: https://github.com/allwinner-zh/documents/raw/master/A31/A31_User_Manual_v1.3_20150510.pdf
 
 /// Import the Zig Standard Library
 const std = @import("std");
