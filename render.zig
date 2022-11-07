@@ -596,19 +596,19 @@ fn initUiChannel(
     comptime{ assert(BLD_FILL_COLOR == 0x110_1004 or BLD_FILL_COLOR == 0x110_1014 or BLD_FILL_COLOR == 0x110_1024); }
     putreg32(color, BLD_FILL_COLOR);
 
-// TODO: BLD_CH_OFFSET (Blender Input Memory Offset) at BLD Offset 0x00C + N*0x10 (N=0,1,2,3,4)
-// Set to y_offset << 16 + x_offset
-// For Channel 1: Set to 0
-// For Channel 2: Set to 0x34 0034
-// For Channel 3: Set to 0
-// (DE Page 108, 0x110 100C / 0x110 101C / 0x110 102C)
+    // BLD_CH_OFFSET (Blender Input Memory Offset) at BLD Offset 0x00C + N*0x10 (N=0,1,2,3,4)
+    // Set to y_offset << 16 + x_offset
+    // For Channel 1: Set to 0
+    // For Channel 2: Set to 0x34 0034
+    // For Channel 3: Set to 0
+    // (DE Page 108, 0x110 100C / 0x110 101C / 0x110 102C)
+    const offset = @intCast(u32, yoffset) << 16
+        | xoffset;
+    comptime{ assert(offset == 0 or offset == 0x34_0034); }
 
-    _ = xoffset; ////
-    _ = yoffset; ////
     const BLD_CH_OFFSET = BLD_BASE_ADDRESS + 0x00C + pipe * 0x10;
-    if (channel == 1) { putreg32(0, BLD_CH_OFFSET); }
-    else if (channel == 2) { putreg32(0x34_0034, BLD_CH_OFFSET); }
-    else if (channel == 3) { putreg32(0, BLD_CH_OFFSET); }
+    comptime{ assert(BLD_CH_OFFSET == 0x110_100C or BLD_CH_OFFSET == 0x110_101C or BLD_CH_OFFSET == 0x110_102C); }
+    putreg32(offset, BLD_CH_OFFSET);
 
 // TODO: BLD_CTL (Blender Control) at BLD Offset 0x090 + N*4
 // Set to 0x301 0301
