@@ -564,28 +564,37 @@ fn initUiChannel(
         putreg32(height_width, GLB_SIZE);
     }
 
-// Set Blender Input Pipe (N = Pipe Number, from 0 to 2 for Channels 1 to 3)
-
+    // Set Blender Input Pipe (N = Pipe Number, from 0 to 2 for Channels 1 to 3)
     const pipe: u64 = channel - 1;
     debug("Channel {}: Set Blender Input Pipe {} ({} x {})", .{ channel, pipe, xres, yres });
 
-// TODO: BLD_CH_ISIZE (Blender Input Memory Size) at BLD Offset 0x008 + N*0x10 (N=0,1,2,3,4)
-// Set to (height-1) << 16 + (width-1)
-// (DE Page 108, 0x110 1008 / 0x110 1018 / 0x110 1028)
-
+    // BLD_CH_ISIZE (Blender Input Memory Size) at BLD Offset 0x008 + N*0x10 (N=0,1,2,3,4)
+    // Set to (height-1) << 16 + (width-1)
+    // (DE Page 108, 0x110 1008 / 0x110 1018 / 0x110 1028)
     const BLD_CH_ISIZE = BLD_BASE_ADDRESS + 0x008 + pipe * 0x10;
+    comptime{ assert(BLD_CH_ISIZE == 0x110_1008 or BLD_CH_ISIZE == 0x110_1018 or BLD_CH_ISIZE == 0x110_1028); }
     putreg32(height_width, BLD_CH_ISIZE);
 
-// TODO: BLD_FILL_COLOR (Blender Fill Color) at BLD Offset 0x004 + N*0x10 (N=0,1,2,3,4)
-// Set to 0xFF00 0000 (Opaque Black)
-// ALPHA (Bits 24 to 31) = 0xFF
-// RED (Bits 16 to 23) = 0
-// GREEN (Bits 8 to 15) = 0
-// BLUE (Bits 0 to 7) = 0
-// (DE Page 107, 0x110 1004 / 0x110 1014 / 0x110 1024)
+    // BLD_FILL_COLOR (Blender Fill Color) at BLD Offset 0x004 + N*0x10 (N=0,1,2,3,4)
+    // Set to 0xFF00 0000 (Opaque Black)
+    // ALPHA (Bits 24 to 31) = 0xFF
+    // RED (Bits 16 to 23) = 0
+    // GREEN (Bits 8 to 15) = 0
+    // BLUE (Bits 0 to 7) = 0
+    // (DE Page 107, 0x110 1004 / 0x110 1014 / 0x110 1024)
+    const ALPHA: u32 = 0xFF << 24;  // Opaque
+    const RED:   u24 = 0    << 16;  // Black
+    const GREEN: u18 = 0    << 8;
+    const BLUE:  u8  = 0    << 0;
+    const color = ALPHA
+        | RED
+        | GREEN
+        | BLUE;
+    comptime{ assert(color == 0xFF00_0000); }
 
     const BLD_FILL_COLOR = BLD_BASE_ADDRESS + 0x004 + pipe * 0x10;
-    putreg32(0xff00_0000, BLD_FILL_COLOR);
+    comptime{ assert(BLD_FILL_COLOR == 0x110_1004 or BLD_FILL_COLOR == 0x110_1014 or BLD_FILL_COLOR == 0x110_1024); }
+    putreg32(color, BLD_FILL_COLOR);
 
 // TODO: BLD_CH_OFFSET (Blender Input Memory Offset) at BLD Offset 0x00C + N*0x10 (N=0,1,2,3,4)
 // Set to y_offset << 16 + x_offset
