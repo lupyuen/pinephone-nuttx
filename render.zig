@@ -568,6 +568,10 @@ fn initUiChannel(
     const pipe: u64 = channel - 1;
     debug("Channel {}: Set Blender Input Pipe {} ({} x {})", .{ channel, pipe, xres, yres });
 
+    // Note: DE Page 91 shows incorrect offset N*0x14 for 
+    // BLD_CH_ISIZE, BLD_FILL_COLOR and BLD_CH_OFFSET. 
+    // Correct offset is N*0x10, see DE Page 108
+
     // BLD_CH_ISIZE (Blender Input Memory Size) at BLD Offset 0x008 + N*0x10 (N=0,1,2,3,4)
     // Set to (height-1) << 16 + (width-1)
     // (DE Page 108, 0x110 1008 / 0x110 1018 / 0x110 1028)
@@ -610,24 +614,29 @@ fn initUiChannel(
     comptime{ assert(BLD_CH_OFFSET == 0x110_100C or BLD_CH_OFFSET == 0x110_101C or BLD_CH_OFFSET == 0x110_102C); }
     putreg32(offset, BLD_CH_OFFSET);
 
-// TODO: BLD_CTL (Blender Control) at BLD Offset 0x090 + N*4
-// Set to 0x301 0301
-// BLEND_AFD (Bits 24 to 27) = 3
-//   (Coefficient for destination alpha data Q[d] is 1-A[s])
-// BLEND_AFS (Bits 16 to 19) = 1
-//   (Coefficient for source alpha data Q[s] is 1)
-// BLEND_PFD (Bits 8 to 11) = 3
-//   (Coefficient for destination pixel data F[d] is 1-A[s])
-// BLEND_PFS (Bits 0 to 3) = 1
-//   (Coefficient for source pixel data F[s] is 1)
-// (DE Page 110, 0x110 1090 / 0x110 1094 / 0x110 1098)
+    // BLD_CTL (Blender Control) at BLD Offset 0x090 + N*4
+    // Set to 0x301 0301
+    // BLEND_AFD (Bits 24 to 27) = 3
+    //   (Coefficient for destination alpha data Q[d] is 1-A[s])
+    // BLEND_AFS (Bits 16 to 19) = 1
+    //   (Coefficient for source alpha data Q[s] is 1)
+    // BLEND_PFD (Bits 8 to 11) = 3
+    //   (Coefficient for destination pixel data F[d] is 1-A[s])
+    // BLEND_PFS (Bits 0 to 3) = 1
+    //   (Coefficient for source pixel data F[s] is 1)
+    // (DE Page 110, 0x110 1090 / 0x110 1094 / 0x110 1098)
+    const BLEND_AFD: u28 = 3 << 24;  // Coefficient for destination alpha data Q[d] is 1-A[s]
+    const BLEND_AFS: u20 = 1 << 16;  // Coefficient for source alpha data Q[s] is 1
+    const BLEND_PFD: u12 = 3 << 8;   // Coefficient for destination pixel data F[d] is 1-A[s]
+    const BLEND_PFS: u4  = 1 << 0;   // Coefficient for source pixel data F[s] is 1
+    const blend = BLEND_AFD
+        | BLEND_AFS
+        | BLEND_PFD
+        | BLEND_PFS;
 
     const BLD_CTL = BLD_BASE_ADDRESS + 0x090 + pipe * 4;
-    putreg32(0x301_0301, BLD_CTL);
-
-    // Note: DE Page 91 shows incorrect offset N*0x14 for 
-    // BLD_CH_ISIZE, BLD_FILL_COLOR and BLD_CH_OFFSET. 
-    // Correct offset is N*0x10, see DE Page 108
+    comptime{ assert(BLD_CTL == 0x110_1090 or BLD_CTL == 0x110_1094 or BLD_CTL == 0x110_1098); }
+    putreg32(blend, BLD_CTL);
 
     // Disable Scaler (Assume we’re not scaling)
     // UIS_CTRL_REG at Offset 0 of UI_SCALER1(CH1) or UI_SCALER2(CH2) or UI_SCALER3(CH3)
@@ -898,6 +907,7 @@ pub export fn de2_init() void {
         enableLog = false;
     }
     enableLog = true;
+    debug("  to *0x{x} = 0x0", .{ MIXER0_BASE_ADDRESS + i - 1 });
 
     // Disable MIXER0 Video Scaler (VSU)
     // Set to 0: VS_CTRL_REG at VIDEO_SCALER(CH0) Offset 0
