@@ -546,20 +546,21 @@ fn initUiChannel(
     comptime{ assert(OVL_UI_COOR == 0x110_3008 or OVL_UI_COOR == 0x110_4008 or OVL_UI_COOR == 0x110_5008); }
     putreg32(0, OVL_UI_COOR);
 
-// For Channel 1: Set Blender Output
-
+    // For Channel 1: Set Blender Output
     if (channel == 1) {
-// TODO: BLD_SIZE (Blender Output Size Setting) at BLD Offset 0x08C
-// Set to (height-1) << 16 + (width-1)
-// (DE Page 110, 0x110 108C)
+        // BLD_SIZE (Blender Output Size Setting) at BLD Offset 0x08C
+        // Set to (height-1) << 16 + (width-1)
+        // (DE Page 110, 0x110 108C)
         debug("Channel {}: Set Blender Output", .{ channel });
         const BLD_SIZE = BLD_BASE_ADDRESS + 0x08C;
+        comptime{ assert(BLD_SIZE == 0x110_108C); }
         putreg32(height_width, BLD_SIZE);
                 
-// TODO: GLB_SIZE (Global Size) at GLB Offset 0x00C
-// Set to (height-1) << 16 + (width-1)
-// (DE Page 93, 0x110 000C)
+        // GLB_SIZE (Global Size) at GLB Offset 0x00C
+        // Set to (height-1) << 16 + (width-1)
+        // (DE Page 93, 0x110 000C)
         const GLB_SIZE = GLB_BASE_ADDRESS + 0x00C;
+        comptime{ assert(GLB_SIZE == 0x110_000C); }
         putreg32(height_width, GLB_SIZE);
     }
 
