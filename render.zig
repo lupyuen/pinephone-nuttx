@@ -467,7 +467,7 @@ fn initUiChannel(
         return;
     }
 
-    // TODO: Set Overlay (Assume Layer = 0)
+    // Set Overlay (Assume Layer = 0)
     // OVL_UI_ATTR_CTL (UI Overlay Attribute Control) at OVL_UI Offset 0x00
     // For Channel 1: Set to 0xFF00 0405
     // For Channel 2: Set to 0xFF00 0005
@@ -481,7 +481,6 @@ fn initUiChannel(
     //   (Input Alpha Value = Global Alpha Value * Pixel’s Alpha Value)
     // LAY_EN (Bit 0) = 1 (Enable Layer)
     // (DE Page 102, 0x110 3000 / 0x110 4000 / 0x110 5000)
-
     debug("Channel {}: Set Overlay ({} x {})", .{ channel, xres, yres });
     const LAY_GLBALPHA: u32 = switch (channel) {  // For Global Alpha Value...
         1 => 0xFF,  // Channel 1: Opaque
@@ -497,55 +496,54 @@ fn initUiChannel(
         else => unreachable,
     } << 8;  // Bits 8 to 12
 
-    // LAY_ALPHA_MODE (Bits 1 to 2) = 2
-    //   (Global Alpha is mixed with Pixel Alpha)
-    //   (Input Alpha Value = Global Alpha Value * Pixel’s Alpha Value)
-    // LAY_EN (Bit 0) = 1 (Enable Layer)
-
-    _ = LAY_GLBALPHA;
-    _ = LAY_FBFMT;
+    const LAY_ALPHA_MODE: u3 = 2 << 1;  // Global Alpha is mixed with Pixel Alpha
+    const LAY_EN:         u1 = 1 << 0;  // Enable Layer
+    const attr = LAY_GLBALPHA
+        | LAY_FBFMT
+        | LAY_ALPHA_MODE
+        | LAY_EN;
+    comptime{ assert(attr == 0xFF00_0405 or attr == 0xFF00_0005 or attr == 0x7F00_0005); }
 
     const OVL_UI_ATTR_CTL = OVL_UI_BASE_ADDRESS + 0x00;
-    if (channel == 1) { putreg32(0xff00_0405, OVL_UI_ATTR_CTL); }
-    else if (channel == 2) { putreg32(0xff00_0005, OVL_UI_ATTR_CTL); }
-    else if (channel == 3) { putreg32(0x7f00_0005, OVL_UI_ATTR_CTL); }
+    comptime{ assert(OVL_UI_ATTR_CTL == 0x110_3000 or OVL_UI_ATTR_CTL == 0x110_4000 or OVL_UI_ATTR_CTL == 0x110_5000); }
+    putreg32(attr, OVL_UI_ATTR_CTL);
 
-// TODO: OVL_UI_TOP_LADD (UI Overlay Top Field Memory Block Low Address) at OVL_UI Offset 0x10
-// Set to Framebuffer Address: fb0, fb1 or fb2
-// (DE Page 104, 0x110 3010 / 0x110 4010 / 0x110 5010)
-
-    const OVL_UI_TOP_LADD = OVL_UI_BASE_ADDRESS + 0x10;
+    // OVL_UI_TOP_LADD (UI Overlay Top Field Memory Block Low Address) at OVL_UI Offset 0x10
+    // Set to Framebuffer Address: fb0, fb1 or fb2
+    // (DE Page 104, 0x110 3010 / 0x110 4010 / 0x110 5010)
     const ptr = @ptrToInt(fbmem.?);
+    const OVL_UI_TOP_LADD = OVL_UI_BASE_ADDRESS + 0x10;
+    comptime{ assert(OVL_UI_TOP_LADD == 0x110_3010 or OVL_UI_TOP_LADD == 0x110_4010 or OVL_UI_TOP_LADD == 0x110_5010); }
     putreg32(@intCast(u32, ptr), OVL_UI_TOP_LADD);
 
-// TODO: OVL_UI_PITCH (UI Overlay Memory Pitch) at OVL_UI Offset 0x0C
-// Set to (width * 4), number of bytes per row
-// (DE Page 104, 0x110 300C / 0x110 400C / 0x110 500C)
-
+    // OVL_UI_PITCH (UI Overlay Memory Pitch) at OVL_UI Offset 0x0C
+    // Set to (width * 4), number of bytes per row
+    // (DE Page 104, 0x110 300C / 0x110 400C / 0x110 500C)
     const OVL_UI_PITCH = OVL_UI_BASE_ADDRESS + 0x0C;
+    comptime{ assert(OVL_UI_PITCH == 0x110_300C or OVL_UI_PITCH == 0x110_400C or OVL_UI_PITCH == 0x110_500C); }
     putreg32(xres * 4, OVL_UI_PITCH);
 
-// TODO: OVL_UI_MBSIZE (UI Overlay Memory Block Size) at OVL_UI Offset 0x04
-// Set to (height-1) << 16 + (width-1)
-// (DE Page 104, 0x110 3004 / 0x110 4004 / 0x110 5004)
-
-    const OVL_UI_MBSIZE = OVL_UI_BASE_ADDRESS + 0x04;
+    // OVL_UI_MBSIZE (UI Overlay Memory Block Size) at OVL_UI Offset 0x04
+    // Set to (height-1) << 16 + (width-1)
+    // (DE Page 104, 0x110 3004 / 0x110 4004 / 0x110 5004)
     const height_width: u32 = @intCast(u32, yres - 1) << 16
         | (xres - 1);
+    const OVL_UI_MBSIZE = OVL_UI_BASE_ADDRESS + 0x04;
+    comptime{ assert(OVL_UI_MBSIZE == 0x110_3004 or OVL_UI_MBSIZE == 0x110_4004 or OVL_UI_MBSIZE == 0x110_5004); }
     putreg32(height_width, OVL_UI_MBSIZE);
 
-// TODO: OVL_UI_SIZE (UI Overlay Overlay Window Size) at OVL_UI Offset 0x88
-// Set to (height-1) << 16 + (width-1)
-// (DE Page 106, 0x110 3088 / 0x110 4088 / 0x110 5088)
-
+    // OVL_UI_SIZE (UI Overlay Overlay Window Size) at OVL_UI Offset 0x88
+    // Set to (height-1) << 16 + (width-1)
+    // (DE Page 106, 0x110 3088 / 0x110 4088 / 0x110 5088)
     const OVL_UI_SIZE = OVL_UI_BASE_ADDRESS + 0x88;
+    comptime{ assert(OVL_UI_SIZE == 0x110_3088 or OVL_UI_SIZE == 0x110_4088 or OVL_UI_SIZE == 0x110_5088); }
     putreg32(height_width, OVL_UI_SIZE);
 
-// TODO: OVL_UI_COOR (UI Overlay Memory Block Coordinate) at OVL_UI Offset 0x08
-// Set to 0 (Overlay at X=0, Y=0)
-// (DE Page 104, 0x110 3008 / 0x110 4008 / 0x110 5008)
-
+    // OVL_UI_COOR (UI Overlay Memory Block Coordinate) at OVL_UI Offset 0x08
+    // Set to 0 (Overlay at X=0, Y=0)
+    // (DE Page 104, 0x110 3008 / 0x110 4008 / 0x110 5008)
     const OVL_UI_COOR = OVL_UI_BASE_ADDRESS + 0x08;
+    comptime{ assert(OVL_UI_COOR == 0x110_3008 or OVL_UI_COOR == 0x110_4008 or OVL_UI_COOR == 0x110_5008); }
     putreg32(0, OVL_UI_COOR);
 
 // For Channel 1: Set Blender Output
