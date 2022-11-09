@@ -96,13 +96,13 @@ pub export fn test_render() void {
         // Colours are in XRGB 8888 format
         if (i < fb0.len / 4) {
             // Blue for top quarter
-            fb0[i] = 0x80000080;
+            fb0[i] = 0x8000_0080;
         } else if (i < fb0.len / 2) {
             // Green for next quarter
-            fb0[i] = 0x80008000;
+            fb0[i] = 0x8000_8000;
         } else {
             // Red for lower half
-            fb0[i] = 0x80800000;
+            fb0[i] = 0x8080_0000;
         }
     }
 
@@ -111,7 +111,7 @@ pub export fn test_render() void {
     i = 0;
     while (i < fb1.len) : (i += 1) {
         // Colours are in ARGB 8888 format
-        fb1[i] = 0x80000080;
+        fb1[i] = 0x8000_0080;
     }
 
     // Init Framebuffer 2:
@@ -130,9 +130,9 @@ pub export fn test_render() void {
 
             // If x^2 + y^2 < radius^2, set the pixel to Semi-Transparent Green
             if (x_shift*x_shift + y_shift*y_shift < 360*360) {
-                fb2[p] = 0x80008000;  // Semi-Transparent Green in ARGB 8888 Format
+                fb2[p] = 0x8000_8000;  // Semi-Transparent Green in ARGB 8888 Format
             } else {  // Otherwise set to Transparent Black
-                fb2[p] = 0x00000000;  // Transparent Black in ARGB 8888 Format
+                fb2[p] = 0x0000_0000;  // Transparent Black in ARGB 8888 Format
             }
         }
     }
