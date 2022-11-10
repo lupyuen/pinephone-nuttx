@@ -352,7 +352,7 @@ fn applySettings(
     comptime{ assert(BLD_CH_RTCTL == 0x110_1080); }
     putreg32(route, BLD_CH_RTCTL);  // TODO: DMB
 
-    // Set Fill Color
+    // Enable Blender Pipes
     // BLD_FILL_COLOR_CTL (Blender Fill Color Control) at BLD Offset 0x000
     // If Rendering 3 UI Channels: Set to 0x701 (DMB)
     //   P2_EN   (Bit 10) = 1 (Enable Pipe 2)
@@ -363,7 +363,7 @@ fn applySettings(
     //   P0_EN   (Bit 8)  = 1 (Enable Pipe 0)
     //   P0_FCEN (Bit 0)  = 1 (Enable Pipe 0 Fill Color)
     // (DE Page 106, 0x110 1000)
-    debug("Set Fill Color", .{});
+    debug("Enable Blender Pipes", .{});
     const P2_EN: u11 = switch (channels) {  // For Pipe 2...
         3 => 1,  // 3 UI Channels: Enable Pipe 2
         1 => 0,  // 1 UI Channel:  Disable Pipe 2
