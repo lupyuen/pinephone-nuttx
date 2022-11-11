@@ -582,9 +582,9 @@ fn initUiChannel(
     // BLD_FILL_COLOR (Blender Fill Color) at BLD Offset 0x004 + N*0x10 (N=0,1,2,3,4)
     // Set to 0xFF00 0000 (Opaque Black)
     // ALPHA (Bits 24 to 31) = 0xFF
-    // RED (Bits 16 to 23) = 0
-    // GREEN (Bits 8 to 15) = 0
-    // BLUE (Bits 0 to 7) = 0
+    // RED   (Bits 16 to 23) = 0
+    // GREEN (Bits 8  to 15) = 0
+    // BLUE  (Bits 0  to 7)  = 0
     // (DE Page 107, 0x110 1004 / 0x110 1014 / 0x110 1024)
     const ALPHA: u32 = 0xFF << 24;  // Opaque
     const RED:   u24 = 0    << 16;  // Black
