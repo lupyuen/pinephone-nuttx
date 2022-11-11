@@ -58,8 +58,8 @@ const c = @cImport({
 fn renderGraphics(
     comptime channels: u8  // Number of UI Channels to render: 1 or 3
 ) void {
-    debug("test_render: start", .{});
-    defer { debug("test_render: end", .{}); }
+    debug("renderGraphics: start", .{});
+    defer { debug("renderGraphics: end", .{}); }
 
     // Validate the Framebuffer Sizes at Compile Time
     comptime {
