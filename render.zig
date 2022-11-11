@@ -52,19 +52,18 @@ const c = @cImport({
     @cInclude("nuttx/video/fb.h");
 });
 
-/// Number of UI Channels to test: 1 or 3
-const NUM_CHANNELS = 3;
-
 /// Render a Test Pattern on PinePhone's Display.
 /// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
-pub export fn test_render() void {
+fn renderGraphics(
+    comptime channels: u8  // Number of UI Channels to render: 1 or 3
+) void {
     debug("test_render: start", .{});
     defer { debug("test_render: end", .{}); }
 
     // Validate the Framebuffer Sizes at Compile Time
     comptime {
-        assert(NUM_CHANNELS == 1 or NUM_CHANNELS == 3);
+        assert(channels == 1 or channels == 3);
         assert(planeInfo.xres_virtual == videoInfo.xres);
         assert(planeInfo.yres_virtual == videoInfo.yres);
         assert(planeInfo.fblen  == planeInfo.xres_virtual * planeInfo.yres_virtual * 4);
@@ -75,7 +74,8 @@ pub export fn test_render() void {
         assert(overlayInfo[1].stride == overlayInfo[1].sarea.w * 4);
     }
 
-    // TODO: Handle non-relaxed write
+    // TODO: Handle DMB non-relaxed write
+    // https://developer.arm.com/documentation/dui0489/c/arm-and-thumb-instructions/miscellaneous-instructions/dmb--dsb--and-isb
 
     // TODO: Init PinePhone's Allwinner A64 Timing Controller TCON0 (tcon0_init)
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#tcon0_init
@@ -156,7 +156,7 @@ pub export fn test_render() void {
     inline for (overlayInfo) | ov, ov_index | {
         initUiChannel(
             @intCast(u8, ov_index + 2),  // UI Channel Number (2 and 3 for Overlay UI Channels)
-            if (NUM_CHANNELS == 3) ov.fbmem else null,  // Start of frame buffer memory
+            if (channels == 3) ov.fbmem else null,  // Start of frame buffer memory
             ov.fblen,    // Length of frame buffer memory in bytes
             ov.stride,   // Length of a line in bytes (4 bytes per pixel)
             ov.sarea.w,  // Horizontal resolution in pixel columns
@@ -167,75 +167,19 @@ pub export fn test_render() void {
     }
 
     // Set UI Blender Route, Fill Color and apply the settings
-    applySettings(NUM_CHANNELS);
+    applySettings(channels);
 }
 
-/// TODO: Remove this
-/// Render a Test Pattern on PinePhone's Display. Framebuffer passed from C.
-/// Calls Allwinner A64 Display Engine, Timing Controller and MIPI Display Serial Interface.
-/// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
-pub export fn test_render2(p0: [*c]u8) void {
-    debug("test_render2: start", .{});
-    defer { debug("test_render2: end", .{}); }
-
-    // Validate the Framebuffer Sizes at Compile Time
-    comptime {
-        assert(NUM_CHANNELS == 1 or NUM_CHANNELS == 3);
-        assert(planeInfo.xres_virtual == videoInfo.xres);
-        assert(planeInfo.yres_virtual == videoInfo.yres);
-        assert(planeInfo.fblen  == planeInfo.xres_virtual * planeInfo.yres_virtual * 4);
-        assert(planeInfo.stride == planeInfo.xres_virtual * 4);
-        assert(overlayInfo[0].fblen  == @intCast(usize, overlayInfo[0].sarea.w) * overlayInfo[0].sarea.h * 4);
-        assert(overlayInfo[0].stride == overlayInfo[0].sarea.w * 4);
-        assert(overlayInfo[1].fblen  == @intCast(usize, overlayInfo[1].sarea.w) * overlayInfo[1].sarea.h * 4);
-        assert(overlayInfo[1].stride == overlayInfo[1].sarea.w * 4);
+/// Render a Test Pattern on PinePhone's Display.
+/// Called by test_display() in https://github.com/lupyuen/incubator-nuttx-apps/blob/de3/examples/hello/test_display.c
+pub export fn test_render(
+    channels: c_int  // Number of UI Channels to render: 1 or 3
+) void {
+    switch (channels) {
+        1 => renderGraphics(1),  // Render 1 UI Channel
+        3 => renderGraphics(3),  // Render 3 UI Channels
+        else => debug("Argument must be 1 or 3", .{}),
     }
-
-    // TODO: Handle non-relaxed write
-
-    // TODO: Init PinePhone's Allwinner A64 Timing Controller TCON0 (tcon0_init)
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#tcon0_init
-
-    // TODO: Init PinePhone's Allwinner A64 MIPI Display Serial Interface (dsi_init)
-    // Call https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
-
-    // TODO: Init PinePhone's Allwinner A64 Display Engine (de2_init)
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#de2_init
-
-    // TODO: Turn on PinePhone's Backlight (backlight_enable)
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#backlight_enable
-
-    // Init the UI Blender for PinePhone's A64 Display Engine
-    initUiBlender();
-
-    // Init the Base UI Channel
-    initUiChannel(
-        1,  // UI Channel Number (1 for Base UI Channel)
-        p0,    // Start of frame buffer memory
-        planeInfo.fblen,    // Length of frame buffer memory in bytes
-        planeInfo.stride,   // Length of a line in bytes (4 bytes per pixel)
-        planeInfo.xres_virtual,  // Horizontal resolution in pixel columns
-        planeInfo.yres_virtual,  // Vertical resolution in pixel rows
-        planeInfo.xoffset,  // Horizontal offset in pixel columns
-        planeInfo.yoffset,  // Vertical offset in pixel rows
-    );
-
-    // Init the 2 Overlay UI Channels
-    inline for (overlayInfo) | ov, ov_index | {
-        initUiChannel(
-            @intCast(u8, ov_index + 2),  // UI Channel Number (2 and 3 for Overlay UI Channels)
-            if (NUM_CHANNELS == 3) ov.fbmem else null,  // Start of frame buffer memory
-            ov.fblen,    // Length of frame buffer memory in bytes
-            ov.stride,   // Length of a line in bytes (4 bytes per pixel)
-            ov.sarea.w,  // Horizontal resolution in pixel columns
-            ov.sarea.h,  // Vertical resolution in pixel rows
-            ov.sarea.x,  // Horizontal offset in pixel columns
-            ov.sarea.y,  // Vertical offset in pixel rows
-        );
-    }
-
-    // Set UI Blender Route, Fill Color and apply the settings
-    applySettings(NUM_CHANNELS);
 }
 
 /// Hardware Registers for PinePhone's A64 Display Engine.
@@ -722,7 +666,7 @@ var fb1 align(0x1000) = std.mem.zeroes([600 * 600] u32);
 var fb2 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
 
 ///////////////////////////////////////////////////////////////////////////////
-//  Display Engine
+//  Init Display Engine
 
 // SRAM Registers Base Address is 0x01C0 0000 (A31 Page 191)
 const SRAM_REGISTERS_BASE_ADDRESS = 0x01C0_0000;
@@ -761,6 +705,7 @@ const FCC_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_A000;
 const DRC_BASE_ADDRESS = 0x011B_0000;
 
 // Init PinePhone's Allwinner A64 Display Engine.
+// Called by display_init() in p-boot Display Code.
 // See https://lupyuen.github.io/articles/de#appendix-initialising-the-allwinner-a64-display-engine
 pub export fn de2_init() void {
     debug("de2_init: start", .{});
