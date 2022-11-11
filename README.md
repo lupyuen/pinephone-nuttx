@@ -4083,7 +4083,7 @@ To test the A64 Display Engine with NuttX on PinePhone, we'll run this p-boot Di
 
 With our Test App...
 
--   [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
+-   [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de3/examples/hello/test_display.c)
 
 Here are the steps to download and run the NuttX Binary Image on PinePhone...
 
@@ -4181,7 +4181,7 @@ nuttx
 
 1.  Follow these steps to compile our Zig MIPI DSI Driver and link into NuttX...
 
-    TODO
+    ["Zig Driver for PinePhone Display Engine"](https://github.com/lupyuen/pinephone-nuttx#zig-driver-for-pinephone-display-engine)
 
 1.  Compress the NuttX Binary Image...
 
