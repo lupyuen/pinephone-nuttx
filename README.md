@@ -3986,6 +3986,219 @@ TODO
 
 See ["p-boot Display Code"](https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70)
 
+# Zig Driver for PinePhone Display Engine
+
+TODO
+
+-   ["NuttX RTOS for PinePhone: Render Graphics in Zig"](https://lupyuen.github.io/articles/de2)
+
+Let's run this Zig App on NuttX for PinePhone: [render.zig](render.zig)
+
+In NuttX, enable the Null Example App: make menuconfig, select "Application Configuration" > "Examples" > "Null Example"
+
+Compile the Zig App (based on the GCC Compiler Options, see below)...
+
+```bash
+#  Change "$HOME/nuttx" for your NuttX Project Directory
+cd $HOME/nuttx
+
+#  Download the Zig App
+git clone --recursive https://github.com/lupyuen/pinephone-nuttx
+cd pinephone-nuttx
+
+#  Compile the Zig App for PinePhone 
+#  (armv8-a with cortex-a53)
+#  TODO: Change "$HOME/nuttx" to your NuttX Project Directory
+zig build-obj \
+  --verbose-cimport \
+  -target aarch64-freestanding-none \
+  -mcpu cortex_a53 \
+  -isystem "$HOME/nuttx/nuttx/include" \
+  -I "$HOME/nuttx/apps/include" \
+  render.zig
+
+#  Copy the compiled app to NuttX and overwrite `null.o`
+#  TODO: Change "$HOME/nuttx" to your NuttX Project Directory
+cp render.o \
+  $HOME/nuttx/apps/examples/null/*null.o
+
+#  Build NuttX to link the Zig Object from `null.o`
+#  TODO: Change "$HOME/nuttx" to your NuttX Project Directory
+cd $HOME/nuttx/nuttx
+make
+```
+
+Run the Zig App...
+
+```text
+## Render colour bars
+hello 1
+
+## Render colour bars with overlays
+hello 3
+```
+
+_How did we get the Zig Compiler options `-target`, `-mcpu`, `-isystem` and `-I`?_
+
+`make --trace` shows these GCC Compiler Options when building Nuttx for PinePhone...
+
+```bash
+aarch64-none-elf-gcc
+  -c
+  -fno-common
+  -Wall
+  -Wstrict-prototypes
+  -Wshadow
+  -Wundef
+  -Werror
+  -Os
+  -fno-strict-aliasing
+  -fomit-frame-pointer
+  -g
+  -march=armv8-a
+  -mtune=cortex-a53
+  -isystem "/Users/Luppy/PinePhone/nuttx/nuttx/include"
+  -D__NuttX__ 
+  -pipe
+  -I "/Users/Luppy/PinePhone/nuttx/apps/include"
+  -Dmain=hello_main  hello_main.c
+  -o  hello_main.c.Users.Luppy.PinePhone.nuttx.apps.examples.hello.o
+```
+
+We copied and modified these GCC Compiler Options for Zig.
+
+_What about `-D__NuttX__`?_
+
+The Zig Compiler won't let us specify C Macros at the Command Line, so we defined the macro `__NuttX__` in our Zig App...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/6ba90edb155a0132400ce66752eea7612c0d022e/render.zig#L32-L53
+
+# Test Zig Driver for PinePhone Display Engine
+
+TODO
+
+To test the A64 Display Engine with NuttX on PinePhone, we'll run this p-boot Display Code...
+
+-   [display.c](https://megous.com/git/p-boot/tree/src/display.c#n2017)
+
+With our Test App...
+
+-   [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
+
+Here are the steps to download and run the NuttX Binary Image on PinePhone...
+
+1.  Download the compressed NuttX Binary Image...
+
+    [Image.gz](https://github.com/lupyuen/pinephone-nuttx/releases/download/v1.1.1/Image.gz)
+
+1.  Copy the compressed NuttX Binary Image to Jumpdrive microSD...
+
+    ```bash
+    ## Copy compressed NuttX Binary Image to Jumpdrive microSD.
+    ## How to create Jumpdrive microSD: https://lupyuen.github.io/articles/uboot#pinephone-jumpdrive
+    ## TODO: Change the microSD Path
+    cp Image.gz "/Volumes/NO NAME"
+    ```
+
+1.  To access the UART Port on PinePhone, we'll connect this USB Serial Debug Cable (at 115.2 kbps)...
+
+    [PinePhone Serial Debug Cable](https://wiki.pine64.org/index.php/PinePhone#Serial_console)
+
+1.  Insert the Jumpdrive microSD into PinePhone and power up
+
+1.  At the NuttX Shell, enter `hello 1` to render the Blue, Green and Red colour bars
+
+1.  Or enter `hello 3` to render the same colour bars with Blue Square and Green Circle as Overlays
+
+If we prefer to build the NuttX Binary Image ourselves, here are the steps to download the following Source Files and build them...
+
+```text
+nuttx
+├── apps (NuttX Apps for PinePhone including Display Engine Version 2)
+│   ├── Application.mk
+│   ├── DISCLAIMER
+│   ├── Directory.mk
+...
+├── nuttx (NuttX OS for PinePhone)
+│   ├── AUTHORS
+│   ├── CONTRIBUTING.md
+│   ├── DISCLAIMER
+...
+├── p-boot (Modified p-boot Display Code)
+│   ├── HACKING
+│   ├── LICENSE
+│   ├── NEWS
+...
+└── pinephone-nuttx (Zig MIPI DSI Driver for PinePhone)
+    ├── LICENSE
+    ├── README.md
+    ├── display.o
+    └── display.zig
+```
+
+1.  Create the NuttX Directory...
+
+    ```bash
+    mkdir nuttx
+    cd nuttx
+    ```
+
+1.  Download the Modified p-boot Display Code `p-boot.11.zip` from...
+
+    [pinephone-nuttx/releases/tag/pboot11](https://github.com/lupyuen/pinephone-nuttx/releases/tag/pboot11)
+
+    Extract into the `nuttx` folder and rename as `p-boot`
+
+1.  Download and build NuttX for PinePhone inside the `nuttx` folder...
+
+    ```bash
+    ## TODO: Install Build Prerequisites
+    ## https://lupyuen.github.io/articles/uboot#install-prerequisites
+
+    ## Download NuttX OS for PinePhone
+    git clone \
+        --recursive \
+        --branch pinephone \
+        https://github.com/lupyuen/incubator-nuttx \
+        nuttx
+
+    ## Download NuttX Apps for PinePhone including Display Engine (Version 3)
+    git clone \
+        --recursive \
+        --branch de3 \
+        https://github.com/lupyuen/incubator-nuttx-apps \
+        apps
+
+    ## We'll build NuttX inside nuttx/nuttx
+    cd nuttx
+
+    ## Configure NuttX for Single Core
+    ./tools/configure.sh -l qemu-a53:nsh
+
+    ## Build NuttX. Ignore the Linker Errors
+    make
+    ```
+
+1.  Follow these steps to compile our Zig MIPI DSI Driver and link into NuttX...
+
+    TODO
+
+1.  Compress the NuttX Binary Image...
+
+    ```bash
+    cp nuttx.bin Image
+    rm -f Image.gz
+    gzip Image
+    ```
+
+1.  Copy the compressed NuttX Binary Image `Image.gz` to Jumpdrive microSD according to the steps above.
+
+    Insert the Jumpdrive microSD into PinePhone and power up.
+
+    At the NuttX Shell, enter `hello 1` or `hello 3`
+
+(The steps look messy today, hopefully we'll remove p-boot after we have created our NuttX Display Driver)
+
 # Test Logs
 
 PinePhone Logs captured from various tests...
