@@ -3988,13 +3988,17 @@ See ["p-boot Display Code"](https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69
 
 # Zig Driver for PinePhone Display Engine
 
-TODO
+We have created a Zig Driver for PinePhone's Allwinner A64 Display Engine that will render graphics...
 
 -   ["NuttX RTOS for PinePhone: Render Graphics in Zig"](https://lupyuen.github.io/articles/de2)
 
-Let's run this Zig App on NuttX for PinePhone: [render.zig](render.zig)
+-   ["Rendering PinePhone's Display (DE and TCON0)"](https://lupyuen.github.io/articles/de)
 
-In NuttX, enable the Null Example App: make menuconfig, select "Application Configuration" > "Examples" > "Null Example"
+To test the rendering of graphics, let's run this Zig App on NuttX for PinePhone: [render.zig](render.zig)
+
+Follow the instructions in the next section to download and build the NuttX Source Code for PinePhone.
+
+In NuttX, enable the Null Example App: `make menuconfig`, select "Application Configuration" > "Examples" > "Null Example"
 
 Compile the Zig App (based on the GCC Compiler Options, see below)...
 
@@ -4028,7 +4032,7 @@ cd $HOME/nuttx/nuttx
 make
 ```
 
-Run the Zig App...
+To run the Zig App...
 
 ```text
 ## Render colour bars
@@ -4075,8 +4079,6 @@ https://github.com/lupyuen/pinephone-nuttx/blob/6ba90edb155a0132400ce66752eea761
 
 # Test Zig Driver for PinePhone Display Engine
 
-TODO
-
 To test the A64 Display Engine with NuttX on PinePhone, we'll run this p-boot Display Code...
 
 -   [display.c](https://megous.com/git/p-boot/tree/src/display.c#n2017)
@@ -4108,7 +4110,11 @@ Here are the steps to download and run the NuttX Binary Image on PinePhone...
 
 1.  At the NuttX Shell, enter `hello 1` to render the Blue, Green and Red colour bars
 
+    [(See the Complete Log)](https://gist.github.com/lupyuen/9824d0cece10bfdaa13da3660c6d9cf5)
+
 1.  Or enter `hello 3` to render the same colour bars with Blue Square and Green Circle as Overlays
+
+    [(See the Complete Log)](https://gist.github.com/lupyuen/d8d6710ab2ed16765816157cb97e54e7)
 
 If we prefer to build the NuttX Binary Image ourselves, here are the steps to download the following Source Files and build them...
 
@@ -4129,11 +4135,11 @@ nuttx
 │   ├── LICENSE
 │   ├── NEWS
 ...
-└── pinephone-nuttx (Zig MIPI DSI Driver for PinePhone)
+└── pinephone-nuttx (Zig MIPI DSI / Display Engine Driver for PinePhone)
     ├── LICENSE
     ├── README.md
-    ├── display.o
-    └── display.zig
+    ├── display.zig
+    └── render.zig
 ```
 
 1.  Create the NuttX Directory...
