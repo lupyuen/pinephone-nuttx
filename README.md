@@ -3986,6 +3986,8 @@ TODO
 
 See ["p-boot Display Code"](https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70)
 
+![Blue, Green, Red Blocks on PinePhone](https://lupyuen.github.io/images/de2-test1.jpg)
+
 # Zig Driver for PinePhone Display Engine
 
 We have created a Zig Driver for PinePhone's Allwinner A64 Display Engine that will render graphics...
@@ -4035,10 +4037,10 @@ make
 To run the Zig App...
 
 ```text
-## Render colour bars
+## Render colour bars (pic above)
 hello 1
 
-## Render colour bars with overlays
+## Render colour bars with overlays (pic below)
 hello 3
 ```
 
@@ -4076,6 +4078,8 @@ _What about `-D__NuttX__`?_
 The Zig Compiler won't let us specify C Macros at the Command Line, so we defined the macro `__NuttX__` in our Zig App...
 
 https://github.com/lupyuen/pinephone-nuttx/blob/6ba90edb155a0132400ce66752eea7612c0d022e/render.zig#L32-L53
+
+![Blue, Green, Red Blocks with Overlays](https://lupyuen.github.io/images/de2-test3.jpg)
 
 # Test Zig Driver for PinePhone Display Engine
 
