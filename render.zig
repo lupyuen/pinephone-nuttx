@@ -166,7 +166,7 @@ fn renderGraphics(
         );
     }
 
-    // Set UI Blender Route, Fill Color and apply the settings
+    // Set UI Blender Route, enable Blender Pipes and apply the settings
     applySettings(channels);
 }
 
@@ -255,7 +255,7 @@ fn initUiBlender() void {
     putreg32(premultiply, BLD_PREMUL_CTL);
 }
 
-/// Set UI Blender Route, Fill Color and apply the settings for PinePhone's A64 Display Engine.
+/// Set UI Blender Route, enable Blender Pipes and apply the settings for PinePhone's A64 Display Engine.
 /// See https://lupyuen.github.io/articles/de#appendix-programming-the-allwinner-a64-display-engine
 fn applySettings(
     comptime channels: u8  // Number of enabled UI Channels
