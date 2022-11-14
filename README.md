@@ -3996,7 +3996,11 @@ We have created a Zig Driver for PinePhone's Allwinner A64 Display Engine that w
 
 -   ["Rendering PinePhone's Display (DE and TCON0)"](https://lupyuen.github.io/articles/de)
 
-To test the rendering of graphics, let's run this Zig App on NuttX for PinePhone: [render.zig](render.zig)
+To test the rendering of graphics, let's run this Zig App on NuttX for PinePhone...
+
+-   [render.zig](render.zig)
+
+-   [display.zig](display.zig)
 
 Follow the instructions in the next section to download and build the NuttX Source Code for PinePhone.
 
@@ -4090,6 +4094,8 @@ To test the A64 Display Engine with NuttX on PinePhone, we'll run our NuttX Test
 Which calls our Zig Display Driver for PinePhone...
 
 -   [render.zig](render.zig)
+
+-   [display.zig](display.zig)
 
 Here are the steps to download and run the NuttX Binary Image on PinePhone...
 
