@@ -4083,13 +4083,13 @@ https://github.com/lupyuen/pinephone-nuttx/blob/6ba90edb155a0132400ce66752eea761
 
 # Test Zig Driver for PinePhone Display Engine
 
-To test the A64 Display Engine with NuttX on PinePhone, we'll run this p-boot Display Code...
-
--   [display.c](https://megous.com/git/p-boot/tree/src/display.c#n2017)
-
-With our Test App...
+To test the A64 Display Engine with NuttX on PinePhone, we'll run our NuttX Test App...
 
 -   [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de3/examples/hello/test_display.c)
+
+Which calls our Zig Display Driver for PinePhone...
+
+-   [render.zig](render.zig)
 
 Here are the steps to download and run the NuttX Binary Image on PinePhone...
 
