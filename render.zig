@@ -81,7 +81,7 @@ fn renderGraphics(
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#tcon0_init
 
     // TODO: Init PinePhone's Allwinner A64 MIPI Display Serial Interface (dsi_init)
-    // Call https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
 
     // TODO: Init PinePhone's Allwinner A64 Display Engine (de2_init)
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#de2_init
