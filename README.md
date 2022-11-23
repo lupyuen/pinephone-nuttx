@@ -4227,6 +4227,18 @@ nuttx
 
 (The steps look messy today, hopefully we'll remove p-boot after we have created our NuttX Display Driver)
 
+# Merge PinePhone into NuttX Mainline
+
+We're now merging PinePhone into NuttX Mainline!
+
+NuttX Mainline now supports Generic Interrupt Controller Version 2...
+
+https://github.com/apache/incubator-nuttx/pull/7630
+
+We're creating a NuttX Board Configuration for PinePhone that will boot to NuttX Shell (NSH)...
+
+https://github.com/lupyuen2/wip-pinephone-nuttx/pull/4
+
 # Test Logs
 
 PinePhone Logs captured from various tests...
