@@ -4237,7 +4237,7 @@ https://github.com/apache/incubator-nuttx/pull/7630
 
 We're creating a NuttX Board Configuration for PinePhone that will boot to NuttX Shell (NSH)...
 
-https://github.com/lupyuen2/wip-pinephone-nuttx/pull/4
+https://github.com/apache/incubator-nuttx/pull/7692
 
 # Test Logs
 
