@@ -4,7 +4,7 @@
 
 [__Another Demo Video__](https://youtu.be/MJDxCcKAv0g)
 
-# Apache NuttX RTOS on PinePhone
+# Apache NuttX RTOS for PinePhone
 
 __UPDATE:__ PinePhone is now officially supported by Apache NuttX RTOS [(See this)](https://lupyuen.github.io/articles/uboot#appendix-pinephone-is-now-supported-by-apache-nuttx-rtos)
 
