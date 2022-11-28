@@ -4233,17 +4233,23 @@ nuttx
 
 # Merge PinePhone into NuttX Mainline
 
-We're now merging PinePhone into NuttX Mainline!
+We're merging PinePhone into NuttX Mainline!
 
 NuttX Mainline now supports Generic Interrupt Controller Version 2...
 
-https://github.com/apache/incubator-nuttx/pull/7630
+-   ["arch/arm64: Add support for Generic Interrupt Controller Version 2"](https://github.com/apache/incubator-nuttx/pull/7630)
 
 We created a NuttX Board Configuration for PinePhone that will boot to NuttX Shell (NSH)...
 
-https://github.com/apache/incubator-nuttx/pull/7692
+-   ["arch/arm64: Add support for PINE64 PinePhone"](https://github.com/apache/incubator-nuttx/pull/7692)
 
-PinePhone is now officially supported by Apache NuttX RTOS! [(See this)](https://lupyuen.github.io/articles/uboot#appendix-pinephone-is-now-supported-by-apache-nuttx-rtos)
+And now PinePhone is officially supported by Apache NuttX RTOS!
+
+-   ["PinePhone is now supported by Apache NuttX RTOS"](https://lupyuen.github.io/articles/uboot#appendix-pinephone-is-now-supported-by-apache-nuttx-rtos)
+
+Here's how we prepared the Pull Requests for NuttX...
+
+-   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
 
 # Test Logs
 
