@@ -29,6 +29,9 @@ const std = @import("std");
 /// Import the MIPI Display Serial Interface Module
 const dsi = @import("./display.zig");
 
+/// Import the Backlight Module
+const backlight = @import("./backlight.zig");
+
 /// Import NuttX Functions from C
 const c = @cImport({
     // NuttX Defines
@@ -970,6 +973,8 @@ pub export fn de2_init() void {
 pub export fn export_dsi_functions() void {
     // Export Panel Init Function
     dsi.nuttx_panel_init();
+    // Export Enable Backlight Function
+    backlight.backlight_enable(100);
 }
 
 /// Atomically modify the specified bits in a memory mapped register.
