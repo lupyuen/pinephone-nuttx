@@ -4255,6 +4255,764 @@ Here's how we prepared the Pull Requests for NuttX...
 
 PinePhone Logs captured from various tests...
 
+## Testing Zig Backlight Driver on PinePhone
+
+See ["Display Backlight"](https://lupyuen.github.io/articles/de#appendix-display-backlight)
+
+```text
+DRAM: 2048 MiB
+Trying to boot from MMC1
+NOTICE:  BL31: v2.2(release):v2.2-904-gf9ea3a629
+NOTICE:  BL31: Built : 15:32:12, Apr  9 2020
+NOTICE:  BL31: Detected Allwinner A64/H64/R18 SoC (1689)
+NOTICE:  BL31: Found U-Boot DTB at 0x4064410, model: PinePhone
+NOTICE:  PSCI: System suspend is unavailable
+
+
+U-Boot 2020.07 (Nov 08 2020 - 00:15:12 +0100)
+
+DRAM:  2 GiB
+MMC:   Device 'mmc@1c11000': seq 1 is in use by 'mmc@1c10000'
+mmc@1c0f000: 0, mmc@1c10000: 2, mmc@1c11000: 1
+Loading Environment from FAT... *** Warning - bad CRC, using default environment
+
+starting USB...
+No working controllers found
+Hit any key to stop autoboot:  0 
+switch to partitions #0, OK
+mmc0 is current device
+Scanning mmc 0:1...
+Found U-Boot script /boot.scr
+653 bytes read in 3 ms (211.9 KiB/s)
+## Executing script at 4fc00000
+gpio: pin 114 (gpio 114) value is 1
+228326 bytes read in 13 ms (16.7 MiB/s)
+Uncompressed size: 10346496 = 0x9DE000
+36162 bytes read in 5 ms (6.9 MiB/s)
+1078500 bytes read in 50 ms (20.6 MiB/s)
+## Flattened Device Tree blob at 4fa00000
+   Booting using the fdt blob at 0x4fa00000
+   Loading Ramdisk to 49ef8000, end 49fff4e4 ... OK
+   Loading Device Tree to 0000000049eec000, end 0000000049ef7d41 ... OK
+
+Starting kernel ...
+
+HELLO NUTTX ON PINEPHONE!
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+nx_start: Entry
+up_allocate_heap: heap_start=0x0x40a5e000, heap_size=0x75a2000
+arm64_gic_initialize: TODO: Init GIC for PinePhone
+arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
+arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
+arm64_gic_initialize: GIC Version is 2
+up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+up_timer_initialize: _vector_table=0x400e6000
+up_timer_initialize: Before writing: vbar_el1=0x400e6000
+up_timer_initialize: After writing: vbar_el1=0x400e6000
+uart_register: Registering /dev/console
+uart_register: Registering /dev/ttyS0
+work_start_highpri: Starting high-priority kernel worker thread(s)
+nx_start_application: Starting init thread
+lib_cxx_initialize: _sinit: 0x400e6000 _einit: 0x400e6000 _stext: 0x40080000 _etext: 0x400e7000
+nsh: sysinit: fopen failed: 2
+nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
+e
+ 
+L
+oNoupt
+t
+Shell (NSH) NuttX-11.0.0-RC2
+nsh> 
+nsh> 
+nsh> uname -a
+NuttX 11.0.0-RC2 a33f82d-dirty Nov 22 2022 18:04:34 arm64 qemu-a53
+nsh> 
+nsh> 
+nsh> 
+nsh> hello 3
+task_spawn: name=hello entry=0x4009d4d8 file_actions=0x40a63580 attr=0x40a63588 argv=0x40a636d0
+spawn_execattrs: Setting policy=2 priority=100 for pid=3
+ABHello, World!!
+ph_cfg1_reg=0x7177
+ph_data_reg=0x400
+pd_cfg2_reg=0x77711177
+pd_data_reg=0x1c0000
+tcon0_init: start
+PLL_VIDEO0
+  0x1c20010 = 0x81006207 (DMB)
+PLL_MIPI
+  0x1c20040 = 0xc00000 (DMB)
+  udelay 100
+  0x1c20040 = 0x80c0071a (DMB)
+TCON0 source MIPI_PLL
+  0x1c20118 = 0x80000000 (DMB)
+Clock on
+  0x1c20064 = 0x8 (DMB)
+Reset off
+  0x1c202c4 = 0x8 (DMB)
+Init lcdc: Disable tcon, Disable all interrupts
+  0x1c0c000 = 0x0 (DMB)
+  0x1c0c004 = 0x0
+  0x1c0c008 = 0x0
+Set all io lines to tristate
+  0x1c0c08c = 0xffffffff
+  0x1c0c0f4 = 0xffffffff
+mode set: DCLK = MIPI_PLL / 6
+  0x1c0c044 = 0x80000006
+  0x1c0c040 = 0x81000000
+  0x1c0c048 = 0x2cf059f
+  0x1c0c0f8 = 0x8
+  0x1c0c060 = 0x10010005
+The datasheet says that this should be set higher than 20 * pixel cycle, but it's not clear what a pixel cycle is.
+  0x1c0c160 = 0x2f02cf
+  0x1c0c164 = 0x59f
+  0x1c0c168 = 0x1bc2000a
+The Allwinner BSP has a comment that the period should be the display clock * 15, but uses an hardcoded 3000
+  0x1c0c1f0 = 0xbb80003
+Enable the output on the pins
+  0x1c0c08c = 0xe0000000 (DMB)
+enable tcon as a whole
+  setbits 0x1c0c000, 0x80000000 (DMB)
+tcon0_init: end
+dsi_init: start
+display_board_init: start
+assert reset: GPD(23), 0  // PD23 - LCD-RST (active low)
+sunxi_gpio_set_cfgpin: pin=0x77, val=1
+sunxi_gpio_set_cfgbank: bank_offset=119, val=1
+  clrsetbits 0x1c20874, 0xf0000000, 0x10000000
+sunxi_gpio_output: pin=0x77, val=0
+  before: 0x1c2087c = 0x1c0000
+  after: 0x1c2087c = 0x1c0000 (DMB)
+dldo1 3.3V
+  pmic_write: reg=0x15, val=0x1a
+  rsb_write: rt_addr=0x2d, reg_addr=0x15, value=0x1a
+  pmic_clrsetbits: reg=0x12, clr_mask=0x0, set_mask=0x8
+  rsb_read: rt_addr=0x2d, reg_addr=0x12
+  rsb_write: rt_addr=0x2d, reg_addr=0x12, value=0xd9
+ldo_io0 3.3V
+  pmic_write: reg=0x91, val=0x1a
+  rsb_write: rt_addr=0x2d, reg_addr=0x91, value=0x1a
+  pmic_write: reg=0x90, val=0x3
+  rsb_write: rt_addr=0x2d, reg_addr=0x90, value=0x3
+dldo2 1.8V
+  pmic_write: reg=0x16, val=0xb
+  rsb_write: rt_addr=0x2d, reg_addr=0x16, value=0xb
+  pmic_clrsetbits: reg=0x12, clr_mask=0x0, set_mask=0x10
+  rsb_read: rt_addr=0x2d, reg_addr=0x12
+  rsb_write: rt_addr=0x2d, reg_addr=0x12, value=0xd9
+wait for power supplies and power-on init
+  udelay 15000
+display_board_init: end
+mipi dsi bus enable
+  setbits 0x1c20060, 0x2 (DMB)
+  setbits 0x1c202c0, 0x2 (DMB)
+Enable the DSI block
+struct reg_inst dsi_init_seq[] = {
+.{ 0x0000, 0x00000001 },  // DMB
+.{ 0x0010, 0x00030000 },  // DMB
+.{ 0x0060, 0x0000000a },  // DMB
+.{ 0x0078, 0x00000000 },  // DMB
+inst_init
+.{ 0x0020, 0x0000001f },  // DMB
+.{ 0x0024, 0x10000001 },  // DMB
+.{ 0x0028, 0x20000010 },  // DMB
+.{ 0x002c, 0x2000000f },  // DMB
+.{ 0x0030, 0x30100001 },  // DMB
+.{ 0x0034, 0x40000010 },  // DMB
+.{ 0x0038, 0x0000000f },  // DMB
+.{ 0x003c, 0x5000001f },  // DMB
+.{ 0x004c, 0x00560001 },  // DMB
+.{ 0x02f8, 0x000000ff },  // DMB
+get_video_start_delay
+.{ 0x0014, 0x00005bc7 },  // DMB
+setup_burst
+.{ 0x007c, 0x10000007 },  // DMB
+setup_inst_loop
+.{ 0x0040, 0x30000002 },  // DMB
+.{ 0x0044, 0x00310031 },  // DMB
+.{ 0x0054, 0x00310031 },  // DMB
+setup_format
+.{ 0x0090, 0x1308703e },  // DMB
+.{ 0x0098, 0x0000ffff },  // DMB
+.{ 0x009c, 0xffffffff },  // DMB
+.{ 0x0080, 0x00010008 },  // DMB
+setup_timings
+display_malloc: size=2330
+.{ 0x000c, 0x00000000 },  // DMB
+.{ 0x00b0, 0x12000021 },  // DMB
+.{ 0x00b4, 0x01000031 },  // DMB
+.{ 0x00b8, 0x07000001 },  // DMB
+.{ 0x00bc, 0x14000011 },  // DMB
+.{ 0x0018, 0x0011000a },  // DMB
+.{ 0x001c, 0x05cd05a0 },  // DMB
+.{ 0x00c0, 0x09004a19 },  // DMB
+.{ 0x00c4, 0x50b40000 },  // DMB
+.{ 0x00c8, 0x35005419 },  // DMB
+.{ 0x00cc, 0x757a0000 },  // DMB
+.{ 0x00d0, 0x09004a19 },  // DMB
+.{ 0x00d4, 0x50b40000 },  // DMB
+.{ 0x00e0, 0x0c091a19 },  // DMB
+.{ 0x00e4, 0x72bd0000 },  // DMB
+.{ 0x00e8, 0x1a000019 },  // DMB
+.{ 0x00ec, 0xffff0000 },  // DMB
+};
+dphy_enable: start
+150MHz (600 / 4)
+  0x1c20168 = 0x8203 (DMB)
+  0x1ca1004 = 0x10000000 (DMB)
+  0x1ca1010 = 0xa06000e (DMB)
+  0x1ca1014 = 0xa033207 (DMB)
+  0x1ca1018 = 0x1e (DMB)
+  0x1ca101c = 0x0 (DMB)
+  0x1ca1020 = 0x303 (DMB)
+  0x1ca1000 = 0x31 (DMB)
+  0x1ca104c = 0x9f007f00 (DMB)
+  0x1ca1050 = 0x17000000 (DMB)
+  0x1ca105c = 0x1f01555 (DMB)
+  0x1ca1054 = 0x2 (DMB)
+  udelay 5
+  0x1ca1058 = 0x3040000 (DMB)
+  udelay 1
+  update_bits 0x1ca1058, 0xf8000000, 0xf8000000 (DMB)
+  udelay 1
+  update_bits 0x1ca1058, 0x4000000, 0x4000000 (DMB)
+  udelay 1
+  update_bits 0x1ca1054, 0x10, 0x10 (DMB)
+  udelay 1
+  update_bits 0x1ca1050, 0x80000000, 0x80000000 (DMB)
+  update_bits 0x1ca1054, 0xf000000, 0xf000000 (DMB)
+dphy_enable: end
+deassert reset: GPD(23), 1  // PD23 - LCD-RST (active low)
+sunxi_gpio_set_cfgpin: pin=0x77, val=1
+sunxi_gpio_set_cfgbank: bank_offset=119, val=1
+  clrsetbits 0x1c20874, 0xf0000000, 0x10000000
+sunxi_gpio_output: pin=0x77, val=1
+  before: 0x1c2087c = 0x1c0000
+  after: 0x1c2087c = 0x9c0000 (DMB)
+wait for initialization
+udelay 15000
+
+struct reg_inst dsi_panel_init_seq[] = {
+nuttx_panel_init
+writeDcs: len=4
+b9 f1 12 83 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
+composeLongPacket: channel=0, cmd=0x39, len=4
+packet: len=10
+39 04 00 2c b9 f1 12 83 
+84 5d 
+modifyreg32: addr=0x300, val=0x2c000439
+modifyreg32: addr=0x304, val=0x8312f1b9
+modifyreg32: addr=0x308, val=0x00005d84
+modifyreg32: addr=0x200, val=0x00000009
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=28
+ba 33 81 05 f9 0e 0e 20 
+00 00 00 00 00 00 00 44 
+25 00 91 0a 00 00 02 4f 
+11 00 00 37 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=28
+composeLongPacket: channel=0, cmd=0x39, len=28
+packet: len=34
+39 1c 00 2f ba 33 81 05 
+f9 0e 0e 20 00 00 00 00 
+00 00 00 44 25 00 91 0a 
+00 00 02 4f 11 00 00 37 
+2c e2 
+modifyreg32: addr=0x300, val=0x2f001c39
+modifyreg32: addr=0x304, val=0x058133ba
+modifyreg32: addr=0x308, val=0x200e0ef9
+modifyreg32: addr=0x30c, val=0x00000000
+modifyreg32: addr=0x310, val=0x44000000
+modifyreg32: addr=0x314, val=0x0a910025
+modifyreg32: addr=0x318, val=0x4f020000
+modifyreg32: addr=0x31c, val=0x37000011
+modifyreg32: addr=0x320, val=0x0000e22c
+modifyreg32: addr=0x200, val=0x00000021
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=5
+b8 25 22 20 03 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=5
+composeLongPacket: channel=0, cmd=0x39, len=5
+packet: len=11
+39 05 00 36 b8 25 22 20 
+03 03 72 
+modifyreg32: addr=0x300, val=0x36000539
+modifyreg32: addr=0x304, val=0x202225b8
+modifyreg32: addr=0x308, val=0x00720303
+modifyreg32: addr=0x200, val=0x0000000a
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=11
+b3 10 10 05 05 03 ff 00 
+00 00 00 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=11
+composeLongPacket: channel=0, cmd=0x39, len=11
+packet: len=17
+39 0b 00 2c b3 10 10 05 
+05 03 ff 00 00 00 00 6f 
+bc 
+modifyreg32: addr=0x300, val=0x2c000b39
+modifyreg32: addr=0x304, val=0x051010b3
+modifyreg32: addr=0x308, val=0x00ff0305
+modifyreg32: addr=0x30c, val=0x6f000000
+modifyreg32: addr=0x310, val=0x000000bc
+modifyreg32: addr=0x200, val=0x00000010
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=10
+c0 73 73 50 50 00 c0 08 
+70 00 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=10
+composeLongPacket: channel=0, cmd=0x39, len=10
+packet: len=16
+39 0a 00 36 c0 73 73 50 
+50 00 c0 08 70 00 1b 6a 
+
+modifyreg32: addr=0x300, val=0x36000a39
+modifyreg32: addr=0x304, val=0x507373c0
+modifyreg32: addr=0x308, val=0x08c00050
+modifyreg32: addr=0x30c, val=0x6a1b0070
+modifyreg32: addr=0x200, val=0x0000000f
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=2
+bc 4e 
+mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
+composeShortPacket: channel=0, cmd=0x15, len=2
+packet: len=4
+15 bc 4e 35 
+modifyreg32: addr=0x300, val=0x354ebc15
+modifyreg32: addr=0x200, val=0x00000003
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=2
+cc 0b 
+mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
+composeShortPacket: channel=0, cmd=0x15, len=2
+packet: len=4
+15 cc 0b 22 
+modifyreg32: addr=0x300, val=0x220bcc15
+modifyreg32: addr=0x200, val=0x00000003
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=2
+b4 80 
+mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
+composeShortPacket: channel=0, cmd=0x15, len=2
+packet: len=4
+15 b4 80 22 
+modifyreg32: addr=0x300, val=0x2280b415
+modifyreg32: addr=0x200, val=0x00000003
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=4
+b2 f0 12 f0 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
+composeLongPacket: channel=0, cmd=0x39, len=4
+packet: len=10
+39 04 00 2c b2 f0 12 f0 
+51 86 
+modifyreg32: addr=0x300, val=0x2c000439
+modifyreg32: addr=0x304, val=0xf012f0b2
+modifyreg32: addr=0x308, val=0x00008651
+modifyreg32: addr=0x200, val=0x00000009
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=15
+e3 00 00 0b 0b 10 10 00 
+00 00 00 ff 00 c0 10 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=15
+composeLongPacket: channel=0, cmd=0x39, len=15
+packet: len=21
+39 0f 00 0f e3 00 00 0b 
+0b 10 10 00 00 00 00 ff 
+00 c0 10 36 0f 
+modifyreg32: addr=0x300, val=0x0f000f39
+modifyreg32: addr=0x304, val=0x0b0000e3
+modifyreg32: addr=0x308, val=0x0010100b
+modifyreg32: addr=0x30c, val=0xff000000
+modifyreg32: addr=0x310, val=0x3610c000
+modifyreg32: addr=0x314, val=0x0000000f
+modifyreg32: addr=0x200, val=0x00000014
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=6
+c6 01 00 ff ff 00 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=6
+composeLongPacket: channel=0, cmd=0x39, len=6
+packet: len=12
+39 06 00 30 c6 01 00 ff 
+ff 00 8e 25 
+modifyreg32: addr=0x300, val=0x30000639
+modifyreg32: addr=0x304, val=0xff0001c6
+modifyreg32: addr=0x308, val=0x258e00ff
+modifyreg32: addr=0x200, val=0x0000000b
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=13
+c1 74 00 32 32 77 f1 ff 
+ff cc cc 77 77 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=13
+composeLongPacket: channel=0, cmd=0x39, len=13
+packet: len=19
+39 0d 00 13 c1 74 00 32 
+32 77 f1 ff ff cc cc 77 
+77 69 e4 
+modifyreg32: addr=0x300, val=0x13000d39
+modifyreg32: addr=0x304, val=0x320074c1
+modifyreg32: addr=0x308, val=0xfff17732
+modifyreg32: addr=0x30c, val=0x77ccccff
+modifyreg32: addr=0x310, val=0x00e46977
+modifyreg32: addr=0x200, val=0x00000012
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=3
+b5 07 07 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=3
+composeLongPacket: channel=0, cmd=0x39, len=3
+packet: len=9
+39 03 00 09 b5 07 07 7b 
+b3 
+modifyreg32: addr=0x300, val=0x09000339
+modifyreg32: addr=0x304, val=0x7b0707b5
+modifyreg32: addr=0x308, val=0x000000b3
+modifyreg32: addr=0x200, val=0x00000008
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=3
+b6 2c 2c 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=3
+composeLongPacket: channel=0, cmd=0x39, len=3
+packet: len=9
+39 03 00 09 b6 2c 2c 55 
+04 
+modifyreg32: addr=0x300, val=0x09000339
+modifyreg32: addr=0x304, val=0x552c2cb6
+modifyreg32: addr=0x308, val=0x00000004
+modifyreg32: addr=0x200, val=0x00000008
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=4
+bf 02 11 00 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
+composeLongPacket: channel=0, cmd=0x39, len=4
+packet: len=10
+39 04 00 2c bf 02 11 00 
+b5 e9 
+modifyreg32: addr=0x300, val=0x2c000439
+modifyreg32: addr=0x304, val=0x001102bf
+modifyreg32: addr=0x308, val=0x0000e9b5
+modifyreg32: addr=0x200, val=0x00000009
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=64
+e9 82 10 06 05 a2 0a a5 
+12 31 23 37 83 04 bc 27 
+38 0c 00 03 00 00 00 0c 
+00 03 00 00 00 75 75 31 
+88 88 88 88 88 88 13 88 
+64 64 20 88 88 88 88 88 
+88 02 88 00 00 00 00 00 
+00 00 00 00 00 00 00 00 
+
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=64
+composeLongPacket: channel=0, cmd=0x39, len=64
+packet: len=70
+39 40 00 25 e9 82 10 06 
+05 a2 0a a5 12 31 23 37 
+83 04 bc 27 38 0c 00 03 
+00 00 00 0c 00 03 00 00 
+00 75 75 31 88 88 88 88 
+88 88 13 88 64 64 20 88 
+88 88 88 88 88 02 88 00 
+00 00 00 00 00 00 00 00 
+00 00 00 00 65 03 
+modifyreg32: addr=0x300, val=0x25004039
+modifyreg32: addr=0x304, val=0x061082e9
+modifyreg32: addr=0x308, val=0xa50aa205
+modifyreg32: addr=0x30c, val=0x37233112
+modifyreg32: addr=0x310, val=0x27bc0483
+modifyreg32: addr=0x314, val=0x03000c38
+modifyreg32: addr=0x318, val=0x0c000000
+modifyreg32: addr=0x31c, val=0x00000300
+modifyreg32: addr=0x320, val=0x31757500
+modifyreg32: addr=0x324, val=0x88888888
+modifyreg32: addr=0x328, val=0x88138888
+modifyreg32: addr=0x32c, val=0x88206464
+modifyreg32: addr=0x330, val=0x88888888
+modifyreg32: addr=0x334, val=0x00880288
+modifyreg32: addr=0x338, val=0x00000000
+modifyreg32: addr=0x33c, val=0x00000000
+modifyreg32: addr=0x340, val=0x00000000
+modifyreg32: addr=0x344, val=0x00000365
+modifyreg32: addr=0x200, val=0x00000045
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=62
+ea 02 21 00 00 00 00 00 
+00 00 00 00 00 02 46 02 
+88 88 88 88 88 88 64 88 
+13 57 13 88 88 88 88 88 
+88 75 88 23 14 00 00 02 
+00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 03 
+0a a5 00 00 00 00 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=62
+composeLongPacket: channel=0, cmd=0x39, len=62
+packet: len=68
+39 3e 00 1a ea 02 21 00 
+00 00 00 00 00 00 00 00 
+00 02 46 02 88 88 88 88 
+88 88 64 88 13 57 13 88 
+88 88 88 88 88 75 88 23 
+14 00 00 02 00 00 00 00 
+00 00 00 00 00 00 00 00 
+00 00 00 03 0a a5 00 00 
+00 00 24 1b 
+modifyreg32: addr=0x300, val=0x1a003e39
+modifyreg32: addr=0x304, val=0x002102ea
+modifyreg32: addr=0x308, val=0x00000000
+modifyreg32: addr=0x30c, val=0x00000000
+modifyreg32: addr=0x310, val=0x02460200
+modifyreg32: addr=0x314, val=0x88888888
+modifyreg32: addr=0x318, val=0x88648888
+modifyreg32: addr=0x31c, val=0x88135713
+modifyreg32: addr=0x320, val=0x88888888
+modifyreg32: addr=0x324, val=0x23887588
+modifyreg32: addr=0x328, val=0x02000014
+modifyreg32: addr=0x32c, val=0x00000000
+modifyreg32: addr=0x330, val=0x00000000
+modifyreg32: addr=0x334, val=0x00000000
+modifyreg32: addr=0x338, val=0x03000000
+modifyreg32: addr=0x33c, val=0x0000a50a
+modifyreg32: addr=0x340, val=0x1b240000
+modifyreg32: addr=0x200, val=0x00000043
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=35
+e0 00 09 0d 23 27 3c 41 
+35 07 0d 0e 12 13 10 12 
+12 18 00 09 0d 23 27 3c 
+41 35 07 0d 0e 12 13 10 
+12 12 18 
+mipi_dsi_dcs_write: channel=0, cmd=0x39, len=35
+composeLongPacket: channel=0, cmd=0x39, len=35
+packet: len=41
+39 23 00 20 e0 00 09 0d 
+23 27 3c 41 35 07 0d 0e 
+12 13 10 12 12 18 00 09 
+0d 23 27 3c 41 35 07 0d 
+0e 12 13 10 12 12 18 93 
+bf 
+modifyreg32: addr=0x300, val=0x20002339
+modifyreg32: addr=0x304, val=0x0d0900e0
+modifyreg32: addr=0x308, val=0x413c2723
+modifyreg32: addr=0x30c, val=0x0e0d0735
+modifyreg32: addr=0x310, val=0x12101312
+modifyreg32: addr=0x314, val=0x09001812
+modifyreg32: addr=0x318, val=0x3c27230d
+modifyreg32: addr=0x31c, val=0x0d073541
+modifyreg32: addr=0x320, val=0x1013120e
+modifyreg32: addr=0x324, val=0x93181212
+modifyreg32: addr=0x328, val=0x000000bf
+modifyreg32: addr=0x200, val=0x00000028
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=1
+11 
+mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
+composeShortPacket: channel=0, cmd=0x5, len=1
+packet: len=4
+05 11 00 36 
+modifyreg32: addr=0x300, val=0x36001105
+modifyreg32: addr=0x200, val=0x00000003
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+writeDcs: len=1
+29 
+mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
+composeShortPacket: channel=0, cmd=0x5, len=1
+packet: len=4
+05 29 00 1c 
+modifyreg32: addr=0x300, val=0x1c002905
+modifyreg32: addr=0x200, val=0x00000003
+modifyreg32: addr=0x010, val=0x00000000
+modifyreg32: addr=0x010, val=0x00000001
+};
+dsi_start DSI_START_HSC
+.{ 0x0048, 0x00000f02 },  // DMB
+.{ MAGIC_COMMIT, 0 },  // DMB
+dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000 (DMB)
+udelay 1000
+dsi_start DSI_START_HSD
+.{ 0x0048, 0x63f07006 },  // DMB
+.{ MAGIC_COMMIT, 0 },  // DMB
+dsi_init: end
+de2_init: start
+Set High Speed SRAM to DMA Mode
+  *0x1c00004 = 0x0
+Set Display Engine PLL to 297 MHz
+  *0x1c20048 = 0x81001701
+Wait for Display Engine PLL to be stable
+Set Special Clock to Display Engine PLL
+  *0x1c20104: clear 0x3000000, set 0x81000000
+  *0x1c20104 = 0x81000000
+Enable AHB for Display Engine: De-Assert Display Engine
+  *0x1c202c4: clear 0x0, set 0x1000
+  *0x1c202c4 = 0x1009
+Enable AHB for Display Engine: Pass Display Engine
+  *0x1c20064: clear 0x0, set 0x1000
+  *0x1c20064 = 0x1009
+Enable Clock for MIXER0: SCLK Clock Pass
+  *0x1000000: clear 0x0, set 0x1
+  *0x1000000 = 0x1
+Enable Clock for MIXER0: HCLK Clock Reset Off
+  *0x1000008: clear 0x0, set 0x1
+  *0x1000008 = 0x1
+Enable Clock for MIXER0: HCLK Clock Pass
+  *0x1000004: clear 0x0, set 0x1
+  *0x1000004 = 0x1
+Route MIXER0 to TCON0
+  *0x1000010: clear 0x1, set 0x0
+  *0x1000010 = 0x0
+Clear MIXER0 Registers: GLB, BLD, OVL_V, OVL_UI
+  *0x1100000 = 0x0
+  to *0x1105fff = 0x0
+Disable MIXER0 VSU
+  *0x1120000 = 0x0
+Disable MIXER0 Undocumented
+  *0x1130000 = 0x0
+Disable MIXER0 UI_SCALER1
+  *0x1140000 = 0x0
+Disable MIXER0 UI_SCALER2
+  *0x1150000 = 0x0
+Disable MIXER0 FCE
+  *0x11a0000 = 0x0
+Disable MIXER0 BWS
+  *0x11a2000 = 0x0
+Disable MIXER0 LTI
+  *0x11a4000 = 0x0
+Disable MIXER0 PEAKING
+  *0x11a6000 = 0x0
+Disable MIXER0 ASE
+  *0x11a8000 = 0x0
+Disable MIXER0 FCC
+  *0x11aa000 = 0x0
+Disable MIXER0 DRC
+  *0x11b0000 = 0x0
+Enable MIXER0
+  *0x1100000 = 0x1
+de2_init: end
+backlight_enable: start, percent=90
+  *0x1f02c04: clear 0x700, set 0x200
+  *0x1f02c04 = 0x77277
+  *0x1f03800: clear 0x40, set 0x0
+  *0x1f03800 = 0x0
+  *0x1f03804 = 0x4af0437
+  *0x1f03800 = 0x5f
+  *0x1c20900: clear 0x700, set 0x100
+  *0x1c20900 = 0x7177
+  *0x1c2090c: clear 0x400, set 0x400
+  *0x1c2090c = 0x400
+backlight_enable: end
+renderGraphics: start
+initUiBlender: start
+Set Blender Background
+  *0x1101088 = 0xff000000
+Set Blender Pre-Multiply
+  *0x1101084 = 0x0
+initUiBlender: end
+initUiChannel: start
+Channel 1: Set Overlay (720 x 1440)
+  *0x1103000 = 0xff000405
+  *0x1103010 = 0x4010f000
+  *0x110300c = 0xb40
+  *0x1103004 = 0x59f02cf
+  *0x1103088 = 0x59f02cf
+  *0x1103008 = 0x0
+Channel 1: Set Blender Output
+  *0x110108c = 0x59f02cf
+  *0x110000c = 0x59f02cf
+Channel 1: Set Blender Input Pipe 0 (720 x 1440)
+  *0x1101008 = 0x59f02cf
+  *0x1101004 = 0xff000000
+  *0x110100c = 0x0
+  *0x1101090 = 0x3010301
+Channel 1: Disable Scaler
+  *0x1140000 = 0x0
+initUiChannel: end
+initUiChannel: start
+Channel 2: Set Overlay (600 x 600)
+  *0x1104000 = 0xff000005
+  *0x1104010 = 0x40504000
+  *0x110400c = 0x960
+  *0x1104004 = 0x2570257
+  *0x1104088 = 0x2570257
+  *0x1104008 = 0x0
+Channel 2: Set Blender Input Pipe 1 (600 x 600)
+  *0x1101018 = 0x2570257
+  *0x1101014 = 0xff000000
+  *0x110101c = 0x340034
+  *0x1101094 = 0x3010301
+Channel 2: Disable Scaler
+  *0x1150000 = 0x0
+initUiChannel: end
+initUiChannel: start
+Channel 3: Set Overlay (720 x 1440)
+  *0x1105000 = 0x7f000005
+  *0x1105010 = 0x40664000
+  *0x110500c = 0xb40
+  *0x1105004 = 0x59f02cf
+  *0x1105088 = 0x59f02cf
+  *0x1105008 = 0x0
+Channel 3: Set Blender Input Pipe 2 (720 x 1440)
+  *0x1101028 = 0x59f02cf
+  *0x1101024 = 0xff000000
+  *0x110102c = 0x0
+  *0x1101098 = 0x3010301
+Channel 3: Disable Scaler
+  *0x1160000 = 0x0
+initUiChannel: end
+applySettings: start
+Set Blender Route
+  *0x1101080 = 0x321
+Enable Blender Pipes
+  *0x1101000 = 0x701
+Apply Settings
+  *0x1100008 = 0x1
+applySettings: end
+renderGraphics: end
+HELLO ZIG ON PINEPHONE!
+Testing Compose Short Packet (Without Parameter)...
+composeShortPacket: channel=0, cmd=0x5, len=1
+Result:
+05 11 00 36 
+Testing Compose Short Packet (With Parameter)...
+composeShortPacket: channel=0, cmd=0x15, len=2
+Result:
+15 bc 4e 35 
+Testing Compose Long Packet...
+composeLongPacket: channel=0, cmd=0x39, len=64
+Result:
+39 40 00 25 e9 82 10 06 
+05 a2 0a a5 12 31 23 37 
+83 04 bc 27 38 0c 00 03 
+00 00 00 0c 00 03 00 00 
+00 75 75 31 88 88 88 88 
+88 88 13 88 64 64 20 88 
+88 88 88 88 88 02 88 00 
+00 00 00 00 00 00 00 00 
+00 00 00 00 65 03 
+nsh> 
+nsh> 
+```
+
 ## Testing Zig Display Engine Driver on PinePhone
 
 See ["p-boot Display Code"](https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70)
