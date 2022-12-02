@@ -80,18 +80,6 @@ fn renderGraphics(
     // TODO: Handle DMB non-relaxed write
     // https://developer.arm.com/documentation/dui0489/c/arm-and-thumb-instructions/miscellaneous-instructions/dmb--dsb--and-isb
 
-    // TODO: Init PinePhone's Allwinner A64 Timing Controller TCON0 (tcon0_init)
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#tcon0_init
-
-    // TODO: Init PinePhone's Allwinner A64 MIPI Display Serial Interface (dsi_init)
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
-
-    // TODO: Init PinePhone's Allwinner A64 Display Engine (de2_init)
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#de2_init
-
-    // TODO: Turn on PinePhone's Backlight (backlight_enable)
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#backlight_enable
-
     // Init Framebuffer 0:
     // Fill with Blue, Green and Red
     var i: usize = 0;
@@ -178,6 +166,27 @@ fn renderGraphics(
 pub export fn test_render(
     channels: c_int  // Number of UI Channels to render: 1 or 3
 ) void {
+    debug("test_render: start, channels={}", .{ channels });
+    defer { debug("test_render: end", .{}); }
+
+    // TODO: Init Timing Controller TCON0
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#tcon0_init
+    tcon0_init();
+
+    // TODO: Init MIPI Display Serial Interface
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
+    dsi_init();
+
+    // Init Display Engine
+    de2_init();
+
+    // Wait a while
+    _ = c.usleep(160000);
+
+    // Turn on Display Backlight
+    backlight.backlight_enable(90);
+
+    // Render Graphics with Display Engine
     switch (channels) {
         1 => renderGraphics(1),  // Render 1 UI Channel
         3 => renderGraphics(3),  // Render 3 UI Channels
@@ -1069,6 +1078,10 @@ pub fn log(
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Imported Functions and Variables
+
+/// From p-boot/src/display.c
+extern fn dsi_init() void;
+extern fn tcon0_init() void;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
 /// We changed `[*c]const u8` to `[*:0]const u8`

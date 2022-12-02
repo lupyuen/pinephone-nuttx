@@ -82,12 +82,12 @@ pub export fn backlight_enable(
     // At R_PWM Offset 4 (A64 Page 195)
     // PWM_CH0_ENTIRE_CYS (Upper 16 Bits) = Period (0x4af)
     // PWM_CH0_ENTIRE_ACT_CYS (Lower 16 Bits) = Period * Percent / 100 (0x0437)
-    // Period = 0x4af (1199)
-    // Percent = 0x5a
+    // Period = 1199 (Cycles of PWM Clock)
+    // Percent = 90 (90% Brightness)
     const R_PWM_CH0_PERIOD = R_PWM_BASE_ADDRESS + 4;
     comptime { assert(R_PWM_CH0_PERIOD == 0x1f03804); }
-    const PERIOD = 0x4af;
-    const PERCENT = 0x5a;
+    const PERIOD = 1199;
+    const PERCENT = 90;
     const PWM_CH0_ENTIRE_CYS: u32 = PERIOD << 16;
     const PWM_CH0_ENTIRE_ACT_CYS: u16 = PERIOD * PERCENT / 100;
     const val = PWM_CH0_ENTIRE_CYS 
