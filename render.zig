@@ -164,13 +164,15 @@ fn renderGraphics(
 /// Render a Test Pattern on PinePhone's Display.
 /// Called by test_display() in https://github.com/lupyuen/incubator-nuttx-apps/blob/de3/examples/hello/test_display.c
 pub export fn test_render(
-    channels: c_int  // Number of UI Channels to render: 1 or 3
+    channels: c_int  // Number of UI Channels to render: 0, 1 or 3
 ) void {
     debug("test_render: start, channels={}", .{ channels });
     defer { debug("test_render: end", .{}); }
 
     // Turn on Display Backlight
-    backlight.backlight_enable(90);
+    if (channels != 0) {
+        backlight.backlight_enable(90);
+    }
 
     // TODO: Init Timing Controller TCON0
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#tcon0_init
@@ -188,6 +190,7 @@ pub export fn test_render(
 
     // Render Graphics with Display Engine
     switch (channels) {
+        0 => renderGraphics(3),  // Render 3 UI Channels
         1 => renderGraphics(1),  // Render 1 UI Channel
         3 => renderGraphics(3),  // Render 3 UI Channels
         else => debug("Argument must be 1 or 3", .{}),
