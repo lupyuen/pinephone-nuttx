@@ -169,6 +169,9 @@ pub export fn test_render(
     debug("test_render: start, channels={}", .{ channels });
     defer { debug("test_render: end", .{}); }
 
+    // Turn on Display Backlight
+    backlight.backlight_enable(90);
+
     // TODO: Init Timing Controller TCON0
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#tcon0_init
     tcon0_init();
@@ -182,9 +185,6 @@ pub export fn test_render(
 
     // Wait a while
     _ = c.usleep(160000);
-
-    // Turn on Display Backlight
-    backlight.backlight_enable(90);
 
     // Render Graphics with Display Engine
     switch (channels) {
