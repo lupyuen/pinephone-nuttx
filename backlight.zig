@@ -61,78 +61,89 @@ pub export fn backlight_enable(
     debug("backlight_enable: start, percent={}", .{ percent });
     defer { debug("backlight_enable: end", .{}); }
 
-    //// TODO
-
     // Configure PL10 for PWM
-
     // Register PL_CFG1 (Port L Configure Register 1)
     // At R_PIO Offset 4 (A64 Page 412)
     // Set PL10_SELECT (Bits 8 to 10) to 2 (S_PWM)
-
-    // backlight_enable: pct=0x5a
-    // 1.0 has incorrectly documented non-presence of PH10, the circuit is in fact the same as on 1.1+
-    // configure pwm: GPL(10), GPL_R_PWM
-    // sunxi_gpio_set_cfgpin: pin=0x16a, val=2
-    // sunxi_gpio_set_cfgbank: bank_offset=362, val=2
-    // clrsetbits 0x1f02c04, 0xf00, 0x200
+    const PL_CFG1 = R_PIO_BASE_ADDRESS + 4;
+    comptime { assert(PL_CFG1 == 0x1f02c04); }
+    modreg32(2 << 8, 0b111 << 8, PL_CFG1);
 
     // Disable R_PWM (Undocumented)
-
     // Register R_PWM_CTRL_REG? (R_PWM Control Register?)
     // At R_PWM Offset 0 (A64 Page 194)
-    // Clear 0x40: SCLK_CH0_GATING (0=mask)
-    // clrbits 0x1f03800, 0x40
+    // Set SCLK_CH0_GATING (Bit 6) to 0 (Mask)
+    const R_PWM_CTRL_REG = R_PWM_BASE_ADDRESS + 0;
+    comptime { assert(R_PWM_CTRL_REG == 0x1f03800); }
+    modreg32(0, 1 << 6, R_PWM_CTRL_REG);
 
     // Configure R_PWM Period (Undocumented)
-
     // Register R_PWM_CH0_PERIOD? (R_PWM Channel 0 Period Register?)
     // At R_PWM Offset 4 (A64 Page 195)
     // PWM_CH0_ENTIRE_CYS (Upper 16 Bits) = Period (0x4af)
     // PWM_CH0_ENTIRE_ACT_CYS (Lower 16 Bits) = Period * Percent / 100 (0x0437)
     // Period = 0x4af (1199)
     // Percent = 0x5a
-
-    // 0x1f03804 = 0x4af0437
+    const R_PWM_CH0_PERIOD = R_PWM_BASE_ADDRESS + 4;
+    comptime { assert(R_PWM_CH0_PERIOD == 0x1f03804); }
+    const PERIOD = 0x4af;
+    const PERCENT = 0x5a;
+    const PWM_CH0_ENTIRE_CYS: u32 = PERIOD << 16;
+    const PWM_CH0_ENTIRE_ACT_CYS: u16 = PERIOD * PERCENT / 100;
+    const val = PWM_CH0_ENTIRE_CYS 
+        | PWM_CH0_ENTIRE_ACT_CYS;
+    comptime { assert(val == 0x4af0437); }
+    putreg32(val, R_PWM_CH0_PERIOD);
+    assert(percent == PERCENT);
 
     // Enable R_PWM (Undocumented)
-
     // Register R_PWM_CTRL_REG? (R_PWM Control Register?)
     // At R_PWM Offset 0 (A64 Page 194)
-    // 0x5f = SCLK_CH0_GATING (1=pass) + PWM_CH0_EN (1=enable) + PWM_CH0_PRESCAL (Prescalar 1)
-
-    // 0x1f03800 = 0x5f
+    // Set SCLK_CH0_GATING (Bit 6) to 1 (Pass)
+    // Set PWM_CH0_EN (Bit 4) to 1 (Enable)
+    // Set PWM_CH0_PRESCAL (Bits 0 to 3) to 0b1111 (Prescalar 1)
+    comptime { assert(R_PWM_CTRL_REG == 0x1f03800); }
+    const SCLK_CH0_GATING: u7 = 1 << 6;
+    const PWM_CH0_EN:      u5 = 1 << 4;
+    const PWM_CH0_PRESCAL: u4 = 0b1111 << 0;
+    const ctrl = SCLK_CH0_GATING
+        | PWM_CH0_EN
+        | PWM_CH0_PRESCAL;
+    comptime { assert(ctrl == 0x5f); }
+    putreg32(ctrl, R_PWM_CTRL_REG);
 
     // Configure PH10 for Output
-
     // Register PH_CFG1 (PH Configure Register 1)
     // At PIO Offset 0x100 (A64 Page 401)
     // Set PH10_SELECT (Bits 8 to 10) to 1 (Output)
-
-    // enable backlight: GPH(10), 1
-    // sunxi_gpio_set_cfgpin: pin=0xea, val=1
-    // sunxi_gpio_set_cfgbank: bank_offset=234, val=1
-    // clrsetbits 0x1c20900, 0xf00, 0x100
-    // TODO: Should 0xf00 be 0x700 instead?
+    const PH_CFG1 = PIO_BASE_ADDRESS + 0x100;
+    comptime { assert(PH_CFG1 == 0x1c20900); }
+    const PH10_SELECT: u11 = 1 << 8;
+    const PH10_MASK:   u11 = 0b111 << 8;
+    comptime { assert(PH10_SELECT == 0x100); }
+    comptime { assert(PH10_MASK   == 0x700); }
+    modreg32(PH10_SELECT, PH10_MASK, PH_CFG1);
 
     // Set PH10 to High
-
     // Register PH_DATA (PH Data Register)
     // At PIO Offset 0x10C (A64 Page 403)
     // Set PH10 (Bit 10) to 1 (High)
-
-    // sunxi_gpio_output: pin=0xea, val=1
-    // TODO: Set Bit 10 of PH_DATA (0x1c2090c)
+    const PH_DATA = PIO_BASE_ADDRESS + 0x10C;
+    comptime { assert(PH_DATA == 0x1c2090c); }
+    const PH10: u11 = 1 << 10;
+    modreg32(PH10, PH10, PH_DATA);
 }
 
 /// Modify the specified bits in a memory mapped register.
 /// Note: Parameters are different from modifyreg32
 /// Based on https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_arch.h#L473
 fn modreg32(
-    val: u32,   // Bits to set, like (1 << bit)
-    mask: u32,  // Bits to clear, like (1 << bit)
-    addr: u64   // Address to modify
+    comptime val: u32,   // Bits to set, like (1 << bit)
+    comptime mask: u32,  // Bits to clear, like (1 << bit)
+    addr: u64  // Address to modify
 ) void {
-    debug("  0x{x}: clear 0x{x}, set 0x{x}", .{ addr, mask, val & mask });
+    comptime { assert(val & mask == val); }
+    debug("  *0x{x}: clear 0x{x}, set 0x{x}", .{ addr, mask, val & mask });
     putreg32(
         (getreg32(addr) & ~(mask))
             | ((val) & (mask)),
@@ -148,9 +159,13 @@ fn getreg32(addr: u64) u32 {
 
 /// Set the 32-bit value at the address
 fn putreg32(val: u32, addr: u64) void {
+    if (enableLog) { debug("  *0x{x} = 0x{x}", .{ addr, val }); }
     const ptr = @intToPtr(*volatile u32, addr);
     ptr.* = val;
 }
+
+/// Set to False to disable log 
+var enableLog = true;
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Panic Handler
