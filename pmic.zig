@@ -18,7 +18,7 @@
 //***************************************************************************
 
 //! PinePhone Power Management IC Driver for Apache NuttX RTOS
-//! See https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#display_board_init
+//! See https://lupyuen.github.io/articles/de#appendix-power-management-integrated-circuit
 //! "A64 Page ???" refers to Allwinner A64 User Manual: https://linux-sunxi.org/images/b/b4/Allwinner_A64_User_Manual_V1.1.pdf
 
 /// Import the Zig Standard Library
@@ -65,7 +65,7 @@ const RSBCMD_RD8 = 0x8B;
 const RSBCMD_WR8 = 0x4E;
 
 /// Init Display Board.
-/// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#display_board_init
+/// Based on https://lupyuen.github.io/articles/de#appendix-power-management-integrated-circuit
 pub export fn display_board_init() void {
     debug("display_board_init: start", .{});
     defer { debug("display_board_init: end", .{}); }
@@ -81,6 +81,7 @@ pub export fn display_board_init() void {
     // sunxi_gpio_set_cfgbank: bank_offset=119, val=1
     //   clrsetbits 0x1c20874, 0xf0000000, 0x10000000
     // TODO: Should 0xf0000000 be 0x70000000 instead?
+    debug("Configure PD23 for Output", .{});
     const PD_CFG2_REG = PIO_BASE_ADDRESS + 0x74;
     comptime { assert(PD_CFG2_REG == 0x1c20874); }
     const PD23_SELECT: u31 = 0b001 << 28;
@@ -96,6 +97,7 @@ pub export fn display_board_init() void {
     // sunxi_gpio_output: pin=0x77, val=0
     //   before: 0x1c2087c = 0x1c0000
     //   after: 0x1c2087c = 0x1c0000 (DMB)
+    debug("Set PD23 to Low", .{});
     const PD_DATA_REG = PIO_BASE_ADDRESS + 0x7C;
     comptime { assert(PD_DATA_REG == 0x1c2087c); }
     const PD23: u24 = 1 << 23;
@@ -105,6 +107,7 @@ pub export fn display_board_init() void {
         // Set DLDO1 Voltage to 3.3V
         //   pmic_write: reg=0x15, val=0x1a
         //   rsb_write: rt_addr=0x2d, reg_addr=0x15, value=0x1a
+        debug("Set DLDO1 Voltage to 3.3V", .{});
         const ret = pmic_write(0x15, 0x1a);
         assert(ret == 0);
     }
@@ -119,6 +122,7 @@ pub export fn display_board_init() void {
         // Set LDO Voltage to 3.3V
         //   pmic_write: reg=0x91, val=0x1a
         //   rsb_write: rt_addr=0x2d, reg_addr=0x91, value=0x1a
+        debug("Set LDO Voltage to 3.3V", .{});
         const ret = pmic_write(0x91, 0x1a);
         assert(ret == 0);
     }
@@ -126,6 +130,7 @@ pub export fn display_board_init() void {
         // Enable LDO mode on GPIO0
         //   pmic_write: reg=0x90, val=0x3
         //   rsb_write: rt_addr=0x2d, reg_addr=0x90, value=0x3
+        debug("Enable LDO mode on GPIO0", .{});
         const ret = pmic_write(0x90, 0x03);
         assert(ret == 0);
     }
@@ -133,6 +138,7 @@ pub export fn display_board_init() void {
         // Set DLDO2 Voltage to 1.8V
         //   pmic_write: reg=0x16, val=0xb
         //   rsb_write: rt_addr=0x2d, reg_addr=0x16, value=0xb
+        debug("Set DLDO2 Voltage to 1.8V", .{});
         const ret = pmic_write(0x16, 0x0b);
         if (ret != 0) { debug("ret={}", .{ ret }); }
         assert(ret == 0);
@@ -146,6 +152,7 @@ pub export fn display_board_init() void {
     }
 
     // Wait for power supply and power-on init
+    debug("Wait for power supply and power-on init", .{});
     _ = c.usleep(15000);
 }
 

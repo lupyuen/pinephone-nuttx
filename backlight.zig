@@ -65,6 +65,7 @@ pub export fn backlight_enable(
     // Register PL_CFG1_REG (Port L Configure Register 1)
     // At R_PIO Offset 4 (A64 Page 412)
     // Set PL10_SELECT (Bits 8 to 10) to 2 (S_PWM)
+    debug("Configure PL10 for PWM", .{});
     const PL_CFG1_REG = R_PIO_BASE_ADDRESS + 4;
     comptime { assert(PL_CFG1_REG == 0x1f02c04); }
     modreg32(2 << 8, 0b111 << 8, PL_CFG1_REG);
@@ -73,6 +74,7 @@ pub export fn backlight_enable(
     // Register R_PWM_CTRL_REG? (R_PWM Control Register?)
     // At R_PWM Offset 0 (A64 Page 194)
     // Set SCLK_CH0_GATING (Bit 6) to 0 (Mask)
+    debug("Disable R_PWM", .{});
     const R_PWM_CTRL_REG = R_PWM_BASE_ADDRESS + 0;
     comptime { assert(R_PWM_CTRL_REG == 0x1f03800); }
     modreg32(0, 1 << 6, R_PWM_CTRL_REG);
@@ -84,6 +86,7 @@ pub export fn backlight_enable(
     // PWM_CH0_ENTIRE_ACT_CYS (Lower 16 Bits) = Period * Percent / 100 (0x0437)
     // Period = 1199 (Cycles of PWM Clock)
     // Percent = 90 (90% Brightness)
+    debug("Configure R_PWM Period", .{});
     const R_PWM_CH0_PERIOD = R_PWM_BASE_ADDRESS + 4;
     comptime { assert(R_PWM_CH0_PERIOD == 0x1f03804); }
     const PERIOD = 1199;
@@ -102,6 +105,7 @@ pub export fn backlight_enable(
     // Set SCLK_CH0_GATING (Bit 6) to 1 (Pass)
     // Set PWM_CH0_EN (Bit 4) to 1 (Enable)
     // Set PWM_CH0_PRESCAL (Bits 0 to 3) to 0b1111 (Prescalar 1)
+    debug("Enable R_PWM", .{});
     comptime { assert(R_PWM_CTRL_REG == 0x1f03800); }
     const SCLK_CH0_GATING: u7 = 1 << 6;
     const PWM_CH0_EN:      u5 = 1 << 4;
@@ -116,6 +120,7 @@ pub export fn backlight_enable(
     // Register PH_CFG1_REG (PH Configure Register 1)
     // At PIO Offset 0x100 (A64 Page 401)
     // Set PH10_SELECT (Bits 8 to 10) to 1 (Output)
+    debug("Configure PH10 for Output", .{});
     const PH_CFG1_REG = PIO_BASE_ADDRESS + 0x100;
     comptime { assert(PH_CFG1_REG == 0x1c20900); }
     const PH10_SELECT: u11 = 0b001 << 8;
@@ -128,6 +133,7 @@ pub export fn backlight_enable(
     // Register PH_DATA_REG (PH Data Register)
     // At PIO Offset 0x10C (A64 Page 403)
     // Set PH10 (Bit 10) to 1 (High)
+    debug("Set PH10 to High", .{});
     const PH_DATA_REG = PIO_BASE_ADDRESS + 0x10C;
     comptime { assert(PH_DATA_REG == 0x1c2090c); }
     const PH10: u11 = 1 << 10;
