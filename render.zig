@@ -32,6 +32,9 @@ const dsi = @import("./display.zig");
 /// Import the Backlight Module
 const backlight = @import("./backlight.zig");
 
+/// Import the Power Management IC Module
+const pmic = @import("./pmic.zig");
+
 /// Import NuttX Functions from C
 const c = @cImport({
     // NuttX Defines
@@ -181,9 +184,8 @@ pub export fn test_render(
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#tcon0_init
     tcon0_init();
 
-    // TODO: Init Display Board
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#display_board_init
-    display_board_init();
+    // Init Display Board
+    pmic.display_board_init();
 
     // TODO: Enable DSI Block
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#enable_dsi_block
@@ -1009,6 +1011,8 @@ pub export fn export_dsi_functions() void {
     dsi.panel_init();
     // Export Enable Backlight Function
     backlight.backlight_enable(100);
+    // Export Board Init Function
+    pmic.display_board_init();
 }
 
 /// Atomically modify the specified bits in a memory mapped register.
@@ -1105,7 +1109,6 @@ pub fn log(
 //  Imported Functions and Variables
 
 /// From p-boot/src/display.c
-extern fn display_board_init() void;
 extern fn dphy_enable() void;
 extern fn dsi_init() void;
 extern fn enable_dsi_block() void;
