@@ -87,7 +87,6 @@ pub export fn display_board_init() void {
         const ret = pmic_write(0x15, 0x1a);
         assert(ret == 0);
     }
-
     {
         //   pmic_clrsetbits: reg=0x12, clr_mask=0x0, set_mask=0x8
         //   rsb_read: rt_addr=0x2d, reg_addr=0x12
@@ -95,7 +94,6 @@ pub export fn display_board_init() void {
         const ret = pmic_clrsetbits(0x12, 0, 1 << 3);
         assert(ret == 0);
     }
-
     {
         // Set LDO Voltage to 3.3V
         //   pmic_write: reg=0x91, val=0x1a
@@ -103,7 +101,6 @@ pub export fn display_board_init() void {
         const ret = pmic_write(0x91, 0x1a);
         assert(ret == 0);
     }
-
     {
         // Enable LDO mode on GPIO0
         //   pmic_write: reg=0x90, val=0x3
@@ -111,14 +108,20 @@ pub export fn display_board_init() void {
         const ret = pmic_write(0x90, 0x03);
         assert(ret == 0);
     }
-
-    // Set dldo2 to 1.8V
-    //   pmic_write: reg=0x16, val=0xb
-    //   rsb_write: rt_addr=0x2d, reg_addr=0x16, value=0xb
-    //   pmic_clrsetbits: reg=0x12, clr_mask=0x0, set_mask=0x10
-    //   rsb_read: rt_addr=0x2d, reg_addr=0x12
-    //   rsb_write: rt_addr=0x2d, reg_addr=0x12, value=0xd9
-
+    {
+        // Set DLDO2 Voltage to 1.8V
+        //   pmic_write: reg=0x16, val=0xb
+        //   rsb_write: rt_addr=0x2d, reg_addr=0x16, value=0xb
+        const ret = pmic_write(0x16, 0x0b);
+        assert(ret == 0);
+    }
+    {
+        //   pmic_clrsetbits: reg=0x12, clr_mask=0x0, set_mask=0x10
+        //   rsb_read: rt_addr=0x2d, reg_addr=0x12
+        //   rsb_write: rt_addr=0x2d, reg_addr=0x12, value=0xd9
+        const ret = pmic_clrsetbits(0x12, 0x0, 1 << 4);
+        assert(ret == 0);
+    }
     // Wait for power supply and power-on init
     _ = c.usleep(15000);
 }
