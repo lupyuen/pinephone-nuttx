@@ -189,9 +189,8 @@ pub export fn test_render(
     // Init Display Board
     pmic.display_board_init();
 
-    // TODO: Enable DSI Block
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#enable_dsi_block
-    enable_dsi_block();
+    // Enable DSI Block
+    dsi.enable_dsi_block();
 
     // TODO: Enable DPHY
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dphy_enable
@@ -1009,8 +1008,9 @@ pub export fn de2_init() void {
 
 /// Export Zig Functions to C. (Why is this needed?)
 pub export fn export_dsi_functions() void {
-    // Export Panel Init Function
+    // Export DSI Functions
     dsi.panel_init();
+    dsi.enable_dsi_block();
     // Export Enable Backlight Function
     backlight.backlight_enable(100);
     // Export Board Init Function

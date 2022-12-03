@@ -476,6 +476,23 @@ fn modifyreg32(
     // TODO: spin_unlock_irqrestore(NULL, flags);
 }
 
+/// Modify the specified bits in a memory mapped register.
+/// Note: Parameters are different from modifyreg32
+/// Based on https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_arch.h#L473
+fn modreg32(
+    comptime val: u32,   // Bits to set, like (1 << bit)
+    comptime mask: u32,  // Bits to clear, like (1 << bit)
+    addr: u64  // Address to modify
+) void {
+    comptime { assert(val & mask == val); }
+    debug("  *0x{x}: clear 0x{x}, set 0x{x}", .{ addr, mask, val & mask });
+    putreg32(
+        (getreg32(addr) & ~(mask))
+            | ((val) & (mask)),
+        (addr)
+    );
+}
+
 /// Get the 32-bit value at the address
 fn getreg32(addr: u64) u32 {
     const ptr = @intToPtr(*const volatile u32, addr);
@@ -1141,6 +1158,130 @@ pub export fn test_zig() void {
 // modifyreg32: addr=0x340, val=0x00000000
 // modifyreg32: addr=0x344, val=0x00000365
 // modifyreg32: addr=0x200, val=0x00000045
+
+///////////////////////////////////////////////////////////////////////////////
+//  Enable DSI Block
+
+/// Enable DSI Block.
+/// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#enable_dsi_block
+pub export fn enable_dsi_block() void {
+    debug("enable_dsi_block: start", .{});
+    defer { debug("enable_dsi_block: end", .{}); }
+
+    // TODO: Decode the addresses and values
+
+    // mipi dsi bus enable
+    //   setbits 0x1c20060, 0x2 (DMB)
+    //   setbits 0x1c202c0, 0x2 (DMB)
+    debug("mipi dsi bus enable", .{});
+    modreg32(0x2, 0x2, 0x1c20060);  // TODO: DMB
+    modreg32(0x2, 0x2, 0x1c202c0);  // TODO: DMB
+
+    // Enable the DSI block
+    //   0x1ca1000 = 0x1 (DMB)
+    //   0x1ca1010 = 0x30000 (DMB)
+    //   0x1ca1060 = 0xa (DMB)
+    //   0x1ca1078 = 0x0 (DMB)
+    debug("Enable the DSI block", .{});
+    putreg32(0x1, 0x1ca1000);  // TODO: DMB
+    putreg32(0x30000, 0x1ca1010);  // TODO: DMB
+    putreg32(0xa, 0x1ca1060);  // TODO: DMB
+    putreg32(0x0, 0x1ca1078);  // TODO: DMB
+
+    // inst_init
+    //   0x1ca1020 = 0x1f (DMB)
+    //   0x1ca1024 = 0x10000001 (DMB)
+    //   0x1ca1028 = 0x20000010 (DMB)
+    //   0x1ca102c = 0x2000000f (DMB)
+    //   0x1ca1030 = 0x30100001 (DMB)
+    debug("inst_init", .{});
+    putreg32(0x1f, 0x1ca1020);  // TODO: DMB
+    putreg32(0x10000001, 0x1ca1024);  // TODO: DMB
+    putreg32(0x20000010, 0x1ca1028);  // TODO: DMB
+    putreg32(0x2000000f, 0x1ca102c);  // TODO: DMB
+    putreg32(0x30100001, 0x1ca1030);  // TODO: DMB
+
+    //   0x1ca1034 = 0x40000010 (DMB)
+    //   0x1ca1038 = 0xf (DMB)
+    //   0x1ca103c = 0x5000001f (DMB)
+    //   0x1ca104c = 0x560001 (DMB)
+    //   0x1ca12f8 = 0xff (DMB)
+    putreg32(0x40000010, 0x1ca1034);  // TODO: DMB
+    putreg32(0xf, 0x1ca1038);  // TODO: DMB
+    putreg32(0x5000001f, 0x1ca103c);  // TODO: DMB
+    putreg32(0x560001, 0x1ca104c);  // TODO: DMB
+    putreg32(0xff, 0x1ca12f8);  // TODO: DMB
+
+    // get_video_start_delay
+    //   0x1ca1014 = 0x5bc7 (DMB)
+    debug("get_video_start_delay", .{});
+    putreg32(0x5bc7, 0x1ca1014);  // TODO: DMB
+
+    // setup_burst
+    //   0x1ca107c = 0x10000007 (DMB)
+    debug("setup_burst", .{});
+    putreg32(0x10000007, 0x1ca107c);  // TODO: DMB
+
+    // setup_inst_loop
+    //   0x1ca1040 = 0x30000002 (DMB)
+    //   0x1ca1044 = 0x310031 (DMB)
+    //   0x1ca1054 = 0x310031 (DMB)
+    debug("setup_inst_loop", .{});
+    putreg32(0x30000002, 0x1ca1040);  // TODO: DMB
+    putreg32(0x310031, 0x1ca1044);  // TODO: DMB
+    putreg32(0x310031, 0x1ca1054);  // TODO: DMB
+
+    // setup_format
+    //   0x1ca1090 = 0x1308703e (DMB)
+    //   0x1ca1098 = 0xffff (DMB)
+    //   0x1ca109c = 0xffffffff (DMB)
+    //   0x1ca1080 = 0x10008 (DMB)
+    debug("setup_format", .{});
+    putreg32(0x1308703e, 0x1ca1090);  // TODO: DMB
+    putreg32(0xffff, 0x1ca1098);  // TODO: DMB
+    putreg32(0xffffffff, 0x1ca109c);  // TODO: DMB
+    putreg32(0x10008, 0x1ca1080);  // TODO: DMB
+
+    // setup_timings
+    //   0x1ca100c = 0x0 (DMB)
+    //   0x1ca10b0 = 0x12000021 (DMB)
+    //   0x1ca10b4 = 0x1000031 (DMB)
+    //   0x1ca10b8 = 0x7000001 (DMB)
+    //   0x1ca10bc = 0x14000011 (DMB)
+    debug("setup_timings", .{});
+    putreg32(0x0, 0x1ca100c);  // TODO: DMB
+    putreg32(0x12000021, 0x1ca10b0);  // TODO: DMB
+    putreg32(0x1000031, 0x1ca10b4);  // TODO: DMB
+    putreg32(0x7000001, 0x1ca10b8);  // TODO: DMB
+    putreg32(0x14000011, 0x1ca10bc);  // TODO: DMB
+
+    //   0x1ca1018 = 0x11000a (DMB)
+    //   0x1ca101c = 0x5cd05a0 (DMB)
+    //   0x1ca10c0 = 0x9004a19 (DMB)
+    //   0x1ca10c4 = 0x50b40000 (DMB)
+    //   0x1ca10c8 = 0x35005419 (DMB)
+    putreg32(0x11000a, 0x1ca1018);  // TODO: DMB
+    putreg32(0x5cd05a0, 0x1ca101c);  // TODO: DMB
+    putreg32(0x9004a19, 0x1ca10c0);  // TODO: DMB
+    putreg32(0x50b40000, 0x1ca10c4);  // TODO: DMB
+    putreg32(0x35005419, 0x1ca10c8);  // TODO: DMB
+
+    //   0x1ca10cc = 0x757a0000 (DMB)
+    //   0x1ca10d0 = 0x9004a19 (DMB)
+    //   0x1ca10d4 = 0x50b40000 (DMB)
+    //   0x1ca10e0 = 0xc091a19 (DMB)
+    //   0x1ca10e4 = 0x72bd0000 (DMB)
+    putreg32(0x757a0000, 0x1ca10cc);  // TODO: DMB
+    putreg32(0x9004a19, 0x1ca10d0);  // TODO: DMB
+    putreg32(0x50b40000, 0x1ca10d4);  // TODO: DMB
+    putreg32(0xc091a19, 0x1ca10e0);  // TODO: DMB
+    putreg32(0x72bd0000, 0x1ca10e4);  // TODO: DMB
+
+    //   0x1ca10e8 = 0x1a000019 (DMB)
+    //   0x1ca10ec = 0xffff0000 (DMB)
+    putreg32(0x1a000019, 0x1ca10e8);  // TODO: DMB
+    putreg32(0xffff0000, 0x1ca10ec);  // TODO: DMB
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Panic Handler
