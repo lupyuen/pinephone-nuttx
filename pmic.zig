@@ -41,6 +41,9 @@ const c = @cImport({
     @cInclude("stdio.h");
 });
 
+/// PIO Base Address (CPUx-PORT) (A64 Page 376)
+const PIO_BASE_ADDRESS = 0x01C2_0800;
+
 /// Address of AXP803 PMIC on Reduced Serial Bus
 const AXP803_RT_ADDR = 0x2d;
 
@@ -70,15 +73,33 @@ pub export fn display_board_init() void {
     // Reset LCD Panel at PD23 (Active Low)
     // assert reset: GPD(23), 0  // PD23 - LCD-RST (active low)
 
-    // TODO: Configure PD23 for Output
+    // Configure PD23 for Output
+    // Register PD_CFG2_REG (PD Configure Register 2)
+    // At PIO Offset 0x74 (A64 Page 387)
+    // Set PD23_SELECT (Bits 28 to 30) to 1 (Output)
     // sunxi_gpio_set_cfgpin: pin=0x77, val=1
     // sunxi_gpio_set_cfgbank: bank_offset=119, val=1
     //   clrsetbits 0x1c20874, 0xf0000000, 0x10000000
+    // TODO: Should 0xf0000000 be 0x70000000 instead?
+    const PD_CFG2_REG = PIO_BASE_ADDRESS + 0x74;
+    comptime { assert(PD_CFG2_REG == 0x1c20874); }
+    const PD23_SELECT: u31 = 0b001 << 28;
+    const PD23_MASK:   u31 = 0b111 << 28;
+    comptime { assert(PD23_SELECT == 0x10000000); }
+    comptime { assert(PD23_MASK   == 0x70000000); }
+    modreg32(PD23_SELECT, PD23_MASK, PD_CFG2_REG);  // TODO: DMB
 
-    // TODO: Set PD23 to Low
+    // Set PD23 to Low
+    // Register PD_DATA_REG (PD Data Register)
+    // At PIO Offset 0x7C (A64 Page 388)
+    // Set PD23 (Bit 23) to 0 (Low)
     // sunxi_gpio_output: pin=0x77, val=0
     //   before: 0x1c2087c = 0x1c0000
     //   after: 0x1c2087c = 0x1c0000 (DMB)
+    const PD_DATA_REG = PIO_BASE_ADDRESS + 0x7C;
+    comptime { assert(PD_DATA_REG == 0x1c2087c); }
+    const PD23: u24 = 1 << 23;
+    modreg32(0, PD23, PD_DATA_REG);  // TODO: DMB
 
     {
         // Set DLDO1 Voltage to 3.3V
@@ -123,6 +144,7 @@ pub export fn display_board_init() void {
         const ret = pmic_clrsetbits(0x12, 0x0, 1 << 4);
         assert(ret == 0);
     }
+
     // Wait for power supply and power-on init
     _ = c.usleep(15000);
 }

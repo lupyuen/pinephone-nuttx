@@ -41,16 +41,16 @@ const c = @cImport({
     @cInclude("stdio.h");
 });
 
-// PIO Base Address (CPUx-PORT) (A64 Page 376)
+/// PIO Base Address (CPUx-PORT) (A64 Page 376)
 const PIO_BASE_ADDRESS = 0x01C2_0800;
 
-// PWM Base Address (CPUx-PWM?) (A64 Page 194)
+/// PWM Base Address (CPUx-PWM?) (A64 Page 194)
 const PWM_BASE_ADDRESS = 0x01C2_1400;
 
-// R_PIO Base Address (CPUs-PORT) (A64 Page 410)
+/// R_PIO Base Address (CPUs-PORT) (A64 Page 410)
 const R_PIO_BASE_ADDRESS = 0x01F0_2C00;
 
-// R_PWM Base Address (CPUs-PWM?) (CPUs Domain, A64 Page 256)
+/// R_PWM Base Address (CPUs-PWM?) (CPUs Domain, A64 Page 256)
 const R_PWM_BASE_ADDRESS = 0x01F0_3800;
 
 /// Turn on PinePhone Display Backlight.
@@ -62,12 +62,12 @@ pub export fn backlight_enable(
     defer { debug("backlight_enable: end", .{}); }
 
     // Configure PL10 for PWM
-    // Register PL_CFG1 (Port L Configure Register 1)
+    // Register PL_CFG1_REG (Port L Configure Register 1)
     // At R_PIO Offset 4 (A64 Page 412)
     // Set PL10_SELECT (Bits 8 to 10) to 2 (S_PWM)
-    const PL_CFG1 = R_PIO_BASE_ADDRESS + 4;
-    comptime { assert(PL_CFG1 == 0x1f02c04); }
-    modreg32(2 << 8, 0b111 << 8, PL_CFG1);
+    const PL_CFG1_REG = R_PIO_BASE_ADDRESS + 4;
+    comptime { assert(PL_CFG1_REG == 0x1f02c04); }
+    modreg32(2 << 8, 0b111 << 8, PL_CFG1_REG);
 
     // Disable R_PWM (Undocumented)
     // Register R_PWM_CTRL_REG? (R_PWM Control Register?)
@@ -113,25 +113,25 @@ pub export fn backlight_enable(
     putreg32(ctrl, R_PWM_CTRL_REG);
 
     // Configure PH10 for Output
-    // Register PH_CFG1 (PH Configure Register 1)
+    // Register PH_CFG1_REG (PH Configure Register 1)
     // At PIO Offset 0x100 (A64 Page 401)
     // Set PH10_SELECT (Bits 8 to 10) to 1 (Output)
-    const PH_CFG1 = PIO_BASE_ADDRESS + 0x100;
-    comptime { assert(PH_CFG1 == 0x1c20900); }
-    const PH10_SELECT: u11 = 1 << 8;
+    const PH_CFG1_REG = PIO_BASE_ADDRESS + 0x100;
+    comptime { assert(PH_CFG1_REG == 0x1c20900); }
+    const PH10_SELECT: u11 = 0b001 << 8;
     const PH10_MASK:   u11 = 0b111 << 8;
     comptime { assert(PH10_SELECT == 0x100); }
     comptime { assert(PH10_MASK   == 0x700); }
-    modreg32(PH10_SELECT, PH10_MASK, PH_CFG1);
+    modreg32(PH10_SELECT, PH10_MASK, PH_CFG1_REG);
 
     // Set PH10 to High
-    // Register PH_DATA (PH Data Register)
+    // Register PH_DATA_REG (PH Data Register)
     // At PIO Offset 0x10C (A64 Page 403)
     // Set PH10 (Bit 10) to 1 (High)
-    const PH_DATA = PIO_BASE_ADDRESS + 0x10C;
-    comptime { assert(PH_DATA == 0x1c2090c); }
+    const PH_DATA_REG = PIO_BASE_ADDRESS + 0x10C;
+    comptime { assert(PH_DATA_REG == 0x1c2090c); }
     const PH10: u11 = 1 << 10;
-    modreg32(PH10, PH10, PH_DATA);
+    modreg32(PH10, PH10, PH_DATA_REG);
 }
 
 /// Modify the specified bits in a memory mapped register.
