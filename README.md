@@ -4286,9 +4286,9 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-228326 bytes read in 13 ms (16.7 MiB/s)
-Uncompressed size: 10346496 = 0x9DE000
-36162 bytes read in 5 ms (6.9 MiB/s)
+229440 bytes read in 14 ms (15.6 MiB/s)
+Uncompressed size: 10350592 = 0x9DF000
+36162 bytes read in 4 ms (8.6 MiB/s)
 1078500 bytes read in 50 ms (20.6 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
    Booting using the fdt blob at 0x4fa00000
@@ -4303,20 +4303,20 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL1
 - Boot to C runtime for OS Initialize
 nx_start: Entry
-up_allocate_heap: heap_start=0x0x40a5e000, heap_size=0x75a2000
+up_allocate_heap: heap_start=0x0x40a5f000, heap_size=0x75a1000
 arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
 arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
 up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-up_timer_initialize: _vector_table=0x400e6000
-up_timer_initialize: Before writing: vbar_el1=0x400e6000
-up_timer_initialize: After writing: vbar_el1=0x400e6000
+up_timer_initialize: _vector_table=0x400e7000
+up_timer_initialize: Before writing: vbar_el1=0x40267000
+up_timer_initialize: After writing: vbar_el1=0x400e7000
 uart_register: Registering /dev/console
 uart_register: Registering /dev/ttyS0
 work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400e6000 _einit: 0x400e6000 _stext: 0x40080000 _etext: 0x400e7000
+lib_cxx_initialize: _sinit: 0x400e7000 _einit: 0x400e7000 _stext: 0x40080000 _etext: 0x400e8000
 nsh: sysinit: fopen failed: 2
 nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
 e
@@ -4328,18 +4328,27 @@ Shell (NSH) NuttX-11.0.0-RC2
 nsh> 
 nsh> 
 nsh> uname -a
-NuttX 11.0.0-RC2 a33f82d-dirty Nov 22 2022 18:04:34 arm64 qemu-a53
-nsh> 
-nsh> 
+NuttX 11.0.0-RC2 a33f82d Dec  2 2022 17:57:39 arm64 qemu-a53
 nsh> 
 nsh> hello 3
-task_spawn: name=hello entry=0x4009d4d8 file_actions=0x40a63580 attr=0x40a63588 argv=0x40a636d0
+task_spawn: name=hello entry=0x4009b4c0 file_actions=0x40a64580 attr=0x40a64588 argv=0x40a646d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
-ph_cfg1_reg=0x7177
-ph_data_reg=0x400
 pd_cfg2_reg=0x77711177
 pd_data_reg=0x1c0000
+test_render: start, channels=3
+backlight_enable: start, percent=90
+  *0x1f02c04: clear 0x700, set 0x200
+  *0x1f02c04 = 0x77277
+  *0x1f03800: clear 0x40, set 0x0
+  *0x1f03800 = 0x0
+  *0x1f03804 = 0x4af0437
+  *0x1f03800 = 0x5f
+  *0x1c20900: clear 0x700, set 0x100
+  *0x1c20900 = 0x7177
+  *0x1c2090c: clear 0x400, set 0x400
+  *0x1c2090c = 0x400
+backlight_enable: end
 tcon0_init: start
 PLL_VIDEO0
   0x1c20010 = 0x81006207 (DMB)
@@ -4377,7 +4386,6 @@ Enable the output on the pins
 enable tcon as a whole
   setbits 0x1c0c000, 0x80000000 (DMB)
 tcon0_init: end
-dsi_init: start
 display_board_init: start
 assert reset: GPD(23), 0  // PD23 - LCD-RST (active low)
 sunxi_gpio_set_cfgpin: pin=0x77, val=1
@@ -4406,6 +4414,7 @@ dldo2 1.8V
 wait for power supplies and power-on init
   udelay 15000
 display_board_init: end
+enable_dsi_block: start
 mipi dsi bus enable
   setbits 0x1c20060, 0x2 (DMB)
   setbits 0x1c202c0, 0x2 (DMB)
@@ -4459,6 +4468,7 @@ display_malloc: size=2330
 .{ 0x00e8, 0x1a000019 },  // DMB
 .{ 0x00ec, 0xffff0000 },  // DMB
 };
+enable_dsi_block: end
 dphy_enable: start
 150MHz (600 / 4)
   0x1c20168 = 0x8203 (DMB)
@@ -4485,6 +4495,7 @@ dphy_enable: start
   update_bits 0x1ca1050, 0x80000000, 0x80000000 (DMB)
   update_bits 0x1ca1054, 0xf000000, 0xf000000 (DMB)
 dphy_enable: end
+panel_reset: start
 deassert reset: GPD(23), 1  // PD23 - LCD-RST (active low)
 sunxi_gpio_set_cfgpin: pin=0x77, val=1
 sunxi_gpio_set_cfgbank: bank_offset=119, val=1
@@ -4494,9 +4505,8 @@ sunxi_gpio_output: pin=0x77, val=1
   after: 0x1c2087c = 0x9c0000 (DMB)
 wait for initialization
 udelay 15000
-
-struct reg_inst dsi_panel_init_seq[] = {
-nuttx_panel_init
+panel_reset: end
+panel_init: start
 writeDcs: len=4
 b9 f1 12 83 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
@@ -4844,7 +4854,8 @@ modifyreg32: addr=0x300, val=0x1c002905
 modifyreg32: addr=0x200, val=0x00000003
 modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
-};
+panel_init: end
+start_dsi: start
 dsi_start DSI_START_HSC
 .{ 0x0048, 0x00000f02 },  // DMB
 .{ MAGIC_COMMIT, 0 },  // DMB
@@ -4853,7 +4864,7 @@ udelay 1000
 dsi_start DSI_START_HSD
 .{ 0x0048, 0x63f07006 },  // DMB
 .{ MAGIC_COMMIT, 0 },  // DMB
-dsi_init: end
+start_dsi: end
 de2_init: start
 Set High Speed SRAM to DMA Mode
   *0x1c00004 = 0x0
@@ -4909,18 +4920,6 @@ Disable MIXER0 DRC
 Enable MIXER0
   *0x1100000 = 0x1
 de2_init: end
-backlight_enable: start, percent=90
-  *0x1f02c04: clear 0x700, set 0x200
-  *0x1f02c04 = 0x77277
-  *0x1f03800: clear 0x40, set 0x0
-  *0x1f03800 = 0x0
-  *0x1f03804 = 0x4af0437
-  *0x1f03800 = 0x5f
-  *0x1c20900: clear 0x700, set 0x100
-  *0x1c20900 = 0x7177
-  *0x1c2090c: clear 0x400, set 0x400
-  *0x1c2090c = 0x400
-backlight_enable: end
 renderGraphics: start
 initUiBlender: start
 Set Blender Background
@@ -4931,7 +4930,7 @@ initUiBlender: end
 initUiChannel: start
 Channel 1: Set Overlay (720 x 1440)
   *0x1103000 = 0xff000405
-  *0x1103010 = 0x4010f000
+  *0x1103010 = 0x40110000
   *0x110300c = 0xb40
   *0x1103004 = 0x59f02cf
   *0x1103088 = 0x59f02cf
@@ -4950,7 +4949,7 @@ initUiChannel: end
 initUiChannel: start
 Channel 2: Set Overlay (600 x 600)
   *0x1104000 = 0xff000005
-  *0x1104010 = 0x40504000
+  *0x1104010 = 0x40505000
   *0x110400c = 0x960
   *0x1104004 = 0x2570257
   *0x1104088 = 0x2570257
@@ -4966,7 +4965,7 @@ initUiChannel: end
 initUiChannel: start
 Channel 3: Set Overlay (720 x 1440)
   *0x1105000 = 0x7f000005
-  *0x1105010 = 0x40664000
+  *0x1105010 = 0x40665000
   *0x110500c = 0xb40
   *0x1105004 = 0x59f02cf
   *0x1105088 = 0x59f02cf
@@ -4988,6 +4987,7 @@ Apply Settings
   *0x1100008 = 0x1
 applySettings: end
 renderGraphics: end
+test_render: end
 HELLO ZIG ON PINEPHONE!
 Testing Compose Short Packet (Without Parameter)...
 composeShortPacket: channel=0, cmd=0x5, len=1

@@ -174,13 +174,35 @@ pub export fn test_render(
         backlight.backlight_enable(90);
     }
 
+    // Init PMIC not needed. Maybe already done by U-Boot?
+    // https://megous.com/git/p-boot/tree/src/pmic.c#n279
+
     // TODO: Init Timing Controller TCON0
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#tcon0_init
     tcon0_init();
 
-    // TODO: Init MIPI Display Serial Interface
+    // TODO: Init Display Board
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#display_board_init
+    display_board_init();
+
+    // TODO: Enable DSI Block
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
-    dsi_init();
+    enable_dsi_block();
+
+    // TODO: Enable DPHY
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dphy_enable
+    dphy_enable();
+
+    // TODO: Reset LCD Panel
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
+    panel_reset();
+
+    // Init LCD Panel
+    dsi.panel_init();
+
+    // TODO: Start DSI HSC and HSD
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
+    start_dsi();
 
     // Init Display Engine
     de2_init();
@@ -981,10 +1003,10 @@ pub export fn de2_init() void {
     putreg32(EN_MIXER, GLB_CTL);  // TODO: DMB
 }
 
-/// Export MIPI DSI Functions to C. (Why is this needed?)
+/// Export Zig Functions to C. (Why is this needed?)
 pub export fn export_dsi_functions() void {
     // Export Panel Init Function
-    dsi.nuttx_panel_init();
+    dsi.panel_init();
     // Export Enable Backlight Function
     backlight.backlight_enable(100);
 }
@@ -1083,7 +1105,12 @@ pub fn log(
 //  Imported Functions and Variables
 
 /// From p-boot/src/display.c
+extern fn display_board_init() void;
+extern fn dphy_enable() void;
 extern fn dsi_init() void;
+extern fn enable_dsi_block() void;
+extern fn panel_reset() void;
+extern fn start_dsi() void;
 extern fn tcon0_init() void;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.

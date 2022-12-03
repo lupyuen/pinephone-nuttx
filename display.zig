@@ -493,9 +493,9 @@ fn putreg32(val: u32, addr: u64) void {
 
 /// Initialise the ST7703 LCD Controller in Xingbangda XBD599 LCD Panel.
 /// See https://lupyuen.github.io/articles/dsi#initialise-lcd-controller
-pub export fn nuttx_panel_init() void {
-    debug("nuttx_panel_init: start", .{});
-    defer { debug("nuttx_panel_init: end", .{}); }
+pub export fn panel_init() void {
+    debug("panel_init: start", .{});
+    defer { debug("panel_init: end", .{}); }
 
     // Most of these commands are documented in the ST7703 Datasheet:
     // https://files.pine64.org/doc/datasheet/pinephone/ST7703_DS_v01_20160128.pdf
