@@ -190,13 +190,16 @@ pub export fn test_render(
     // https://megous.com/git/p-boot/tree/src/pmic.c#n279
 
     // Init Timing Controller TCON0
-    tcon.tcon0_init();
+    ////tcon.tcon0_init();
+    NOTUSED_tcon0_init();
 
     // Init Display Board
-    pmic.display_board_init();
+    ////pmic.display_board_init();
+    NOTUSED_display_board_init();
 
     // Enable DSI Block
-    dsi.enable_dsi_block();
+    ////dsi.enable_dsi_block();
+    NOTUSED_enable_dsi_block();
 
     // TODO: Enable MIPI Display Physical Layer
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dphy_enable
@@ -1121,10 +1124,11 @@ pub fn log(
 /// From p-boot/src/display.c
 extern fn dphy_enable() void;
 extern fn dsi_init() void;
-extern fn enable_dsi_block() void;
+extern fn NOTUSED_enable_dsi_block() void;
 extern fn panel_reset() void;
 extern fn start_dsi() void;
-extern fn tcon0_init() void;
+extern fn NOTUSED_tcon0_init() void;
+extern fn NOTUSED_display_board_init() void;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
 /// We changed `[*c]const u8` to `[*:0]const u8`
