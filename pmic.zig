@@ -113,6 +113,7 @@ pub export fn display_board_init() void {
         //   pmic_write: reg=0x16, val=0xb
         //   rsb_write: rt_addr=0x2d, reg_addr=0x16, value=0xb
         const ret = pmic_write(0x16, 0x0b);
+        if (ret != 0) { debug("ret={}", .{ ret }); }
         assert(ret == 0);
     }
     {
@@ -132,7 +133,9 @@ fn pmic_write(
     val: u8
 ) i32 {
     debug("  pmic_write: reg=0x{x}, val=0x{x}", .{ reg, val });
-    return rsb_write(AXP803_RT_ADDR, reg, val);
+    const ret = rsb_write(AXP803_RT_ADDR, reg, val);
+    if (ret != 0) { debug("  pmic_write Error: ret={}", .{ ret }); }
+    return ret;
 }
 
 /// Read value from PMIC Register
@@ -140,7 +143,9 @@ fn pmic_read(
     reg_addr: u8
 ) i32 {
     debug("  pmic_read: reg_addr=0x{x}", .{ reg_addr });
-    return rsb_read(AXP803_RT_ADDR, reg_addr);
+    const ret = rsb_read(AXP803_RT_ADDR, reg_addr);
+    if (ret < 0) { debug("  pmic_read Error: ret={}", .{ ret }); }
+    return ret;
 }
 
 /// Clear and Set the PMIC Register Bits
@@ -171,7 +176,7 @@ fn rsb_read(
 
     // Start transaction
     putreg32(0x80,          R_RSB_BASE_ADDRESS + RSB_CTRL);    // TODO: DMB
-    const ret = rsb_wait_stat("RSB: read command");
+    const ret = rsb_wait_stat("Read RSB");
     if (ret != 0) { return ret; }
     return getreg8(R_RSB_BASE_ADDRESS + RSB_DATA0);
 }
@@ -192,7 +197,7 @@ fn rsb_write(
 
     // Start transaction
     putreg32(0x80,          R_RSB_BASE_ADDRESS + RSB_CTRL);    // TODO: DMB
-    return rsb_wait_stat("RSB: write command");
+    return rsb_wait_stat("Write RSB");
 }
 
 /// Wait for Reduced Serial Bus and read Status
@@ -200,12 +205,15 @@ fn rsb_wait_stat(
     desc: []const u8
 ) i32 {
     const ret = rsb_wait_bit(desc, RSB_CTRL, 1 << 7);
-    if (ret != 0) { return ret; }
+    if (ret != 0) {
+        debug("rsb_wait_stat Timeout ({s})", .{ desc });
+        return ret;
+    }
 
     const reg = getreg32(R_RSB_BASE_ADDRESS + RSB_STAT);
     if (reg == 0x01) { return 0; }
 
-    debug("{s}: 0x{x}", .{ desc, reg });
+    debug("rsb_wait_stat Error ({s}): 0x{x}", .{ desc, reg });
     return -1;
 }
 
@@ -224,7 +232,7 @@ fn rsb_wait_bit(
         // Check for transaction timeout
         tries -= 1;
         if (tries == 0) {
-            debug("{s}: timed out", .{ desc });
+            debug("rsb_wait_bit Timeout ({s})", .{ desc });
             return -1;
         }
     }
