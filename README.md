@@ -4286,10 +4286,10 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-229440 bytes read in 14 ms (15.6 MiB/s)
-Uncompressed size: 10350592 = 0x9DF000
+233591 bytes read in 14 ms (15.9 MiB/s)
+Uncompressed size: 10375168 = 0x9E5000
 36162 bytes read in 4 ms (8.6 MiB/s)
-1078500 bytes read in 50 ms (20.6 MiB/s)
+1078500 bytes read in 51 ms (20.2 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
    Booting using the fdt blob at 0x4fa00000
    Loading Ramdisk to 49ef8000, end 49fff4e4 ... OK
@@ -4303,20 +4303,20 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL1
 - Boot to C runtime for OS Initialize
 nx_start: Entry
-up_allocate_heap: heap_start=0x0x40a5f000, heap_size=0x75a1000
+up_allocate_heap: heap_start=0x0x40a65000, heap_size=0x759b000
 arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
 arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
 up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-up_timer_initialize: _vector_table=0x400e7000
-up_timer_initialize: Before writing: vbar_el1=0x40267000
-up_timer_initialize: After writing: vbar_el1=0x400e7000
+up_timer_initialize: _vector_table=0x400ec000
+up_timer_initialize: Before writing: vbar_el1=0x4026c000
+up_timer_initialize: After writing: vbar_el1=0x400ec000
 uart_register: Registering /dev/console
 uart_register: Registering /dev/ttyS0
 work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400e7000 _einit: 0x400e7000 _stext: 0x40080000 _etext: 0x400e8000
+lib_cxx_initialize: _sinit: 0x400ec000 _einit: 0x400ec000 _stext: 0x40080000 _etext: 0x400ed000
 nsh: sysinit: fopen failed: 2
 nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
 e
@@ -4331,7 +4331,7 @@ nsh> uname -a
 NuttX 11.0.0-RC2 a33f82d Dec  2 2022 17:57:39 arm64 qemu-a53
 nsh> 
 nsh> hello 3
-task_spawn: name=hello entry=0x4009b4c0 file_actions=0x40a64580 attr=0x40a64588 argv=0x40a646d0
+task_spawn: name=hello entry=0x4009b4f4 file_actions=0x40a6a580 attr=0x40a6a588 argv=0x40a6a6d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 pd_cfg2_reg=0x77711177
@@ -4387,32 +4387,62 @@ enable tcon as a whole
   setbits 0x1c0c000, 0x80000000 (DMB)
 tcon0_init: end
 display_board_init: start
-assert reset: GPD(23), 0  // PD23 - LCD-RST (active low)
-sunxi_gpio_set_cfgpin: pin=0x77, val=1
-sunxi_gpio_set_cfgbank: bank_offset=119, val=1
-  clrsetbits 0x1c20874, 0xf0000000, 0x10000000
-sunxi_gpio_output: pin=0x77, val=0
-  before: 0x1c2087c = 0x1c0000
-  after: 0x1c2087c = 0x1c0000 (DMB)
-dldo1 3.3V
+  *0x1c20874: clear 0x70000000, set 0x10000000
+  *0x1c20874 = 0x17711177
+  *0x1c2087c: clear 0x800000, set 0x0
+  *0x1c2087c = 0x1c0000
   pmic_write: reg=0x15, val=0x1a
   rsb_write: rt_addr=0x2d, reg_addr=0x15, value=0x1a
+  *0x1f0342c = 0x4e
+  *0x1f03430 = 0x2d0000
+  *0x1f03410 = 0x15
+  *0x1f0341c = 0x1a
+  *0x1f03400 = 0x80
   pmic_clrsetbits: reg=0x12, clr_mask=0x0, set_mask=0x8
   rsb_read: rt_addr=0x2d, reg_addr=0x12
+  *0x1f0342c = 0x8b
+  *0x1f03430 = 0x2d0000
+  *0x1f03410 = 0x12
+  *0x1f03400 = 0x80
   rsb_write: rt_addr=0x2d, reg_addr=0x12, value=0xd9
-ldo_io0 3.3V
+  *0x1f0342c = 0x4e
+  *0x1f03430 = 0x2d0000
+  *0x1f03410 = 0x12
+  *0x1f0341c = 0xd9
+  *0x1f03400 = 0x80
   pmic_write: reg=0x91, val=0x1a
   rsb_write: rt_addr=0x2d, reg_addr=0x91, value=0x1a
+  *0x1f0342c = 0x4e
+  *0x1f03430 = 0x2d0000
+  *0x1f03410 = 0x91
+  *0x1f0341c = 0x1a
+  *0x1f03400 = 0x80
   pmic_write: reg=0x90, val=0x3
   rsb_write: rt_addr=0x2d, reg_addr=0x90, value=0x3
-dldo2 1.8V
+  *0x1f0342c = 0x4e
+  *0x1f03430 = 0x2d0000
+  *0x1f03410 = 0x90
+  *0x1f0341c = 0x3
+  *0x1f03400 = 0x80
   pmic_write: reg=0x16, val=0xb
   rsb_write: rt_addr=0x2d, reg_addr=0x16, value=0xb
+  *0x1f0342c = 0x4e
+  *0x1f03430 = 0x2d0000
+  *0x1f03410 = 0x16
+  *0x1f0341c = 0xb
+  *0x1f03400 = 0x80
   pmic_clrsetbits: reg=0x12, clr_mask=0x0, set_mask=0x10
   rsb_read: rt_addr=0x2d, reg_addr=0x12
+  *0x1f0342c = 0x8b
+  *0x1f03430 = 0x2d0000
+  *0x1f03410 = 0x12
+  *0x1f03400 = 0x80
   rsb_write: rt_addr=0x2d, reg_addr=0x12, value=0xd9
-wait for power supplies and power-on init
-  udelay 15000
+  *0x1f0342c = 0x4e
+  *0x1f03430 = 0x2d0000
+  *0x1f03410 = 0x12
+  *0x1f0341c = 0xd9
+  *0x1f03400 = 0x80
 display_board_init: end
 enable_dsi_block: start
 mipi dsi bus enable
@@ -4420,55 +4450,96 @@ mipi dsi bus enable
   setbits 0x1c202c0, 0x2 (DMB)
 Enable the DSI block
 struct reg_inst dsi_init_seq[] = {
-.{ 0x0000, 0x00000001 },  // DMB
-.{ 0x0010, 0x00030000 },  // DMB
-.{ 0x0060, 0x0000000a },  // DMB
-.{ 0x0078, 0x00000000 },  // DMB
+.{ 0x1ca0000 + 0x0000, 0x00000001 },  // DMB
+  0x1ca1000 = 0x1 (DMB)
+.{ 0x1ca0000 + 0x0010, 0x00030000 },  // DMB
+  0x1ca1010 = 0x30000 (DMB)
+.{ 0x1ca0000 + 0x0060, 0x0000000a },  // DMB
+  0x1ca1060 = 0xa (DMB)
+.{ 0x1ca0000 + 0x0078, 0x00000000 },  // DMB
+  0x1ca1078 = 0x0 (DMB)
 inst_init
-.{ 0x0020, 0x0000001f },  // DMB
-.{ 0x0024, 0x10000001 },  // DMB
-.{ 0x0028, 0x20000010 },  // DMB
-.{ 0x002c, 0x2000000f },  // DMB
-.{ 0x0030, 0x30100001 },  // DMB
-.{ 0x0034, 0x40000010 },  // DMB
-.{ 0x0038, 0x0000000f },  // DMB
-.{ 0x003c, 0x5000001f },  // DMB
-.{ 0x004c, 0x00560001 },  // DMB
-.{ 0x02f8, 0x000000ff },  // DMB
+.{ 0x1ca0000 + 0x0020, 0x0000001f },  // DMB
+  0x1ca1020 = 0x1f (DMB)
+.{ 0x1ca0000 + 0x0024, 0x10000001 },  // DMB
+  0x1ca1024 = 0x10000001 (DMB)
+.{ 0x1ca0000 + 0x0028, 0x20000010 },  // DMB
+  0x1ca1028 = 0x20000010 (DMB)
+.{ 0x1ca0000 + 0x002c, 0x2000000f },  // DMB
+  0x1ca102c = 0x2000000f (DMB)
+.{ 0x1ca0000 + 0x0030, 0x30100001 },  // DMB
+  0x1ca1030 = 0x30100001 (DMB)
+.{ 0x1ca0000 + 0x0034, 0x40000010 },  // DMB
+  0x1ca1034 = 0x40000010 (DMB)
+.{ 0x1ca0000 + 0x0038, 0x0000000f },  // DMB
+  0x1ca1038 = 0xf (DMB)
+.{ 0x1ca0000 + 0x003c, 0x5000001f },  // DMB
+  0x1ca103c = 0x5000001f (DMB)
+.{ 0x1ca0000 + 0x004c, 0x00560001 },  // DMB
+  0x1ca104c = 0x560001 (DMB)
+.{ 0x1ca0000 + 0x02f8, 0x000000ff },  // DMB
+  0x1ca12f8 = 0xff (DMB)
 get_video_start_delay
-.{ 0x0014, 0x00005bc7 },  // DMB
+.{ 0x1ca0000 + 0x0014, 0x00005bc7 },  // DMB
+  0x1ca1014 = 0x5bc7 (DMB)
 setup_burst
-.{ 0x007c, 0x10000007 },  // DMB
+.{ 0x1ca0000 + 0x007c, 0x10000007 },  // DMB
+  0x1ca107c = 0x10000007 (DMB)
 setup_inst_loop
-.{ 0x0040, 0x30000002 },  // DMB
-.{ 0x0044, 0x00310031 },  // DMB
-.{ 0x0054, 0x00310031 },  // DMB
+.{ 0x1ca0000 + 0x0040, 0x30000002 },  // DMB
+  0x1ca1040 = 0x30000002 (DMB)
+.{ 0x1ca0000 + 0x0044, 0x00310031 },  // DMB
+  0x1ca1044 = 0x310031 (DMB)
+.{ 0x1ca0000 + 0x0054, 0x00310031 },  // DMB
+  0x1ca1054 = 0x310031 (DMB)
 setup_format
-.{ 0x0090, 0x1308703e },  // DMB
-.{ 0x0098, 0x0000ffff },  // DMB
-.{ 0x009c, 0xffffffff },  // DMB
-.{ 0x0080, 0x00010008 },  // DMB
+.{ 0x1ca0000 + 0x0090, 0x1308703e },  // DMB
+  0x1ca1090 = 0x1308703e (DMB)
+.{ 0x1ca0000 + 0x0098, 0x0000ffff },  // DMB
+  0x1ca1098 = 0xffff (DMB)
+.{ 0x1ca0000 + 0x009c, 0xffffffff },  // DMB
+  0x1ca109c = 0xffffffff (DMB)
+.{ 0x1ca0000 + 0x0080, 0x00010008 },  // DMB
+  0x1ca1080 = 0x10008 (DMB)
 setup_timings
 display_malloc: size=2330
-.{ 0x000c, 0x00000000 },  // DMB
-.{ 0x00b0, 0x12000021 },  // DMB
-.{ 0x00b4, 0x01000031 },  // DMB
-.{ 0x00b8, 0x07000001 },  // DMB
-.{ 0x00bc, 0x14000011 },  // DMB
-.{ 0x0018, 0x0011000a },  // DMB
-.{ 0x001c, 0x05cd05a0 },  // DMB
-.{ 0x00c0, 0x09004a19 },  // DMB
-.{ 0x00c4, 0x50b40000 },  // DMB
-.{ 0x00c8, 0x35005419 },  // DMB
-.{ 0x00cc, 0x757a0000 },  // DMB
-.{ 0x00d0, 0x09004a19 },  // DMB
-.{ 0x00d4, 0x50b40000 },  // DMB
-.{ 0x00e0, 0x0c091a19 },  // DMB
-.{ 0x00e4, 0x72bd0000 },  // DMB
-.{ 0x00e8, 0x1a000019 },  // DMB
-.{ 0x00ec, 0xffff0000 },  // DMB
+.{ 0x1ca0000 + 0x000c, 0x00000000 },  // DMB
+  0x1ca100c = 0x0 (DMB)
+.{ 0x1ca0000 + 0x00b0, 0x12000021 },  // DMB
+  0x1ca10b0 = 0x12000021 (DMB)
+.{ 0x1ca0000 + 0x00b4, 0x01000031 },  // DMB
+  0x1ca10b4 = 0x1000031 (DMB)
+.{ 0x1ca0000 + 0x00b8, 0x07000001 },  // DMB
+  0x1ca10b8 = 0x7000001 (DMB)
+.{ 0x1ca0000 + 0x00bc, 0x14000011 },  // DMB
+  0x1ca10bc = 0x14000011 (DMB)
+.{ 0x1ca0000 + 0x0018, 0x0011000a },  // DMB
+  0x1ca1018 = 0x11000a (DMB)
+.{ 0x1ca0000 + 0x001c, 0x05cd05a0 },  // DMB
+  0x1ca101c = 0x5cd05a0 (DMB)
+.{ 0x1ca0000 + 0x00c0, 0x09004a19 },  // DMB
+  0x1ca10c0 = 0x9004a19 (DMB)
+.{ 0x1ca0000 + 0x00c4, 0x50b40000 },  // DMB
+  0x1ca10c4 = 0x50b40000 (DMB)
+.{ 0x1ca0000 + 0x00c8, 0x35005419 },  // DMB
+  0x1ca10c8 = 0x35005419 (DMB)
+.{ 0x1ca0000 + 0x00cc, 0x757a0000 },  // DMB
+  0x1ca10cc = 0x757a0000 (DMB)
+.{ 0x1ca0000 + 0x00d0, 0x09004a19 },  // DMB
+  0x1ca10d0 = 0x9004a19 (DMB)
+.{ 0x1ca0000 + 0x00d4, 0x50b40000 },  // DMB
+  0x1ca10d4 = 0x50b40000 (DMB)
+.{ 0x1ca0000 + 0x00e0, 0x0c091a19 },  // DMB
+  0x1ca10e0 = 0xc091a19 (DMB)
+.{ 0x1ca0000 + 0x00e4, 0x72bd0000 },  // DMB
+  0x1ca10e4 = 0x72bd0000 (DMB)
+.{ 0x1ca0000 + 0x00e8, 0x1a000019 },  // DMB
+  0x1ca10e8 = 0x1a000019 (DMB)
+.{ 0x1ca0000 + 0x00ec, 0xffff0000 },  // DMB
+  0x1ca10ec = 0xffff0000 (DMB)
 };
 enable_dsi_block: end
+
 dphy_enable: start
 150MHz (600 / 4)
   0x1c20168 = 0x8203 (DMB)
@@ -4506,6 +4577,7 @@ sunxi_gpio_output: pin=0x77, val=1
 wait for initialization
 udelay 15000
 panel_reset: end
+
 panel_init: start
 writeDcs: len=4
 b9 f1 12 83 
@@ -4857,14 +4929,22 @@ modifyreg32: addr=0x010, val=0x00000001
 panel_init: end
 start_dsi: start
 dsi_start DSI_START_HSC
-.{ 0x0048, 0x00000f02 },  // DMB
+.{ 0x1ca0000 + 0x0048, 0x00000f02 },  // DMB
+  0x1ca1048 = 0xf02 (DMB)
 .{ MAGIC_COMMIT, 0 },  // DMB
+dsi_update_bits: 0x01ca0010 : 00030000 -> (00000001) 00000001 (DMB)
+  0x1ca1010 = 0x30001 (DMB)
 dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000 (DMB)
+  0x1ca1020 = 0xf (DMB)
 udelay 1000
 dsi_start DSI_START_HSD
-.{ 0x0048, 0x63f07006 },  // DMB
+.{ 0x1ca0000 + 0x0048, 0x63f07006 },  // DMB
+  0x1ca1048 = 0x63f07006 (DMB)
 .{ MAGIC_COMMIT, 0 },  // DMB
+dsi_update_bits: 0x01ca0010 : 00030000 -> (00000001) 00000001 (DMB)
+  0x1ca1010 = 0x30001 (DMB)
 start_dsi: end
+
 de2_init: start
 Set High Speed SRAM to DMA Mode
   *0x1c00004 = 0x0
@@ -4930,7 +5010,7 @@ initUiBlender: end
 initUiChannel: start
 Channel 1: Set Overlay (720 x 1440)
   *0x1103000 = 0xff000405
-  *0x1103010 = 0x40110000
+  *0x1103010 = 0x40116000
   *0x110300c = 0xb40
   *0x1103004 = 0x59f02cf
   *0x1103088 = 0x59f02cf
@@ -4949,7 +5029,7 @@ initUiChannel: end
 initUiChannel: start
 Channel 2: Set Overlay (600 x 600)
   *0x1104000 = 0xff000005
-  *0x1104010 = 0x40505000
+  *0x1104010 = 0x4050b000
   *0x110400c = 0x960
   *0x1104004 = 0x2570257
   *0x1104088 = 0x2570257
@@ -4965,7 +5045,7 @@ initUiChannel: end
 initUiChannel: start
 Channel 3: Set Overlay (720 x 1440)
   *0x1105000 = 0x7f000005
-  *0x1105010 = 0x40665000
+  *0x1105010 = 0x4066b000
   *0x110500c = 0xb40
   *0x1105004 = 0x59f02cf
   *0x1105088 = 0x59f02cf
