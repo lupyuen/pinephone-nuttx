@@ -35,6 +35,9 @@ const backlight = @import("./backlight.zig");
 /// Import the Power Management IC Module
 const pmic = @import("./pmic.zig");
 
+/// Import the Timing Controller Module
+const tcon = @import("./tcon.zig");
+
 /// Import NuttX Functions from C
 const c = @cImport({
     // NuttX Defines
@@ -180,9 +183,8 @@ pub export fn test_render(
     // Init PMIC not needed. Maybe already done by U-Boot?
     // https://megous.com/git/p-boot/tree/src/pmic.c#n279
 
-    // TODO: Init Timing Controller TCON0
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#tcon0_init
-    tcon0_init();
+    // Init Timing Controller TCON0
+    tcon.tcon0_init();
 
     // Init Display Board
     pmic.display_board_init();
@@ -1013,6 +1015,8 @@ pub export fn export_dsi_functions() void {
     backlight.backlight_enable(100);
     // Export Board Init Function
     pmic.display_board_init();
+    // Export Timing Controller Init Function
+    tcon.tcon0_init();
 }
 
 /// Atomically modify the specified bits in a memory mapped register.
