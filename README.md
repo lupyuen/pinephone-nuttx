@@ -4257,7 +4257,11 @@ PinePhone Logs captured from various tests...
 
 ## Testing Zig Backlight Driver on PinePhone
 
-See ["Display Backlight"](https://lupyuen.github.io/articles/de#appendix-display-backlight)
+PinePhone Test Log for the following Zig Drivers...
+
+-   ["Display Backlight"](https://lupyuen.github.io/articles/de#appendix-display-backlight)
+
+-   ["Power Management Integrated Circuit"](https://lupyuen.github.io/articles/de#appendix-power-management-integrated-circuit)
 
 ```text
 DRAM: 2048 MiB
@@ -4286,8 +4290,8 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-233591 bytes read in 14 ms (15.9 MiB/s)
-Uncompressed size: 10375168 = 0x9E5000
+237752 bytes read in 15 ms (15.1 MiB/s)
+Uncompressed size: 10399744 = 0x9EB000
 36162 bytes read in 4 ms (8.6 MiB/s)
 1078500 bytes read in 51 ms (20.2 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
@@ -4303,20 +4307,20 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL1
 - Boot to C runtime for OS Initialize
 nx_start: Entry
-up_allocate_heap: heap_start=0x0x40a65000, heap_size=0x759b000
+up_allocate_heap: heap_start=0x0x40a6b000, heap_size=0x7595000
 arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
 arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
 up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-up_timer_initialize: _vector_table=0x400ec000
-up_timer_initialize: Before writing: vbar_el1=0x4026c000
-up_timer_initialize: After writing: vbar_el1=0x400ec000
+up_timer_initialize: _vector_table=0x400f2000
+up_timer_initialize: Before writing: vbar_el1=0x40272000
+up_timer_initialize: After writing: vbar_el1=0x400f2000
 uart_register: Registering /dev/console
 uart_register: Registering /dev/ttyS0
 work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400ec000 _einit: 0x400ec000 _stext: 0x40080000 _etext: 0x400ed000
+lib_cxx_initialize: _sinit: 0x400f2000 _einit: 0x400f2000 _stext: 0x40080000 _etext: 0x400f3000
 nsh: sysinit: fopen failed: 2
 nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
 e
@@ -4331,66 +4335,75 @@ nsh> uname -a
 NuttX 11.0.0-RC2 a33f82d Dec  2 2022 17:57:39 arm64 qemu-a53
 nsh> 
 nsh> hello 3
-task_spawn: name=hello entry=0x4009b4f4 file_actions=0x40a6a580 attr=0x40a6a588 argv=0x40a6a6d0
+task_spawn: name=hello entry=0x4009b4f4 file_actions=0x40a70580 attr=0x40a70588 argv=0x40a706d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 pd_cfg2_reg=0x77711177
 pd_data_reg=0x1c0000
 test_render: start, channels=3
 backlight_enable: start, percent=90
+Configure PL10 for PWM
   *0x1f02c04: clear 0x700, set 0x200
   *0x1f02c04 = 0x77277
+Disable R_PWM
   *0x1f03800: clear 0x40, set 0x0
   *0x1f03800 = 0x0
+Configure R_PWM Period
   *0x1f03804 = 0x4af0437
+Enable R_PWM
   *0x1f03800 = 0x5f
+Configure PH10 for Output
   *0x1c20900: clear 0x700, set 0x100
   *0x1c20900 = 0x7177
+Set PH10 to High
   *0x1c2090c: clear 0x400, set 0x400
   *0x1c2090c = 0x400
 backlight_enable: end
 tcon0_init: start
 PLL_VIDEO0
-  0x1c20010 = 0x81006207 (DMB)
+  *0x1c20010 = 0x81006207
 PLL_MIPI
-  0x1c20040 = 0xc00000 (DMB)
-  udelay 100
-  0x1c20040 = 0x80c0071a (DMB)
+  *0x1c20040 = 0xc00000
+  *0x1c20040 = 0x80c0071a
 TCON0 source MIPI_PLL
-  0x1c20118 = 0x80000000 (DMB)
+  *0x1c20118 = 0x80000000
 Clock on
-  0x1c20064 = 0x8 (DMB)
+  *0x1c20064 = 0x8
 Reset off
-  0x1c202c4 = 0x8 (DMB)
+  *0x1c202c4 = 0x8
 Init lcdc: Disable tcon, Disable all interrupts
-  0x1c0c000 = 0x0 (DMB)
-  0x1c0c004 = 0x0
-  0x1c0c008 = 0x0
+  *0x1c0c000 = 0x0
+  *0x1c0c004 = 0x0
+  *0x1c0c008 = 0x0
 Set all io lines to tristate
-  0x1c0c08c = 0xffffffff
-  0x1c0c0f4 = 0xffffffff
+  *0x1c0c08c = 0xffffffff
+  *0x1c0c0f4 = 0xffffffff
 mode set: DCLK = MIPI_PLL / 6
-  0x1c0c044 = 0x80000006
-  0x1c0c040 = 0x81000000
-  0x1c0c048 = 0x2cf059f
-  0x1c0c0f8 = 0x8
-  0x1c0c060 = 0x10010005
-The datasheet says that this should be set higher than 20 * pixel cycle, but it's not clear what a pixel cycle is.
-  0x1c0c160 = 0x2f02cf
-  0x1c0c164 = 0x59f
-  0x1c0c168 = 0x1bc2000a
-The Allwinner BSP has a comment that the period should be the display clock * 15, but uses an hardcoded 3000
-  0x1c0c1f0 = 0xbb80003
-Enable the output on the pins
-  0x1c0c08c = 0xe0000000 (DMB)
-enable tcon as a whole
-  setbits 0x1c0c000, 0x80000000 (DMB)
+  *0x1c0c044 = 0x80000006
+  *0x1c0c040 = 0x81000000
+  *0x1c0c048 = 0x2cf059f
+  *0x1c0c0f8 = 0x8
+  *0x1c0c060 = 0x10010005
+Set pixel cycle
+  *0x1c0c160 = 0x2f02cf
+  *0x1c0c164 = 0x59f
+  *0x1c0c168 = 0x1bc2000a
+Set period
+  *0x1c0c1f0 = 0xbb80003
+Enable output
+  *0x1c0c08c = 0xe0000000
+Enable TCON0
+  *0x1c0c000: clear 0x80000000, set 0x80000000
+  *0x1c0c000 = 0x80000000
 tcon0_init: end
 display_board_init: start
+Configure PD23 for Output
   *0x1c20874: clear 0x70000000, set 0x10000000
   *0x1c20874 = 0x17711177
+Set PD23 to Low
   *0x1c2087c: clear 0x800000, set 0x0
   *0x1c2087c = 0x1c0000
+Set DLDO1 Voltage to 3.3V
   pmic_write: reg=0x15, val=0x1a
   rsb_write: rt_addr=0x2d, reg_addr=0x15, value=0x1a
   *0x1f0342c = 0x4e
@@ -4410,6 +4423,7 @@ display_board_init: start
   *0x1f03410 = 0x12
   *0x1f0341c = 0xd9
   *0x1f03400 = 0x80
+Set LDO Voltage to 3.3V
   pmic_write: reg=0x91, val=0x1a
   rsb_write: rt_addr=0x2d, reg_addr=0x91, value=0x1a
   *0x1f0342c = 0x4e
@@ -4417,6 +4431,7 @@ display_board_init: start
   *0x1f03410 = 0x91
   *0x1f0341c = 0x1a
   *0x1f03400 = 0x80
+Enable LDO mode on GPIO0
   pmic_write: reg=0x90, val=0x3
   rsb_write: rt_addr=0x2d, reg_addr=0x90, value=0x3
   *0x1f0342c = 0x4e
@@ -4424,6 +4439,7 @@ display_board_init: start
   *0x1f03410 = 0x90
   *0x1f0341c = 0x3
   *0x1f03400 = 0x80
+Set DLDO2 Voltage to 1.8V
   pmic_write: reg=0x16, val=0xb
   rsb_write: rt_addr=0x2d, reg_addr=0x16, value=0xb
   *0x1f0342c = 0x4e
@@ -4443,6 +4459,7 @@ display_board_init: start
   *0x1f03410 = 0x12
   *0x1f0341c = 0xd9
   *0x1f03400 = 0x80
+Wait for power supply and power-on init
 display_board_init: end
 enable_dsi_block: start
 mipi dsi bus enable
@@ -4956,10 +4973,10 @@ Set Special Clock to Display Engine PLL
   *0x1c20104 = 0x81000000
 Enable AHB for Display Engine: De-Assert Display Engine
   *0x1c202c4: clear 0x0, set 0x1000
-  *0x1c202c4 = 0x1009
+  *0x1c202c4 = 0x1008
 Enable AHB for Display Engine: Pass Display Engine
   *0x1c20064: clear 0x0, set 0x1000
-  *0x1c20064 = 0x1009
+  *0x1c20064 = 0x1008
 Enable Clock for MIXER0: SCLK Clock Pass
   *0x1000000: clear 0x0, set 0x1
   *0x1000000 = 0x1
@@ -5010,7 +5027,7 @@ initUiBlender: end
 initUiChannel: start
 Channel 1: Set Overlay (720 x 1440)
   *0x1103000 = 0xff000405
-  *0x1103010 = 0x40116000
+  *0x1103010 = 0x4011c000
   *0x110300c = 0xb40
   *0x1103004 = 0x59f02cf
   *0x1103088 = 0x59f02cf
@@ -5029,7 +5046,7 @@ initUiChannel: end
 initUiChannel: start
 Channel 2: Set Overlay (600 x 600)
   *0x1104000 = 0xff000005
-  *0x1104010 = 0x4050b000
+  *0x1104010 = 0x40511000
   *0x110400c = 0x960
   *0x1104004 = 0x2570257
   *0x1104088 = 0x2570257
@@ -5045,7 +5062,7 @@ initUiChannel: end
 initUiChannel: start
 Channel 3: Set Overlay (720 x 1440)
   *0x1105000 = 0x7f000005
-  *0x1105010 = 0x4066b000
+  *0x1105010 = 0x40671000
   *0x110500c = 0xb40
   *0x1105004 = 0x59f02cf
   *0x1105088 = 0x59f02cf
