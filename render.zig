@@ -186,7 +186,7 @@ pub export fn test_render(
     display_board_init();
 
     // TODO: Enable DSI Block
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#enable_dsi_block
     enable_dsi_block();
 
     // TODO: Enable DPHY
@@ -194,14 +194,14 @@ pub export fn test_render(
     dphy_enable();
 
     // TODO: Reset LCD Panel
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#panel_reset
     panel_reset();
 
     // Init LCD Panel
     dsi.panel_init();
 
     // TODO: Start DSI HSC and HSD
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dsi_init
+    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#start_dsi
     start_dsi();
 
     // Init Display Engine
