@@ -47,52 +47,89 @@ pub export fn tcon0_init() void {
     debug("tcon0_init: start", .{});
     defer { debug("tcon0_init: end", .{}); }
 
-    // TODO: PLL_VIDEO0
-    //   0x1c20010 = 0x81006207 (DMB)
+    // TODO: Decode the addresses and values
 
-    // TODO: PLL_MIPI
+    // PLL_VIDEO0
+    //   0x1c20010 = 0x81006207 (DMB)
+    debug("PLL_VIDEO0", .{});
+    putreg32(0x81006207, 0x1c20010);  // TODO: DMB
+
+    // PLL_MIPI
     //   0x1c20040 = 0xc00000 (DMB)
     //   udelay 100
     //   0x1c20040 = 0x80c0071a (DMB)
+    debug("PLL_MIPI", .{});
+    putreg32(0xc00000, 0x1c20040);  // TODO: DMB
+    _ = c.usleep(100);
+    putreg32(0x80c0071a, 0x1c20040);  // TODO: DMB
 
-    // TODO: TCON0 source MIPI_PLL
+    // TCON0 source MIPI_PLL
     //   0x1c20118 = 0x80000000 (DMB)
+    debug("TCON0 source MIPI_PLL", .{});
+    putreg32(0x80000000, 0x1c20118);  // TODO: DMB
 
-    // TODO: Clock on
+    // Clock on
     //   0x1c20064 = 0x8 (DMB)
+    debug("Clock on", .{});
+    putreg32(0x8, 0x1c20064);  // TODO: DMB
 
-    // TODO: Reset off
+    // Reset off
     //   0x1c202c4 = 0x8 (DMB)
+    debug("Reset off", .{});
+    putreg32(0x8, 0x1c202c4);  // TODO: DMB
 
-    // TODO: Init lcdc: Disable tcon, Disable all interrupts
+    // Init lcdc: Disable tcon, Disable all interrupts
     //   0x1c0c000 = 0x0 (DMB)
     //   0x1c0c004 = 0x0
     //   0x1c0c008 = 0x0
+    debug("Init lcdc: Disable tcon, Disable all interrupts", .{});
+    putreg32(0x0, 0x1c0c000);  // TODO: DMB
+    putreg32(0x0, 0x1c0c004);
+    putreg32(0x0, 0x1c0c008);
 
-    // TODO: Set all io lines to tristate
+    // Set all io lines to tristate
     //   0x1c0c08c = 0xffffffff
     //   0x1c0c0f4 = 0xffffffff
+    debug("Set all io lines to tristate", .{});
+    putreg32(0xffffffff, 0x1c0c08c);
+    putreg32(0xffffffff, 0x1c0c0f4);
 
-    // TODO: mode set: DCLK = MIPI_PLL / 6
+    // mode set: DCLK = MIPI_PLL / 6
     //   0x1c0c044 = 0x80000006
     //   0x1c0c040 = 0x81000000
     //   0x1c0c048 = 0x2cf059f
     //   0x1c0c0f8 = 0x8
     //   0x1c0c060 = 0x10010005
+    debug("mode set: DCLK = MIPI_PLL / 6", .{});
+    putreg32(0x80000006, 0x1c0c044);
+    putreg32(0x81000000, 0x1c0c040);
+    putreg32(0x2cf059f, 0x1c0c048);
+    putreg32(0x8, 0x1c0c0f8);
+    putreg32(0x10010005, 0x1c0c060);
 
-    // TODO: The datasheet says that this should be set higher than 20 * pixel cycle, but it's not clear what a pixel cycle is.
+    // The datasheet says that this should be set higher than 20 * pixel cycle, but it's not clear what a pixel cycle is.
     //   0x1c0c160 = 0x2f02cf
     //   0x1c0c164 = 0x59f
     //   0x1c0c168 = 0x1bc2000a
+    debug("Set pixel cycle", .{});
+    putreg32(0x2f02cf, 0x1c0c160);
+    putreg32(0x59f, 0x1c0c164);
+    putreg32(0x1bc2000a, 0x1c0c168);
 
-    // TODO: The Allwinner BSP has a comment that the period should be the display clock * 15, but uses an hardcoded 3000
+    // The Allwinner BSP has a comment that the period should be the display clock * 15, but uses an hardcoded 3000
     //   0x1c0c1f0 = 0xbb80003
+    debug("Set period", .{});
+    putreg32(0xbb80003, 0x1c0c1f0);
 
-    // TODO: Enable the output on the pins
+    // Enable the output on the pins
     //   0x1c0c08c = 0xe0000000 (DMB)
+    debug("Enable output", .{});
+    putreg32(0xe0000000, 0x1c0c08c);  // TODO: DMB
 
-    // TODO: enable tcon as a whole
+    // enable tcon as a whole
     //   setbits 0x1c0c000, 0x80000000 (DMB)
+    debug("Enable TCON0", .{});
+    modreg32(0x80000000, 0x80000000, 0x1c0c000);  // TODO: DMB
 }
 
 /// Modify the specified bits in a memory mapped register.
