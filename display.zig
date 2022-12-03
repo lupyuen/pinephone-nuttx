@@ -1284,6 +1284,18 @@ pub export fn enable_dsi_block() void {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+//  Start DSI HSC and HSD
+
+/// Start DSI HSC and HSD.
+/// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#start_dsi
+pub export fn NEW_start_dsi() void {
+    debug("start_dsi: start", .{});
+    defer { debug("start_dsi: end", .{}); }
+
+    // TODO: Decode addresses and values
+}
+
+///////////////////////////////////////////////////////////////////////////////
 //  Panic Handler
 
 /// Called by Zig when it hits a Panic. We print the Panic Message, Stack Trace and halt. See 

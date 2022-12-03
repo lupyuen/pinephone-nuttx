@@ -29,14 +29,20 @@ const std = @import("std");
 /// Import the MIPI Display Serial Interface Module
 const dsi = @import("./display.zig");
 
+/// Import the MIPI Display Physical Layer Module
+const dphy = @import("./dphy.zig");
+
+/// Import the Timing Controller Module
+const tcon = @import("./tcon.zig");
+
 /// Import the Backlight Module
 const backlight = @import("./backlight.zig");
 
 /// Import the Power Management IC Module
 const pmic = @import("./pmic.zig");
 
-/// Import the Timing Controller Module
-const tcon = @import("./tcon.zig");
+/// Import the LCD Panel Module
+const panel = @import("./panel.zig");
 
 /// Import NuttX Functions from C
 const c = @cImport({
@@ -192,7 +198,7 @@ pub export fn test_render(
     // Enable DSI Block
     dsi.enable_dsi_block();
 
-    // TODO: Enable DPHY
+    // TODO: Enable MIPI Display Physical Layer
     // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dphy_enable
     dphy_enable();
 
