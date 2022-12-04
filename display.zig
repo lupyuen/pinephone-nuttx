@@ -1007,7 +1007,7 @@ pub export fn enable_dsi_block() void {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//  Start DSI HSC and HSD
+//  MIPI DSI HSC / HSD
 
 /// Start MIPI DSI HSC and HSD.
 /// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#start_dsi
