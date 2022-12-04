@@ -885,7 +885,7 @@ pub export fn panel_init() void {
 //  MIPI DSI Block
 
 /// Enable MIPI DSI Block.
-/// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#enable_dsi_block
+/// Based on https://lupyuen.github.io/articles/de#appendix-enable-mipi-dsi-block
 pub export fn enable_dsi_block() void {
     debug("enable_dsi_block: start", .{});
     defer { debug("enable_dsi_block: end", .{}); }
@@ -1010,7 +1010,7 @@ pub export fn enable_dsi_block() void {
 //  MIPI DSI HSC / HSD
 
 /// Start MIPI DSI HSC and HSD.
-/// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#start_dsi
+/// Based on https://lupyuen.github.io/articles/de#appendix-start-mipi-dsi-hsc-and-hsd
 pub export fn start_dsi() void {
     debug("start_dsi: start", .{});
     defer { debug("start_dsi: end", .{}); }

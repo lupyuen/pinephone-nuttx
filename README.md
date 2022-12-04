@@ -4263,6 +4263,16 @@ PinePhone Test Log for the following Zig Drivers...
 
 -   ["Power Management Integrated Circuit"](https://lupyuen.github.io/articles/de#appendix-power-management-integrated-circuit)
 
+-   ["Timing Controller (TCON0)"](https://lupyuen.github.io/articles/de#appendix-timing-controller-tcon0)
+
+-   ["Enable MIPI DSI Block"](https://lupyuen.github.io/articles/de#appendix-enable-mipi-dsi-block)
+
+-   ["Enable MIPI Display Physical Layer (DPHY)"](https://lupyuen.github.io/articles/de#appendix-enable-mipi-display-physical-layer-dphy)
+
+-   ["Reset LCD Panel"](https://lupyuen.github.io/articles/de#appendix-reset-lcd-panel)
+
+-   ["Start MIPI DSI HSC and HSD"](https://lupyuen.github.io/articles/de#appendix-start-mipi-dsi-hsc-and-hsd)
+
 ```text
 DRAM: 2048 MiB
 Trying to boot from MMC1

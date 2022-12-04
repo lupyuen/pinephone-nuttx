@@ -18,7 +18,7 @@
 //***************************************************************************
 
 //! PinePhone LCD Panel Driver for Apache NuttX RTOS
-//! See https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#panel_reset
+//! See https://lupyuen.github.io/articles/de#appendix-reset-lcd-panel
 //! "A64 Page ???" refers to Allwinner A64 User Manual: https://linux-sunxi.org/images/b/b4/Allwinner_A64_User_Manual_V1.1.pdf
 
 /// Import the Zig Standard Library
@@ -45,7 +45,7 @@ const c = @cImport({
 const PIO_BASE_ADDRESS = 0x01C2_0800;
 
 /// Reset LCD Panel.
-/// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#panel_reset
+/// Based on https://lupyuen.github.io/articles/de#appendix-reset-lcd-panel
 pub export fn panel_reset() void {
     debug("panel_reset: start", .{});
     defer { debug("panel_reset: end", .{}); }
