@@ -4263,6 +4263,28 @@ Here's how we prepared the Pull Requests for NuttX...
 
 -   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
 
+# Complete PinePhone Display Driver in Zig
+
+We have completed the entire PinePhone Display Driver in Zig!
+
+https://github.com/lupyuen/pinephone-nuttx/blob/432c15a55d97fd044f291aba292b1c4efb431f41/render.zig#L176-L226
+
+Here are the Zig Modules...
+
+-   [`render.zig`](tcon.zig): Allwinner A64 Display Engine (DE)
+
+-   [`display.zig`](display.zig): MIPI Display Serial Interface (DSI)
+
+-   [`dphy.zig`](dphy.zig): MIPI Display Physical Layer (DPHY)
+
+-   [`tcon.zig`](tcon.zig): Timing Controller (TCON0)
+
+-   [`backlight.zig`](backlight.zig): Display Backlight
+
+-   [`pmic.zig`](pmic.zig): Power Management Integrated Circuit
+
+-   [`panel.zig`](panel.zig): LCD Panel
+
 # Test Logs
 
 PinePhone Logs captured from various tests...
