@@ -3994,9 +3994,9 @@ __DE Rotation:__ (Page 137)
 
 # Timing Controller in Allwinner A64
 
-TODO
+See this...
 
-See ["p-boot Display Code"](https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70)
+-   ["Timing Controller (TCON0)"](https://lupyuen.github.io/articles/de#appendix-timing-controller-tcon0)
 
 ![Blue, Green, Red Blocks on PinePhone](https://lupyuen.github.io/images/de2-test1.jpg)
 
