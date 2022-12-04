@@ -190,31 +190,25 @@ pub export fn test_render(
     // https://megous.com/git/p-boot/tree/src/pmic.c#n279
 
     // Init Timing Controller TCON0
-    ////tcon.tcon0_init();
-    NOTUSED_tcon0_init();
+    tcon.tcon0_init();
 
     // Init Display Board
-    ////pmic.display_board_init();
-    NOTUSED_display_board_init();
+    pmic.display_board_init();
 
-    // Enable DSI Block
-    ////dsi.enable_dsi_block();
-    NOTUSED_enable_dsi_block();
+    // Enable MIPI DSI Block
+    dsi.enable_dsi_block();
 
-    // TODO: Enable MIPI Display Physical Layer
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dphy_enable
-    dphy_enable();
+    // Enable MIPI Display Physical Layer
+    dphy.dphy_enable();
 
-    // TODO: Reset LCD Panel
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#panel_reset
-    panel_reset();
+    // Reset LCD Panel
+    panel.panel_reset();
 
     // Init LCD Panel
     dsi.panel_init();
 
-    // TODO: Start DSI HSC and HSD
-    // https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#start_dsi
-    start_dsi();
+    // Start MIPI DSI HSC and HSD
+    dsi.start_dsi();
 
     // Init Display Engine
     de2_init();
@@ -1020,12 +1014,22 @@ pub export fn export_dsi_functions() void {
     // Export DSI Functions
     dsi.panel_init();
     dsi.enable_dsi_block();
-    // Export Enable Backlight Function
+    dsi.start_dsi();
+
+    // Export Backlight Functions
     backlight.backlight_enable(100);
-    // Export Board Init Function
+
+    // Export PMIC Functions
     pmic.display_board_init();
-    // Export Timing Controller Init Function
+
+    // Export TCON Functions
     tcon.tcon0_init();
+
+    // Export DPHY Functions
+    dphy.dphy_enable();
+
+    // Export Panel Functions
+    panel.panel_reset();
 }
 
 /// Atomically modify the specified bits in a memory mapped register.
@@ -1120,15 +1124,6 @@ pub fn log(
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Imported Functions and Variables
-
-/// From p-boot/src/display.c
-extern fn dphy_enable() void;
-extern fn dsi_init() void;
-extern fn NOTUSED_enable_dsi_block() void;
-extern fn panel_reset() void;
-extern fn start_dsi() void;
-extern fn NOTUSED_tcon0_init() void;
-extern fn NOTUSED_display_board_init() void;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
 /// We changed `[*c]const u8` to `[*:0]const u8`

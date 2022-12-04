@@ -501,9 +501,13 @@ fn getreg32(addr: u64) u32 {
 
 /// Set the 32-bit value at the address
 fn putreg32(val: u32, addr: u64) void {
+    if (enableLog) { debug("  *0x{x} = 0x{x}", .{ addr, val }); }
     const ptr = @intToPtr(*volatile u32, addr);
     ptr.* = val;
 }
+
+/// Set to False to disable log 
+var enableLog = true;
 
 ///////////////////////////////////////////////////////////////////////////////
 //  ST7703 LCD Controller
@@ -513,6 +517,7 @@ fn putreg32(val: u32, addr: u64) void {
 pub export fn panel_init() void {
     debug("panel_init: start", .{});
     defer { debug("panel_init: end", .{}); }
+    enableLog = false;  // Disable putreg32 log
 
     // Most of these commands are documented in the ST7703 Datasheet:
     // https://files.pine64.org/doc/datasheet/pinephone/ST7703_DS_v01_20160128.pdf
@@ -877,6 +882,171 @@ pub export fn panel_init() void {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+//  MIPI DSI Block
+
+/// Enable MIPI DSI Block.
+/// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#enable_dsi_block
+pub export fn enable_dsi_block() void {
+    debug("enable_dsi_block: start", .{});
+    defer { debug("enable_dsi_block: end", .{}); }
+    enableLog = true;  // Enable putreg32 log
+
+    // TODO: Decode the addresses and values
+
+    // mipi dsi bus enable
+    //   setbits 0x1c20060, 0x2 (DMB)
+    //   setbits 0x1c202c0, 0x2 (DMB)
+    debug("mipi dsi bus enable", .{});
+    modreg32(0x2, 0x2, 0x1c20060);  // TODO: DMB
+    modreg32(0x2, 0x2, 0x1c202c0);  // TODO: DMB
+
+    // Enable the DSI block
+    //   0x1ca0000 = 0x1 (DMB)
+    //   0x1ca0010 = 0x30000 (DMB)
+    //   0x1ca0060 = 0xa (DMB)
+    //   0x1ca0078 = 0x0 (DMB)
+    debug("Enable the DSI block", .{});
+    putreg32(0x1,     0x1ca0000);  // TODO: DMB
+    putreg32(0x30000, 0x1ca0010);  // TODO: DMB
+    putreg32(0xa,     0x1ca0060);  // TODO: DMB
+    putreg32(0x0,     0x1ca0078);  // TODO: DMB
+
+    // inst_init
+    //   0x1ca0020 = 0x1f (DMB)
+    //   0x1ca0024 = 0x10000001 (DMB)
+    //   0x1ca0028 = 0x20000010 (DMB)
+    //   0x1ca002c = 0x2000000f (DMB)
+    //   0x1ca0030 = 0x30100001 (DMB)
+    debug("inst_init", .{});
+    putreg32(0x1f,       0x1ca0020);  // TODO: DMB
+    putreg32(0x10000001, 0x1ca0024);  // TODO: DMB
+    putreg32(0x20000010, 0x1ca0028);  // TODO: DMB
+    putreg32(0x2000000f, 0x1ca002c);  // TODO: DMB
+    putreg32(0x30100001, 0x1ca0030);  // TODO: DMB
+
+    //   0x1ca0034 = 0x40000010 (DMB)
+    //   0x1ca0038 = 0xf (DMB)
+    //   0x1ca003c = 0x5000001f (DMB)
+    //   0x1ca004c = 0x560001 (DMB)
+    //   0x1ca02f8 = 0xff (DMB)
+    putreg32(0x40000010, 0x1ca0034);  // TODO: DMB
+    putreg32(0xf,        0x1ca0038);  // TODO: DMB
+    putreg32(0x5000001f, 0x1ca003c);  // TODO: DMB
+    putreg32(0x560001,   0x1ca004c);  // TODO: DMB
+    putreg32(0xff,       0x1ca02f8);  // TODO: DMB
+
+    // get_video_start_delay
+    //   0x1ca0014 = 0x5bc7 (DMB)
+    debug("get_video_start_delay", .{});
+    putreg32(0x5bc7, 0x1ca0014);  // TODO: DMB
+
+    // setup_burst
+    //   0x1ca007c = 0x10000007 (DMB)
+    debug("setup_burst", .{});
+    putreg32(0x10000007, 0x1ca007c);  // TODO: DMB
+
+    // setup_inst_loop
+    //   0x1ca0040 = 0x30000002 (DMB)
+    //   0x1ca0044 = 0x310031 (DMB)
+    //   0x1ca0054 = 0x310031 (DMB)
+    debug("setup_inst_loop", .{});
+    putreg32(0x30000002, 0x1ca0040);  // TODO: DMB
+    putreg32(0x310031,   0x1ca0044);  // TODO: DMB
+    putreg32(0x310031,   0x1ca0054);  // TODO: DMB
+
+    // setup_format
+    //   0x1ca0090 = 0x1308703e (DMB)
+    //   0x1ca0098 = 0xffff (DMB)
+    //   0x1ca009c = 0xffffffff (DMB)
+    //   0x1ca0080 = 0x10008 (DMB)
+    debug("setup_format", .{});
+    putreg32(0x1308703e, 0x1ca0090);  // TODO: DMB
+    putreg32(0xffff,     0x1ca0098);  // TODO: DMB
+    putreg32(0xffffffff, 0x1ca009c);  // TODO: DMB
+    putreg32(0x10008,    0x1ca0080);  // TODO: DMB
+
+    // setup_timings
+    //   0x1ca000c = 0x0 (DMB)
+    //   0x1ca00b0 = 0x12000021 (DMB)
+    //   0x1ca00b4 = 0x1000031 (DMB)
+    //   0x1ca00b8 = 0x7000001 (DMB)
+    //   0x1ca00bc = 0x14000011 (DMB)
+    debug("setup_timings", .{});
+    putreg32(0x0,        0x1ca000c);  // TODO: DMB
+    putreg32(0x12000021, 0x1ca00b0);  // TODO: DMB
+    putreg32(0x1000031,  0x1ca00b4);  // TODO: DMB
+    putreg32(0x7000001,  0x1ca00b8);  // TODO: DMB
+    putreg32(0x14000011, 0x1ca00bc);  // TODO: DMB
+
+    //   0x1ca0018 = 0x11000a (DMB)
+    //   0x1ca001c = 0x5cd05a0 (DMB)
+    //   0x1ca00c0 = 0x9004a19 (DMB)
+    //   0x1ca00c4 = 0x50b40000 (DMB)
+    //   0x1ca00c8 = 0x35005419 (DMB)
+    putreg32(0x11000a,   0x1ca0018);  // TODO: DMB
+    putreg32(0x5cd05a0,  0x1ca001c);  // TODO: DMB
+    putreg32(0x9004a19,  0x1ca00c0);  // TODO: DMB
+    putreg32(0x50b40000, 0x1ca00c4);  // TODO: DMB
+    putreg32(0x35005419, 0x1ca00c8);  // TODO: DMB
+
+    //   0x1ca00cc = 0x757a0000 (DMB)
+    //   0x1ca00d0 = 0x9004a19 (DMB)
+    //   0x1ca00d4 = 0x50b40000 (DMB)
+    //   0x1ca00e0 = 0xc091a19 (DMB)
+    //   0x1ca00e4 = 0x72bd0000 (DMB)
+    putreg32(0x757a0000, 0x1ca00cc);  // TODO: DMB
+    putreg32(0x9004a19,  0x1ca00d0);  // TODO: DMB
+    putreg32(0x50b40000, 0x1ca00d4);  // TODO: DMB
+    putreg32(0xc091a19,  0x1ca00e0);  // TODO: DMB
+    putreg32(0x72bd0000, 0x1ca00e4);  // TODO: DMB
+
+    //   0x1ca00e8 = 0x1a000019 (DMB)
+    //   0x1ca00ec = 0xffff0000 (DMB)
+    putreg32(0x1a000019, 0x1ca00e8);  // TODO: DMB
+    putreg32(0xffff0000, 0x1ca00ec);  // TODO: DMB
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//  Start DSI HSC and HSD
+
+/// Start MIPI DSI HSC and HSD.
+/// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#start_dsi
+pub export fn start_dsi() void {
+    debug("start_dsi: start", .{});
+    defer { debug("start_dsi: end", .{}); }
+    enableLog = true;  // Enable putreg32 log
+
+    // TODO: Decode addresses and values
+
+    // dsi_start DSI_START_HSC
+    //   0x1ca0048 = 0xf02 (DMB)
+    debug("DSI_START_HSC", .{});
+    putreg32(0xf02, 0x1ca0048);  // TODO: DMB
+
+    // dsi_update_bits: 0x01ca0010 : 00030000 -> (00000001) 00000001 (DMB)
+    //   addr=0x1ca0010, mask=0x1, val=0x1 (DMB)
+    debug("Commit", .{});
+    modreg32(0x1, 0x1, 0x1ca0010);  // TODO: DMB
+
+    // dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000 (DMB)
+    //   addr=0x1ca0020, mask=0x10, val=0x0 (DMB)
+    modreg32(0x0, 0x10, 0x1ca0020);  // TODO: DMB
+
+    // udelay 1000
+    _ = c.usleep(1000);
+
+    // dsi_start DSI_START_HSD
+    //   0x1ca0048 = 0x63f07006 (DMB)
+    debug("DSI_START_HSD", .{});
+    putreg32(0x63f07006, 0x1ca0048);  // TODO: DMB
+
+    // dsi_update_bits: 0x01ca0010 : 00030000 -> (00000001) 00000001 (DMB)
+    //   addr=0x1ca0010, mask=0x1, val=0x1 (DMB)
+    debug("Commit", .{});
+    modreg32(0x1, 0x1, 0x1ca0010);  // TODO: DMB
+}
+
+///////////////////////////////////////////////////////////////////////////////
 //  MIPI DSI Types
 
 /// MIPI DSI Device
@@ -943,6 +1113,8 @@ pub export fn null_main(_argc: c_int, _argv: [*]const [*]const u8) c_int {
 /// Zig Test Function
 pub export fn test_zig() void {
     _ = printf("HELLO ZIG ON PINEPHONE!\n");
+    debug("test_zig: start", .{});
+    defer { debug("test_zig: end", .{}); }
 
     // Allocate Packet Buffer
     var pkt_buf = std.mem.zeroes([128]u8);
@@ -1158,142 +1330,6 @@ pub export fn test_zig() void {
 // modifyreg32: addr=0x340, val=0x00000000
 // modifyreg32: addr=0x344, val=0x00000365
 // modifyreg32: addr=0x200, val=0x00000045
-
-///////////////////////////////////////////////////////////////////////////////
-//  Enable DSI Block
-
-/// Enable DSI Block.
-/// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#enable_dsi_block
-pub export fn enable_dsi_block() void {
-    debug("enable_dsi_block: start", .{});
-    defer { debug("enable_dsi_block: end", .{}); }
-
-    // TODO: Decode the addresses and values
-
-    // mipi dsi bus enable
-    //   setbits 0x1c20060, 0x2 (DMB)
-    //   setbits 0x1c202c0, 0x2 (DMB)
-    debug("mipi dsi bus enable", .{});
-    modreg32(0x2, 0x2, 0x1c20060);  // TODO: DMB
-    modreg32(0x2, 0x2, 0x1c202c0);  // TODO: DMB
-
-    // Enable the DSI block
-    //   0x1ca1000 = 0x1 (DMB)
-    //   0x1ca1010 = 0x30000 (DMB)
-    //   0x1ca1060 = 0xa (DMB)
-    //   0x1ca1078 = 0x0 (DMB)
-    debug("Enable the DSI block", .{});
-    putreg32(0x1, 0x1ca1000);  // TODO: DMB
-    putreg32(0x30000, 0x1ca1010);  // TODO: DMB
-    putreg32(0xa, 0x1ca1060);  // TODO: DMB
-    putreg32(0x0, 0x1ca1078);  // TODO: DMB
-
-    // inst_init
-    //   0x1ca1020 = 0x1f (DMB)
-    //   0x1ca1024 = 0x10000001 (DMB)
-    //   0x1ca1028 = 0x20000010 (DMB)
-    //   0x1ca102c = 0x2000000f (DMB)
-    //   0x1ca1030 = 0x30100001 (DMB)
-    debug("inst_init", .{});
-    putreg32(0x1f, 0x1ca1020);  // TODO: DMB
-    putreg32(0x10000001, 0x1ca1024);  // TODO: DMB
-    putreg32(0x20000010, 0x1ca1028);  // TODO: DMB
-    putreg32(0x2000000f, 0x1ca102c);  // TODO: DMB
-    putreg32(0x30100001, 0x1ca1030);  // TODO: DMB
-
-    //   0x1ca1034 = 0x40000010 (DMB)
-    //   0x1ca1038 = 0xf (DMB)
-    //   0x1ca103c = 0x5000001f (DMB)
-    //   0x1ca104c = 0x560001 (DMB)
-    //   0x1ca12f8 = 0xff (DMB)
-    putreg32(0x40000010, 0x1ca1034);  // TODO: DMB
-    putreg32(0xf, 0x1ca1038);  // TODO: DMB
-    putreg32(0x5000001f, 0x1ca103c);  // TODO: DMB
-    putreg32(0x560001, 0x1ca104c);  // TODO: DMB
-    putreg32(0xff, 0x1ca12f8);  // TODO: DMB
-
-    // get_video_start_delay
-    //   0x1ca1014 = 0x5bc7 (DMB)
-    debug("get_video_start_delay", .{});
-    putreg32(0x5bc7, 0x1ca1014);  // TODO: DMB
-
-    // setup_burst
-    //   0x1ca107c = 0x10000007 (DMB)
-    debug("setup_burst", .{});
-    putreg32(0x10000007, 0x1ca107c);  // TODO: DMB
-
-    // setup_inst_loop
-    //   0x1ca1040 = 0x30000002 (DMB)
-    //   0x1ca1044 = 0x310031 (DMB)
-    //   0x1ca1054 = 0x310031 (DMB)
-    debug("setup_inst_loop", .{});
-    putreg32(0x30000002, 0x1ca1040);  // TODO: DMB
-    putreg32(0x310031, 0x1ca1044);  // TODO: DMB
-    putreg32(0x310031, 0x1ca1054);  // TODO: DMB
-
-    // setup_format
-    //   0x1ca1090 = 0x1308703e (DMB)
-    //   0x1ca1098 = 0xffff (DMB)
-    //   0x1ca109c = 0xffffffff (DMB)
-    //   0x1ca1080 = 0x10008 (DMB)
-    debug("setup_format", .{});
-    putreg32(0x1308703e, 0x1ca1090);  // TODO: DMB
-    putreg32(0xffff, 0x1ca1098);  // TODO: DMB
-    putreg32(0xffffffff, 0x1ca109c);  // TODO: DMB
-    putreg32(0x10008, 0x1ca1080);  // TODO: DMB
-
-    // setup_timings
-    //   0x1ca100c = 0x0 (DMB)
-    //   0x1ca10b0 = 0x12000021 (DMB)
-    //   0x1ca10b4 = 0x1000031 (DMB)
-    //   0x1ca10b8 = 0x7000001 (DMB)
-    //   0x1ca10bc = 0x14000011 (DMB)
-    debug("setup_timings", .{});
-    putreg32(0x0, 0x1ca100c);  // TODO: DMB
-    putreg32(0x12000021, 0x1ca10b0);  // TODO: DMB
-    putreg32(0x1000031, 0x1ca10b4);  // TODO: DMB
-    putreg32(0x7000001, 0x1ca10b8);  // TODO: DMB
-    putreg32(0x14000011, 0x1ca10bc);  // TODO: DMB
-
-    //   0x1ca1018 = 0x11000a (DMB)
-    //   0x1ca101c = 0x5cd05a0 (DMB)
-    //   0x1ca10c0 = 0x9004a19 (DMB)
-    //   0x1ca10c4 = 0x50b40000 (DMB)
-    //   0x1ca10c8 = 0x35005419 (DMB)
-    putreg32(0x11000a, 0x1ca1018);  // TODO: DMB
-    putreg32(0x5cd05a0, 0x1ca101c);  // TODO: DMB
-    putreg32(0x9004a19, 0x1ca10c0);  // TODO: DMB
-    putreg32(0x50b40000, 0x1ca10c4);  // TODO: DMB
-    putreg32(0x35005419, 0x1ca10c8);  // TODO: DMB
-
-    //   0x1ca10cc = 0x757a0000 (DMB)
-    //   0x1ca10d0 = 0x9004a19 (DMB)
-    //   0x1ca10d4 = 0x50b40000 (DMB)
-    //   0x1ca10e0 = 0xc091a19 (DMB)
-    //   0x1ca10e4 = 0x72bd0000 (DMB)
-    putreg32(0x757a0000, 0x1ca10cc);  // TODO: DMB
-    putreg32(0x9004a19, 0x1ca10d0);  // TODO: DMB
-    putreg32(0x50b40000, 0x1ca10d4);  // TODO: DMB
-    putreg32(0xc091a19, 0x1ca10e0);  // TODO: DMB
-    putreg32(0x72bd0000, 0x1ca10e4);  // TODO: DMB
-
-    //   0x1ca10e8 = 0x1a000019 (DMB)
-    //   0x1ca10ec = 0xffff0000 (DMB)
-    putreg32(0x1a000019, 0x1ca10e8);  // TODO: DMB
-    putreg32(0xffff0000, 0x1ca10ec);  // TODO: DMB
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//  Start DSI HSC and HSD
-
-/// Start DSI HSC and HSD.
-/// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#start_dsi
-pub export fn NEW_start_dsi() void {
-    debug("start_dsi: start", .{});
-    defer { debug("start_dsi: end", .{}); }
-
-    // TODO: Decode addresses and values
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Panic Handler

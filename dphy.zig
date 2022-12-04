@@ -43,7 +43,7 @@ const c = @cImport({
 
 /// Enable MIPI Display Physical Layer (DPHY).
 /// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#dphy_enable
-pub export fn NEW_dphy_enable() void {
+pub export fn dphy_enable() void {
     debug("dphy_enable: start", .{});
     defer { debug("dphy_enable: end", .{}); }
 
@@ -56,27 +56,27 @@ pub export fn NEW_dphy_enable() void {
     //   0x1ca1014 = 0xa033207 (DMB)
     //   0x1ca1018 = 0x1e (DMB)
     debug("150MHz (600 / 4)", .{});
-    putreg32(0x8203, 0x1c20168);  // TODO: DMB
+    putreg32(0x8203,     0x1c20168);  // TODO: DMB
     putreg32(0x10000000, 0x1ca1004);  // TODO: DMB
-    putreg32(0xa06000e, 0x1ca1010);  // TODO: DMB
-    putreg32(0xa033207, 0x1ca1014);  // TODO: DMB
-    putreg32(0x1e, 0x1ca1018);  // TODO: DMB
+    putreg32(0xa06000e,  0x1ca1010);  // TODO: DMB
+    putreg32(0xa033207,  0x1ca1014);  // TODO: DMB
+    putreg32(0x1e,       0x1ca1018);  // TODO: DMB
 
     //   0x1ca101c = 0x0 (DMB)
     //   0x1ca1020 = 0x303 (DMB)
     //   0x1ca1000 = 0x31 (DMB)
     //   0x1ca104c = 0x9f007f00 (DMB)
     //   0x1ca1050 = 0x17000000 (DMB)
-    putreg32(0x0, 0x1ca101c);  // TODO: DMB
-    putreg32(0x303, 0x1ca1020);  // TODO: DMB
-    putreg32(0x31, 0x1ca1000);  // TODO: DMB
+    putreg32(0x0,        0x1ca101c);  // TODO: DMB
+    putreg32(0x303,      0x1ca1020);  // TODO: DMB
+    putreg32(0x31,       0x1ca1000);  // TODO: DMB
     putreg32(0x9f007f00, 0x1ca104c);  // TODO: DMB
     putreg32(0x17000000, 0x1ca1050);  // TODO: DMB
 
     //   0x1ca105c = 0x1f01555 (DMB)
     //   0x1ca1054 = 0x2 (DMB)
     putreg32(0x1f01555, 0x1ca105c);  // TODO: DMB
-    putreg32(0x2, 0x1ca1054);  // TODO: DMB
+    putreg32(0x2,       0x1ca1054);  // TODO: DMB
 
     //   udelay 5
     _ = c.usleep(5);
@@ -108,7 +108,7 @@ pub export fn NEW_dphy_enable() void {
     //   update_bits addr=0x1ca1050, mask=0x80000000, val=0x80000000 (DMB)
     //   update_bits addr=0x1ca1054, mask=0xf000000, val=0xf000000 (DMB)
     modreg32(0x80000000, 0x80000000, 0x1ca1050);  // TODO: DMB
-    modreg32(0xf000000, 0xf000000, 0x1ca1054);  // TODO: DMB
+    modreg32(0xf000000,  0xf000000,  0x1ca1054);  // TODO: DMB
 }
 
 /// Modify the specified bits in a memory mapped register.

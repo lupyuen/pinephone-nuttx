@@ -46,7 +46,7 @@ const PIO_BASE_ADDRESS = 0x01C2_0800;
 
 /// Reset LCD Panel.
 /// Based on https://gist.github.com/lupyuen/c12f64cf03d3a81e9c69f9fef49d9b70#panel_reset
-pub export fn NEW_panel_reset() void {
+pub export fn panel_reset() void {
     debug("panel_reset: start", .{});
     defer { debug("panel_reset: end", .{}); }
 
