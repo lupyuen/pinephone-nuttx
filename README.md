@@ -6,7 +6,9 @@
 
 # Apache NuttX RTOS for PinePhone
 
-__UPDATE:__ PinePhone is now officially supported by Apache NuttX RTOS [(See this)](https://lupyuen.github.io/articles/uboot#appendix-pinephone-is-now-supported-by-apache-nuttx-rtos)
+PinePhone is now officially supported by Apache NuttX RTOS! See this...
+
+-   ["PinePhone is now supported by Apache NuttX RTOS"](https://lupyuen.github.io/articles/uboot#appendix-pinephone-is-now-supported-by-apache-nuttx-rtos)
 
 Read the articles...
 
@@ -30,25 +32,27 @@ Read the articles...
 
 -   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
 
-[Apache NuttX RTOS](https://nuttx.apache.org/docs/latest/) now runs on Arm Cortex-A53 with Multi-Core SMP...
+Also check out the PinePhone Drivers that we have built in Zig...
 
--   [nuttx/boards/arm64/qemu/qemu-a53](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53)
+-   ["Display Backlight"](https://lupyuen.github.io/articles/de#appendix-display-backlight)
 
-PinePhone is based on [Allwinner A64 SoC](https://linux-sunxi.org/A64) with 4 Cores of Arm Cortex-A53...
+-   ["Power Management Integrated Circuit"](https://lupyuen.github.io/articles/de#appendix-power-management-integrated-circuit)
 
--   [PinePhone Wiki](https://wiki.pine64.org/index.php/PinePhone)
+-   ["Timing Controller (TCON0)"](https://lupyuen.github.io/articles/de#appendix-timing-controller-tcon0)
+
+-   ["Enable MIPI DSI Block"](https://lupyuen.github.io/articles/de#appendix-enable-mipi-dsi-block)
+
+-   ["Enable MIPI Display Physical Layer (DPHY)"](https://lupyuen.github.io/articles/de#appendix-enable-mipi-display-physical-layer-dphy)
+
+-   ["Reset LCD Panel"](https://lupyuen.github.io/articles/de#appendix-reset-lcd-panel)
+
+-   ["Start MIPI DSI HSC and HSD"](https://lupyuen.github.io/articles/de#appendix-start-mipi-dsi-hsc-and-hsd)
 
 _Will NuttX run on PinePhone?_
 
-Yep it does! PinePhone (with a Serial Debug Cable) boots to the NuttX Shell...
+Yep it does! PinePhone boots to the NuttX Shell (needs a Serial Debug Cable)...
 
 -   [Watch the Demo on YouTube](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
-
-Here's the NuttX Source Code for PinePhone...
-
--   NuttX OS: [lupyuen/incubator-nuttx/tree/pinephone](https://github.com/lupyuen/incubator-nuttx/tree/pinephone)
-
--   NuttX Apps: [lupyuen/incubator-nuttx-apps/tree/pinephone](https://github.com/lupyuen/incubator-nuttx-apps/tree/pinephone)
 
 _Why NuttX?_
 
@@ -61,6 +65,14 @@ Many thanks to [qinwei2004](https://github.com/qinwei2004) and the NuttX Team fo
 The following is a journal that documents the porting of NuttX to PinePhone. It looks super messy and unstructured, please read the articles (at the top of this page) instead.
 
 # Download NuttX
+
+[Apache NuttX RTOS](https://nuttx.apache.org/docs/latest/) now runs on Arm Cortex-A53 with Multi-Core SMP...
+
+-   [nuttx/boards/arm64/qemu/qemu-a53](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53)
+
+PinePhone is based on [Allwinner A64 SoC](https://linux-sunxi.org/A64) with 4 Cores of Arm Cortex-A53...
+
+-   [PinePhone Wiki](https://wiki.pine64.org/index.php/PinePhone)
 
 We start with NuttX Mainline, run it on QEMU, then mod it for PinePhone.
 
