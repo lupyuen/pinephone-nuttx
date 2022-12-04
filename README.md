@@ -4271,7 +4271,7 @@ https://github.com/lupyuen/pinephone-nuttx/blob/432c15a55d97fd044f291aba292b1c4e
 
 Here are the Zig Modules...
 
--   [`render.zig`](tcon.zig): Allwinner A64 Display Engine (DE)
+-   [`render.zig`](render.zig): Allwinner A64 Display Engine (DE)
 
 -   [`display.zig`](display.zig): MIPI Display Serial Interface (DSI)
 
@@ -4284,6 +4284,8 @@ Here are the Zig Modules...
 -   [`pmic.zig`](pmic.zig): Power Management Integrated Circuit
 
 -   [`panel.zig`](panel.zig): LCD Panel
+
+We'll merge these modules to NuttX Mainline as a NuttX Framebuffer Driver.
 
 # Test Logs
 
