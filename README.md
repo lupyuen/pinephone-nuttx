@@ -4313,6 +4313,19 @@ We tested the LED Driver with the `leds` Test App, here's the Test Log...
 
 -   [nuttx-pinephone-led.log](https://gist.github.com/lupyuen/b9de190aba4598752d827f1105571a6a)
 
+From the Test Log we see the Red / Green / Blue LEDs set to the colour combinations...
+
+```text
+led_daemon: LED set 0x00 (black)
+led_daemon: LED set 0x01 (green)
+led_daemon: LED set 0x02 (red)
+led_daemon: LED set 0x03 (yellow)
+led_daemon: LED set 0x04 (blue)
+led_daemon: LED set 0x05 (cyan)
+led_daemon: LED set 0x06 (magenta)
+led_daemon: LED set 0x07 (white)
+```
+
 # Test Logs
 
 PinePhone Logs captured from various tests...
