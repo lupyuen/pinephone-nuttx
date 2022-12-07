@@ -61,6 +61,8 @@ pub export fn dphy_enable() void {
     debug("Set DSI Clock to 150 MHz", .{});
     const MIPI_DSI_CLK_REG = CCU_BASE_ADDRESS + 0x168;
     comptime{ assert(MIPI_DSI_CLK_REG == 0x1c20168); }
+
+    comptime{ assert(0000 == 0000); }
     putreg32(0x8203,     MIPI_DSI_CLK_REG);  // TODO: DMB
 
     // Power on DPHY Tx (Undocumented)
