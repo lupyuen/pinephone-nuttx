@@ -59,67 +59,79 @@ pub export fn dphy_enable() void {
     // Set DSI_DPHY_SRC_SEL (Bits 8 to 9) to 0b10 (DSI DPHY Clock Source is PLL_PERIPH0(1X))
     // Set DPHY_CLK_DIV_M (Bits 0 to 3) to 3 (DSI DPHY Clock divide ratio - 1)
     debug("Set DSI Clock to 150 MHz", .{});
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x8203,     0x1c20168);  // TODO: DMB
+    const MIPI_DSI_CLK_REG = CCU_BASE_ADDRESS + 0x168;
+    comptime{ assert(MIPI_DSI_CLK_REG == 0x1c20168); }
+    putreg32(0x8203,     MIPI_DSI_CLK_REG);  // TODO: DMB
 
     // Power on DPHY Tx (Undocumented)
     // DPHY_TX_CTL_REG: DPHY Offset 0x04
     // Set to 0x1000 0000
     debug("Power on DPHY Tx", .{});
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x10000000, 0x1ca1004);  // TODO: DMB
+    const DPHY_TX_CTL_REG = DPHY_BASE_ADDRESS + 0x04;
+    comptime{ assert(DPHY_TX_CTL_REG == 0x1ca1004); }
+    putreg32(0x10000000, DPHY_TX_CTL_REG);  // TODO: DMB
 
     // DPHY_TX_TIME0_REG: DPHY Offset 0x10
     // Set to 0xa06 000e
-    comptime{ assert(0000 == 0000); }
-    putreg32(0xa06000e,  0x1ca1010);  // TODO: DMB
+    const DPHY_TX_TIME0_REG = DPHY_BASE_ADDRESS + 0x10;
+    comptime{ assert(DPHY_TX_TIME0_REG == 0x1ca1010); }
+    putreg32(0xa06000e,  DPHY_TX_TIME0_REG);  // TODO: DMB
 
     // DPHY_TX_TIME1_REG: DPHY Offset 0x14
     // Set to 0xa03 3207
-    comptime{ assert(0000 == 0000); }
-    putreg32(0xa033207,  0x1ca1014);  // TODO: DMB
+    const DPHY_TX_TIME1_REG = DPHY_BASE_ADDRESS + 0x14;
+    comptime{ assert(DPHY_TX_TIME1_REG == 0x1ca1014); }
+    putreg32(0xa033207,  DPHY_TX_TIME1_REG);  // TODO: DMB
 
     // DPHY_TX_TIME2_REG: DPHY Offset 0x18
     // Set to 0x1e
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x1e,       0x1ca1018);  // TODO: DMB
+    const DPHY_TX_TIME2_REG = DPHY_BASE_ADDRESS + 0x18;
+    comptime{ assert(DPHY_TX_TIME2_REG == 0x1ca1018); }
+    putreg32(0x1e,       DPHY_TX_TIME2_REG);  // TODO: DMB
 
     // DPHY_TX_TIME3_REG: DPHY Offset 0x1c
     // Set to 0x0
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x0,        0x1ca101c);  // TODO: DMB
+    const DPHY_TX_TIME3_REG = DPHY_BASE_ADDRESS + 0x1c;
+    comptime{ assert(DPHY_TX_TIME3_REG == 0x1ca101c); }
+    putreg32(0x0,        DPHY_TX_TIME3_REG);  // TODO: DMB
 
     // DPHY_TX_TIME4_REG: DPHY Offset 0x20
     // Set to 0x303
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x303,      0x1ca1020);  // TODO: DMB
+    const DPHY_TX_TIME4_REG = DPHY_BASE_ADDRESS + 0x20;
+    comptime{ assert(DPHY_TX_TIME4_REG == 0x1ca1020); }
+    putreg32(0x303,      DPHY_TX_TIME4_REG);  // TODO: DMB
 
     // Enable DPHY (Undocumented)
     // DPHY_GCTL_REG: DPHY Offset 0x00 (Enable DPHY)
     // Set to 0x31
     debug("Enable DPHY", .{});
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x31,       0x1ca1000);  // TODO: DMB
+    const DPHY_GCTL_REG = DPHY_BASE_ADDRESS + 0x00;
+    comptime{ assert(DPHY_GCTL_REG == 0x1ca1000); }
+    putreg32(0x31,       DPHY_GCTL_REG);  // TODO: DMB
 
     // DPHY_ANA0_REG: DPHY Offset 0x4c (PWS)
     // Set to 0x9f00 7f00
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x9f007f00, 0x1ca104c);  // TODO: DMB
+    const DPHY_ANA0_REG = DPHY_BASE_ADDRESS + 0x4c;
+    comptime{ assert(DPHY_ANA0_REG == 0x1ca104c); }
+    putreg32(0x9f007f00, DPHY_ANA0_REG);  // TODO: DMB
 
     // DPHY_ANA1_REG: DPHY Offset 0x50 (CSMPS)
     // Set to 0x1700 0000
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x17000000, 0x1ca1050);  // TODO: DMB
+    const DPHY_ANA1_REG = DPHY_BASE_ADDRESS + 0x50;
+    comptime{ assert(DPHY_ANA1_REG == 0x1ca1050); }
+    putreg32(0x17000000, DPHY_ANA1_REG);  // TODO: DMB
 
     // DPHY_ANA4_REG: DPHY Offset 0x5c (CKDV)
     // Set to 0x1f0 1555
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x1f01555,  0x1ca105c);  // TODO: DMB
+    const DPHY_ANA4_REG = DPHY_BASE_ADDRESS + 0x5c;
+    comptime{ assert(DPHY_ANA4_REG == 0x1ca105c); }
+    putreg32(0x1f01555,  DPHY_ANA4_REG);  // TODO: DMB
 
     // DPHY_ANA2_REG: DPHY Offset 0x54 (ENIB)
     // Set to 0x2
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x2,        0x1ca1054);  // TODO: DMB
+    const DPHY_ANA2_REG = DPHY_BASE_ADDRESS + 0x54;
+    comptime{ assert(DPHY_ANA2_REG == 0x1ca1054); }
+    putreg32(0x2,        DPHY_ANA2_REG);  // TODO: DMB
 
     // Wait 5 microseconds
     _ = c.usleep(5);
@@ -128,31 +140,32 @@ pub export fn dphy_enable() void {
     // DPHY_ANA3_REG: DPHY Offset 0x58 (Enable LDOR, LDOC, LDOD)
     // Set to 0x304 0000
     debug("Enable LDOR, LDOC, LDOD", .{});
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x3040000, 0x1ca1058);  // TODO: DMB
+    const DPHY_ANA3_REG = DPHY_BASE_ADDRESS + 0x58;
+    comptime{ assert(DPHY_ANA3_REG == 0x1ca1058); }
+    putreg32(0x3040000, DPHY_ANA3_REG);  // TODO: DMB
 
     // Wait 1 microsecond
     _ = c.usleep(1);
 
     // DPHY_ANA3_REG: DPHY Offset 0x58 (Enable VTTC, VTTD)
     // Set bits 0xf800 0000
-    comptime{ assert(0000 == 0000); }
-    modreg32(0xf8000000, 0xf8000000, 0x1ca1058);  // TODO: DMB
+    comptime{ assert(DPHY_ANA3_REG == 0x1ca1058); }
+    modreg32(0xf8000000, 0xf8000000, DPHY_ANA3_REG);  // TODO: DMB
 
     // Wait 1 microsecond
     _ = c.usleep(1);
 
     // DPHY_ANA3_REG: DPHY Offset 0x58 (Enable DIV)
     // Set bits 0x400 0000
-    comptime{ assert(0000 == 0000); }
-    modreg32(0x4000000, 0x4000000, 0x1ca1058);  // TODO: DMB
+    comptime{ assert(DPHY_ANA3_REG == 0x1ca1058); }
+    modreg32(0x4000000, 0x4000000, DPHY_ANA3_REG);  // TODO: DMB
 
     // Wait 1 microsecond
     _ = c.usleep(1);
 
     // DPHY_ANA2_REG: DPHY Offset 0x54 (Enable CK_CPU)
-    comptime{ assert(0000 == 0000); }
-    modreg32(0x10, 0x10, 0x1ca1054);  // TODO: DMB
+    comptime{ assert(DPHY_ANA2_REG == 0x1ca1054); }
+    modreg32(0x10, 0x10, DPHY_ANA2_REG);  // TODO: DMB
 
     // Set bits 0x10
     // Wait 1 microsecond
@@ -160,13 +173,13 @@ pub export fn dphy_enable() void {
 
     // DPHY_ANA1_REG: DPHY Offset 0x50 (VTT Mode)
     // Set bits 0x8000 0000
-    comptime{ assert(0000 == 0000); }
-    modreg32(0x80000000, 0x80000000, 0x1ca1050);  // TODO: DMB
+    comptime{ assert(DPHY_ANA1_REG == 0x1ca1050); }
+    modreg32(0x80000000, 0x80000000, DPHY_ANA1_REG);  // TODO: DMB
 
     // DPHY_ANA2_REG: DPHY Offset 0x54 (Enable P2S CPU)
     // Set bits 0xf00 0000
-    comptime{ assert(0000 == 0000); }
-    modreg32(0xf000000,  0xf000000,  0x1ca1054);  // TODO: DMB
+    comptime{ assert(DPHY_ANA2_REG == 0x1ca1054); }
+    modreg32(0xf000000,  0xf000000,  DPHY_ANA2_REG);  // TODO: DMB
 }
 
 /// Modify the specified bits in a memory mapped register.
