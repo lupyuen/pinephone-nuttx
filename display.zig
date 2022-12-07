@@ -18,6 +18,8 @@
 //***************************************************************************
 
 //! PinePhone MIPI DSI Driver for Apache NuttX RTOS.
+//! "A64 Page ???" refers to Allwinner A64 User Manual: https://linux-sunxi.org/images/b/b4/Allwinner_A64_User_Manual_V1.1.pdf
+//! "A31 Page ???" refers to Allwinner A31 User Manual: https://github.com/allwinner-zh/documents/raw/master/A31/A31_User_Manual_v1.3_20150510.pdf
 //! This MIPI DSI Interface is compatible with Zephyr MIPI DSI:
 //! https://github.com/zephyrproject-rtos/zephyr/blob/main/include/zephyr/drivers/mipi_dsi.h
 
@@ -285,7 +287,10 @@ const MIPI_DSI_DCS_SHORT_WRITE = 0x05;
 /// DCS Short Write (With Parameter)
 const MIPI_DSI_DCS_SHORT_WRITE_PARAM = 0x15;
 
-/// Base Address of Allwinner A64 MIPI DSI Controller. See https://lupyuen.github.io/articles/dsi#a64-registers-for-mipi-dsi
+/// Base Address of Allwinner A64 CCU Controller (A64 Page 82)
+const CCU_BASE_ADDRESS = 0x01C2_0000;
+
+/// Base Address of Allwinner A64 MIPI DSI Controller (A31 Page 842)
 const DSI_BASE_ADDRESS = 0x01CA_0000;
 
 /// Instru_En is Bit 0 of DSI_BASIC_CTL0_REG 
@@ -891,158 +896,380 @@ pub export fn enable_dsi_block() void {
     defer { debug("enable_dsi_block: end", .{}); }
     enableLog = true;  // Enable putreg32 log
 
-    // TODO: Decode the addresses and values
+    // Enable MIPI DSI Bus
+    // BUS_CLK_GATING_REG0: CCU Offset 0x60 (A64 Page 100)
+    // Set MIPIDSI_GATING (Bit 1) to 1 (Pass Gating Clock for MIPI DSI)
+    debug("Enable MIPI DSI Bus", .{});
+    const BUS_CLK_GATING_REG0 = CCU_BASE_ADDRESS + 0x60;
+    comptime{ assert(BUS_CLK_GATING_REG0 == 0x1c20060); }
 
-    // mipi dsi bus enable
-    //   setbits 0x1c20060, 0x2 (DMB)
-    //   setbits 0x1c202c0, 0x2 (DMB)
-    debug("mipi dsi bus enable", .{});
-    modreg32(0x2, 0x2, 0x1c20060);  // TODO: DMB
-    modreg32(0x2, 0x2, 0x1c202c0);  // TODO: DMB
+    const MIPIDSI_GATING: u2 = 1 << 1;
+    comptime{ assert(MIPIDSI_GATING == 2); }
+    modreg32(MIPIDSI_GATING, MIPIDSI_GATING, BUS_CLK_GATING_REG0);  // TODO: DMB
 
-    // Enable the DSI block
-    //   0x1ca0000 = 0x1 (DMB)
-    //   0x1ca0010 = 0x30000 (DMB)
-    //   0x1ca0060 = 0xa (DMB)
-    //   0x1ca0078 = 0x0 (DMB)
-    debug("Enable the DSI block", .{});
-    putreg32(0x1,     0x1ca0000);  // TODO: DMB
-    putreg32(0x30000, 0x1ca0010);  // TODO: DMB
-    putreg32(0xa,     0x1ca0060);  // TODO: DMB
-    putreg32(0x0,     0x1ca0078);  // TODO: DMB
+    // BUS_SOFT_RST_REG0: CCU Offset 0x2C0 (A64 Page 138)
+    // Set MIPI_DSI_RST (Bit 1) to 1 (Deassert MIPI DSI Reset)
+    const BUS_SOFT_RST_REG0 = CCU_BASE_ADDRESS + 0x2C0;
+    comptime{ assert(BUS_SOFT_RST_REG0 == 0x1c202c0); }
 
-    // inst_init
-    //   0x1ca0020 = 0x1f (DMB)
-    //   0x1ca0024 = 0x10000001 (DMB)
-    //   0x1ca0028 = 0x20000010 (DMB)
-    //   0x1ca002c = 0x2000000f (DMB)
-    //   0x1ca0030 = 0x30100001 (DMB)
-    debug("inst_init", .{});
+    const MIPI_DSI_RST: u2 = 1 << 1;
+    comptime{ assert(MIPI_DSI_RST == 2); }
+    modreg32(MIPI_DSI_RST, MIPI_DSI_RST, BUS_SOFT_RST_REG0);  // TODO: DMB
+
+    // Enable DSI Block
+    // DSI_CTL_REG: DSI Offset 0x0 (A31 Page 843)
+    // Set DSI_En (Bit 0) to 1 (Enable DSI)
+    debug("Enable DSI Block", .{});
+    const DSI_CTL_REG = DSI_BASE_ADDRESS + 0x0;
+    comptime{ assert(DSI_CTL_REG == 0x1ca0000); }
+
+    const DSI_En: u1 = 1 << 0;
+    comptime{ assert(DSI_En == 1); }
+    putreg32(DSI_En, DSI_CTL_REG);  // TODO: DMB
+
+    // DSI_BASIC_CTL0_REG: DSI Offset 0x10 (A31 Page 845)
+    // Set CRC_En (Bit 17) to 1 (Enable CRC)
+    // Set ECC_En (Bit 16) to 1 (Enable ECC)
+    comptime{ assert(DSI_BASIC_CTL0_REG == 0x1ca0010); }
+
+    const CRC_En: u18 = 1 << 17;
+    const ECC_En: u17 = 1 << 16;
+    const DSI_BASIC_CTL0 = CRC_En
+        | ECC_En;
+    comptime{ assert(DSI_BASIC_CTL0 == 0x30000); }
+    putreg32(DSI_BASIC_CTL0, DSI_BASIC_CTL0_REG);  // TODO: DMB
+
+    // DSI_TRANS_START_REG: DSI Offset 0x60 (Undocumented)
+    // Set to 10
+    const DSI_TRANS_START_REG = DSI_BASE_ADDRESS + 0x60;
+    comptime{ assert(DSI_TRANS_START_REG == 0x1ca0060); }
+    putreg32(10, DSI_TRANS_START_REG);  // TODO: DMB
+
+    // DSI_TRANS_ZERO_REG: DSI Offset 0x78 (Undocumented)
+    // Set to 0
+    const DSI_TRANS_ZERO_REG = DSI_BASE_ADDRESS + 0x78;
+    comptime{ assert(DSI_TRANS_ZERO_REG == 0x1ca0078); }
+    putreg32(0, DSI_TRANS_ZERO_REG);  // TODO: DMB
+
+    // Set Instructions (Undocumented)
+    // DSI_INST_FUNC_REG(0): DSI Offset 0x20 (DSI_INST_ID_LP11)
+    // Set to 0x1f
+    debug("Set Instructions", .{});
+    comptime{ assert(0000 == 0000); }
     putreg32(0x1f,       0x1ca0020);  // TODO: DMB
-    putreg32(0x10000001, 0x1ca0024);  // TODO: DMB
-    putreg32(0x20000010, 0x1ca0028);  // TODO: DMB
-    putreg32(0x2000000f, 0x1ca002c);  // TODO: DMB
-    putreg32(0x30100001, 0x1ca0030);  // TODO: DMB
 
-    //   0x1ca0034 = 0x40000010 (DMB)
-    //   0x1ca0038 = 0xf (DMB)
-    //   0x1ca003c = 0x5000001f (DMB)
-    //   0x1ca004c = 0x560001 (DMB)
-    //   0x1ca02f8 = 0xff (DMB)
-    putreg32(0x40000010, 0x1ca0034);  // TODO: DMB
-    putreg32(0xf,        0x1ca0038);  // TODO: DMB
-    putreg32(0x5000001f, 0x1ca003c);  // TODO: DMB
-    putreg32(0x560001,   0x1ca004c);  // TODO: DMB
-    putreg32(0xff,       0x1ca02f8);  // TODO: DMB
+    // DSI_INST_FUNC_REG(1): DSI Offset 0x24 (DSI_INST_ID_TBA)
+    // Set to 0x1000 0001
+    comptime{ assert(0000 == 0000); }
+    putreg32(0x1000_0001, 0x1ca0024);  // TODO: DMB
 
-    // get_video_start_delay
-    //   0x1ca0014 = 0x5bc7 (DMB)
-    debug("get_video_start_delay", .{});
-    putreg32(0x5bc7, 0x1ca0014);  // TODO: DMB
+    // DSI_INST_FUNC_REG(2): DSI Offset 0x28 (DSI_INST_ID_HSC)
+    // Set to 0x2000 0010
+    comptime{ assert(0000 == 0000); }
+    putreg32(0x2000_0010, 0x1ca0028);  // TODO: DMB
 
-    // setup_burst
-    //   0x1ca007c = 0x10000007 (DMB)
-    debug("setup_burst", .{});
-    putreg32(0x10000007, 0x1ca007c);  // TODO: DMB
+    // DSI_INST_FUNC_REG(3): DSI Offset 0x2c (DSI_INST_ID_HSD)
+    // Set to 0x2000 000f
+    comptime{ assert(0000 == 0000); }
+    putreg32(0x2000_000f, 0x1ca002c);  // TODO: DMB
 
-    // setup_inst_loop
-    //   0x1ca0040 = 0x30000002 (DMB)
-    //   0x1ca0044 = 0x310031 (DMB)
-    //   0x1ca0054 = 0x310031 (DMB)
-    debug("setup_inst_loop", .{});
-    putreg32(0x30000002, 0x1ca0040);  // TODO: DMB
+    // DSI_INST_FUNC_REG(4): DSI Offset 0x30 (DSI_INST_ID_LPDT)
+    // Set to 0x3010 0001
+    comptime{ assert(0000 == 0000); }
+    putreg32(0x3010_0001, 0x1ca0030);  // TODO: DMB
+
+    // DSI_INST_FUNC_REG(5): DSI Offset 0x34 (DSI_INST_ID_HSCEXIT)
+    // Set to 0x4000 0010
+    comptime{ assert(0000 == 0000); }
+    putreg32(0x4000_0010, 0x1ca0034);  // TODO: DMB
+
+    // DSI_INST_FUNC_REG(6): DSI Offset 0x38 (DSI_INST_ID_NOP)
+    // Set to 0xf
+    comptime{ assert(0000 == 0000); }
+    putreg32(0xf, 0x1ca0038);  // TODO: DMB
+
+    // DSI_INST_FUNC_REG(7): DSI Offset 0x3c (DSI_INST_ID_DLY)
+    // Set to 0x5000 001f
+    // (DSI_INST_FUNC_REG(n) is (0x020 + (n) * 0x04))
+    comptime{ assert(0000 == 0000); }
+    putreg32(0x5000_001f, 0x1ca003c);  // TODO: DMB
+
+    // Configure Jump Instructions (Undocumented)
+    // DSI_INST_JUMP_CFG_REG(0): DSI Offset 0x4c (DSI_INST_JUMP_CFG)
+    // Set to 0x56 0001    
+    // (DSI_INST_JUMP_CFG_REG(n) is (0x04c + (n) * 0x04))
+    debug("Configure Jump Instructions", .{});
+    comptime{ assert(0000 == 0000); }
+    putreg32(0x56_0001,   0x1ca004c);  // TODO: DMB
+
+    // DSI_DEBUG_DATA_REG: DSI Offset 0x2f8
+    // Set to 0xff
+    const DSI_DEBUG_DATA_REG = DSI_BASE_ADDRESS + 0x2f8;
+    comptime{ assert(DSI_DEBUG_DATA_REG == 0x1ca02f8); }
+    putreg32(0xff, DSI_DEBUG_DATA_REG);  // TODO: DMB
+
+    // Set Video Start Delay
+    // DSI_BASIC_CTL1_REG: DSI Offset 0x14 (A31 Page 846)
+    // Set Video_Start_Delay (Bits 4 to 16) to 1468 (Line Delay)
+    // Set Video_Precision_Mode_Align (Bit 2) to 1 (Fill Mode)
+    // Set Video_Frame_Start (Bit 1) to 1 (Precision Mode)
+    // Set DSI_Mode (Bit 0) to 1 (Video Mode)
+    // TODO: Video_Start_Delay is actually 13 bits, not 8 bits as documented in the A31 User Manual
+    debug("Set Video Start Delay", .{});
+    const DSI_BASIC_CTL1_REG = DSI_BASE_ADDRESS + 0x14;
+    comptime{ assert(DSI_BASIC_CTL1_REG == 0x1ca0014); }
+
+    const Video_Start_Delay:          u17 = 1468 << 4;
+    const Video_Precision_Mode_Align: u3  = 1    << 2;
+    const Video_Frame_Start:          u2  = 1    << 1;
+    const DSI_Mode:                   u1  = 1    << 0;
+    const DSI_BASIC_CTL1 = Video_Start_Delay
+        | Video_Precision_Mode_Align
+        | Video_Frame_Start
+        | DSI_Mode;
+    comptime{ assert(DSI_BASIC_CTL1 == 0x5bc7); }
+    putreg32(DSI_BASIC_CTL1, DSI_BASIC_CTL1_REG);  // TODO: DMB
+
+    // Set Burst (Undocumented)
+    // DSI_TCON_DRQ_REG: DSI Offset 0x7c
+    // Set to 0x1000 0007
+    debug("Set Burst", .{});
+    const DSI_TCON_DRQ_REG = DSI_BASE_ADDRESS + 0x7c;
+    comptime{ assert(DSI_TCON_DRQ_REG == 0x1ca007c); }
+    putreg32(0x1000_0007, DSI_TCON_DRQ_REG);  // TODO: DMB
+
+    // Set Instruction Loop (Undocumented)
+    // DSI_INST_LOOP_SEL_REG: DSI Offset 0x40
+    // Set to 0x3000 0002
+    debug("Set Instruction Loop", .{});
+    const DSI_INST_LOOP_SEL_REG = DSI_BASE_ADDRESS + 0x40;
+    comptime{ assert(DSI_INST_LOOP_SEL_REG == 0x1ca0040); }
+    putreg32(0x3000_0002, DSI_INST_LOOP_SEL_REG);  // TODO: DMB
+
+    // (DSI_INST_LOOP_NUM_REG(n) is (0x044 + (n) * 0x10))
+
+    // DSI_INST_LOOP_NUM_REG(0): DSI Offset 0x44
+    // Set to 0x31 0031
+    comptime{ assert(0000 == 0000); }
     putreg32(0x310031,   0x1ca0044);  // TODO: DMB
+
+    // DSI_INST_LOOP_NUM_REG(1): DSI Offset 0x54
+    // Set to 0x31 0031
+    comptime{ assert(0000 == 0000); }
     putreg32(0x310031,   0x1ca0054);  // TODO: DMB
 
-    // setup_format
-    //   0x1ca0090 = 0x1308703e (DMB)
-    //   0x1ca0098 = 0xffff (DMB)
-    //   0x1ca009c = 0xffffffff (DMB)
-    //   0x1ca0080 = 0x10008 (DMB)
-    debug("setup_format", .{});
-    putreg32(0x1308703e, 0x1ca0090);  // TODO: DMB
-    putreg32(0xffff,     0x1ca0098);  // TODO: DMB
-    putreg32(0xffffffff, 0x1ca009c);  // TODO: DMB
+    // Set Pixel Format
+    // DSI_PIXEL_PH_REG: DSI Offset 0x90 (A31 Page 848)
+    // Set ECC (Bits 24 to 31) to 19
+    // Set WC (Bits 8 to 23) to 2160 (Byte Numbers of PD in a Pixel Packet)
+    // Set VC (Bits 6 to 7) to 0 (Virtual Channel)
+    // Set DT (Bits 0 to 5) to 0x3E (24-bit Video Mode)
+    debug("Set Pixel Format", .{});
+    const DSI_PIXEL_PH_REG = DSI_BASE_ADDRESS + 0x90;
+    comptime{ assert(DSI_PIXEL_PH_REG == 0x1ca0090); }
+
+    const ECC: u32 = 19   << 24;
+    const WC:  u24 = 2160 << 8;
+    const VC:  u8  = 0    << 6;
+    const DT:  u6  = 0x3E << 0;
+    const DSI_PIXEL_PH = ECC
+        | WC
+        | VC
+        | DT;
+    comptime{ assert(DSI_PIXEL_PH == 0x1308703e); }
+    putreg32(DSI_PIXEL_PH, DSI_PIXEL_PH_REG);  // TODO: DMB
+
+    // DSI_PIXEL_PF0_REG: DSI Offset 0x98 (A31 Page 849)
+    // Set CRC_Force (Bits 0 to 15) to 0xffff (Force CRC to this value)
+    const DSI_PIXEL_PF0_REG = DSI_BASE_ADDRESS + 0x98;
+    comptime{ assert(DSI_PIXEL_PF0_REG == 0x1ca0098); }
+    const CRC_Force: u16 = 0xffff;
+    putreg32(CRC_Force, DSI_PIXEL_PF0_REG);  // TODO: DMB
+
+    // DSI_PIXEL_PF1_REG: DSI Offset 0x9c (A31 Page 849)
+    // Set CRC_Init_LineN (Bits 16 to 31) to 0xffff (CRC initial to this value in transmitions except 1st one)
+    // Set CRC_Init_Line0 (Bits 0 to 15) to 0xffff (CRC initial to this value in 1st transmition every frame)
+    const DSI_PIXEL_PF1_REG = DSI_BASE_ADDRESS + 0x9c;
+    comptime{ assert(DSI_PIXEL_PF1_REG == 0x1ca009c); }
+
+    const CRC_Init_LineN: u32 = 0xffff << 16;
+    const CRC_Init_Line0: u16 = 0xffff << 0;
+    const DSI_PIXEL_PF1 = CRC_Init_LineN
+        | CRC_Init_Line0;
+    comptime{ assert(DSI_PIXEL_PF1 == 0xffffffff); }
+    putreg32(DSI_PIXEL_PF1, DSI_PIXEL_PF1_REG);  // TODO: DMB
+
+    // DSI_PIXEL_CTL0_REG: DSI Offset 0x80 (A31 Page 847)
+    // Set PD_Plug_Dis (Bit 16) to 1 (Disable PD plug before pixel bytes)
+    // Set Pixel_Endian (Bit 4) to 0 (LSB first)
+    // Set Pixel_Format (Bits 0 to 3) to 8 (24-bit RGB888)
+    comptime{ assert(0000 == 0000); }
     putreg32(0x10008,    0x1ca0080);  // TODO: DMB
 
-    // setup_timings
-    //   0x1ca000c = 0x0 (DMB)
-    //   0x1ca00b0 = 0x12000021 (DMB)
-    //   0x1ca00b4 = 0x1000031 (DMB)
-    //   0x1ca00b8 = 0x7000001 (DMB)
-    //   0x1ca00bc = 0x14000011 (DMB)
-    debug("setup_timings", .{});
+    // Set Sync Timings
+    // DSI_BASIC_CTL_REG: DSI Offset 0x0c (Undocumented)
+    // Set to 0
+    debug("Set Sync Timings", .{});
+    comptime{ assert(0000 == 0000); }
     putreg32(0x0,        0x1ca000c);  // TODO: DMB
+
+    // DSI_SYNC_HSS_REG: DSI Offset 0xb0 (A31 Page 850)
+    // Set ECC (Bits 24 to 31) to 0x12
+    // Set D1 (Bits 16 to 23) to 0
+    // Set D0 (Bits 8 to 15) to 0
+    // Set VC (Bits 6 to 7) to 0 (Virtual Channel)
+    // Set DT (Bits 0 to 5) to 0x21 (HSS)
+    comptime{ assert(0000 == 0000); }
     putreg32(0x12000021, 0x1ca00b0);  // TODO: DMB
+
+    // DSI_SYNC_HSE_REG: DSI Offset 0xb4 (A31 Page 850)
+    // Set ECC (Bits 24 to 31) to 1
+    // Set D1 (Bits 16 to 23) to 0
+    // Set D0 (Bits 8 to 15) to 0
+    // Set VC (Bits 6 to 7) to 0 (Virtual Channel)
+    // Set DT (Bits 0 to 5) to 0x31 (HSE)
+    comptime{ assert(0000 == 0000); }
     putreg32(0x1000031,  0x1ca00b4);  // TODO: DMB
+
+    // DSI_SYNC_VSS_REG: DSI Offset 0xb8 (A31 Page 851)
+    // Set ECC (Bits 24 to 31) to 7
+    // Set D1 (Bits 16 to 23) to 0
+    // Set D0 (Bits 8 to 15) to 0
+    // Set VC (Bits 6 to 7) to 0 (Virtual Channel)
+    // Set DT (Bits 0 to 5) to 1 (VSS)
+    comptime{ assert(0000 == 0000); }
     putreg32(0x7000001,  0x1ca00b8);  // TODO: DMB
+
+    // DSI_SYNC_VSE_REG: DSI Offset 0xbc (A31 Page 851)
+    // Set ECC (Bits 24 to 31) to 0x14
+    // Set D1 (Bits 16 to 23) to 0
+    // Set D0 (Bits 8 to 15) to 0
+    // Set VC (Bits 6 to 7) to 0 (Virtual Channel)
+    // Set DT (Bits 0 to 5) to 0x11 (VSE)
+    comptime{ assert(0000 == 0000); }
     putreg32(0x14000011, 0x1ca00bc);  // TODO: DMB
 
-    //   0x1ca0018 = 0x11000a (DMB)
-    //   0x1ca001c = 0x5cd05a0 (DMB)
-    //   0x1ca00c0 = 0x9004a19 (DMB)
-    //   0x1ca00c4 = 0x50b40000 (DMB)
-    //   0x1ca00c8 = 0x35005419 (DMB)
+    // Set Basic Size (Undocumented)
+    // DSI_BASIC_SIZE0_REG: DSI Offset 0x18
+    // Set Video_VBP (Bits 16 to 27) to 17
+    // Set Video_VSA (Bits 0 to 11) to 10
+    debug("Set Basic Size", .{});
+    comptime{ assert(0000 == 0000); }
     putreg32(0x11000a,   0x1ca0018);  // TODO: DMB
+
+    // DSI_BASIC_SIZE1_REG: DSI Offset 0x1c
+    // Set Video_VT (Bits 16 to 28) to 1485
+    // Set Video_VACT (Bits 0 to 11) to 1440
+    comptime{ assert(0000 == 0000); }
     putreg32(0x5cd05a0,  0x1ca001c);  // TODO: DMB
+
+    // Set Horizontal Blanking
+    // DSI_BLK_HSA0_REG: DSI Offset 0xc0 (A31 Page 852)
+    // Set HSA_PH (Bits 0 to 31) to 0x900 4a19
+    debug("Set Horizontal Blanking", .{});
+    comptime{ assert(0000 == 0000); }
     putreg32(0x9004a19,  0x1ca00c0);  // TODO: DMB
+
+    // DSI_BLK_HSA1_REG: DSI Offset 0xc4 (A31 Page 852)
+    // Set HSA_PF (Bits 16 to 31) to 0x50b4
+    // Set HSA_PD (Bits 0 to 7) to 0
+    comptime{ assert(0000 == 0000); }
     putreg32(0x50b40000, 0x1ca00c4);  // TODO: DMB
+
+    // DSI_BLK_HBP0_REG: DSI Offset 0xc8 (A31 Page 852)
+    // Set HBP_PH (Bits 0 to 31) to 0x3500 5419
+    comptime{ assert(0000 == 0000); }
     putreg32(0x35005419, 0x1ca00c8);  // TODO: DMB
 
-    //   0x1ca00cc = 0x757a0000 (DMB)
-    //   0x1ca00d0 = 0x9004a19 (DMB)
-    //   0x1ca00d4 = 0x50b40000 (DMB)
-    //   0x1ca00e0 = 0xc091a19 (DMB)
-    //   0x1ca00e4 = 0x72bd0000 (DMB)
+    // DSI_BLK_HBP1_REG: DSI Offset 0xcc (A31 Page 852)
+    // Set HBP_PF (Bits 16 to 31) to 0x757a
+    // Set HBP_PD (Bits 0 to 7) to 0
+    comptime{ assert(0000 == 0000); }
     putreg32(0x757a0000, 0x1ca00cc);  // TODO: DMB
+
+    // DSI_BLK_HFP0_REG: DSI Offset 0xd0 (A31 Page 852)
+    // Set HFP_PH (Bits 0 to 31) to 0x900 4a19
+    comptime{ assert(0000 == 0000); }
     putreg32(0x9004a19,  0x1ca00d0);  // TODO: DMB
+
+    // DSI_BLK_HFP1_REG: DSI Offset 0xd4 (A31 Page 853)
+    // Set HFP_PF (Bits 16 to 31) to 0x50b4
+    // Set HFP_PD (Bits 0 to 7) to 0
+    comptime{ assert(0000 == 0000); }
     putreg32(0x50b40000, 0x1ca00d4);  // TODO: DMB
+
+    // DSI_BLK_HBLK0_REG: DSI Offset 0xe0 (A31 Page 853)
+    // Set HBLK_PH (Bits 0 to 31) to 0xc09 1a19
+    comptime{ assert(0000 == 0000); }
     putreg32(0xc091a19,  0x1ca00e0);  // TODO: DMB
+
+    // DSI_BLK_HBLK1_REG: DSI Offset 0xe4 (A31 Page 853)
+    // Set HBLK_PF (Bits 16 to 31) to 0x72bd
+    // Set HBLK_PD (Bits 0 to 7) to 0
+    comptime{ assert(0000 == 0000); }
     putreg32(0x72bd0000, 0x1ca00e4);  // TODO: DMB
 
-    //   0x1ca00e8 = 0x1a000019 (DMB)
-    //   0x1ca00ec = 0xffff0000 (DMB)
+    // Set Vertical Blanking
+    // DSI_BLK_VBLK0_REG: DSI Offset 0xe8 (A31 Page 854)
+    // Set VBLK_PH (Bits 0 to 31) to 0x1a00 0019
+    debug("Set Vertical Blanking", .{});
+    comptime{ assert(0000 == 0000); }
     putreg32(0x1a000019, 0x1ca00e8);  // TODO: DMB
+
+    // DSI_BLK_VBLK1_REG: DSI Offset 0xec (A31 Page 854)
+    // Set VBLK_PF (Bits 16 to 31) to 0xffff
+    // Set VBLK_PD (Bits 0 to 7) to 0
+    comptime{ assert(0000 == 0000); }
     putreg32(0xffff0000, 0x1ca00ec);  // TODO: DMB
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //  MIPI DSI HSC / HSD
 
-/// Start MIPI DSI HSC and HSD.
+/// Start MIPI DSI HSC and HSD. (High Speed Clock Mode and High Speed Data Transmission)
 /// Based on https://lupyuen.github.io/articles/dsi#appendix-start-mipi-dsi-hsc-and-hsd
 pub export fn start_dsi() void {
     debug("start_dsi: start", .{});
     defer { debug("start_dsi: end", .{}); }
     enableLog = true;  // Enable putreg32 log
 
-    // TODO: Decode addresses and values
-
-    // dsi_start DSI_START_HSC
-    //   0x1ca0048 = 0xf02 (DMB)
-    debug("DSI_START_HSC", .{});
+    // Start HSC (Undocumented)
+    // DSI_INST_JUMP_SEL_REG: DSI Offset 0x48
+    // Set to 0xf02
+    debug("Start HSC", .{});
+    comptime{ assert(0000 == 0000); }
     putreg32(0xf02, 0x1ca0048);  // TODO: DMB
 
-    // dsi_update_bits: 0x01ca0010 : 00030000 -> (00000001) 00000001 (DMB)
-    //   addr=0x1ca0010, mask=0x1, val=0x1 (DMB)
+    // Commit
+    // DSI_BASIC_CTL0_REG: DSI Offset 0x10 (A31 Page 845)
+    // Set Instru_En (Bit 0) to 1 (Enable DSI Processing from Instruction 0)
     debug("Commit", .{});
+    comptime{ assert(0000 == 0000); }
     modreg32(0x1, 0x1, 0x1ca0010);  // TODO: DMB
 
-    // dsi_update_bits: 0x01ca0020 : 0000001f -> (00000010) 00000000 (DMB)
-    //   addr=0x1ca0020, mask=0x10, val=0x0 (DMB)
+    // Instruction Function Lane (Undocumented)
+    // DSI_INST_FUNC_REG(0): DSI Offset 0x20 (DSI_INST_ID_LP11)
+    // Set DSI_INST_FUNC_LANE_CEN (Bit 4) to 0
+    // (DSI_INST_FUNC_REG(n) is (0x020 + (n) * 0x04))
+    debug("Instruction Function Lane", .{});
+    comptime{ assert(0000 == 0000); }
     modreg32(0x0, 0x10, 0x1ca0020);  // TODO: DMB
 
-    // udelay 1000
+    // Wait 1,000 microseconds
     _ = c.usleep(1000);
 
-    // dsi_start DSI_START_HSD
-    //   0x1ca0048 = 0x63f07006 (DMB)
-    debug("DSI_START_HSD", .{});
+    // Start HSD (Undocumented)
+    // DSI_INST_JUMP_SEL_REG: DSI Offset 0x48
+    // Set to 0x63f0 7006
+    debug("Start HSD", .{});
+    comptime{ assert(0000 == 0000); }
     putreg32(0x63f07006, 0x1ca0048);  // TODO: DMB
 
-    // dsi_update_bits: 0x01ca0010 : 00030000 -> (00000001) 00000001 (DMB)
-    //   addr=0x1ca0010, mask=0x1, val=0x1 (DMB)
+    // Commit
+    // DSI_BASIC_CTL0_REG: DSI Offset 0x10 (A31 Page 845)
+    // Set Instru_En (Bit 0) to 1 (Enable DSI Processing from Instruction 0)
     debug("Commit", .{});
+    comptime{ assert(0000 == 0000); }
     modreg32(0x1, 0x1, 0x1ca0010);  // TODO: DMB
 }
 
