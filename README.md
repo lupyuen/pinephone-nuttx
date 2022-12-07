@@ -40,13 +40,13 @@ Also check out the PinePhone Drivers that we've built in Zig...
 
 -   ["Timing Controller (TCON0)"](https://lupyuen.github.io/articles/de#appendix-timing-controller-tcon0)
 
--   ["Enable MIPI DSI Block"](https://lupyuen.github.io/articles/de#appendix-enable-mipi-dsi-block)
+-   ["Enable MIPI DSI Block"](https://lupyuen.github.io/articles/dsi#appendix-enable-mipi-dsi-block)
 
--   ["Enable MIPI Display Physical Layer (DPHY)"](https://lupyuen.github.io/articles/de#appendix-enable-mipi-display-physical-layer-dphy)
+-   ["Enable MIPI Display Physical Layer (DPHY)"](https://lupyuen.github.io/articles/dsi#appendix-enable-mipi-display-physical-layer-dphy)
 
 -   ["Reset LCD Panel"](https://lupyuen.github.io/articles/de#appendix-reset-lcd-panel)
 
--   ["Start MIPI DSI HSC and HSD"](https://lupyuen.github.io/articles/de#appendix-start-mipi-dsi-hsc-and-hsd)
+-   ["Start MIPI DSI HSC and HSD"](https://lupyuen.github.io/articles/dsi#appendix-start-mipi-dsi-hsc-and-hsd)
 
 _Will NuttX run on PinePhone?_
 
@@ -4340,13 +4340,13 @@ PinePhone Test Log for the following Zig Drivers...
 
 -   ["Timing Controller (TCON0)"](https://lupyuen.github.io/articles/de#appendix-timing-controller-tcon0)
 
--   ["Enable MIPI DSI Block"](https://lupyuen.github.io/articles/de#appendix-enable-mipi-dsi-block)
+-   ["Enable MIPI DSI Block"](https://lupyuen.github.io/articles/dsi#appendix-enable-mipi-dsi-block)
 
--   ["Enable MIPI Display Physical Layer (DPHY)"](https://lupyuen.github.io/articles/de#appendix-enable-mipi-display-physical-layer-dphy)
+-   ["Enable MIPI Display Physical Layer (DPHY)"](https://lupyuen.github.io/articles/dsi#appendix-enable-mipi-display-physical-layer-dphy)
 
 -   ["Reset LCD Panel"](https://lupyuen.github.io/articles/de#appendix-reset-lcd-panel)
 
--   ["Start MIPI DSI HSC and HSD"](https://lupyuen.github.io/articles/de#appendix-start-mipi-dsi-hsc-and-hsd)
+-   ["Start MIPI DSI HSC and HSD"](https://lupyuen.github.io/articles/dsi#appendix-start-mipi-dsi-hsc-and-hsd)
 
 ```text
 DRAM: 2048 MiB
