@@ -1134,8 +1134,9 @@ pub export fn enable_dsi_block() void {
     const DSI_SYNC_HSS_REG = DSI_BASE_ADDRESS + 0xb0;
     comptime{ assert(DSI_SYNC_HSS_REG == 0x1ca00b0); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x12000021, DSI_SYNC_HSS_REG);  // TODO: DMB
+    const DSI_SYNC_HSS = 0x12000021;
+    comptime{ assert(DSI_SYNC_HSS == 0x12000021); }
+    putreg32(DSI_SYNC_HSS, DSI_SYNC_HSS_REG);  // TODO: DMB
 
     // DSI_SYNC_HSE_REG: DSI Offset 0xb4 (A31 Page 850)
     // Set ECC (Bits 24 to 31) to 1
@@ -1146,8 +1147,9 @@ pub export fn enable_dsi_block() void {
     const DSI_SYNC_HSE_REG = DSI_BASE_ADDRESS + 0xb4;
     comptime{ assert(DSI_SYNC_HSE_REG == 0x1ca00b4); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x1000031, DSI_SYNC_HSE_REG);  // TODO: DMB
+    const DSI_SYNC_HSE = 0x1000031;
+    comptime{ assert(DSI_SYNC_HSE == 0x1000031); }
+    putreg32(DSI_SYNC_HSE, DSI_SYNC_HSE_REG);  // TODO: DMB
 
     // DSI_SYNC_VSS_REG: DSI Offset 0xb8 (A31 Page 851)
     // Set ECC (Bits 24 to 31) to 7
@@ -1158,8 +1160,9 @@ pub export fn enable_dsi_block() void {
     const DSI_SYNC_VSS_REG = DSI_BASE_ADDRESS + 0xb8;
     comptime{ assert(DSI_SYNC_VSS_REG == 0x1ca00b8); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x7000001, DSI_SYNC_VSS_REG);  // TODO: DMB
+    const DSI_SYNC_VSS = 0x7000001;
+    comptime{ assert(DSI_SYNC_VSS == 0x7000001); }
+    putreg32(DSI_SYNC_VSS, DSI_SYNC_VSS_REG);  // TODO: DMB
 
     // DSI_SYNC_VSE_REG: DSI Offset 0xbc (A31 Page 851)
     // Set ECC (Bits 24 to 31) to 0x14
@@ -1170,8 +1173,9 @@ pub export fn enable_dsi_block() void {
     const DSI_SYNC_VSE_REG = DSI_BASE_ADDRESS + 0xbc;
     comptime{ assert(DSI_SYNC_VSE_REG == 0x1ca00bc); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x14000011, DSI_SYNC_VSE_REG);  // TODO: DMB
+    const DSI_SYNC_VSE = 0x14000011;
+    comptime{ assert(DSI_SYNC_VSE == 0x14000011); }
+    putreg32(DSI_SYNC_VSE, DSI_SYNC_VSE_REG);  // TODO: DMB
 
     // Set Basic Size (Undocumented)
     // DSI_BASIC_SIZE0_REG: DSI Offset 0x18
@@ -1181,8 +1185,9 @@ pub export fn enable_dsi_block() void {
     const DSI_BASIC_SIZE0_REG = DSI_BASE_ADDRESS + 0x18;
     comptime{ assert(DSI_BASIC_SIZE0_REG == 0x1ca0018); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x11000a, DSI_BASIC_SIZE0_REG);  // TODO: DMB
+    const DSI_BASIC_SIZE0 = 0x11000a;
+    comptime{ assert(DSI_BASIC_SIZE0 == 0x11000a); }
+    putreg32(DSI_BASIC_SIZE0, DSI_BASIC_SIZE0_REG);  // TODO: DMB
 
     // DSI_BASIC_SIZE1_REG: DSI Offset 0x1c
     // Set Video_VT (Bits 16 to 28) to 1485
@@ -1190,8 +1195,9 @@ pub export fn enable_dsi_block() void {
     const DSI_BASIC_SIZE1_REG = DSI_BASE_ADDRESS + 0x1c;
     comptime{ assert(DSI_BASIC_SIZE1_REG == 0x1ca001c); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x5cd05a0, DSI_BASIC_SIZE1_REG);  // TODO: DMB
+    const DSI_BASIC_SIZE1 = 0x5cd05a0;
+    comptime{ assert(DSI_BASIC_SIZE1 == 0x5cd05a0); }
+    putreg32(DSI_BASIC_SIZE1, DSI_BASIC_SIZE1_REG);  // TODO: DMB
 
     // Set Horizontal Blanking
     // DSI_BLK_HSA0_REG: DSI Offset 0xc0 (A31 Page 852)
@@ -1200,8 +1206,9 @@ pub export fn enable_dsi_block() void {
     const DSI_BLK_HSA0_REG = DSI_BASE_ADDRESS + 0xc0;
     comptime{ assert(DSI_BLK_HSA0_REG == 0x1ca00c0); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x9004a19, DSI_BLK_HSA0_REG);  // TODO: DMB
+    const DSI_BLK_HSA0 = 0x9004a19;
+    comptime{ assert(DSI_BLK_HSA0 == 0x9004a19); }
+    putreg32(DSI_BLK_HSA0, DSI_BLK_HSA0_REG);  // TODO: DMB
 
     // DSI_BLK_HSA1_REG: DSI Offset 0xc4 (A31 Page 852)
     // Set HSA_PF (Bits 16 to 31) to 0x50b4
@@ -1209,23 +1216,28 @@ pub export fn enable_dsi_block() void {
     const DSI_BLK_HSA1_REG = DSI_BASE_ADDRESS + 0xc4;
     comptime{ assert(DSI_BLK_HSA1_REG == 0x1ca00c4); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x50b40000, DSI_BLK_HSA1_REG);  // TODO: DMB
+    const DSI_BLK_HSA1 = 0x50b40000;
+    comptime{ assert(DSI_BLK_HSA1 == 0x50b40000); }
+    putreg32(DSI_BLK_HSA1, DSI_BLK_HSA1_REG);  // TODO: DMB
 
     // DSI_BLK_HBP0_REG: DSI Offset 0xc8 (A31 Page 852)
     // Set HBP_PH (Bits 0 to 31) to 0x3500 5419
     const DSI_BLK_HBP0_REG = DSI_BASE_ADDRESS + 0xc8;
     comptime{ assert(DSI_BLK_HBP0_REG == 0x1ca00c8); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x35005419, DSI_BLK_HBP0_REG);  // TODO: DMB
+    const DSI_BLK_HBP0 = 0x35005419;
+    comptime{ assert(DSI_BLK_HBP0 == 0x35005419); }
+    putreg32(DSI_BLK_HBP0, DSI_BLK_HBP0_REG);  // TODO: DMB
 
     // DSI_BLK_HBP1_REG: DSI Offset 0xcc (A31 Page 852)
     // Set HBP_PF (Bits 16 to 31) to 0x757a
     // Set HBP_PD (Bits 0 to 7) to 0
     const DSI_BLK_HBP1_REG = DSI_BASE_ADDRESS + 0xcc;
     comptime{ assert(DSI_BLK_HBP1_REG == 0x1ca00cc); }
-    putreg32(0x757a0000, DSI_BLK_HBP1_REG);  // TODO: DMB
+
+    const DSI_BLK_HBP1 = 0x757a0000;
+    comptime{ assert(DSI_BLK_HBP1 == 0x757a0000); }
+    putreg32(DSI_BLK_HBP1, DSI_BLK_HBP1_REG);  // TODO: DMB
 
     // DSI_BLK_HFP0_REG: DSI Offset 0xd0 (A31 Page 852)
     // Set HFP_PH (Bits 0 to 31) to 0x900 4a19
@@ -1239,8 +1251,9 @@ pub export fn enable_dsi_block() void {
     const DSI_BLK_HFP1_REG = DSI_BASE_ADDRESS + 0xd4;
     comptime{ assert(DSI_BLK_HFP1_REG == 0x1ca00d4); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x50b40000, DSI_BLK_HFP1_REG);  // TODO: DMB
+    const DSI_BLK_HFP1 = 0x50b40000;
+    comptime{ assert(DSI_BLK_HFP1 == 0x50b40000); }
+    putreg32(DSI_BLK_HFP1, DSI_BLK_HFP1_REG);  // TODO: DMB
 
     // DSI_BLK_HBLK0_REG: DSI Offset 0xe0 (A31 Page 853)
     // Set HBLK_PH (Bits 0 to 31) to 0xc09 1a19
@@ -1254,8 +1267,9 @@ pub export fn enable_dsi_block() void {
     const DSI_BLK_HBLK1_REG = DSI_BASE_ADDRESS + 0xe4;
     comptime{ assert(DSI_BLK_HBLK1_REG == 0x1ca00e4); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x72bd0000, DSI_BLK_HBLK1_REG);  // TODO: DMB
+    const DSI_BLK_HBLK1 = 0x72bd0000;
+    comptime{ assert(DSI_BLK_HBLK1 == 0x72bd0000); }
+    putreg32(DSI_BLK_HBLK1, DSI_BLK_HBLK1_REG);  // TODO: DMB
 
     // Set Vertical Blanking
     // DSI_BLK_VBLK0_REG: DSI Offset 0xe8 (A31 Page 854)
@@ -1271,8 +1285,9 @@ pub export fn enable_dsi_block() void {
     const DSI_BLK_VBLK1_REG = DSI_BASE_ADDRESS + 0xec;
     comptime{ assert(DSI_BLK_VBLK1_REG == 0x1ca00ec); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0xffff0000, DSI_BLK_VBLK1_REG);  // TODO: DMB
+    const DSI_BLK_VBLK1 = 0xffff0000;
+    comptime{ assert(DSI_BLK_VBLK1 == 0xffff0000); }
+    putreg32(DSI_BLK_VBLK1, DSI_BLK_VBLK1_REG);  // TODO: DMB
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1298,9 +1313,8 @@ pub export fn start_dsi() void {
     // Set Instru_En (Bit 0) to 1 (Enable DSI Processing from Instruction 0)
     debug("Commit", .{});
     comptime{ assert(DSI_BASIC_CTL0_REG == 0x1ca0010); }
-
-    comptime{ assert(0000 == 0000); }
-    modreg32(0x1, 0x1, DSI_BASIC_CTL0_REG);  // TODO: DMB
+    comptime{ assert(Instru_En == 0x1); }
+    modreg32(Instru_En, Instru_En, DSI_BASIC_CTL0_REG);  // TODO: DMB
 
     // Instruction Function Lane (Undocumented)
     // DSI_INST_FUNC_REG(0): DSI Offset 0x20 (DSI_INST_ID_LP11)
@@ -1325,9 +1339,8 @@ pub export fn start_dsi() void {
     // Set Instru_En (Bit 0) to 1 (Enable DSI Processing from Instruction 0)
     debug("Commit", .{});
     comptime{ assert(DSI_BASIC_CTL0_REG == 0x1ca0010); }
-
-    comptime{ assert(0000 == 0000); }
-    modreg32(0x1, 0x1, DSI_BASIC_CTL0_REG);  // TODO: DMB
+    comptime{ assert(Instru_En == 0x1); }
+    modreg32(Instru_En, Instru_En, DSI_BASIC_CTL0_REG);  // TODO: DMB
 }
 
 ///////////////////////////////////////////////////////////////////////////////

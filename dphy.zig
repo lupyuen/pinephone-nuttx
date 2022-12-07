@@ -62,8 +62,9 @@ pub export fn dphy_enable() void {
     const MIPI_DSI_CLK_REG = CCU_BASE_ADDRESS + 0x168;
     comptime{ assert(MIPI_DSI_CLK_REG == 0x1c20168); }
 
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x8203,     MIPI_DSI_CLK_REG);  // TODO: DMB
+    const MIPI_DSI_CLK = 0x8203;
+    comptime{ assert(MIPI_DSI_CLK == 0x8203); }
+    putreg32(MIPI_DSI_CLK, MIPI_DSI_CLK_REG);  // TODO: DMB
 
     // Power on DPHY Tx (Undocumented)
     // DPHY_TX_CTL_REG: DPHY Offset 0x04
@@ -152,7 +153,8 @@ pub export fn dphy_enable() void {
     // DPHY_ANA3_REG: DPHY Offset 0x58 (Enable VTTC, VTTD)
     // Set bits 0xf800 0000
     comptime{ assert(DPHY_ANA3_REG == 0x1ca1058); }
-    modreg32(0xf8000000, 0xf8000000, DPHY_ANA3_REG);  // TODO: DMB
+    const EnableVTTC = 0xf8000000;
+    modreg32(EnableVTTC, EnableVTTC, DPHY_ANA3_REG);  // TODO: DMB
 
     // Wait 1 microsecond
     _ = c.usleep(1);
@@ -160,14 +162,16 @@ pub export fn dphy_enable() void {
     // DPHY_ANA3_REG: DPHY Offset 0x58 (Enable DIV)
     // Set bits 0x400 0000
     comptime{ assert(DPHY_ANA3_REG == 0x1ca1058); }
-    modreg32(0x4000000, 0x4000000, DPHY_ANA3_REG);  // TODO: DMB
+    const EnableDIV = 0x4000000;
+    modreg32(EnableDIV, EnableDIV, DPHY_ANA3_REG);  // TODO: DMB
 
     // Wait 1 microsecond
     _ = c.usleep(1);
 
     // DPHY_ANA2_REG: DPHY Offset 0x54 (Enable CK_CPU)
     comptime{ assert(DPHY_ANA2_REG == 0x1ca1054); }
-    modreg32(0x10, 0x10, DPHY_ANA2_REG);  // TODO: DMB
+    const EnableCKCPU = 0x10;
+    modreg32(EnableCKCPU, EnableCKCPU, DPHY_ANA2_REG);  // TODO: DMB
 
     // Set bits 0x10
     // Wait 1 microsecond
@@ -176,12 +180,14 @@ pub export fn dphy_enable() void {
     // DPHY_ANA1_REG: DPHY Offset 0x50 (VTT Mode)
     // Set bits 0x8000 0000
     comptime{ assert(DPHY_ANA1_REG == 0x1ca1050); }
-    modreg32(0x80000000, 0x80000000, DPHY_ANA1_REG);  // TODO: DMB
+    const VTTMode = 0x80000000;
+    modreg32(VTTMode, VTTMode, DPHY_ANA1_REG);  // TODO: DMB
 
     // DPHY_ANA2_REG: DPHY Offset 0x54 (Enable P2S CPU)
     // Set bits 0xf00 0000
     comptime{ assert(DPHY_ANA2_REG == 0x1ca1054); }
-    modreg32(0xf000000,  0xf000000,  DPHY_ANA2_REG);  // TODO: DMB
+    const EnableP2SCPU = 0xf000000;
+    modreg32(EnableP2SCPU,  EnableP2SCPU,  DPHY_ANA2_REG);  // TODO: DMB
 }
 
 /// Modify the specified bits in a memory mapped register.
