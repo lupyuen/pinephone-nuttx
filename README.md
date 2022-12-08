@@ -4375,10 +4375,10 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-245494 bytes read in 14 ms (16.7 MiB/s)
-Uncompressed size: 10457088 = 0x9F9000
+246286 bytes read in 14 ms (16.8 MiB/s)
+Uncompressed size: 10465280 = 0x9FB000
 36162 bytes read in 4 ms (8.6 MiB/s)
-1078500 bytes read in 50 ms (20.6 MiB/s)
+1078500 bytes read in 51 ms (20.2 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
    Booting using the fdt blob at 0x4fa00000
    Loading Ramdisk to 49ef8000, end 49fff4e4 ... OK
@@ -4392,20 +4392,20 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL1
 - Boot to C runtime for OS Initialize
 nx_start: Entry
-up_allocate_heap: heap_start=0x0x40a79000, heap_size=0x7587000
+up_allocate_heap: heap_start=0x0x40a7b000, heap_size=0x7585000
 arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
 arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
 up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-up_timer_initialize: _vector_table=0x400fe000
-up_timer_initialize: Before writing: vbar_el1=0x4027e000
-up_timer_initialize: After writing: vbar_el1=0x400fe000
+up_timer_initialize: _vector_table=0x40100000
+up_timer_initialize: Before writing: vbar_el1=0x40280000
+up_timer_initialize: After writing: vbar_el1=0x40100000
 uart_register: Registering /dev/console
 uart_register: Registering /dev/ttyS0
 work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400fe000 _einit: 0x400fe000 _stext: 0x40080000 _etext: 0x400ff000
+lib_cxx_initialize: _sinit: 0x40100000 _einit: 0x40100000 _stext: 0x40080000 _etext: 0x40101000
 nsh: sysinit: fopen failed: 2
 nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
 e
@@ -4420,7 +4420,7 @@ nsh> uname -a
 NuttX 11.0.0-RC2 a33f82d Dec  2 2022 17:57:39 arm64 qemu-a53
 nsh> 
 nsh> hello 3
-task_spawn: name=hello entry=0x4009b4f8 file_actions=0x40a7e580 attr=0x40a7e588 argv=0x40a7e6d0
+task_spawn: name=hello entry=0x4009b4f8 file_actions=0x40a80580 attr=0x40a80588 argv=0x40a806d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 pd_cfg2_reg=0x77711177
@@ -4651,12 +4651,12 @@ composeLongPacket: channel=0, cmd=0x39, len=4
 packet: len=10
 39 04 00 2c b9 f1 12 83 
 84 5d 
-modifyreg32: addr=0x300, val=0x2c000439
-modifyreg32: addr=0x304, val=0x8312f1b9
-modifyreg32: addr=0x308, val=0x00005d84
-modifyreg32: addr=0x200, val=0x00000009
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x2c000439
+  *0x1ca0304: clear 0xffffffff, set 0x8312f1b9
+  *0x1ca0308: clear 0xffffffff, set 0x5d84
+  *0x1ca0200: clear 0xff, set 0x9
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=28
 ba 33 81 05 f9 0e 0e 20 
 00 00 00 00 00 00 00 44 
@@ -4670,18 +4670,18 @@ f9 0e 0e 20 00 00 00 00
 00 00 00 44 25 00 91 0a 
 00 00 02 4f 11 00 00 37 
 2c e2 
-modifyreg32: addr=0x300, val=0x2f001c39
-modifyreg32: addr=0x304, val=0x058133ba
-modifyreg32: addr=0x308, val=0x200e0ef9
-modifyreg32: addr=0x30c, val=0x00000000
-modifyreg32: addr=0x310, val=0x44000000
-modifyreg32: addr=0x314, val=0x0a910025
-modifyreg32: addr=0x318, val=0x4f020000
-modifyreg32: addr=0x31c, val=0x37000011
-modifyreg32: addr=0x320, val=0x0000e22c
-modifyreg32: addr=0x200, val=0x00000021
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x2f001c39
+  *0x1ca0304: clear 0xffffffff, set 0x58133ba
+  *0x1ca0308: clear 0xffffffff, set 0x200e0ef9
+  *0x1ca030c: clear 0xffffffff, set 0x0
+  *0x1ca0310: clear 0xffffffff, set 0x44000000
+  *0x1ca0314: clear 0xffffffff, set 0xa910025
+  *0x1ca0318: clear 0xffffffff, set 0x4f020000
+  *0x1ca031c: clear 0xffffffff, set 0x37000011
+  *0x1ca0320: clear 0xffffffff, set 0xe22c
+  *0x1ca0200: clear 0xff, set 0x21
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=5
 b8 25 22 20 03 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=5
@@ -4689,12 +4689,12 @@ composeLongPacket: channel=0, cmd=0x39, len=5
 packet: len=11
 39 05 00 36 b8 25 22 20 
 03 03 72 
-modifyreg32: addr=0x300, val=0x36000539
-modifyreg32: addr=0x304, val=0x202225b8
-modifyreg32: addr=0x308, val=0x00720303
-modifyreg32: addr=0x200, val=0x0000000a
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x36000539
+  *0x1ca0304: clear 0xffffffff, set 0x202225b8
+  *0x1ca0308: clear 0xffffffff, set 0x720303
+  *0x1ca0200: clear 0xff, set 0xa
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=11
 b3 10 10 05 05 03 ff 00 
 00 00 00 
@@ -4704,14 +4704,14 @@ packet: len=17
 39 0b 00 2c b3 10 10 05 
 05 03 ff 00 00 00 00 6f 
 bc 
-modifyreg32: addr=0x300, val=0x2c000b39
-modifyreg32: addr=0x304, val=0x051010b3
-modifyreg32: addr=0x308, val=0x00ff0305
-modifyreg32: addr=0x30c, val=0x6f000000
-modifyreg32: addr=0x310, val=0x000000bc
-modifyreg32: addr=0x200, val=0x00000010
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x2c000b39
+  *0x1ca0304: clear 0xffffffff, set 0x51010b3
+  *0x1ca0308: clear 0xffffffff, set 0xff0305
+  *0x1ca030c: clear 0xffffffff, set 0x6f000000
+  *0x1ca0310: clear 0xffffffff, set 0xbc
+  *0x1ca0200: clear 0xff, set 0x10
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=10
 c0 73 73 50 50 00 c0 08 
 70 00 
@@ -4721,43 +4721,43 @@ packet: len=16
 39 0a 00 36 c0 73 73 50 
 50 00 c0 08 70 00 1b 6a 
 
-modifyreg32: addr=0x300, val=0x36000a39
-modifyreg32: addr=0x304, val=0x507373c0
-modifyreg32: addr=0x308, val=0x08c00050
-modifyreg32: addr=0x30c, val=0x6a1b0070
-modifyreg32: addr=0x200, val=0x0000000f
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x36000a39
+  *0x1ca0304: clear 0xffffffff, set 0x507373c0
+  *0x1ca0308: clear 0xffffffff, set 0x8c00050
+  *0x1ca030c: clear 0xffffffff, set 0x6a1b0070
+  *0x1ca0200: clear 0xff, set 0xf
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=2
 bc 4e 
 mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
 composeShortPacket: channel=0, cmd=0x15, len=2
 packet: len=4
 15 bc 4e 35 
-modifyreg32: addr=0x300, val=0x354ebc15
-modifyreg32: addr=0x200, val=0x00000003
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x354ebc15
+  *0x1ca0200: clear 0xff, set 0x3
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=2
 cc 0b 
 mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
 composeShortPacket: channel=0, cmd=0x15, len=2
 packet: len=4
 15 cc 0b 22 
-modifyreg32: addr=0x300, val=0x220bcc15
-modifyreg32: addr=0x200, val=0x00000003
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x220bcc15
+  *0x1ca0200: clear 0xff, set 0x3
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=2
 b4 80 
 mipi_dsi_dcs_write: channel=0, cmd=0x15, len=2
 composeShortPacket: channel=0, cmd=0x15, len=2
 packet: len=4
 15 b4 80 22 
-modifyreg32: addr=0x300, val=0x2280b415
-modifyreg32: addr=0x200, val=0x00000003
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x2280b415
+  *0x1ca0200: clear 0xff, set 0x3
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=4
 b2 f0 12 f0 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
@@ -4765,12 +4765,12 @@ composeLongPacket: channel=0, cmd=0x39, len=4
 packet: len=10
 39 04 00 2c b2 f0 12 f0 
 51 86 
-modifyreg32: addr=0x300, val=0x2c000439
-modifyreg32: addr=0x304, val=0xf012f0b2
-modifyreg32: addr=0x308, val=0x00008651
-modifyreg32: addr=0x200, val=0x00000009
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x2c000439
+  *0x1ca0304: clear 0xffffffff, set 0xf012f0b2
+  *0x1ca0308: clear 0xffffffff, set 0x8651
+  *0x1ca0200: clear 0xff, set 0x9
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=15
 e3 00 00 0b 0b 10 10 00 
 00 00 00 ff 00 c0 10 
@@ -4780,15 +4780,15 @@ packet: len=21
 39 0f 00 0f e3 00 00 0b 
 0b 10 10 00 00 00 00 ff 
 00 c0 10 36 0f 
-modifyreg32: addr=0x300, val=0x0f000f39
-modifyreg32: addr=0x304, val=0x0b0000e3
-modifyreg32: addr=0x308, val=0x0010100b
-modifyreg32: addr=0x30c, val=0xff000000
-modifyreg32: addr=0x310, val=0x3610c000
-modifyreg32: addr=0x314, val=0x0000000f
-modifyreg32: addr=0x200, val=0x00000014
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0xf000f39
+  *0x1ca0304: clear 0xffffffff, set 0xb0000e3
+  *0x1ca0308: clear 0xffffffff, set 0x10100b
+  *0x1ca030c: clear 0xffffffff, set 0xff000000
+  *0x1ca0310: clear 0xffffffff, set 0x3610c000
+  *0x1ca0314: clear 0xffffffff, set 0xf
+  *0x1ca0200: clear 0xff, set 0x14
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=6
 c6 01 00 ff ff 00 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=6
@@ -4796,12 +4796,12 @@ composeLongPacket: channel=0, cmd=0x39, len=6
 packet: len=12
 39 06 00 30 c6 01 00 ff 
 ff 00 8e 25 
-modifyreg32: addr=0x300, val=0x30000639
-modifyreg32: addr=0x304, val=0xff0001c6
-modifyreg32: addr=0x308, val=0x258e00ff
-modifyreg32: addr=0x200, val=0x0000000b
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x30000639
+  *0x1ca0304: clear 0xffffffff, set 0xff0001c6
+  *0x1ca0308: clear 0xffffffff, set 0x258e00ff
+  *0x1ca0200: clear 0xff, set 0xb
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=13
 c1 74 00 32 32 77 f1 ff 
 ff cc cc 77 77 
@@ -4811,14 +4811,14 @@ packet: len=19
 39 0d 00 13 c1 74 00 32 
 32 77 f1 ff ff cc cc 77 
 77 69 e4 
-modifyreg32: addr=0x300, val=0x13000d39
-modifyreg32: addr=0x304, val=0x320074c1
-modifyreg32: addr=0x308, val=0xfff17732
-modifyreg32: addr=0x30c, val=0x77ccccff
-modifyreg32: addr=0x310, val=0x00e46977
-modifyreg32: addr=0x200, val=0x00000012
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x13000d39
+  *0x1ca0304: clear 0xffffffff, set 0x320074c1
+  *0x1ca0308: clear 0xffffffff, set 0xfff17732
+  *0x1ca030c: clear 0xffffffff, set 0x77ccccff
+  *0x1ca0310: clear 0xffffffff, set 0xe46977
+  *0x1ca0200: clear 0xff, set 0x12
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=3
 b5 07 07 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=3
@@ -4826,12 +4826,12 @@ composeLongPacket: channel=0, cmd=0x39, len=3
 packet: len=9
 39 03 00 09 b5 07 07 7b 
 b3 
-modifyreg32: addr=0x300, val=0x09000339
-modifyreg32: addr=0x304, val=0x7b0707b5
-modifyreg32: addr=0x308, val=0x000000b3
-modifyreg32: addr=0x200, val=0x00000008
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x9000339
+  *0x1ca0304: clear 0xffffffff, set 0x7b0707b5
+  *0x1ca0308: clear 0xffffffff, set 0xb3
+  *0x1ca0200: clear 0xff, set 0x8
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=3
 b6 2c 2c 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=3
@@ -4839,12 +4839,12 @@ composeLongPacket: channel=0, cmd=0x39, len=3
 packet: len=9
 39 03 00 09 b6 2c 2c 55 
 04 
-modifyreg32: addr=0x300, val=0x09000339
-modifyreg32: addr=0x304, val=0x552c2cb6
-modifyreg32: addr=0x308, val=0x00000004
-modifyreg32: addr=0x200, val=0x00000008
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x9000339
+  *0x1ca0304: clear 0xffffffff, set 0x552c2cb6
+  *0x1ca0308: clear 0xffffffff, set 0x4
+  *0x1ca0200: clear 0xff, set 0x8
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=4
 bf 02 11 00 
 mipi_dsi_dcs_write: channel=0, cmd=0x39, len=4
@@ -4852,12 +4852,12 @@ composeLongPacket: channel=0, cmd=0x39, len=4
 packet: len=10
 39 04 00 2c bf 02 11 00 
 b5 e9 
-modifyreg32: addr=0x300, val=0x2c000439
-modifyreg32: addr=0x304, val=0x001102bf
-modifyreg32: addr=0x308, val=0x0000e9b5
-modifyreg32: addr=0x200, val=0x00000009
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x2c000439
+  *0x1ca0304: clear 0xffffffff, set 0x1102bf
+  *0x1ca0308: clear 0xffffffff, set 0xe9b5
+  *0x1ca0200: clear 0xff, set 0x9
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=64
 e9 82 10 06 05 a2 0a a5 
 12 31 23 37 83 04 bc 27 
@@ -4880,27 +4880,27 @@ packet: len=70
 88 88 88 88 88 02 88 00 
 00 00 00 00 00 00 00 00 
 00 00 00 00 65 03 
-modifyreg32: addr=0x300, val=0x25004039
-modifyreg32: addr=0x304, val=0x061082e9
-modifyreg32: addr=0x308, val=0xa50aa205
-modifyreg32: addr=0x30c, val=0x37233112
-modifyreg32: addr=0x310, val=0x27bc0483
-modifyreg32: addr=0x314, val=0x03000c38
-modifyreg32: addr=0x318, val=0x0c000000
-modifyreg32: addr=0x31c, val=0x00000300
-modifyreg32: addr=0x320, val=0x31757500
-modifyreg32: addr=0x324, val=0x88888888
-modifyreg32: addr=0x328, val=0x88138888
-modifyreg32: addr=0x32c, val=0x88206464
-modifyreg32: addr=0x330, val=0x88888888
-modifyreg32: addr=0x334, val=0x00880288
-modifyreg32: addr=0x338, val=0x00000000
-modifyreg32: addr=0x33c, val=0x00000000
-modifyreg32: addr=0x340, val=0x00000000
-modifyreg32: addr=0x344, val=0x00000365
-modifyreg32: addr=0x200, val=0x00000045
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x25004039
+  *0x1ca0304: clear 0xffffffff, set 0x61082e9
+  *0x1ca0308: clear 0xffffffff, set 0xa50aa205
+  *0x1ca030c: clear 0xffffffff, set 0x37233112
+  *0x1ca0310: clear 0xffffffff, set 0x27bc0483
+  *0x1ca0314: clear 0xffffffff, set 0x3000c38
+  *0x1ca0318: clear 0xffffffff, set 0xc000000
+  *0x1ca031c: clear 0xffffffff, set 0x300
+  *0x1ca0320: clear 0xffffffff, set 0x31757500
+  *0x1ca0324: clear 0xffffffff, set 0x88888888
+  *0x1ca0328: clear 0xffffffff, set 0x88138888
+  *0x1ca032c: clear 0xffffffff, set 0x88206464
+  *0x1ca0330: clear 0xffffffff, set 0x88888888
+  *0x1ca0334: clear 0xffffffff, set 0x880288
+  *0x1ca0338: clear 0xffffffff, set 0x0
+  *0x1ca033c: clear 0xffffffff, set 0x0
+  *0x1ca0340: clear 0xffffffff, set 0x0
+  *0x1ca0344: clear 0xffffffff, set 0x365
+  *0x1ca0200: clear 0xff, set 0x45
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=62
 ea 02 21 00 00 00 00 00 
 00 00 00 00 00 02 46 02 
@@ -4922,26 +4922,26 @@ packet: len=68
 00 00 00 00 00 00 00 00 
 00 00 00 03 0a a5 00 00 
 00 00 24 1b 
-modifyreg32: addr=0x300, val=0x1a003e39
-modifyreg32: addr=0x304, val=0x002102ea
-modifyreg32: addr=0x308, val=0x00000000
-modifyreg32: addr=0x30c, val=0x00000000
-modifyreg32: addr=0x310, val=0x02460200
-modifyreg32: addr=0x314, val=0x88888888
-modifyreg32: addr=0x318, val=0x88648888
-modifyreg32: addr=0x31c, val=0x88135713
-modifyreg32: addr=0x320, val=0x88888888
-modifyreg32: addr=0x324, val=0x23887588
-modifyreg32: addr=0x328, val=0x02000014
-modifyreg32: addr=0x32c, val=0x00000000
-modifyreg32: addr=0x330, val=0x00000000
-modifyreg32: addr=0x334, val=0x00000000
-modifyreg32: addr=0x338, val=0x03000000
-modifyreg32: addr=0x33c, val=0x0000a50a
-modifyreg32: addr=0x340, val=0x1b240000
-modifyreg32: addr=0x200, val=0x00000043
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x1a003e39
+  *0x1ca0304: clear 0xffffffff, set 0x2102ea
+  *0x1ca0308: clear 0xffffffff, set 0x0
+  *0x1ca030c: clear 0xffffffff, set 0x0
+  *0x1ca0310: clear 0xffffffff, set 0x2460200
+  *0x1ca0314: clear 0xffffffff, set 0x88888888
+  *0x1ca0318: clear 0xffffffff, set 0x88648888
+  *0x1ca031c: clear 0xffffffff, set 0x88135713
+  *0x1ca0320: clear 0xffffffff, set 0x88888888
+  *0x1ca0324: clear 0xffffffff, set 0x23887588
+  *0x1ca0328: clear 0xffffffff, set 0x2000014
+  *0x1ca032c: clear 0xffffffff, set 0x0
+  *0x1ca0330: clear 0xffffffff, set 0x0
+  *0x1ca0334: clear 0xffffffff, set 0x0
+  *0x1ca0338: clear 0xffffffff, set 0x3000000
+  *0x1ca033c: clear 0xffffffff, set 0xa50a
+  *0x1ca0340: clear 0xffffffff, set 0x1b240000
+  *0x1ca0200: clear 0xff, set 0x43
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=35
 e0 00 09 0d 23 27 3c 41 
 35 07 0d 0e 12 13 10 12 
@@ -4957,40 +4957,40 @@ packet: len=41
 0d 23 27 3c 41 35 07 0d 
 0e 12 13 10 12 12 18 93 
 bf 
-modifyreg32: addr=0x300, val=0x20002339
-modifyreg32: addr=0x304, val=0x0d0900e0
-modifyreg32: addr=0x308, val=0x413c2723
-modifyreg32: addr=0x30c, val=0x0e0d0735
-modifyreg32: addr=0x310, val=0x12101312
-modifyreg32: addr=0x314, val=0x09001812
-modifyreg32: addr=0x318, val=0x3c27230d
-modifyreg32: addr=0x31c, val=0x0d073541
-modifyreg32: addr=0x320, val=0x1013120e
-modifyreg32: addr=0x324, val=0x93181212
-modifyreg32: addr=0x328, val=0x000000bf
-modifyreg32: addr=0x200, val=0x00000028
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x20002339
+  *0x1ca0304: clear 0xffffffff, set 0xd0900e0
+  *0x1ca0308: clear 0xffffffff, set 0x413c2723
+  *0x1ca030c: clear 0xffffffff, set 0xe0d0735
+  *0x1ca0310: clear 0xffffffff, set 0x12101312
+  *0x1ca0314: clear 0xffffffff, set 0x9001812
+  *0x1ca0318: clear 0xffffffff, set 0x3c27230d
+  *0x1ca031c: clear 0xffffffff, set 0xd073541
+  *0x1ca0320: clear 0xffffffff, set 0x1013120e
+  *0x1ca0324: clear 0xffffffff, set 0x93181212
+  *0x1ca0328: clear 0xffffffff, set 0xbf
+  *0x1ca0200: clear 0xff, set 0x28
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=1
 11 
 mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
 composeShortPacket: channel=0, cmd=0x5, len=1
 packet: len=4
 05 11 00 36 
-modifyreg32: addr=0x300, val=0x36001105
-modifyreg32: addr=0x200, val=0x00000003
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x36001105
+  *0x1ca0200: clear 0xff, set 0x3
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 writeDcs: len=1
 29 
 mipi_dsi_dcs_write: channel=0, cmd=0x5, len=1
 composeShortPacket: channel=0, cmd=0x5, len=1
 packet: len=4
 05 29 00 1c 
-modifyreg32: addr=0x300, val=0x1c002905
-modifyreg32: addr=0x200, val=0x00000003
-modifyreg32: addr=0x010, val=0x00000000
-modifyreg32: addr=0x010, val=0x00000001
+  *0x1ca0300: clear 0xffffffff, set 0x1c002905
+  *0x1ca0200: clear 0xff, set 0x3
+  *0x1ca0010: clear 0x1, set 0x0
+  *0x1ca0010: clear 0x1, set 0x1
 panel_init: end
 start_dsi: start
 Start HSC
@@ -5014,22 +5014,22 @@ Set Display Engine PLL to 297 MHz
   *0x1c20048 = 0x81001701
 Wait for Display Engine PLL to be stable
 Set Special Clock to Display Engine PLL
-  *0x1c20104: clear 0x3000000, set 0x81000000
+  *0x1c20104: clear 0x87000000, set 0x81000000
   *0x1c20104 = 0x81000000
 Enable AHB for Display Engine: De-Assert Display Engine
-  *0x1c202c4: clear 0x0, set 0x1000
+  *0x1c202c4: clear 0x1000, set 0x1000
   *0x1c202c4 = 0x1008
 Enable AHB for Display Engine: Pass Display Engine
-  *0x1c20064: clear 0x0, set 0x1000
+  *0x1c20064: clear 0x1000, set 0x1000
   *0x1c20064 = 0x1008
 Enable Clock for MIXER0: SCLK Clock Pass
-  *0x1000000: clear 0x0, set 0x1
+  *0x1000000: clear 0x1, set 0x1
   *0x1000000 = 0x1
 Enable Clock for MIXER0: HCLK Clock Reset Off
-  *0x1000008: clear 0x0, set 0x1
+  *0x1000008: clear 0x1, set 0x1
   *0x1000008 = 0x1
 Enable Clock for MIXER0: HCLK Clock Pass
-  *0x1000004: clear 0x0, set 0x1
+  *0x1000004: clear 0x1, set 0x1
   *0x1000004 = 0x1
 Route MIXER0 to TCON0
   *0x1000010: clear 0x1, set 0x0
@@ -5072,7 +5072,7 @@ initUiBlender: end
 initUiChannel: start
 Channel 1: Set Overlay (720 x 1440)
   *0x1103000 = 0xff000405
-  *0x1103010 = 0x4012a000
+  *0x1103010 = 0x4012c000
   *0x110300c = 0xb40
   *0x1103004 = 0x59f02cf
   *0x1103088 = 0x59f02cf
@@ -5091,7 +5091,7 @@ initUiChannel: end
 initUiChannel: start
 Channel 2: Set Overlay (600 x 600)
   *0x1104000 = 0xff000005
-  *0x1104010 = 0x4051f000
+  *0x1104010 = 0x40521000
   *0x110400c = 0x960
   *0x1104004 = 0x2570257
   *0x1104088 = 0x2570257
@@ -5107,7 +5107,7 @@ initUiChannel: end
 initUiChannel: start
 Channel 3: Set Overlay (720 x 1440)
   *0x1105000 = 0x7f000005
-  *0x1105010 = 0x4067f000
+  *0x1105010 = 0x40681000
   *0x110500c = 0xb40
   *0x1105004 = 0x59f02cf
   *0x1105088 = 0x59f02cf

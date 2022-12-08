@@ -814,9 +814,14 @@ pub export fn de2_init() void {
         | CLK_SRC_SEL;
     comptime{ assert(clk == 0x8100_0000); }
 
+    const SCLK_GATING_MASK: u32 = 0b1   << 31;
+    const CLK_SRC_SEL_MASK: u27 = 0b111 << 24;
+    const clk_mask = SCLK_GATING_MASK
+        | CLK_SRC_SEL_MASK;
+
     const DE_CLK_REG = CCU_BASE_ADDRESS + 0x0104;
     comptime{ assert(DE_CLK_REG == 0x1C2_0104); }
-    modifyreg32(DE_CLK_REG, 0b11 << 24, clk);
+    modreg32(clk, clk_mask, DE_CLK_REG);
 
     // Enable AHB (AMBA High-speed Bus) for Display Engine: De-Assert Display Engine
     // Set BUS_SOFT_RST_REG1 bits 0x1000
@@ -827,7 +832,7 @@ pub export fn de2_init() void {
     const DE_RST: u13 = 1 << 12;  // De-Assert Display Engine
     const BUS_SOFT_RST_REG1 = CCU_BASE_ADDRESS + 0x02C4;
     comptime{ assert(BUS_SOFT_RST_REG1 == 0x1C2_02C4); }
-    modifyreg32(BUS_SOFT_RST_REG1, 0, DE_RST);
+    modreg32(DE_RST, DE_RST, BUS_SOFT_RST_REG1);
 
     // Enable AHB (AMBA High-speed Bus) for Display Engine: Pass Display Engine
     // Set BUS_CLK_GATING_REG1 bits 0x1000
@@ -838,7 +843,7 @@ pub export fn de2_init() void {
     const DE_GATING: u13 = 1 << 12;  // Pass Display Engine
     const BUS_CLK_GATING_REG1 = CCU_BASE_ADDRESS + 0x0064;
     comptime{ assert(BUS_CLK_GATING_REG1 == 0x1C2_0064); }
-    modifyreg32(BUS_CLK_GATING_REG1, 0, DE_GATING);
+    modreg32(DE_GATING, DE_GATING, BUS_CLK_GATING_REG1);
 
     // Enable Clock for MIXER0: SCLK Clock Pass
     // Set SCLK_GATE bits 0x1
@@ -849,7 +854,7 @@ pub export fn de2_init() void {
     const CORE0_SCLK_GATE: u1 = 1 << 0;  // Clock Pass
     const SCLK_GATE = DISPLAY_ENGINE_BASE_ADDRESS + 0x000;
     comptime{ assert(SCLK_GATE == 0x100_0000); }
-    modifyreg32(SCLK_GATE, 0, CORE0_SCLK_GATE);
+    modreg32(CORE0_SCLK_GATE, CORE0_SCLK_GATE, SCLK_GATE);
 
     // Enable Clock for MIXER0: HCLK Clock Reset Off
     // Set AHB_RESET bits 0x1
@@ -860,7 +865,7 @@ pub export fn de2_init() void {
     const CORE0_HCLK_RESET: u1 = 1 << 0;  // Reset Off
     const AHB_RESET = DISPLAY_ENGINE_BASE_ADDRESS + 0x008;
     comptime{ assert(AHB_RESET == 0x100_0008); }
-    modifyreg32(AHB_RESET, 0, CORE0_HCLK_RESET);
+    modreg32(CORE0_HCLK_RESET, CORE0_HCLK_RESET, AHB_RESET);
 
     // Enable Clock for MIXER0: HCLK Clock Pass
     // Set HCLK_GATE bits 0x1
@@ -871,7 +876,7 @@ pub export fn de2_init() void {
     const CORE0_HCLK_GATE: u1 = 1 << 0;  // Clock Pass
     const HCLK_GATE = DISPLAY_ENGINE_BASE_ADDRESS + 0x004;
     comptime{ assert(HCLK_GATE == 0x100_0004); }
-    modifyreg32(HCLK_GATE, 0, CORE0_HCLK_GATE);
+    modreg32(CORE0_HCLK_GATE, CORE0_HCLK_GATE, HCLK_GATE);
 
     // Route MIXER0 to TCON0
     // Clear DE2TCON_MUX bits 0x1
@@ -883,7 +888,7 @@ pub export fn de2_init() void {
     const DE2TCON_MUX_MASK: u1 = 1 << 0;  // Route MIXER0 to TCON0; Route MIXER1 to TCON1
     const DE2TCON_MUX = DISPLAY_ENGINE_BASE_ADDRESS + 0x010;
     comptime{ assert(DE2TCON_MUX == 0x100_0010); }
-    modifyreg32(DE2TCON_MUX, DE2TCON_MUX_MASK, 0);
+    modreg32(0, DE2TCON_MUX_MASK, DE2TCON_MUX);
 
     // Clear MIXER0 Registers: Global Registers (GLB), Blender (BLD), Video Overlay (OVL_V), UI Overlay (OVL_UI)
     // Set MIXER0 Offsets 0x0000 - 0x5FFF to 0
@@ -1038,20 +1043,20 @@ pub export fn export_dsi_functions() void {
     panel.panel_reset();
 }
 
-/// Atomically modify the specified bits in a memory mapped register.
-/// Based on https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/common/arm_modifyreg32.c#L38-L57
-fn modifyreg32(
-    addr: u64,       // Address to modify
-    clearbits: u32,  // Bits to clear, like (1 << bit)
-    setbits: u32     // Bit to set, like (1 << bit)
+/// Modify the specified bits in a memory mapped register.
+/// Based on https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_arch.h#L473
+fn modreg32(
+    comptime val: u32,   // Bits to set, like (1 << bit)
+    comptime mask: u32,  // Bits to clear, like (1 << bit)
+    addr: u64  // Address to modify
 ) void {
-    debug("  *0x{x}: clear 0x{x}, set 0x{x}", .{ addr, clearbits, setbits });
-    // TODO: flags = spin_lock_irqsave(NULL);
-    var regval = getreg32(addr);
-    regval &= ~clearbits;
-    regval |= setbits;
-    putreg32(regval, addr);
-    // TODO: spin_unlock_irqrestore(NULL, flags);
+    comptime{ assert(val & mask == val); }
+    debug("  *0x{x}: clear 0x{x}, set 0x{x}", .{ addr, mask, val & mask });
+    putreg32(
+        (getreg32(addr) & ~(mask))
+            | ((val) & (mask)),
+        (addr)
+    );
 }
 
 /// Get the 32-bit value at the address

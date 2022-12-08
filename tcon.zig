@@ -435,7 +435,6 @@ pub export fn tcon0_init() void {
 }
 
 /// Modify the specified bits in a memory mapped register.
-/// Note: Parameters are different from modifyreg32
 /// Based on https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_arch.h#L473
 fn modreg32(
     comptime val: u32,   // Bits to set, like (1 << bit)

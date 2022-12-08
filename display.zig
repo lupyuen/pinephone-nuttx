@@ -402,13 +402,13 @@ pub export fn nuttx_mipi_dsi_dcs_write(
 
         // Write the 32-bit value
         assert(addr <= DSI_BASE_ADDRESS + 0x3FC);
-        modifyreg32(addr, 0xFFFF_FFFF, v);  // TODO: DMB
+        modreg32(v, 0xFFFF_FFFF, addr);  // TODO: DMB
         addr += 4;
     }
 
     // Set Packet Length - 1 in Bits 0 to 7 (TX_Size) of
     // DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200
-    modifyreg32(DSI_CMD_CTL_REG, 0xFF, @intCast(u32, pkt.len) - 1);  // TODO: DMB
+    modreg32(@intCast(u32, pkt.len) - 1, 0xFF, DSI_CMD_CTL_REG);  // TODO: DMB
 
     // Set DSI_INST_JUMP_SEL_REG (Offset 0x48, undocumented) 
     // to begin the Low Power Transmission (LPTX)
@@ -459,41 +459,24 @@ fn waitForTransmit() isize {
 /// Disable DSI Processing. See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
 fn disableDsiProcessing() void {
     // Set Instru_En to 0
-    modifyreg32(DSI_BASIC_CTL0_REG, Instru_En, 0);  // TODO: DMB
+    modreg32(0, Instru_En, DSI_BASIC_CTL0_REG);  // TODO: DMB
 }
 
 /// Enable DSI Processing. See https://lupyuen.github.io/articles/dsi#transmit-packet-over-mipi-dsi
 fn enableDsiProcessing() void {
     // Set Instru_En to 1
-    modifyreg32(DSI_BASIC_CTL0_REG, Instru_En, Instru_En);  // TODO: DMB
-}
-
-/// Atomically modify the specified bits in a memory mapped register.
-/// Based on https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm/src/common/arm_modifyreg32.c#L38-L57
-fn modifyreg32(
-    addr: u64,       // Address to modify
-    clearbits: u32,  // Bits to clear, like (1 << bit)
-    setbits: u32     // Bit to set, like (1 << bit)
-) void {
-    debug("modifyreg32: addr=0x{x:0>3}, val=0x{x:0>8}", .{ addr - DSI_BASE_ADDRESS, setbits & clearbits });
-    // TODO: flags = spin_lock_irqsave(NULL);
-    var regval = getreg32(addr);
-    regval &= ~clearbits;
-    regval |= setbits;
-    putreg32(regval, addr);
-    // TODO: spin_unlock_irqrestore(NULL, flags);
+    modreg32(Instru_En, Instru_En, DSI_BASIC_CTL0_REG);  // TODO: DMB
 }
 
 /// Modify the specified bits in a memory mapped register.
-/// Note: Parameters are different from modifyreg32
 /// Based on https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_arch.h#L473
 fn modreg32(
-    comptime val: u32,   // Bits to set, like (1 << bit)
+    val: u32,   // Bits to set, like (1 << bit)
     comptime mask: u32,  // Bits to clear, like (1 << bit)
     addr: u64  // Address to modify
 ) void {
-    comptime { assert(val & mask == val); }
     debug("  *0x{x}: clear 0x{x}, set 0x{x}", .{ addr, mask, val & mask });
+    assert(val & mask == val);
     putreg32(
         (getreg32(addr) & ~(mask))
             | ((val) & (mask)),
