@@ -64,14 +64,18 @@ pub export fn tcon0_init() void {
     // Set PLL_FACTOR_N (Bits 8 to 14) to 0x62 (PLL Factor N)
     // Set PLL_PREDIV_M (Bits 0 to 3) to 7 (PLL Pre Divider)
     debug("Configure PLL_VIDEO0", .{});
-    putreg32(0x81006207, 0x1c20010);  // TODO: DMB
+    const PLL_VIDEO0_CTRL_REG = CCU_BASE_ADDRESS + 0x10;
+    comptime{ assert(PLL_VIDEO0_CTRL_REG == 0x1c20010); }
+    putreg32(0x81006207, PLL_VIDEO0_CTRL_REG);  // TODO: DMB
 
     // Enable LDO1 and LDO2
     // PLL_MIPI_CTRL_REG: CCU Offset 0x40 (A64 Page 94)
     // Set LDO1_EN (Bit 23) to 1 (Enable On-chip LDO1)
     // Set LDO2_EN (Bit 22) to 1 (Enable On-chip LDO2)
     debug("Enable LDO1 and LDO2", .{});
-    putreg32(0xc00000, 0x1c20040);  // TODO: DMB
+    const PLL_MIPI_CTRL_REG = CCU_BASE_ADDRESS + 0x40;
+    comptime{ assert(PLL_MIPI_CTRL_REG == 0x1c20040); }
+    putreg32(0xc00000, PLL_MIPI_CTRL_REG);  // TODO: DMB
 
     // Wait 100 microseconds
     _ = c.usleep(100);
@@ -93,58 +97,77 @@ pub export fn tcon0_init() void {
     // Set PLL_FACTOR_K (Bits 4 to 5) to 1 (PLL Factor K)
     // Set PLL_PRE_DIV_M (Bits 0 to 3) to 10 (PLL Pre Divider)
     debug("Configure MIPI PLL", .{});
-    putreg32(0x80c0071a, 0x1c20040);  // TODO: DMB
+    comptime{ assert(PLL_MIPI_CTRL_REG == 0x1c20040); }
+    putreg32(0x80c0071a, PLL_MIPI_CTRL_REG);  // TODO: DMB
 
     // Set TCON0 Clock Source to MIPI PLL
     // TCON0_CLK_REG: CCU Offset 0x118 (A64 Page 117)
     // Set SCLK_GATING (Bit 31) to 1 (Special Clock is On)
     // Set CLK_SRC_SEL (Bits 24 to 26) to 0 (Clock Source is MIPI PLL)
     debug("Set TCON0 Clock Source to MIPI PLL", .{});
-    putreg32(0x80000000, 0x1c20118);  // TODO: DMB
+    const TCON0_CLK_REG = CCU_BASE_ADDRESS + 0x118;
+    comptime{ assert(TCON0_CLK_REG == 0x1c20118); }
+    putreg32(0x80000000, TCON0_CLK_REG);  // TODO: DMB
 
     // Enable TCON0 Clock
     // BUS_CLK_GATING_REG1: CCU Offset 0x64 (A64 Page 102)
     // Set TCON0_GATING (Bit 3) to 1 (Pass Clock for TCON0)
     debug("Enable TCON0 Clock", .{});
-    putreg32(0x8, 0x1c20064);  // TODO: DMB
+    const BUS_CLK_GATING_REG1 = CCU_BASE_ADDRESS + 0x64;
+    comptime{ assert(BUS_CLK_GATING_REG1 == 0x1c20064); }
+    putreg32(0x8, BUS_CLK_GATING_REG1);  // TODO: DMB
 
     // Deassert TCON0 Reset
     // BUS_SOFT_RST_REG1: CCU Offset 0x2c4 (A64 Page 140)
     // Set TCON0_RST (Bit 3) to 1 (Deassert TCON0 Reset)
     debug("Deassert TCON0 Reset", .{});
-    putreg32(0x8, 0x1c202c4);  // TODO: DMB
+    const BUS_SOFT_RST_REG1 = CCU_BASE_ADDRESS + 0x2c4;
+    comptime{ assert(BUS_SOFT_RST_REG1 == 0x1c202c4); }
+    putreg32(0x8, BUS_SOFT_RST_REG1);  // TODO: DMB
 
     // Disable TCON0 and Interrupts
     // TCON_GCTL_REG: TCON0 Offset 0x00 (A64 Page 508)
     // Set TCON_En (Bit 31) to 0 (Disable TCON0)
     debug("Disable TCON0 and Interrupts", .{});
-    putreg32(0x0, 0x1c0c000);  // TODO: DMB
+    const TCON_GCTL_REG = TCON0_BASE_ADDRESS + 0x00;
+    comptime{ assert(TCON_GCTL_REG == 0x1c0c000); }
+    putreg32(0x0, TCON_GCTL_REG);  // TODO: DMB
 
     // TCON_GINT0_REG: TCON0 Offset 0x04 (A64 Page 509)
     // Set to 0 (Disable TCON0 Interrupts)
-    putreg32(0x0, 0x1c0c004);
+    const TCON_GINT0_REG = TCON0_BASE_ADDRESS + 0x04;
+    comptime{ assert(TCON_GINT0_REG == 0x1c0c004); }
+    putreg32(0x0, TCON_GINT0_REG);
 
     // TCON_GINT1_REG: TCON0 Offset 0x08 (A64 Page 510)
     // Set to 0 (Disable TCON0 Interrupts)
-    putreg32(0x0, 0x1c0c008);
+    const TCON_GINT1_REG = TCON0_BASE_ADDRESS + 0x08;
+    comptime{ assert(TCON_GINT1_REG == 0x1c0c008); }
+    putreg32(0x0, TCON_GINT1_REG);
 
     // Enable Tristate Output
     // TCON0_IO_TRI_REG: TCON0 Offset 0x8c (A64 Page 520)
     // Set to 0xffff ffff to Enable TCON0 Tristate Output
     debug("Enable Tristate Output", .{});
-    putreg32(0xffffffff, 0x1c0c08c);
+    const TCON0_IO_TRI_REG = TCON0_BASE_ADDRESS + 0x8c;
+    comptime{ assert(TCON0_IO_TRI_REG == 0x1c0c08c); }
+    putreg32(0xffffffff, TCON0_IO_TRI_REG);
 
     // TCON1_IO_TRI_REG: TCON0 Offset 0xf4
     // Set to 0xffff ffff to Enable TCON1 Tristate Output
     // Note: TCON1_IO_TRI_REG is actually in TCON0 Address Range, not in TCON1 Address Range as stated in A64 User Manual
-    putreg32(0xffffffff, 0x1c0c0f4);
+    const TCON1_IO_TRI_REG = TCON0_BASE_ADDRESS + 0xf4;
+    comptime{ assert(TCON1_IO_TRI_REG == 0x1c0c0f4); }
+    putreg32(0xffffffff, TCON1_IO_TRI_REG);
 
     // Set DCLK to MIPI PLL / 6
     // TCON0_DCLK_REG: TCON0 Offset 0x44 (A64 Page 513)
     // Set TCON0_Dclk_En (Bits 28 to 31) to 8 (Enable TCON0 Clocks: DCLK, DCLK1, DCLK2, DCLKM2)
     // Set TCON0_Dclk_Div (Bits 0 to 6) to 6 (DCLK Divisor)
     debug("Set DCLK to MIPI PLL / 6", .{});
-    putreg32(0x80000006, 0x1c0c044);
+    const TCON0_DCLK_REG = TCON0_BASE_ADDRESS + 0x44;
+    comptime{ assert(TCON0_DCLK_REG == 0x1c0c044); }
+    putreg32(0x80000006, TCON0_DCLK_REG);
 
     // TCON0_CTL_REG: TCON0 Offset 0x40 (A64 Page 512)
     // Set TCON0_En (Bit 31) to 1 (Enable TCON0)
@@ -154,16 +177,22 @@ pub export fn tcon0_init() void {
     // Set TCON0_FIFO1_Rst (Bit 21) to 0 (No FIFO1 Reset)
     // Set TCON0_Start_Delay (Bits 4 to 8) to 0 (No STA Delay)
     // Set TCON0_SRC_SEL (Bits 0 to 2) to 0 (TCON0 Source is DE0)
-    putreg32(0x81000000, 0x1c0c040);
+    const TCON0_CTL_REG = TCON0_BASE_ADDRESS + 0x40;
+    comptime{ assert(TCON0_CTL_REG == 0x1c0c040); }
+    putreg32(0x81000000, TCON0_CTL_REG);
 
     // TCON0_BASIC0_REG: TCON0 Offset 0x48 (A64 Page 514)
     // Set TCON0_X (Bits 16 to 27) to 719 (Panel Width - 1)
     // Set TCON0_Y (Bits 0 to 11) to 1439 (Panel Height - 1)
-    putreg32(0x2cf059f, 0x1c0c048);
+    const TCON0_BASIC0_REG = TCON0_BASE_ADDRESS + 0x48;
+    comptime{ assert(TCON0_BASIC0_REG == 0x1c0c048); }
+    putreg32(0x2cf059f, TCON0_BASIC0_REG);
 
-    // TCON0_ECC_FIFO: Offset 0xf8 (Undocumented)
+    // TCON0_ECC_FIFO: TCON0 Offset 0xf8 (Undocumented)
     // Set to 8
-    putreg32(0x8, 0x1c0c0f8);
+    const TCON0_ECC_FIFO = TCON0_BASE_ADDRESS + 0xf8;
+    comptime{ assert(TCON0_ECC_FIFO == 0x1c0c0f8); }
+    putreg32(0x8, TCON0_ECC_FIFO);
 
     // TCON0_CPU_IF_REG: TCON0 Offset 0x60 (A64 Page 516)
     // Set CPU_Mode (Bits 28 to 31) to 1 (24-bit DSI)
@@ -172,26 +201,34 @@ pub export fn tcon0_init() void {
     // Set Trigger_FIFO_Bist_En (Bit 3) to 0 (Disable FIFO Bist Trigger)
     // Set Trigger_FIFO_En (Bit 2) to 1 (Enable FIFO Trigger)
     // Set Trigger_En (Bit 0) to 1 (Enable Trigger Mode)
-    putreg32(0x10010005, 0x1c0c060);
+    const TCON0_CPU_IF_REG = TCON0_BASE_ADDRESS + 0x60;
+    comptime{ assert(TCON0_CPU_IF_REG == 0x1c0c060); }
+    putreg32(0x10010005, TCON0_CPU_IF_REG);
 
     // Set CPU Panel Trigger
     // TCON0_CPU_TRI0_REG: TCON0 Offset 0x160 (A64 Page 521)
     // Set Block_Space (Bits 16 to 27) to 47 (Block Space)
     // Set Block_Size (Bits 0 to 11) to 719 (Panel Width - 1)
     debug("Set CPU Panel Trigger", .{});
-    putreg32(0x2f02cf, 0x1c0c160);
+    const TCON0_CPU_TRI0_REG = TCON0_BASE_ADDRESS + 0x160;
+    comptime{ assert(TCON0_CPU_TRI0_REG == 0x1c0c160); }
+    putreg32(0x2f02cf, TCON0_CPU_TRI0_REG);
 
     // TCON0_CPU_TRI1_REG: TCON0 Offset 0x164 (A64 Page 522)
     // Set Block_Current_Num (Bits 16 to 31) to 0 (Block Current Number)
     // Set Block_Num (Bits 0 to 15) to 1439 (Panel Height - 1)
-    putreg32(0x59f, 0x1c0c164);
+    const TCON0_CPU_TRI1_REG = TCON0_BASE_ADDRESS + 0x164;
+    comptime{ assert(TCON0_CPU_TRI1_REG == 0x1c0c164); }
+    putreg32(0x59f, TCON0_CPU_TRI1_REG);
 
     // TCON0_CPU_TRI2_REG: TCON0 Offset 0x168 (A64 Page 522)
     // Set Start_Delay (Bits 16 to 31) to 7106 (Start Delay)
     // Set Trans_Start_Mode (Bit 15) to 0 (Trans Start Mode is ECC FIFO + TRI FIFO)
     // Set Sync_Mode (Bits 13 to 14) to 0 (Sync Mode is Auto)
     // Set Trans_Start_Set (Bits 0 to 12) to 10 (Trans Start Set)
-    putreg32(0x1bc2000a, 0x1c0c168);
+    const TCON0_CPU_TRI2_REG = TCON0_BASE_ADDRESS + 0x168;
+    comptime{ assert(TCON0_CPU_TRI2_REG == 0x1c0c168); }
+    putreg32(0x1bc2000a, TCON0_CPU_TRI2_REG);
 
     // Set Safe Period
     // TCON_SAFE_PERIOD_REG: TCON0 Offset 0x1f0 (A64 Page 525)
@@ -199,7 +236,9 @@ pub export fn tcon0_init() void {
     // Set Safe_Period_Line (Bits 4 to 15) to 0
     // Set Safe_Period_Mode (Bits 0 to 2) to 3 (Safe Period Mode: Safe at 2 and safe at sync active)
     debug("Set Safe Period", .{});
-    putreg32(0xbb80003, 0x1c0c1f0);
+    const TCON_SAFE_PERIOD_REG = TCON0_BASE_ADDRESS + 0x1f0;
+    comptime{ assert(TCON_SAFE_PERIOD_REG == 0x1c0c1f0); }
+    putreg32(0xbb80003, TCON_SAFE_PERIOD_REG);
 
     // Enable Output Triggers
     // TCON0_IO_TRI_REG: TCON0 Offset 0x8c (A64 Page 520)
@@ -211,13 +250,15 @@ pub export fn tcon0_init() void {
     // Set IO0_Output_Tri_En (Bit 24) to 0 (Enable IO0 Output Tri)
     // Set Data_Output_Tri_En (Bits 0 to 23) to 0 (Enable TCON0 Output Port)
     debug("Enable Output Triggers", .{});
-    putreg32(0xe0000000, 0x1c0c08c);  // TODO: DMB
+    comptime{ assert(TCON0_IO_TRI_REG == 0x1c0c08c); }
+    putreg32(0xe0000000, TCON0_IO_TRI_REG);  // TODO: DMB
 
     // Enable TCON0
     // TCON_GCTL_REG: TCON0 Offset 0x00 (A64 Page 508)
     // Set TCON_En (Bit 31) to 1 (Enable TCON0)
     debug("Enable TCON0", .{});
-    modreg32(0x80000000, 0x80000000, 0x1c0c000);  // TODO: DMB
+    comptime{ assert(TCON_GCTL_REG == 0x1c0c000); }
+    modreg32(0x80000000, 0x80000000, TCON_GCTL_REG);  // TODO: DMB
 }
 
 /// Modify the specified bits in a memory mapped register.
