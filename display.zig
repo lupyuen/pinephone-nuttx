@@ -952,55 +952,71 @@ pub export fn enable_dsi_block() void {
     putreg32(0, DSI_TRANS_ZERO_REG);  // TODO: DMB
 
     // Set Instructions (Undocumented)
-    // DSI_INST_FUNC_REG(0): DSI Offset 0x20 (DSI_INST_ID_LP11)
+    // DSI_INST_FUNC_REG(0): DSI Offset 0x20
     // Set to 0x1f
+    // Index 0 is DSI_INST_ID_LP11
     debug("Set Instructions", .{});
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x1f,       0x1ca0020);  // TODO: DMB
+    const DSI_INST_ID_LP11 = 0;
+    comptime{ assert(DSI_INST_FUNC_REG(DSI_INST_ID_LP11) == 0x1ca0020); }
+    putreg32(0x1f, DSI_INST_FUNC_REG(DSI_INST_ID_LP11));  // TODO: DMB
 
-    // DSI_INST_FUNC_REG(1): DSI Offset 0x24 (DSI_INST_ID_TBA)
+    // DSI_INST_FUNC_REG(1): DSI Offset 0x24
     // Set to 0x1000 0001
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x1000_0001, 0x1ca0024);  // TODO: DMB
+    // Index 1 is DSI_INST_ID_TBA
+    const DSI_INST_ID_TBA = 1;
+    comptime{ assert(DSI_INST_FUNC_REG(DSI_INST_ID_TBA) == 0x1ca0024); }
+    putreg32(0x1000_0001, DSI_INST_FUNC_REG(DSI_INST_ID_TBA));  // TODO: DMB
 
-    // DSI_INST_FUNC_REG(2): DSI Offset 0x28 (DSI_INST_ID_HSC)
+    // DSI_INST_FUNC_REG(2): DSI Offset 0x28
     // Set to 0x2000 0010
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x2000_0010, 0x1ca0028);  // TODO: DMB
+    // Index 2 is DSI_INST_ID_HSC
+    const DSI_INST_ID_HSC = 2;
+    comptime{ assert(DSI_INST_FUNC_REG(DSI_INST_ID_HSC) == 0x1ca0028); }
+    putreg32(0x2000_0010, DSI_INST_FUNC_REG(DSI_INST_ID_HSC));  // TODO: DMB
 
-    // DSI_INST_FUNC_REG(3): DSI Offset 0x2c (DSI_INST_ID_HSD)
+    // DSI_INST_FUNC_REG(3): DSI Offset 0x2c
     // Set to 0x2000 000f
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x2000_000f, 0x1ca002c);  // TODO: DMB
+    // Index 3 is DSI_INST_ID_HSD
+    const DSI_INST_ID_HSD = 3;
+    comptime{ assert(DSI_INST_FUNC_REG(DSI_INST_ID_HSD) == 0x1ca002c); }
+    putreg32(0x2000_000f, DSI_INST_FUNC_REG(DSI_INST_ID_HSD));  // TODO: DMB
 
-    // DSI_INST_FUNC_REG(4): DSI Offset 0x30 (DSI_INST_ID_LPDT)
+    // DSI_INST_FUNC_REG(4): DSI Offset 0x30
     // Set to 0x3010 0001
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x3010_0001, 0x1ca0030);  // TODO: DMB
+    // Index 4 is DSI_INST_ID_LPDT
+    const DSI_INST_ID_LPDT = 4;
+    comptime{ assert(DSI_INST_FUNC_REG(DSI_INST_ID_LPDT) == 0x1ca0030); }
+    putreg32(0x3010_0001, DSI_INST_FUNC_REG(DSI_INST_ID_LPDT));  // TODO: DMB
 
-    // DSI_INST_FUNC_REG(5): DSI Offset 0x34 (DSI_INST_ID_HSCEXIT)
+    // DSI_INST_FUNC_REG(5): DSI Offset 0x34
     // Set to 0x4000 0010
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x4000_0010, 0x1ca0034);  // TODO: DMB
+    // Index 5 is DSI_INST_ID_HSCEXIT
+    const DSI_INST_ID_HSCEXIT = 5;
+    comptime{ assert(DSI_INST_FUNC_REG(DSI_INST_ID_HSCEXIT) == 0x1ca0034); }
+    putreg32(0x4000_0010, DSI_INST_FUNC_REG(DSI_INST_ID_HSCEXIT));  // TODO: DMB
 
-    // DSI_INST_FUNC_REG(6): DSI Offset 0x38 (DSI_INST_ID_NOP)
+    // DSI_INST_FUNC_REG(6): DSI Offset 0x38
     // Set to 0xf
-    comptime{ assert(0000 == 0000); }
-    putreg32(0xf, 0x1ca0038);  // TODO: DMB
+    // Index 6 is DSI_INST_ID_NOP
+    const DSI_INST_ID_NOP = 6;
+    comptime{ assert(DSI_INST_FUNC_REG(DSI_INST_ID_NOP) == 0x1ca0038); }
+    putreg32(0xf, DSI_INST_FUNC_REG(DSI_INST_ID_NOP));  // TODO: DMB
 
-    // DSI_INST_FUNC_REG(7): DSI Offset 0x3c (DSI_INST_ID_DLY)
+    // DSI_INST_FUNC_REG(7): DSI Offset 0x3c
     // Set to 0x5000 001f
-    // (DSI_INST_FUNC_REG(n) is (0x020 + (n) * 0x04))
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x5000_001f, 0x1ca003c);  // TODO: DMB
+    // Index 7 is DSI_INST_ID_DLY
+    const DSI_INST_ID_DLY = 7;
+    comptime{ assert(DSI_INST_FUNC_REG(DSI_INST_ID_DLY) == 0x1ca003c); }
+    putreg32(0x5000_001f, DSI_INST_FUNC_REG(DSI_INST_ID_DLY));  // TODO: DMB
 
     // Configure Jump Instructions (Undocumented)
-    // DSI_INST_JUMP_CFG_REG(0): DSI Offset 0x4c (DSI_INST_JUMP_CFG)
+    // DSI_INST_JUMP_CFG_REG(0): DSI Offset 0x4c
     // Set to 0x56 0001    
-    // (DSI_INST_JUMP_CFG_REG(n) is (0x04c + (n) * 0x04))
+    // Index 0 is DSI_INST_JUMP_CFG
     debug("Configure Jump Instructions", .{});
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x56_0001,   0x1ca004c);  // TODO: DMB
+    const DSI_INST_JUMP_CFG = 0;
+    comptime{ assert(DSI_INST_JUMP_CFG_REG(DSI_INST_JUMP_CFG) == 0x1ca004c); }
+    putreg32(0x56_0001, DSI_INST_JUMP_CFG_REG(DSI_INST_JUMP_CFG));  // TODO: DMB
 
     // DSI_DEBUG_DATA_REG: DSI Offset 0x2f8
     // Set to 0xff
@@ -1046,17 +1062,15 @@ pub export fn enable_dsi_block() void {
     comptime{ assert(DSI_INST_LOOP_SEL_REG == 0x1ca0040); }
     putreg32(0x3000_0002, DSI_INST_LOOP_SEL_REG);  // TODO: DMB
 
-    // (DSI_INST_LOOP_NUM_REG(n) is (0x044 + (n) * 0x10))
-
     // DSI_INST_LOOP_NUM_REG(0): DSI Offset 0x44
     // Set to 0x31 0031
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x310031,   0x1ca0044);  // TODO: DMB
+    comptime{ assert(DSI_INST_LOOP_NUM_REG(0) == 0x1ca0044); }
+    putreg32(0x310031, DSI_INST_LOOP_NUM_REG(0));  // TODO: DMB
 
     // DSI_INST_LOOP_NUM_REG(1): DSI Offset 0x54
     // Set to 0x31 0031
-    comptime{ assert(0000 == 0000); }
-    putreg32(0x310031,   0x1ca0054);  // TODO: DMB
+    comptime{ assert(DSI_INST_LOOP_NUM_REG(1) == 0x1ca0054); }
+    putreg32(0x310031, DSI_INST_LOOP_NUM_REG(1));  // TODO: DMB
 
     // Set Pixel Format
     // DSI_PIXEL_PH_REG: DSI Offset 0x90 (A31 Page 848)
@@ -1345,6 +1359,24 @@ pub export fn enable_dsi_block() void {
     putreg32(DSI_BLK_VBLK1, DSI_BLK_VBLK1_REG);  // TODO: DMB
 }
 
+/// DSI_INST_FUNC_REG(n) is (0x020 + (n) * 0x04)
+fn DSI_INST_FUNC_REG(n: u8) u64 {
+    return DSI_BASE_ADDRESS 
+        + (0x020 + @intCast(u64, n) * 0x04);
+}
+
+/// DSI_INST_JUMP_CFG_REG(n) is (0x04c + (n) * 0x04)
+fn DSI_INST_JUMP_CFG_REG(n: u8) u64 {
+    return DSI_BASE_ADDRESS 
+        + (0x04c + @intCast(u64, n) * 0x04);
+}
+
+/// DSI_INST_LOOP_NUM_REG(n) is (0x044 + (n) * 0x10)
+fn DSI_INST_LOOP_NUM_REG(n: u8) u64 {
+    return DSI_BASE_ADDRESS 
+        + (0x044 + @intCast(u64, n) * 0x10);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //  MIPI DSI HSC / HSD
 
@@ -1371,13 +1403,18 @@ pub export fn start_dsi() void {
     comptime{ assert(Instru_En == 0x1); }
     modreg32(Instru_En, Instru_En, DSI_BASIC_CTL0_REG);  // TODO: DMB
 
-    // Instruction Function Lane (Undocumented)
-    // DSI_INST_FUNC_REG(0): DSI Offset 0x20 (DSI_INST_ID_LP11)
-    // Set DSI_INST_FUNC_LANE_CEN (Bit 4) to 0
     // (DSI_INST_FUNC_REG(n) is (0x020 + (n) * 0x04))
+
+    // Instruction Function Lane (Undocumented)
+    // DSI_INST_FUNC_REG(0): DSI Offset 0x20
+    // Set DSI_INST_FUNC_LANE_CEN (Bit 4) to 0
+    // Index 0 is DSI_INST_ID_LP11
     debug("Instruction Function Lane", .{});
-    comptime{ assert(0000 == 0000); }
-    modreg32(0x0, 0x10, 0x1ca0020);  // TODO: DMB
+    comptime{ assert(DSI_INST_FUNC_REG(0) == 0x1ca0020); }
+
+    const DSI_INST_FUNC_LANE_CEN: u5 = 1 << 4;
+    comptime { assert(DSI_INST_FUNC_LANE_CEN == 0x10); }
+    modreg32(0x0, DSI_INST_FUNC_LANE_CEN, DSI_INST_FUNC_REG(0) );  // TODO: DMB
 
     // Wait 1,000 microseconds
     _ = c.usleep(1000);
