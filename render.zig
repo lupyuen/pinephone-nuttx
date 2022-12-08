@@ -1076,6 +1076,40 @@ fn putreg32(val: u32, addr: u64) void {
 var enableLog = true;
 
 ///////////////////////////////////////////////////////////////////////////////
+//  Main Function
+
+/// Main Function that will be called by NuttX.
+/// Comment out this function if NuttX Build fails due to duplicate `hello_main`.
+pub export fn hello_main(
+    argc: c_int, 
+    argv: [*c]const [*c]u8
+) c_int {
+    debug("hello_main (render.zig)", .{});
+
+    // Quit if no args specified
+    if (argc <= 1) { usage(); return -1; }
+
+    // Run a command like "test" or "test2"
+    if (argc == 2) {
+        const cmd = std.mem.span(argv[1]);
+        if (std.mem.eql(u8, cmd, "test")) {
+            return 0;
+        }
+        else if (std.mem.eql(u8, cmd, "test2")) {
+            return 0;
+        }
+    }
+    return 0;
+}
+
+/// Print the Command-Line Options
+fn usage() void {
+    const err = std.log.err;
+    err("hello test", .{});
+    err(" Test something", .{});
+}
+
+///////////////////////////////////////////////////////////////////////////////
 //  Panic Handler
 
 /// Called by Zig when it hits a Panic. We print the Panic Message, Stack Trace and halt. See 
