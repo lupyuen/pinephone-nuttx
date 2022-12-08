@@ -62,7 +62,12 @@ pub export fn dphy_enable() void {
     const MIPI_DSI_CLK_REG = CCU_BASE_ADDRESS + 0x168;
     comptime{ assert(MIPI_DSI_CLK_REG == 0x1c20168); }
 
-    const MIPI_DSI_CLK = 0x8203;
+    const DSI_DPHY_GATING:  u16 = 1    << 15;
+    const DSI_DPHY_SRC_SEL: u10 = 0b10 << 8;
+    const DPHY_CLK_DIV_M:   u4  = 3    << 0;
+    const MIPI_DSI_CLK = DSI_DPHY_GATING
+        | DSI_DPHY_SRC_SEL
+        | DPHY_CLK_DIV_M;
     comptime{ assert(MIPI_DSI_CLK == 0x8203); }
     putreg32(MIPI_DSI_CLK, MIPI_DSI_CLK_REG);  // TODO: DMB
 
