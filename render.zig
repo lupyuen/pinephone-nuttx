@@ -120,19 +120,21 @@ fn renderGraphics(
     // Init Framebuffer 2:
     // Fill with Semi-Transparent Green Circle
     var y: usize = 0;
-    while (y < 1440) : (y += 1) {
+    while (y < PANEL_HEIGHT) : (y += 1) {
         var x: usize = 0;
-        while (x < 720) : (x += 1) {
+        while (x < PANEL_WIDTH) : (x += 1) {
             // Get pixel index
-            const p = (y * 720) + x;
+            const p = (y * PANEL_WIDTH) + x;
             assert(p < fb2.len);
 
             // Shift coordinates so that centre of screen is (0,0)
-            const x_shift = @intCast(isize, x) - 360;
-            const y_shift = @intCast(isize, y) - 720;
+            const half_width  = PANEL_WIDTH  / 2;
+            const half_height = PANEL_HEIGHT / 2;
+            const x_shift = @intCast(isize, x) - half_width;
+            const y_shift = @intCast(isize, y) - half_height;
 
             // If x^2 + y^2 < radius^2, set the pixel to Semi-Transparent Green
-            if (x_shift*x_shift + y_shift*y_shift < 360*360) {
+            if (x_shift*x_shift + y_shift*y_shift < half_width*half_width) {
                 fb2[p] = 0x8000_8000;  // Semi-Transparent Green in ARGB 8888 Format
             } else {  // Otherwise set to Transparent Black
                 fb2[p] = 0x0000_0000;  // Transparent Black in ARGB 8888 Format
@@ -636,11 +638,15 @@ fn initUiChannel(
     putreg32(0, UIS_CTRL_REG);
 }
 
+/// LCD Panel Width and Height (pixels)
+const PANEL_WIDTH  = 720;
+const PANEL_HEIGHT = 1440;
+
 /// NuttX Video Controller for PinePhone (3 UI Channels)
 const videoInfo = c.fb_videoinfo_s {
     .fmt       = c.FB_FMT_RGBA32,  // Pixel format (XRGB 8888)
-    .xres      = 720,   // Horizontal resolution in pixel columns
-    .yres      = 1440,  // Vertical resolution in pixel rows
+    .xres      = PANEL_WIDTH,      // Horizontal resolution in pixel columns
+    .yres      = PANEL_HEIGHT,     // Vertical resolution in pixel rows
     .nplanes   = 1,     // Number of color planes supported (Base UI Channel)
     .noverlays = 2,     // Number of overlays supported (2 Overlay UI Channels)
 };
@@ -650,11 +656,11 @@ const videoInfo = c.fb_videoinfo_s {
 const planeInfo = c.fb_planeinfo_s {
     .fbmem   = &fb0,     // Start of frame buffer memory
     .fblen   = @sizeOf( @TypeOf(fb0) ),  // Length of frame buffer memory in bytes
-    .stride  = 720 * 4,  // Length of a line in bytes (4 bytes per pixel)
+    .stride  = PANEL_WIDTH * 4,  // Length of a line in bytes (4 bytes per pixel)
     .display = 0,        // Display number (Unused)
     .bpp     = 32,       // Bits per pixel (XRGB 8888)
-    .xres_virtual = 720,   // Virtual Horizontal resolution in pixel columns
-    .yres_virtual = 1440,  // Virtual Vertical resolution in pixel rows
+    .xres_virtual = PANEL_WIDTH,   // Virtual Horizontal resolution in pixel columns
+    .yres_virtual = PANEL_HEIGHT,  // Virtual Vertical resolution in pixel rows
     .xoffset      = 0,     // Offset from virtual to visible resolution
     .yoffset      = 0,     // Offset from virtual to visible resolution
 };
@@ -681,14 +687,14 @@ const overlayInfo = [2] c.fb_overlayinfo_s {
     .{
         .fbmem     = &fb2,     // Start of frame buffer memory
         .fblen     = @sizeOf( @TypeOf(fb2) ),  // Length of frame buffer memory in bytes
-        .stride    = 720 * 4,  // Length of a line in bytes
+        .stride    = PANEL_WIDTH * 4,  // Length of a line in bytes
         .overlay   = 1,        // Overlay number (Second Overlay)
         .bpp       = 32,       // Bits per pixel (ARGB 8888)
         .blank     = 0,        // TODO: Blank or unblank
         .chromakey = 0,        // TODO: Chroma key argb8888 formatted
         .color     = 0,        // TODO: Color argb8888 formatted
         .transp    = c.fb_transp_s { .transp = 0, .transp_mode = 0 },  // TODO: Transparency
-        .sarea     = c.fb_area_s { .x = 0, .y = 0, .w = 720, .h = 1440 },  // Selected area within the overlay
+        .sarea     = c.fb_area_s { .x = 0, .y = 0, .w = PANEL_WIDTH, .h = PANEL_HEIGHT },  // Selected area within the overlay
         .accl      = 0,        // TODO: Supported hardware acceleration
     },
 };
@@ -696,7 +702,7 @@ const overlayInfo = [2] c.fb_overlayinfo_s {
 // Framebuffer 0: (Base UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
 // TODO: Does alignment prevent flickering?
-var fb0 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
+var fb0 align(0x1000) = std.mem.zeroes([PANEL_WIDTH * PANEL_HEIGHT] u32);
 
 // Framebuffer 1: (First Overlay UI Channel)
 // Square 600 x 600 (4 bytes per ARGB 8888 pixel)
@@ -706,7 +712,7 @@ var fb1 align(0x1000) = std.mem.zeroes([600 * 600] u32);
 // Framebuffer 2: (Second Overlay UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per ARGB 8888 pixel)
 // TODO: Does alignment prevent flickering?
-var fb2 align(0x1000) = std.mem.zeroes([720 * 1440] u32);
+var fb2 align(0x1000) = std.mem.zeroes([PANEL_WIDTH * PANEL_HEIGHT] u32);
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Init Display Engine
