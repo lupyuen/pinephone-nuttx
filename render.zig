@@ -1087,7 +1087,7 @@ pub export fn hello_main(
     argc: c_int, 
     argv: [*c]const [*c]u8
 ) c_int {
-    debug("hello_main (render.zig)", .{});
+    debug("pinephone-nuttx/render.zig: hello_main", .{});
 
     // Quit if no args specified
     if (argc <= 1) { usage(); return -1; }
@@ -1124,7 +1124,7 @@ pub export fn hello_main(
             // Init LCD Panel
             ////dsi.panel_init();
             const fd = c.open("/dev/userleds", c.O_WRONLY); assert(fd > 0);
-            const ret = c.ioctl(fd, c.ULEDIOC_SETALL, @intCast(c_int, 0)); assert(ret >= 0);
+            const ret = c.ioctl(fd, c.ULEDIOC_SETALL, @intCast(c_int, 6)); assert(ret >= 0);
             _ = c.close(fd);
 
         } else if (std.mem.eql(u8, cmd, "h")) {
