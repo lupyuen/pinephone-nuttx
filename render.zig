@@ -1142,6 +1142,14 @@ pub export fn hello_main(
             // Render Graphics with Display Engine
             renderGraphics(3);  // Render 3 UI Channels
 
+        } else if (std.mem.eql(u8, cmd, "1")) {
+            // Render 1 UI Channel
+            test_render(1);
+
+        } else if (std.mem.eql(u8, cmd, "3")) {
+            // Render 3 UI Channels
+            test_render(1);
+
         } else {
             usage(); return -1;
         }
@@ -1170,6 +1178,10 @@ fn usage() void {
     err(" Start MIPI DSI HSC and HSD", .{});
     err("hello i", .{});
     err(" Render Graphics with Display Engine", .{});
+    err("hello 1", .{});
+    err(" Render 1 UI Channel", .{});
+    err("hello 3", .{});
+    err(" Render 3 UI Channels", .{});
 }
 
 ///////////////////////////////////////////////////////////////////////////////
