@@ -4375,9 +4375,9 @@ Found U-Boot script /boot.scr
 653 bytes read in 3 ms (211.9 KiB/s)
 ## Executing script at 4fc00000
 gpio: pin 114 (gpio 114) value is 1
-244176 bytes read in 15 ms (15.5 MiB/s)
-Uncompressed size: 10448896 = 0x9F7000
-36162 bytes read in 5 ms (6.9 MiB/s)
+245494 bytes read in 14 ms (16.7 MiB/s)
+Uncompressed size: 10457088 = 0x9F9000
+36162 bytes read in 4 ms (8.6 MiB/s)
 1078500 bytes read in 50 ms (20.6 MiB/s)
 ## Flattened Device Tree blob at 4fa00000
    Booting using the fdt blob at 0x4fa00000
@@ -4392,20 +4392,20 @@ HELLO NUTTX ON PINEPHONE!
 - Boot from EL1
 - Boot to C runtime for OS Initialize
 nx_start: Entry
-up_allocate_heap: heap_start=0x0x40a77000, heap_size=0x7589000
+up_allocate_heap: heap_start=0x0x40a79000, heap_size=0x7587000
 arm64_gic_initialize: TODO: Init GIC for PinePhone
 arm64_gic_initialize: CONFIG_GICD_BASE=0x1c81000
 arm64_gic_initialize: CONFIG_GICR_BASE=0x1c82000
 arm64_gic_initialize: GIC Version is 2
 up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-up_timer_initialize: _vector_table=0x400fc000
-up_timer_initialize: Before writing: vbar_el1=0x4027c000
-up_timer_initialize: After writing: vbar_el1=0x400fc000
+up_timer_initialize: _vector_table=0x400fe000
+up_timer_initialize: Before writing: vbar_el1=0x4027e000
+up_timer_initialize: After writing: vbar_el1=0x400fe000
 uart_register: Registering /dev/console
 uart_register: Registering /dev/ttyS0
 work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400fc000 _einit: 0x400fc000 _stext: 0x40080000 _etext: 0x400fd000
+lib_cxx_initialize: _sinit: 0x400fe000 _einit: 0x400fe000 _stext: 0x40080000 _etext: 0x400ff000
 nsh: sysinit: fopen failed: 2
 nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
 e
@@ -4420,7 +4420,7 @@ nsh> uname -a
 NuttX 11.0.0-RC2 a33f82d Dec  2 2022 17:57:39 arm64 qemu-a53
 nsh> 
 nsh> hello 3
-task_spawn: name=hello entry=0x4009b4f8 file_actions=0x40a7c580 attr=0x40a7c588 argv=0x40a7c6d0
+task_spawn: name=hello entry=0x4009b4f8 file_actions=0x40a7e580 attr=0x40a7e588 argv=0x40a7e6d0
 spawn_execattrs: Setting policy=2 priority=100 for pid=3
 ABHello, World!!
 pd_cfg2_reg=0x77711177
@@ -4445,37 +4445,38 @@ Set PH10 to High
   *0x1c2090c = 0x400
 backlight_enable: end
 tcon0_init: start
-PLL_VIDEO0
+Configure PLL_VIDEO0
   *0x1c20010 = 0x81006207
-PLL_MIPI
+Enable LDO1 and LDO2
   *0x1c20040 = 0xc00000
+Configure MIPI PLL
   *0x1c20040 = 0x80c0071a
-TCON0 source MIPI_PLL
+Set TCON0 Clock Source to MIPI PLL
   *0x1c20118 = 0x80000000
-Clock on
+Enable TCON0 Clock
   *0x1c20064 = 0x8
-Reset off
+Deassert TCON0 Reset
   *0x1c202c4 = 0x8
-Init lcdc: Disable tcon, Disable all interrupts
+Disable TCON0 and Interrupts
   *0x1c0c000 = 0x0
   *0x1c0c004 = 0x0
   *0x1c0c008 = 0x0
-Set all io lines to tristate
+Enable Tristate Output
   *0x1c0c08c = 0xffffffff
   *0x1c0c0f4 = 0xffffffff
-mode set: DCLK = MIPI_PLL / 6
+Set DCLK to MIPI PLL / 6
   *0x1c0c044 = 0x80000006
   *0x1c0c040 = 0x81000000
   *0x1c0c048 = 0x2cf059f
   *0x1c0c0f8 = 0x8
   *0x1c0c060 = 0x10010005
-Set pixel cycle
+Set CPU Panel Trigger
   *0x1c0c160 = 0x2f02cf
   *0x1c0c164 = 0x59f
   *0x1c0c168 = 0x1bc2000a
-Set period
+Set Safe Period
   *0x1c0c1f0 = 0xbb80003
-Enable output
+Enable Output Triggers
   *0x1c0c08c = 0xe0000000
 Enable TCON0
   *0x1c0c000: clear 0x80000000, set 0x80000000
@@ -4547,17 +4548,17 @@ Set DLDO2 Voltage to 1.8V
 Wait for power supply and power-on init
 display_board_init: end
 enable_dsi_block: start
-mipi dsi bus enable
+Enable MIPI DSI Bus
   *0x1c20060: clear 0x2, set 0x2
   *0x1c20060 = 0x4742
   *0x1c202c0: clear 0x2, set 0x2
   *0x1c202c0 = 0x4742
-Enable the DSI block
+Enable DSI Block
   *0x1ca0000 = 0x1
   *0x1ca0010 = 0x30000
   *0x1ca0060 = 0xa
   *0x1ca0078 = 0x0
-inst_init
+Set Instructions
   *0x1ca0020 = 0x1f
   *0x1ca0024 = 0x10000001
   *0x1ca0028 = 0x20000010
@@ -4566,29 +4567,32 @@ inst_init
   *0x1ca0034 = 0x40000010
   *0x1ca0038 = 0xf
   *0x1ca003c = 0x5000001f
+Configure Jump Instructions
   *0x1ca004c = 0x560001
   *0x1ca02f8 = 0xff
-get_video_start_delay
+Set Video Start Delay
   *0x1ca0014 = 0x5bc7
-setup_burst
+Set Burst
   *0x1ca007c = 0x10000007
-setup_inst_loop
+Set Instruction Loop
   *0x1ca0040 = 0x30000002
   *0x1ca0044 = 0x310031
   *0x1ca0054 = 0x310031
-setup_format
+Set Pixel Format
   *0x1ca0090 = 0x1308703e
   *0x1ca0098 = 0xffff
   *0x1ca009c = 0xffffffff
   *0x1ca0080 = 0x10008
-setup_timings
+Set Sync Timings
   *0x1ca000c = 0x0
   *0x1ca00b0 = 0x12000021
   *0x1ca00b4 = 0x1000031
   *0x1ca00b8 = 0x7000001
   *0x1ca00bc = 0x14000011
+Set Basic Size
   *0x1ca0018 = 0x11000a
   *0x1ca001c = 0x5cd05a0
+Set Horizontal Blanking
   *0x1ca00c0 = 0x9004a19
   *0x1ca00c4 = 0x50b40000
   *0x1ca00c8 = 0x35005419
@@ -4597,23 +4601,27 @@ setup_timings
   *0x1ca00d4 = 0x50b40000
   *0x1ca00e0 = 0xc091a19
   *0x1ca00e4 = 0x72bd0000
+Set Vertical Blanking
   *0x1ca00e8 = 0x1a000019
   *0x1ca00ec = 0xffff0000
 enable_dsi_block: end
 dphy_enable: start
-150MHz (600 / 4)
+Set DSI Clock to 150 MHz
   *0x1c20168 = 0x8203
+Power on DPHY Tx
   *0x1ca1004 = 0x10000000
   *0x1ca1010 = 0xa06000e
   *0x1ca1014 = 0xa033207
   *0x1ca1018 = 0x1e
   *0x1ca101c = 0x0
   *0x1ca1020 = 0x303
+Enable DPHY
   *0x1ca1000 = 0x31
   *0x1ca104c = 0x9f007f00
   *0x1ca1050 = 0x17000000
   *0x1ca105c = 0x1f01555
   *0x1ca1054 = 0x2
+Enable LDOR, LDOC, LDOD
   *0x1ca1058 = 0x3040000
   *0x1ca1058: clear 0xf8000000, set 0xf8000000
   *0x1ca1058 = 0xfb040000
@@ -4985,14 +4993,15 @@ modifyreg32: addr=0x010, val=0x00000000
 modifyreg32: addr=0x010, val=0x00000001
 panel_init: end
 start_dsi: start
-DSI_START_HSC
+Start HSC
   *0x1ca0048 = 0xf02
 Commit
   *0x1ca0010: clear 0x1, set 0x1
   *0x1ca0010 = 0x30001
+Instruction Function Lane
   *0x1ca0020: clear 0x10, set 0x0
   *0x1ca0020 = 0xf
-DSI_START_HSD
+Start HSD
   *0x1ca0048 = 0x63f07006
 Commit
   *0x1ca0010: clear 0x1, set 0x1
@@ -5063,7 +5072,7 @@ initUiBlender: end
 initUiChannel: start
 Channel 1: Set Overlay (720 x 1440)
   *0x1103000 = 0xff000405
-  *0x1103010 = 0x40128000
+  *0x1103010 = 0x4012a000
   *0x110300c = 0xb40
   *0x1103004 = 0x59f02cf
   *0x1103088 = 0x59f02cf
@@ -5082,7 +5091,7 @@ initUiChannel: end
 initUiChannel: start
 Channel 2: Set Overlay (600 x 600)
   *0x1104000 = 0xff000005
-  *0x1104010 = 0x4051d000
+  *0x1104010 = 0x4051f000
   *0x110400c = 0x960
   *0x1104004 = 0x2570257
   *0x1104088 = 0x2570257
@@ -5098,7 +5107,7 @@ initUiChannel: end
 initUiChannel: start
 Channel 3: Set Overlay (720 x 1440)
   *0x1105000 = 0x7f000005
-  *0x1105010 = 0x4067d000
+  *0x1105010 = 0x4067f000
   *0x110500c = 0xb40
   *0x1105004 = 0x59f02cf
   *0x1105088 = 0x59f02cf
