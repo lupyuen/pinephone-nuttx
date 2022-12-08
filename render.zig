@@ -58,10 +58,13 @@ const c = @cImport({
     @cInclude("arch/types.h");
     @cInclude("../../nuttx/include/limits.h");
     @cInclude("nuttx/config.h");
+    @cInclude("sys/ioctl.h");
     @cInclude("inttypes.h");
     @cInclude("unistd.h");
     @cInclude("stdlib.h");
     @cInclude("stdio.h");
+    @cInclude("fcntl.h");
+    @cInclude("nuttx/leds/userled.h");
 
     // NuttX Framebuffer Header Files
     @cInclude("nuttx/video/fb.h");
@@ -194,7 +197,7 @@ pub export fn test_render(
     // Init Timing Controller TCON0
     tcon.tcon0_init();
 
-    // Init Display Board
+    // Init Power Mgmt IC
     pmic.display_board_init();
 
     // Enable MIPI DSI Block
@@ -1078,7 +1081,7 @@ var enableLog = true;
 ///////////////////////////////////////////////////////////////////////////////
 //  Main Function
 
-/// Main Function that will be called by NuttX.
+/// Main Function that will be called by NuttX when we run the `hello` app.
 /// Comment out this function if NuttX Build fails due to duplicate `hello_main`.
 pub export fn hello_main(
     argc: c_int, 
@@ -1089,14 +1092,58 @@ pub export fn hello_main(
     // Quit if no args specified
     if (argc <= 1) { usage(); return -1; }
 
-    // Run a command like "test" or "test2"
+    // Run a command like "a" or "b"
     if (argc == 2) {
         const cmd = std.mem.span(argv[1]);
-        if (std.mem.eql(u8, cmd, "test")) {
-            return 0;
-        }
-        else if (std.mem.eql(u8, cmd, "test2")) {
-            return 0;
+        if (std.mem.eql(u8, cmd, "a")) {
+            // Turn on Display Backlight
+            backlight.backlight_enable(90);
+
+        } else if (std.mem.eql(u8, cmd, "b")) {
+            // Init Timing Controller TCON0
+            tcon.tcon0_init();
+
+        } else if (std.mem.eql(u8, cmd, "c")) {
+            // Init PMIC
+            pmic.display_board_init();
+
+        } else if (std.mem.eql(u8, cmd, "d")) {
+            // Enable MIPI DSI Block
+            dsi.enable_dsi_block();
+            ////TODO
+
+        } else if (std.mem.eql(u8, cmd, "e")) {
+            // Enable MIPI Display Physical Layer
+            dphy.dphy_enable();
+
+        } else if (std.mem.eql(u8, cmd, "f")) {
+            // Reset LCD Panel
+            panel.panel_reset();
+
+        } else if (std.mem.eql(u8, cmd, "g")) {
+            // Init LCD Panel
+            ////dsi.panel_init();
+            const fd = c.open("/dev/userleds", c.O_WRONLY); assert(fd > 0);
+            const ret = c.ioctl(fd, c.ULEDIOC_SETALL, @intCast(c_int, 0)); assert(ret >= 0);
+            _ = c.close(fd);
+
+        } else if (std.mem.eql(u8, cmd, "h")) {
+            // Start MIPI DSI HSC and HSD
+            dsi.start_dsi();
+            ////TODO
+
+        } else if (std.mem.eql(u8, cmd, "i")) {
+            // Init Display Engine
+            de2_init();
+
+            // Wait a while
+            _ = c.usleep(160000);
+
+            // Render Graphics with Display Engine
+            renderGraphics(3);  // Render 3 UI Channels
+
+        } else {
+            usage(); return -1;
         }
     }
     return 0;
@@ -1105,8 +1152,24 @@ pub export fn hello_main(
 /// Print the Command-Line Options
 fn usage() void {
     const err = std.log.err;
-    err("hello test", .{});
-    err(" Test something", .{});
+    err("hello a", .{});
+    err(" Turn on Display Backlight", .{});
+    err("hello b", .{});
+    err(" Init Timing Controller TCON0", .{});
+    err("hello c", .{});
+    err(" Init PMIC", .{});
+    err("hello d", .{});
+    err(" Enable MIPI DSI Block", .{});
+    err("hello e", .{});
+    err(" Enable MIPI Display Physical Layer", .{});
+    err("hello f", .{});
+    err(" Reset LCD Panel", .{});
+    err("hello g", .{});
+    err(" Init LCD Panel (pinephone_panel_init)", .{});
+    err("hello h", .{});
+    err(" Start MIPI DSI HSC and HSD", .{});
+    err("hello i", .{});
+    err(" Render Graphics with Display Engine", .{});
 }
 
 ///////////////////////////////////////////////////////////////////////////////
