@@ -41,6 +41,10 @@ const c = @cImport({
     @cInclude("stdio.h");
 });
 
+/// LCD Panel Width and Height (pixels)
+const PANEL_WIDTH  = 720;
+const PANEL_HEIGHT = 1440;
+
 /// Base Address of Allwinner A64 TCON0 Controller (A64 Page 507)
 const TCON0_BASE_ADDRESS = 0x01C0_C000;
 
@@ -285,8 +289,8 @@ pub export fn tcon0_init() void {
     const TCON0_BASIC0_REG = TCON0_BASE_ADDRESS + 0x48;
     comptime{ assert(TCON0_BASIC0_REG == 0x1c0c048); }
 
-    const TCON0_X: u28 = 719 << 16;
-    const TCON0_Y: u12 = 1439 << 0;
+    const TCON0_X: u28 = (PANEL_WIDTH  - 1) << 16;
+    const TCON0_Y: u12 = (PANEL_HEIGHT - 1) << 0;
     const TCON0_BASIC0 = TCON0_X
         | TCON0_Y;
     comptime{ assert(TCON0_BASIC0 == 0x2cf059f); }
@@ -331,8 +335,8 @@ pub export fn tcon0_init() void {
     const TCON0_CPU_TRI0_REG = TCON0_BASE_ADDRESS + 0x160;
     comptime{ assert(TCON0_CPU_TRI0_REG == 0x1c0c160); }
 
-    const Block_Space: u28 = 47  << 16;
-    const Block_Size:  u12 = 719 << 0;
+    const Block_Space: u28 = 47  << 16;  // TODO: Compute this based on Panel Width and Height 
+    const Block_Size:  u12 = (PANEL_WIDTH - 1) << 0;
     const TCON0_CPU_TRI0 = Block_Space
         | Block_Size;
     comptime{ assert(TCON0_CPU_TRI0 == 0x2f02cf); }
@@ -345,7 +349,7 @@ pub export fn tcon0_init() void {
     comptime{ assert(TCON0_CPU_TRI1_REG == 0x1c0c164); }
 
     const Block_Current_Num: u32 = 0    << 16;
-    const Block_Num:         u16 = 1439 << 0;
+    const Block_Num:         u16 = (PANEL_HEIGHT - 1) << 0;
     const TCON0_CPU_TRI1 = Block_Current_Num
         | Block_Num;
     comptime{ assert(TCON0_CPU_TRI1 == 0x59f); }
