@@ -277,6 +277,9 @@ const crc16ccitt_tab = [256]u16 {
 ///////////////////////////////////////////////////////////////////////////////
 //  MIPI DSI Operations for Allwinner A64
 
+/// MIPI DSI Virtual Channel
+const VIRTUAL_CHANNEL = 0;
+
 /// MIPI DSI Processor-to-Peripheral transaction types:
 /// DCS Long Write. See https://lupyuen.github.io/articles/dsi#display-command-set-for-mipi-dsi
 const MIPI_DSI_DCS_LONG_WRITE = 0x39;
@@ -308,17 +311,17 @@ fn writeDcs(buf: []const u8) void {
     const res = switch (buf.len) {
 
         // DCS Short Write (without parameter)
-        1 => nuttx_mipi_dsi_dcs_write(null, 0, 
+        1 => nuttx_mipi_dsi_dcs_write(null, VIRTUAL_CHANNEL, 
             MIPI_DSI_DCS_SHORT_WRITE, 
             &buf[0], buf.len),
 
         // DCS Short Write (with parameter)
-        2 => nuttx_mipi_dsi_dcs_write(null, 0, 
+        2 => nuttx_mipi_dsi_dcs_write(null, VIRTUAL_CHANNEL, 
             MIPI_DSI_DCS_SHORT_WRITE_PARAM, 
             &buf[0], buf.len),
 
         // DCS Long Write
-        else => nuttx_mipi_dsi_dcs_write(null, 0, 
+        else => nuttx_mipi_dsi_dcs_write(null, VIRTUAL_CHANNEL, 
             MIPI_DSI_DCS_LONG_WRITE, 
             &buf[0], buf.len),
     };
@@ -1084,7 +1087,7 @@ pub export fn enable_dsi_block() void {
     {
         const ECC: u32 = 19   << 24;
         const WC:  u24 = 2160 << 8;
-        const VC:  u8  = 0    << 6;
+        const VC:  u8  = VIRTUAL_CHANNEL << 6;
         const DT:  u6  = 0x3E << 0;
         const DSI_PIXEL_PH = ECC
             | WC
@@ -1150,7 +1153,7 @@ pub export fn enable_dsi_block() void {
         const ECC: u32 = 0x12 << 24;
         const D1:  u24 = 0    << 16;
         const D0:  u16 = 0    << 8;
-        const VC:  u8  = 0    << 6;
+        const VC:  u8  = VIRTUAL_CHANNEL << 6;
         const DT:  u6  = 0x21 << 0;
         const DSI_SYNC_HSS = ECC
             | D1
@@ -1173,7 +1176,7 @@ pub export fn enable_dsi_block() void {
         const ECC: u32 = 1    << 24;
         const D1:  u24 = 0    << 16;
         const D0:  u16 = 0    << 8;
-        const VC:  u8  = 0    << 6;
+        const VC:  u8  = VIRTUAL_CHANNEL << 6;
         const DT:  u6  = 0x31 << 0;
         const DSI_SYNC_HSE = ECC
             | D1
@@ -1196,7 +1199,7 @@ pub export fn enable_dsi_block() void {
         const ECC: u32 = 7 << 24;
         const D1:  u24 = 0 << 16;
         const D0:  u16 = 0 << 8;
-        const VC:  u8  = 0 << 6;
+        const VC:  u8  = VIRTUAL_CHANNEL << 6;
         const DT:  u6  = 1 << 0;
         const DSI_SYNC_VSS = ECC
             | D1
@@ -1219,7 +1222,7 @@ pub export fn enable_dsi_block() void {
         const ECC: u32 = 0x14 << 24;
         const D1:  u24 = 0    << 16;
         const D0:  u16 = 0    << 8;
-        const VC:  u8  = 0    << 6;
+        const VC:  u8  = VIRTUAL_CHANNEL << 6;
         const DT:  u6  = 0x11 << 0;
         const DSI_SYNC_VSE = ECC
             | D1
