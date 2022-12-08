@@ -66,10 +66,26 @@ pub export fn tcon0_init() void {
     debug("Configure PLL_VIDEO0", .{});
     const PLL_VIDEO0_CTRL_REG = CCU_BASE_ADDRESS + 0x10;
     comptime{ assert(PLL_VIDEO0_CTRL_REG == 0x1c20010); }
-
-    const PLL_VIDEO0_CTRL = 0x81006207;
-    comptime{ assert(PLL_VIDEO0_CTRL == 0x81006207); }
-    putreg32(PLL_VIDEO0_CTRL, PLL_VIDEO0_CTRL_REG);  // TODO: DMB
+    {
+        const PLL_ENABLE:   u32 = 1    << 31;
+        const PLL_MODE:     u31 = 0    << 30;
+        const LOCK:         u29 = 0    << 28;
+        const FRAC_CLK_OUT: u26 = 0    << 25;
+        const PLL_MODE_SEL: u25 = 1    << 24;
+        const PLL_SDM_EN:   u21 = 0    << 20;
+        const PLL_FACTOR_N: u15 = 0x62 << 8;
+        const PLL_PREDIV_M: u4  = 7    << 0;
+        const PLL_VIDEO0_CTRL = PLL_ENABLE
+            | PLL_MODE
+            | LOCK
+            | FRAC_CLK_OUT
+            | PLL_MODE_SEL
+            | PLL_SDM_EN
+            | PLL_FACTOR_N
+            | PLL_PREDIV_M;
+        comptime{ assert(PLL_VIDEO0_CTRL == 0x81006207); }
+        putreg32(PLL_VIDEO0_CTRL, PLL_VIDEO0_CTRL_REG);  // TODO: DMB        
+    }
 
     // Enable LDO1 and LDO2
     // PLL_MIPI_CTRL_REG: CCU Offset 0x40 (A64 Page 94)
@@ -79,7 +95,10 @@ pub export fn tcon0_init() void {
     const PLL_MIPI_CTRL_REG = CCU_BASE_ADDRESS + 0x40;
     comptime{ assert(PLL_MIPI_CTRL_REG == 0x1c20040); }
     {
-        const PLL_MIPI_CTRL = 0xc00000;
+        const LDO1_EN: u24 = 1 << 23;
+        const LDO2_EN: u23 = 1 << 22;
+        const PLL_MIPI_CTRL = LDO1_EN
+            | LDO2_EN;
         comptime{ assert(PLL_MIPI_CTRL == 0xc00000); }
         putreg32(PLL_MIPI_CTRL, PLL_MIPI_CTRL_REG);  // TODO: DMB
     }
@@ -106,7 +125,34 @@ pub export fn tcon0_init() void {
     debug("Configure MIPI PLL", .{});
     comptime{ assert(PLL_MIPI_CTRL_REG == 0x1c20040); }
     {
-        const PLL_MIPI_CTRL = 0x80c0071a;
+        const PLL_ENABLE:       u32 = 1  << 31;
+        const LOCK:             u29 = 0  << 28;
+        const SINT_FRAC:        u28 = 0  << 27;
+        const SDIV2:            u27 = 0  << 26;
+        const S6P25_7P5:        u26 = 0  << 25;
+        const LDO1_EN:          u24 = 1  << 23;
+        const LDO2_EN:          u23 = 1  << 22;
+        const PLL_SRC:          u22 = 0  << 21;
+        const PLL_SDM_EN:       u21 = 0  << 20;
+        const PLL_FEEDBACK_DIV: u18 = 0  << 17;
+        const VFB_SEL:          u17 = 0  << 16;
+        const PLL_FACTOR_N:     u12 = 7  << 8;
+        const PLL_FACTOR_K:     u6  = 1  << 4;
+        const PLL_PRE_DIV_M:    u6  = 10 << 0;
+        const PLL_MIPI_CTRL = PLL_ENABLE
+            | LOCK
+            | SINT_FRAC
+            | SDIV2
+            | S6P25_7P5
+            | LDO1_EN
+            | LDO2_EN
+            | PLL_SRC
+            | PLL_SDM_EN
+            | PLL_FEEDBACK_DIV
+            | VFB_SEL
+            | PLL_FACTOR_N
+            | PLL_FACTOR_K
+            | PLL_PRE_DIV_M;
         comptime{ assert(PLL_MIPI_CTRL == 0x80c0071a); }
         putreg32(PLL_MIPI_CTRL, PLL_MIPI_CTRL_REG);  // TODO: DMB
     }
@@ -119,7 +165,10 @@ pub export fn tcon0_init() void {
     const TCON0_CLK_REG = CCU_BASE_ADDRESS + 0x118;
     comptime{ assert(TCON0_CLK_REG == 0x1c20118); }
 
-    const TCON0_CLK = 0x80000000;
+    const SCLK_GATING: u32 = 1 << 31;
+    const CLK_SRC_SEL: u27 = 0 << 24;
+    const TCON0_CLK = SCLK_GATING
+        | CLK_SRC_SEL;
     comptime{ assert(TCON0_CLK == 0x80000000); }
     putreg32(TCON0_CLK, TCON0_CLK_REG);  // TODO: DMB
 
@@ -130,7 +179,8 @@ pub export fn tcon0_init() void {
     const BUS_CLK_GATING_REG1 = CCU_BASE_ADDRESS + 0x64;
     comptime{ assert(BUS_CLK_GATING_REG1 == 0x1c20064); }
 
-    const BUS_CLK_GATING = 0x8;
+    const TCON0_GATING: u4 = 1 << 3;
+    const BUS_CLK_GATING = TCON0_GATING;
     comptime{ assert(BUS_CLK_GATING == 0x8); }
     putreg32(BUS_CLK_GATING, BUS_CLK_GATING_REG1);  // TODO: DMB
 
@@ -141,7 +191,8 @@ pub export fn tcon0_init() void {
     const BUS_SOFT_RST_REG1 = CCU_BASE_ADDRESS + 0x2c4;
     comptime{ assert(BUS_SOFT_RST_REG1 == 0x1c202c4); }
 
-    const BUS_SOFT_RST = 0x8;
+    const TCON0_RST: u4 = 1 << 3;
+    const BUS_SOFT_RST = TCON0_RST;
     comptime{ assert(BUS_SOFT_RST == 0x8); }
     putreg32(BUS_SOFT_RST, BUS_SOFT_RST_REG1);  // TODO: DMB
 
@@ -152,7 +203,8 @@ pub export fn tcon0_init() void {
     const TCON_GCTL_REG = TCON0_BASE_ADDRESS + 0x00;
     comptime{ assert(TCON_GCTL_REG == 0x1c0c000); }
     {
-        const TCON_GCTL = 0x0;
+        const TCON_En: u32 = 0 << 31;
+        const TCON_GCTL = TCON_En;
         comptime{ assert(TCON_GCTL == 0x0); }
         putreg32(TCON_GCTL, TCON_GCTL_REG);  // TODO: DMB
     }
@@ -192,7 +244,10 @@ pub export fn tcon0_init() void {
     const TCON0_DCLK_REG = TCON0_BASE_ADDRESS + 0x44;
     comptime{ assert(TCON0_DCLK_REG == 0x1c0c044); }
 
-    const TCON0_DCLK = 0x80000006;
+    const TCON0_Dclk_En:  u32 = 8 << 28;
+    const TCON0_Dclk_Div: u7 = 6 << 0;
+    const TCON0_DCLK = TCON0_Dclk_En
+        | TCON0_Dclk_Div;
     comptime{ assert(TCON0_DCLK == 0x80000006); }
     putreg32(TCON0_DCLK, TCON0_DCLK_REG);
 
@@ -207,7 +262,20 @@ pub export fn tcon0_init() void {
     const TCON0_CTL_REG = TCON0_BASE_ADDRESS + 0x40;
     comptime{ assert(TCON0_CTL_REG == 0x1c0c040); }
 
-    const TCON0_CTL = 0x81000000;
+    const TCON0_En:          u32 = 1 << 31;
+    const TCON0_Work_Mode:   u29 = 0 << 28;
+    const TCON0_IF:          u26 = 1 << 24;
+    const TCON0_RB_Swap:     u24 = 0 << 23;
+    const TCON0_FIFO1_Rst:   u22 = 0 << 21;
+    const TCON0_Start_Delay: u9  = 0 << 4;
+    const TCON0_SRC_SEL:     u3  = 0 << 0;
+    const TCON0_CTL = TCON0_En
+        | TCON0_Work_Mode
+        | TCON0_IF
+        | TCON0_RB_Swap
+        | TCON0_FIFO1_Rst
+        | TCON0_Start_Delay
+        | TCON0_SRC_SEL;
     comptime{ assert(TCON0_CTL == 0x81000000); }
     putreg32(TCON0_CTL, TCON0_CTL_REG);
 
@@ -217,7 +285,10 @@ pub export fn tcon0_init() void {
     const TCON0_BASIC0_REG = TCON0_BASE_ADDRESS + 0x48;
     comptime{ assert(TCON0_BASIC0_REG == 0x1c0c048); }
 
-    const TCON0_BASIC0 = 0x2cf059f;
+    const TCON0_X: u28 = 719 << 16;
+    const TCON0_Y: u12 = 1439 << 0;
+    const TCON0_BASIC0 = TCON0_X
+        | TCON0_Y;
     comptime{ assert(TCON0_BASIC0 == 0x2cf059f); }
     putreg32(TCON0_BASIC0, TCON0_BASIC0_REG);
 
@@ -237,7 +308,18 @@ pub export fn tcon0_init() void {
     const TCON0_CPU_IF_REG = TCON0_BASE_ADDRESS + 0x60;
     comptime{ assert(TCON0_CPU_IF_REG == 0x1c0c060); }
 
-    const TCON0_CPU_IF = 0x10010005;
+    const CPU_Mode:             u32 = 1 << 28;
+    const AUTO:                 u18 = 0 << 17;
+    const FLUSH:                u17 = 1 << 16;
+    const Trigger_FIFO_Bist_En: u4  = 0 << 3;
+    const Trigger_FIFO_En:      u3  = 1 << 2;
+    const Trigger_En:           u1  = 1 << 0;
+    const TCON0_CPU_IF = CPU_Mode
+        | AUTO
+        | FLUSH
+        | Trigger_FIFO_Bist_En
+        | Trigger_FIFO_En
+        | Trigger_En;
     comptime{ assert(TCON0_CPU_IF == 0x10010005); }
     putreg32(TCON0_CPU_IF, TCON0_CPU_IF_REG);
 
@@ -249,7 +331,10 @@ pub export fn tcon0_init() void {
     const TCON0_CPU_TRI0_REG = TCON0_BASE_ADDRESS + 0x160;
     comptime{ assert(TCON0_CPU_TRI0_REG == 0x1c0c160); }
 
-    const TCON0_CPU_TRI0 = 0x2f02cf;
+    const Block_Space: u28 = 47  << 16;
+    const Block_Size:  u12 = 719 << 0;
+    const TCON0_CPU_TRI0 = Block_Space
+        | Block_Size;
     comptime{ assert(TCON0_CPU_TRI0 == 0x2f02cf); }
     putreg32(TCON0_CPU_TRI0, TCON0_CPU_TRI0_REG);
 
@@ -259,7 +344,10 @@ pub export fn tcon0_init() void {
     const TCON0_CPU_TRI1_REG = TCON0_BASE_ADDRESS + 0x164;
     comptime{ assert(TCON0_CPU_TRI1_REG == 0x1c0c164); }
 
-    const TCON0_CPU_TRI1 = 0x59f;
+    const Block_Current_Num: u32 = 0    << 16;
+    const Block_Num:         u16 = 1439 << 0;
+    const TCON0_CPU_TRI1 = Block_Current_Num
+        | Block_Num;
     comptime{ assert(TCON0_CPU_TRI1 == 0x59f); }
     putreg32(TCON0_CPU_TRI1, TCON0_CPU_TRI1_REG);
 
@@ -271,7 +359,14 @@ pub export fn tcon0_init() void {
     const TCON0_CPU_TRI2_REG = TCON0_BASE_ADDRESS + 0x168;
     comptime{ assert(TCON0_CPU_TRI2_REG == 0x1c0c168); }
 
-    const TCON0_CPU_TRI2 = 0x1bc2000a;
+    const Start_Delay:      u32 = 7106 << 16;
+    const Trans_Start_Mode: u16 = 0    << 15;
+    const Sync_Mode:        u15 = 0    << 13;
+    const Trans_Start_Set:  u13 = 10   << 0;
+    const TCON0_CPU_TRI2 = Start_Delay
+        | Trans_Start_Mode
+        | Sync_Mode
+        | Trans_Start_Set;
     comptime{ assert(TCON0_CPU_TRI2 == 0x1bc2000a); }
     putreg32(TCON0_CPU_TRI2, TCON0_CPU_TRI2_REG);
 
@@ -284,7 +379,12 @@ pub export fn tcon0_init() void {
     const TCON_SAFE_PERIOD_REG = TCON0_BASE_ADDRESS + 0x1f0;
     comptime{ assert(TCON_SAFE_PERIOD_REG == 0x1c0c1f0); }
 
-    const TCON_SAFE_PERIOD = 0xbb80003;
+    const Safe_Period_FIFO_Num: u29 = 3000 << 16;
+    const Safe_Period_Line:     u16 = 0    << 4;
+    const Safe_Period_Mode:     u3  = 3    << 0;
+    const TCON_SAFE_PERIOD = Safe_Period_FIFO_Num
+        | Safe_Period_Line
+        | Safe_Period_Mode;
     comptime{ assert(TCON_SAFE_PERIOD == 0xbb80003); }
     putreg32(TCON_SAFE_PERIOD, TCON_SAFE_PERIOD_REG);
 
@@ -300,7 +400,20 @@ pub export fn tcon0_init() void {
     debug("Enable Output Triggers", .{});
     comptime{ assert(TCON0_IO_TRI_REG == 0x1c0c08c); }
 
-    const TCON0_IO_TRI = 0xe0000000;
+    const Reserved:           u32 = 0b111 << 29;
+    const RGB_Endian:         u29 = 0     << 28;
+    const IO3_Output_Tri_En:  u28 = 0     << 27;
+    const IO2_Output_Tri_En:  u27 = 0     << 26;
+    const IO1_Output_Tri_En:  u26 = 0     << 25;
+    const IO0_Output_Tri_En:  u25 = 0     << 24;
+    const Data_Output_Tri_En: u24 = 0     << 0;
+    const TCON0_IO_TRI = Reserved
+        | RGB_Endian
+        | IO3_Output_Tri_En
+        | IO2_Output_Tri_En
+        | IO1_Output_Tri_En
+        | IO0_Output_Tri_En
+        | Data_Output_Tri_En;
     comptime{ assert(TCON0_IO_TRI == 0xe0000000); }
     putreg32(TCON0_IO_TRI, TCON0_IO_TRI_REG);  // TODO: DMB
 
@@ -310,7 +423,8 @@ pub export fn tcon0_init() void {
     debug("Enable TCON0", .{});
     comptime{ assert(TCON_GCTL_REG == 0x1c0c000); }
     {
-        const TCON_GCTL = 0x80000000;
+        const TCON_En: u32 = 1 << 31;
+        const TCON_GCTL = TCON_En;
         comptime{ assert(TCON_GCTL == 0x80000000); }
         modreg32(TCON_GCTL, TCON_GCTL, TCON_GCTL_REG);  // TODO: DMB
     }
