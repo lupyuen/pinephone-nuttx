@@ -304,7 +304,7 @@ const Instru_En = 1 << 0;
 /// Write the DCS Command to MIPI DSI
 fn writeDcs(buf: []const u8) void {
     debug("writeDcs: len={}", .{ buf.len });
-    dump_buffer(&buf[0], buf.len);
+    dump_buffer(buf);
     assert(buf.len > 0);
 
     // Do DCS Short Write or Long Write depending on command length
@@ -363,7 +363,7 @@ pub export fn nuttx_mipi_dsi_dcs_write(
 
     // Dump the packet
     debug("packet: len={}", .{ pkt.len });
-    dump_buffer(&pkt[0], pkt.len);
+    dump_buffer(pkt);
 
     // Set the following bits to 1 in DSI_CMD_CTL_REG (DSI Low Power Control Register) at Offset 0x200:
     // RX_Overflow (Bit 26): Clear flag for "Receive Overflow"
@@ -1477,6 +1477,16 @@ pub const mipi_dsi_timings = extern struct {
 ///////////////////////////////////////////////////////////////////////////////
 //  Test Functions
 
+// Dump the buffer as hex
+fn dump_buffer(data: []const u8) void {
+    var i: usize = 0;
+    while (i < data.len) : (i += 1) {
+        _ = printf("%02x ", data[i]);
+        if ((i + 1) % 8 == 0) { _ = printf("\n"); }
+    }
+    _ = printf("\n");
+}
+
 /// Main Function for Null App
 pub export fn null_main(_argc: c_int, _argv: [*]const [*]const u8) c_int {
     _ = _argc;
@@ -1507,7 +1517,7 @@ pub export fn test_zig() void {
         short_pkt.len  // Buffer Length
     );
     debug("Result:", .{});
-    dump_buffer(&short_pkt_result[0], short_pkt_result.len);
+    dump_buffer(short_pkt_result);
     assert(  //  Verify result
         std.mem.eql(
             u8,
@@ -1540,7 +1550,7 @@ pub export fn test_zig() void {
         short_pkt_param.len  // Buffer Length
     );
     debug("Result:", .{});
-    dump_buffer(&short_pkt_param_result[0], short_pkt_param_result.len);
+    dump_buffer(short_pkt_param_result);
     assert(  //  Verify result
         std.mem.eql(
             u8,
@@ -1580,7 +1590,7 @@ pub export fn test_zig() void {
         long_pkt.len  // Buffer Length
     );
     debug("Result:", .{});
-    dump_buffer(&long_pkt_result[0], long_pkt_result.len);
+    dump_buffer(long_pkt_result);
     assert(  //  Verify result
         std.mem.eql(
             u8,
@@ -1766,9 +1776,6 @@ pub fn log(
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Imported Functions and Variables
-
-/// From apps/examples/hello/hello_main.c
-extern fn dump_buffer(data: [*c]const u8, len: usize) void;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
 /// We changed `[*c]const u8` to `[*:0]const u8`

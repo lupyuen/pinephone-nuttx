@@ -50,7 +50,6 @@ int main()
   mipi_dsi_test();
 }
 
-// Called by render.zig
 void dump_buffer(const uint8_t *data, size_t len)
 {
     char buf[8 * 3];
