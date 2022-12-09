@@ -1,4 +1,4 @@
-[3J[H[2JEnable MIPI DSI Bus
+[3J[H[2JTODO: Turn on Display BacklightTODO: Init Timing Controller TCON0TODO: Init PMICEnable MIPI DSI Bus
   *0x1c20060: clear 0x2, set 0x2
   *0x1c202c0: clear 0x2, set 0x2
 Enable DSI Block
@@ -67,26 +67,21 @@ Enable DPHY
   *0x1ca1050 = 0x17000000
   *0x1ca105c = 0x1f01555
   *0x1ca1054 = 0x2
-  up_udelay 5
 Enable LDOR, LDOC, LDOD
   *0x1ca1058 = 0x3040000
-  up_udelay 1
   *0x1ca1058: clear 0xf8000000, set 0xf8000000
-  up_udelay 1
   *0x1ca1058: clear 0x4000000, set 0x4000000
-  up_udelay 1
   *0x1ca1054: clear 0x10, set 0x10
-  up_udelay 1
   *0x1ca1050: clear 0x80000000, set 0x80000000
   *0x1ca1054: clear 0xf000000, set 0xf000000
-panel_init: start
+TODO: Reset LCD Panelpanel_init: start
 writeDcs: len=4
-b9 f1 12 83 
+b9 f1 12 83            
 channel=0, cmd=0x39, txlen=4
 channel=0, cmd=0x39, txlen=4
 packet: pktlen=10
-39 04 00 2c b9 f1 12 83 
-84 5d 
+39 04 00 2c b9 f1 12 83
+84 5d                  
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x2c000439
   *0x1ca0304: clear 0xffffffff, set 0x8312f1b9
@@ -97,18 +92,18 @@ packet: pktlen=10
   *0x1ca0010: clear 0x1, set 0x1
 ret=4
 writeDcs: len=28
-ba 33 81 05 f9 0e 0e 20 
-00 00 00 00 00 00 00 44 
-25 00 91 0a 00 00 02 4f 
-11 00 00 37 
+ba 33 81 05 f9 0e 0e 20
+00 00 00 00 00 00 00 44
+25 00 91 0a 00 00 02 4f
+11 00 00 37            
 channel=0, cmd=0x39, txlen=28
 channel=0, cmd=0x39, txlen=28
 packet: pktlen=34
-39 1c 00 2f ba 33 81 05 
-f9 0e 0e 20 00 00 00 00 
-00 00 00 44 25 00 91 0a 
-00 00 02 4f 11 00 00 37 
-2c e2 
+39 1c 00 2f ba 33 81 05
+f9 0e 0e 20 00 00 00 00
+00 00 00 44 25 00 91 0a
+00 00 02 4f 11 00 00 37
+2c e2                  
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x2f001c39
   *0x1ca0304: clear 0xffffffff, set 0x58133ba
@@ -125,12 +120,12 @@ f9 0e 0e 20 00 00 00 00
   *0x1ca0010: clear 0x1, set 0x1
 ret=28
 writeDcs: len=5
-b8 25 22 20 03 
+b8 25 22 20 03         
 channel=0, cmd=0x39, txlen=5
 channel=0, cmd=0x39, txlen=5
 packet: pktlen=11
-39 05 00 36 b8 25 22 20 
-03 03 72 
+39 05 00 36 b8 25 22 20
+03 03 72               
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x36000539
   *0x1ca0304: clear 0xffffffff, set 0x202225b8
@@ -141,14 +136,14 @@ packet: pktlen=11
   *0x1ca0010: clear 0x1, set 0x1
 ret=5
 writeDcs: len=11
-b3 10 10 05 05 03 ff 00 
-00 00 00 
+b3 10 10 05 05 03 ff 00
+00 00 00               
 channel=0, cmd=0x39, txlen=11
 channel=0, cmd=0x39, txlen=11
 packet: pktlen=17
-39 0b 00 2c b3 10 10 05 
-05 03 ff 00 00 00 00 6f 
-bc 
+39 0b 00 2c b3 10 10 05
+05 03 ff 00 00 00 00 6f
+bc                     
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x2c000b39
   *0x1ca0304: clear 0xffffffff, set 0x51010b3
@@ -161,14 +156,13 @@ bc
   *0x1ca0010: clear 0x1, set 0x1
 ret=11
 writeDcs: len=10
-c0 73 73 50 50 00 c0 08 
-70 00 
+c0 73 73 50 50 00 c0 08
+70 00                  
 channel=0, cmd=0x39, txlen=10
 channel=0, cmd=0x39, txlen=10
 packet: pktlen=16
-39 0a 00 36 c0 73 73 50 
-50 00 c0 08 70 00 1b 6a 
-
+39 0a 00 36 c0 73 73 50
+50 00 c0 08 70 00 1b 6a
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x36000a39
   *0x1ca0304: clear 0xffffffff, set 0x507373c0
@@ -180,11 +174,11 @@ packet: pktlen=16
   *0x1ca0010: clear 0x1, set 0x1
 ret=10
 writeDcs: len=2
-bc 4e 
+bc 4e                  
 channel=0, cmd=0x15, txlen=2
 channel=0, cmd=0x15, txlen=2
 packet: pktlen=4
-15 bc 4e 35 
+15 bc 4e 35            
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x354ebc15
   *0x1ca0200: clear 0xff, set 0x3
@@ -193,11 +187,11 @@ packet: pktlen=4
   *0x1ca0010: clear 0x1, set 0x1
 ret=2
 writeDcs: len=2
-cc 0b 
+cc 0b                  
 channel=0, cmd=0x15, txlen=2
 channel=0, cmd=0x15, txlen=2
 packet: pktlen=4
-15 cc 0b 22 
+15 cc 0b 22            
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x220bcc15
   *0x1ca0200: clear 0xff, set 0x3
@@ -206,11 +200,11 @@ packet: pktlen=4
   *0x1ca0010: clear 0x1, set 0x1
 ret=2
 writeDcs: len=2
-b4 80 
+b4 80                  
 channel=0, cmd=0x15, txlen=2
 channel=0, cmd=0x15, txlen=2
 packet: pktlen=4
-15 b4 80 22 
+15 b4 80 22            
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x2280b415
   *0x1ca0200: clear 0xff, set 0x3
@@ -219,12 +213,12 @@ packet: pktlen=4
   *0x1ca0010: clear 0x1, set 0x1
 ret=2
 writeDcs: len=4
-b2 f0 12 f0 
+b2 f0 12 f0            
 channel=0, cmd=0x39, txlen=4
 channel=0, cmd=0x39, txlen=4
 packet: pktlen=10
-39 04 00 2c b2 f0 12 f0 
-51 86 
+39 04 00 2c b2 f0 12 f0
+51 86                  
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x2c000439
   *0x1ca0304: clear 0xffffffff, set 0xf012f0b2
@@ -235,14 +229,14 @@ packet: pktlen=10
   *0x1ca0010: clear 0x1, set 0x1
 ret=4
 writeDcs: len=15
-e3 00 00 0b 0b 10 10 00 
-00 00 00 ff 00 c0 10 
+e3 00 00 0b 0b 10 10 00
+00 00 00 ff 00 c0 10   
 channel=0, cmd=0x39, txlen=15
 channel=0, cmd=0x39, txlen=15
 packet: pktlen=21
-39 0f 00 0f e3 00 00 0b 
-0b 10 10 00 00 00 00 ff 
-00 c0 10 36 0f 
+39 0f 00 0f e3 00 00 0b
+0b 10 10 00 00 00 00 ff
+00 c0 10 36 0f         
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0xf000f39
   *0x1ca0304: clear 0xffffffff, set 0xb0000e3
@@ -256,12 +250,12 @@ packet: pktlen=21
   *0x1ca0010: clear 0x1, set 0x1
 ret=15
 writeDcs: len=6
-c6 01 00 ff ff 00 
+c6 01 00 ff ff 00      
 channel=0, cmd=0x39, txlen=6
 channel=0, cmd=0x39, txlen=6
 packet: pktlen=12
-39 06 00 30 c6 01 00 ff 
-ff 00 8e 25 
+39 06 00 30 c6 01 00 ff
+ff 00 8e 25            
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x30000639
   *0x1ca0304: clear 0xffffffff, set 0xff0001c6
@@ -272,14 +266,14 @@ ff 00 8e 25
   *0x1ca0010: clear 0x1, set 0x1
 ret=6
 writeDcs: len=13
-c1 74 00 32 32 77 f1 ff 
-ff cc cc 77 77 
+c1 74 00 32 32 77 f1 ff
+ff cc cc 77 77         
 channel=0, cmd=0x39, txlen=13
 channel=0, cmd=0x39, txlen=13
 packet: pktlen=19
-39 0d 00 13 c1 74 00 32 
-32 77 f1 ff ff cc cc 77 
-77 69 e4 
+39 0d 00 13 c1 74 00 32
+32 77 f1 ff ff cc cc 77
+77 69 e4               
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x13000d39
   *0x1ca0304: clear 0xffffffff, set 0x320074c1
@@ -292,12 +286,12 @@ packet: pktlen=19
   *0x1ca0010: clear 0x1, set 0x1
 ret=13
 writeDcs: len=3
-b5 07 07 
+b5 07 07               
 channel=0, cmd=0x39, txlen=3
 channel=0, cmd=0x39, txlen=3
 packet: pktlen=9
-39 03 00 09 b5 07 07 7b 
-b3 
+39 03 00 09 b5 07 07 7b
+b3                     
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x9000339
   *0x1ca0304: clear 0xffffffff, set 0x7b0707b5
@@ -308,12 +302,12 @@ b3
   *0x1ca0010: clear 0x1, set 0x1
 ret=3
 writeDcs: len=3
-b6 2c 2c 
+b6 2c 2c               
 channel=0, cmd=0x39, txlen=3
 channel=0, cmd=0x39, txlen=3
 packet: pktlen=9
-39 03 00 09 b6 2c 2c 55 
-04 
+39 03 00 09 b6 2c 2c 55
+04                     
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x9000339
   *0x1ca0304: clear 0xffffffff, set 0x552c2cb6
@@ -324,12 +318,12 @@ packet: pktlen=9
   *0x1ca0010: clear 0x1, set 0x1
 ret=3
 writeDcs: len=4
-bf 02 11 00 
+bf 02 11 00            
 channel=0, cmd=0x39, txlen=4
 channel=0, cmd=0x39, txlen=4
 packet: pktlen=10
-39 04 00 2c bf 02 11 00 
-b5 e9 
+39 04 00 2c bf 02 11 00
+b5 e9                  
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x2c000439
   *0x1ca0304: clear 0xffffffff, set 0x1102bf
@@ -340,27 +334,26 @@ b5 e9
   *0x1ca0010: clear 0x1, set 0x1
 ret=4
 writeDcs: len=64
-e9 82 10 06 05 a2 0a a5 
-12 31 23 37 83 04 bc 27 
-38 0c 00 03 00 00 00 0c 
-00 03 00 00 00 75 75 31 
-88 88 88 88 88 88 13 88 
-64 64 20 88 88 88 88 88 
-88 02 88 00 00 00 00 00 
-00 00 00 00 00 00 00 00 
-
+e9 82 10 06 05 a2 0a a5
+12 31 23 37 83 04 bc 27
+38 0c 00 03 00 00 00 0c
+00 03 00 00 00 75 75 31
+88 88 88 88 88 88 13 88
+64 64 20 88 88 88 88 88
+88 02 88 00 00 00 00 00
+00 00 00 00 00 00 00 00
 channel=0, cmd=0x39, txlen=64
 channel=0, cmd=0x39, txlen=64
 packet: pktlen=70
-39 40 00 25 e9 82 10 06 
-05 a2 0a a5 12 31 23 37 
-83 04 bc 27 38 0c 00 03 
-00 00 00 0c 00 03 00 00 
-00 75 75 31 88 88 88 88 
-88 88 13 88 64 64 20 88 
-88 88 88 88 88 02 88 00 
-00 00 00 00 00 00 00 00 
-00 00 00 00 65 03 
+39 40 00 25 e9 82 10 06
+05 a2 0a a5 12 31 23 37
+83 04 bc 27 38 0c 00 03
+00 00 00 0c 00 03 00 00
+00 75 75 31 88 88 88 88
+88 88 13 88 64 64 20 88
+88 88 88 88 88 02 88 00
+00 00 00 00 00 00 00 00
+00 00 00 00 65 03      
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x25004039
   *0x1ca0304: clear 0xffffffff, set 0x61082e9
@@ -386,26 +379,26 @@ packet: pktlen=70
   *0x1ca0010: clear 0x1, set 0x1
 ret=64
 writeDcs: len=62
-ea 02 21 00 00 00 00 00 
-00 00 00 00 00 02 46 02 
-88 88 88 88 88 88 64 88 
-13 57 13 88 88 88 88 88 
-88 75 88 23 14 00 00 02 
-00 00 00 00 00 00 00 00 
-00 00 00 00 00 00 00 03 
-0a a5 00 00 00 00 
+ea 02 21 00 00 00 00 00
+00 00 00 00 00 02 46 02
+88 88 88 88 88 88 64 88
+13 57 13 88 88 88 88 88
+88 75 88 23 14 00 00 02
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 03
+0a a5 00 00 00 00      
 channel=0, cmd=0x39, txlen=62
 channel=0, cmd=0x39, txlen=62
 packet: pktlen=68
-39 3e 00 1a ea 02 21 00 
-00 00 00 00 00 00 00 00 
-00 02 46 02 88 88 88 88 
-88 88 64 88 13 57 13 88 
-88 88 88 88 88 75 88 23 
-14 00 00 02 00 00 00 00 
-00 00 00 00 00 00 00 00 
-00 00 00 03 0a a5 00 00 
-00 00 24 1b 
+39 3e 00 1a ea 02 21 00
+00 00 00 00 00 00 00 00
+00 02 46 02 88 88 88 88
+88 88 64 88 13 57 13 88
+88 88 88 88 88 75 88 23
+14 00 00 02 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 03 0a a5 00 00
+00 00 24 1b            
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x1a003e39
   *0x1ca0304: clear 0xffffffff, set 0x2102ea
@@ -430,20 +423,20 @@ packet: pktlen=68
   *0x1ca0010: clear 0x1, set 0x1
 ret=62
 writeDcs: len=35
-e0 00 09 0d 23 27 3c 41 
-35 07 0d 0e 12 13 10 12 
-12 18 00 09 0d 23 27 3c 
-41 35 07 0d 0e 12 13 10 
-12 12 18 
+e0 00 09 0d 23 27 3c 41
+35 07 0d 0e 12 13 10 12
+12 18 00 09 0d 23 27 3c
+41 35 07 0d 0e 12 13 10
+12 12 18               
 channel=0, cmd=0x39, txlen=35
 channel=0, cmd=0x39, txlen=35
 packet: pktlen=41
-39 23 00 20 e0 00 09 0d 
-23 27 3c 41 35 07 0d 0e 
-12 13 10 12 12 18 00 09 
-0d 23 27 3c 41 35 07 0d 
-0e 12 13 10 12 12 18 93 
-bf 
+39 23 00 20 e0 00 09 0d
+23 27 3c 41 35 07 0d 0e
+12 13 10 12 12 18 00 09
+0d 23 27 3c 41 35 07 0d
+0e 12 13 10 12 12 18 93
+bf                     
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x20002339
   *0x1ca0304: clear 0xffffffff, set 0xd0900e0
@@ -462,11 +455,11 @@ bf
   *0x1ca0010: clear 0x1, set 0x1
 ret=35
 writeDcs: len=1
-11 
+11                     
 channel=0, cmd=0x5, txlen=1
 channel=0, cmd=0x5, txlen=1
 packet: pktlen=4
-05 11 00 36 
+05 11 00 36            
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x36001105
   *0x1ca0200: clear 0xff, set 0x3
@@ -474,13 +467,12 @@ packet: pktlen=4
   *0x1ca0010: clear 0x1, set 0x0
   *0x1ca0010: clear 0x1, set 0x1
 ret=1
-  up_udelay 120000
 writeDcs: len=1
-29 
+29                     
 channel=0, cmd=0x5, txlen=1
 channel=0, cmd=0x5, txlen=1
 packet: pktlen=4
-05 29 00 1c 
+05 29 00 1c            
   *0x1ca0200 = 0x6000200
   *0x1ca0300: clear 0xffffffff, set 0x1c002905
   *0x1ca0200: clear 0xff, set 0x3
@@ -495,28 +487,28 @@ Commit
   *0x1ca0010: clear 0x1, set 0x1
 Instruction Function Lane
   *0x1ca0020: clear 0x10, set 0x0
-  up_udelay 1000
 Start HSD
   *0x1ca0048 = 0x63f07006
 Commit
   *0x1ca0010: clear 0x1, set 0x1
+TODO: Render Graphics with Display Engine
 Testing Compose Short Packet (Without Parameter)...
 channel=0, cmd=0x5, txlen=1
 Result:
-05 11 00 36 
+05 11 00 36            
 Testing Compose Short Packet (With Parameter)...
 channel=0, cmd=0x15, txlen=2
 Result:
-15 bc 4e 35 
+15 bc 4e 35            
 Testing Compose Long Packet...
 channel=0, cmd=0x39, txlen=64
 Result:
-39 40 00 25 e9 82 10 06 
-05 a2 0a a5 12 31 23 37 
-83 04 bc 27 38 0c 00 03 
-00 00 00 0c 00 03 00 00 
-00 75 75 31 88 88 88 88 
-88 88 13 88 64 64 20 88 
-88 88 88 88 88 02 88 00 
-00 00 00 00 00 00 00 00 
-00 00 00 00 65 03 
+39 40 00 25 e9 82 10 06
+05 a2 0a a5 12 31 23 37
+83 04 bc 27 38 0c 00 03
+00 00 00 0c 00 03 00 00
+00 75 75 31 88 88 88 88
+88 88 13 88 64 64 20 88
+88 88 88 88 88 02 88 00
+00 00 00 00 00 00 00 00
+00 00 00 00 65 03      

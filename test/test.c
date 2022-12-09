@@ -19,6 +19,12 @@ int main()
 {
   int ret;
 
+  _info("TODO: Turn on Display Backlight\n");
+
+  _info("TODO: Init Timing Controller TCON0\n");
+  
+  _info("TODO: Init PMIC\n");
+
   // Enable MIPI DSI Block
   ret = a64_mipi_dsi_enable();
   assert(ret == OK);
@@ -27,6 +33,8 @@ int main()
   ret = a64_mipi_dphy_enable();
   assert(ret == OK);
 
+  _info("TODO: Reset LCD Panel\n");
+
   // Initialise LCD Controller (ST7703)
   ret = pinephone_panel_init();
   assert(ret == OK);
@@ -34,6 +42,8 @@ int main()
   // Start MIPI DSI HSC and HSD
   ret = a64_mipi_dsi_start();
   assert(ret == OK);
+
+  _info("TODO: Render Graphics with Display Engine\n");
 
   // Test MIPI DSI
   void mipi_dsi_test(void);
