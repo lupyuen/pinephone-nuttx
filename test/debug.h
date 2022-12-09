@@ -1,4 +1,4 @@
-#define _err printf
+#define gerr printf
 #define ginfo printf
 #define ginfodumpbuffer(msg, buf, len) dump_buffer(buf, len)
 
