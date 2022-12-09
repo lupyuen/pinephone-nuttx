@@ -15,21 +15,21 @@ static int write_dcs(FAR const uint8_t *buf, size_t len)
   {
     // DCS Short Write (without parameter)
     case 1:
-      ret = a64_mipi_dsi_write(VIRTUAL_CHANNEL, 
+      ret = a64_mipi_dsi_write(A64_MIPI_DSI_VIRTUAL_CHANNEL, 
         MIPI_DSI_DCS_SHORT_WRITE, 
         buf, len);
       break;
 
     // DCS Short Write (with parameter)
     case 2:
-      ret = a64_mipi_dsi_write(VIRTUAL_CHANNEL, 
+      ret = a64_mipi_dsi_write(A64_MIPI_DSI_VIRTUAL_CHANNEL, 
         MIPI_DSI_DCS_SHORT_WRITE_PARAM, 
         buf, len);
       break;
 
     // DCS Long Write
     default:
-      ret = a64_mipi_dsi_write(VIRTUAL_CHANNEL, 
+      ret = a64_mipi_dsi_write(A64_MIPI_DSI_VIRTUAL_CHANNEL, 
         MIPI_DSI_DCS_LONG_WRITE, 
         buf, len);
       break;
