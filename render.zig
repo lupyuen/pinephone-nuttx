@@ -1108,29 +1108,36 @@ pub export fn hello_main(
             pmic.display_board_init();
 
         } else if (std.mem.eql(u8, cmd, "d")) {
-            // Enable MIPI DSI Block
-            dsi.enable_dsi_block();
-            ////TODO
+            // Enable MIPI DSI Block: a64_mipi_dsi_enable
+            // dsi.enable_dsi_block();
+            const fd = c.open("/dev/userleds", c.O_WRONLY); assert(fd > 0);
+            const ret = c.ioctl(fd, c.ULEDIOC_SETALL, @intCast(c_int, 3)); assert(ret >= 0);
+            _ = c.close(fd);
 
         } else if (std.mem.eql(u8, cmd, "e")) {
-            // Enable MIPI Display Physical Layer
-            dphy.dphy_enable();
+            // Enable MIPI Display Physical Layer: a64_mipi_dphy_enable
+            // dphy.dphy_enable();
+            const fd = c.open("/dev/userleds", c.O_WRONLY); assert(fd > 0);
+            const ret = c.ioctl(fd, c.ULEDIOC_SETALL, @intCast(c_int, 4)); assert(ret >= 0);
+            _ = c.close(fd);
 
         } else if (std.mem.eql(u8, cmd, "f")) {
             // Reset LCD Panel
             panel.panel_reset();
 
         } else if (std.mem.eql(u8, cmd, "g")) {
-            // Init LCD Panel
-            ////dsi.panel_init();
+            // Init LCD Panel: pinephone_panel_init
+            // dsi.panel_init();
             const fd = c.open("/dev/userleds", c.O_WRONLY); assert(fd > 0);
             const ret = c.ioctl(fd, c.ULEDIOC_SETALL, @intCast(c_int, 6)); assert(ret >= 0);
             _ = c.close(fd);
 
         } else if (std.mem.eql(u8, cmd, "h")) {
-            // Start MIPI DSI HSC and HSD
-            dsi.start_dsi();
-            ////TODO
+            // Start MIPI DSI HSC and HSD: a64_mipi_dsi_start
+            // dsi.start_dsi();
+            const fd = c.open("/dev/userleds", c.O_WRONLY); assert(fd > 0);
+            const ret = c.ioctl(fd, c.ULEDIOC_SETALL, @intCast(c_int, 7)); assert(ret >= 0);
+            _ = c.close(fd);
 
         } else if (std.mem.eql(u8, cmd, "i")) {
             // Init Display Engine
@@ -1171,15 +1178,15 @@ fn usage() void {
     err("hello c", .{});
     err(" Init PMIC", .{});
     err("hello d", .{});
-    err(" Enable MIPI DSI Block", .{});
+    err(" Enable MIPI DSI Block (a64_mipi_dsi_enable)", .{});
     err("hello e", .{});
-    err(" Enable MIPI Display Physical Layer", .{});
+    err(" Enable MIPI Display Physical Layer (a64_mipi_dphy_enable)", .{});
     err("hello f", .{});
     err(" Reset LCD Panel", .{});
     err("hello g", .{});
     err(" Init LCD Panel (pinephone_panel_init)", .{});
     err("hello h", .{});
-    err(" Start MIPI DSI HSC and HSD", .{});
+    err(" Start MIPI DSI HSC and HSD (a64_mipi_dsi_start)", .{});
     err("hello i", .{});
     err(" Render Graphics with Display Engine", .{});
 }
