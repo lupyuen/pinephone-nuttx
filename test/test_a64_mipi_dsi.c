@@ -2,14 +2,12 @@
 // Add `#include "../../pinephone-nuttx/test/a64_mipi_dsi_inc.c"` to the end of this file:
 // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c
 
-void dump_buffer(const uint8_t *data, size_t len);
-
 /// Write the DCS Command to MIPI DSI
 static int write_dcs(FAR const uint8_t *buf, size_t len)
 {
   int ret = -1;
-  _info("writeDcs: len=%d\n", (int) len);
-  dump_buffer(buf, len);
+  ginfo("writeDcs: len=%d\n", (int) len);
+  ginfodumpbuffer("buf", buf, len);
   assert(len > 0);
 
   // Do DCS Short Write or Long Write depending on command length
@@ -36,7 +34,7 @@ static int write_dcs(FAR const uint8_t *buf, size_t len)
         buf, len);
       break;
   };
-  _info("ret=%d\n", ret);
+  ginfo("ret=%d\n", ret);
   DEBUGASSERT(ret == len);
 
   return OK;
@@ -46,7 +44,7 @@ static int write_dcs(FAR const uint8_t *buf, size_t len)
 /// See https://lupyuen.github.io/articles/dsi#initialise-lcd-controller
 int pinephone_panel_init(void) {
   int ret;
-  _info("panel_init: start\n");
+  ginfo("panel_init: start\n");
 
   // Most of these commands are documented in the ST7703 Datasheet:
   // https://files.pine64.org/doc/datasheet/pinephone/ST7703_DS_v01_20160128.pdf
@@ -449,6 +447,6 @@ int pinephone_panel_init(void) {
   ret = write_dcs(cmd20, sizeof(cmd20));
   assert(ret == OK);
 
-  _info("panel_init: end\n");
+  ginfo("panel_init: end\n");
   return OK;
 }

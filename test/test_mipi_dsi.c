@@ -2,41 +2,6 @@
 // Add `#include "../../pinephone-nuttx/test/mipi_dsi_inc.c"` to the end of this file:
 // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/mipi_dsi.c
 
-void dump_buffer(const uint8_t *data, size_t len)
-{
-  char buf[8 * 3];
-  memset(buf, ' ', sizeof(buf));
-  buf[sizeof(buf) - 1] = 0;
-
-	for (int i = 0; i < len; i++) {
-    const int mod = i % 8;
-    const int d1 = data[i] >> 4;
-    const int d2 = data[i] & 0b1111;
-    buf[mod * 3] = (d1 < 10) ? ('0' + d1) : ('a' + d1 - 10);
-    buf[mod * 3 + 1] = (d2 < 10) ? ('0' + d2) : ('a' + d2 - 10);
-
-		if ((i + 1) % 8 == 0 || i == len - 1) {
-      _info("%s\n", buf);
-      if (i == len - 1) { break; }
-
-      memset(buf, ' ', sizeof(buf));
-      buf[sizeof(buf) - 1] = 0;
-    }
-	}
-}
-
-/*
-39 40 00 25 e9 82 10 06 
-05 a2 0a a5 12 31 23 37 
-83 04 bc 27 38 0c 00 03 
-00 00 00 0c 00 03 00 00 
-00 75 75 31 88 88 88 88 
-88 88 13 88 64 64 20 88 
-88 88 88 88 88 02 88 00 
-00 00 00 00 00 00 00 00 
-00 00 00 00 65 03 
-*/
-
 void mipi_dsi_test(void)  //// TODO: Remove
 {
     // Allocate Packet Buffer
@@ -44,7 +9,7 @@ void mipi_dsi_test(void)  //// TODO: Remove
     memset(pkt_buf, 0, sizeof(pkt_buf));
 
     // Test Compose Short Packet (Without Parameter)
-    _info("Testing Compose Short Packet (Without Parameter)...\n");
+    ginfo("Testing Compose Short Packet (Without Parameter)...\n");
     const uint8_t short_pkt[1] = {
         0x11,
     };
@@ -56,8 +21,8 @@ void mipi_dsi_test(void)  //// TODO: Remove
         short_pkt,    // Transmit Buffer
         sizeof(short_pkt)  // Buffer Length
     );
-    _info("Result:\n");
-    dump_buffer(pkt_buf, short_pkt_result);
+    ginfo("Result:\n");
+    ginfodumpbuffer("pkt_buf", pkt_buf, short_pkt_result);
 
     const uint8_t expected_short_pkt[] = { 
       0x05, 0x11, 0x00, 0x36 
@@ -75,7 +40,7 @@ void mipi_dsi_test(void)  //// TODO: Remove
     // );
 
     // Test Compose Short Packet (With Parameter)
-    _info("Testing Compose Short Packet (With Parameter)...\n");
+    ginfo("Testing Compose Short Packet (With Parameter)...\n");
     const uint8_t short_pkt_param[2] = {
         0xbc, 0x4e,
     };
@@ -87,8 +52,8 @@ void mipi_dsi_test(void)  //// TODO: Remove
         short_pkt_param,    // Transmit Buffer
         sizeof(short_pkt_param)  // Buffer Length
     );
-    _info("Result:\n");
-    dump_buffer(pkt_buf, short_pkt_param_result);
+    ginfo("Result:\n");
+    ginfodumpbuffer("pkt_buf", pkt_buf, short_pkt_param_result);
 
     const uint8_t expected_short_pkt_param[] = { 
         0x15, 0xbc, 0x4e, 0x35 
@@ -106,7 +71,7 @@ void mipi_dsi_test(void)  //// TODO: Remove
     // );
 
     // Test Compose Long Packet
-    _info("Testing Compose Long Packet...\n");
+    ginfo("Testing Compose Long Packet...\n");
     const uint8_t long_pkt[] = {
         0xe9, 0x82, 0x10, 0x06, 0x05, 0xa2, 0x0a, 0xa5,
         0x12, 0x31, 0x23, 0x37, 0x83, 0x04, 0xbc, 0x27,
@@ -125,8 +90,8 @@ void mipi_dsi_test(void)  //// TODO: Remove
         long_pkt,    // Transmit Buffer
         sizeof(long_pkt)  // Buffer Length
     );
-    _info("Result:\n");
-    dump_buffer(pkt_buf, long_pkt_result);
+    ginfo("Result:\n");
+    ginfodumpbuffer("pkt_buf", pkt_buf, long_pkt_result);
 
     const uint8_t expected_long_pkt[] = {
         0x39, 0x40, 0x00, 0x25, 0xe9, 0x82, 0x10, 0x06,
