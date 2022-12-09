@@ -4326,6 +4326,56 @@ led_daemon: LED set 0x06 (magenta)
 led_daemon: LED set 0x07 (white)
 ```
 
+PinePhone PIO and LEDs are now supported in NuttX Mainline...
+
+https://github.com/apache/nuttx/pull/7796
+
+# Add MIPI DSI to NuttX Kernel
+
+TODO
+
+https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dphy.c
+
+https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c
+
+https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/mipi_dsi.c
+
+# Test NuttX MIPI DSI
+
+TODO
+
+https://github.com/lupyuen/pinephone-nuttx/blob/170c25bc4d22e56967b0fa7866d647f91e75314b/render.zig#L1099-L1153
+
+https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm64/a64/pinephone/src/pinephone_userleds.c#L179-L207
+
+```c
+void board_userled_all(uint32_t ledset)
+{
+  ...
+  // Added this test code
+  int a64_mipi_dsi_enable(void);
+  int a64_mipi_dphy_enable(void);
+  int pinephone_panel_init(void);
+  int a64_mipi_dsi_start(void);
+  switch (ledset)
+    {
+      // Enable MIPI DSI Block
+      case 3: _info("a64_mipi_dsi_enable\n"); a64_mipi_dsi_enable(); break;
+      // Enable MIPI Display Physical Layer
+      case 4: _info("a64_mipi_dphy_enable\n"); a64_mipi_dphy_enable(); break;
+      // Init LCD Panel
+      case 6: _info("pinephone_panel_init\n"); pinephone_panel_init(); break;
+      // Start MIPI DSI HSC and HSD
+      case 7: _info("a64_mipi_dsi_start\n"); a64_mipi_dsi_start(); break;
+      default: break;
+    }
+}
+```
+
+Test Log:
+
+https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7
+
 # Test Logs
 
 PinePhone Logs captured from various tests...
