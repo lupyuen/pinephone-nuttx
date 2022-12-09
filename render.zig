@@ -1160,6 +1160,10 @@ pub export fn hello_main(
 /// Print the Command-Line Options
 fn usage() void {
     const err = std.log.err;
+    err("hello 1", .{});
+    err(" Render 1 UI Channel", .{});
+    err("hello 3", .{});
+    err(" Render 3 UI Channels", .{});
     err("hello a", .{});
     err(" Turn on Display Backlight", .{});
     err("hello b", .{});
@@ -1178,10 +1182,6 @@ fn usage() void {
     err(" Start MIPI DSI HSC and HSD", .{});
     err("hello i", .{});
     err(" Render Graphics with Display Engine", .{});
-    err("hello 1", .{});
-    err(" Render 1 UI Channel", .{});
-    err("hello 3", .{});
-    err(" Render 3 UI Channels", .{});
 }
 
 ///////////////////////////////////////////////////////////////////////////////
