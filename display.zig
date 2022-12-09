@@ -18,8 +18,8 @@
 //***************************************************************************
 
 //! PinePhone MIPI DSI Driver for Apache NuttX RTOS.
-//! "A64 Page ???" refers to Allwinner A64 User Manual: https://linux-sunxi.org/images/b/b4/Allwinner_A64_User_Manual_V1.1.pdf
-//! "A31 Page ???" refers to Allwinner A31 User Manual: https://github.com/allwinner-zh/documents/raw/master/A31/A31_User_Manual_v1.3_20150510.pdf
+//! "A64 Page ???" refers to Allwinner A64 User Manual: https://github.com/lupyuen/pinephone-nuttx/releases/download/doc/Allwinner_A64_User_Manual_V1.1.pdf
+//! "A31 Page ???" refers to Allwinner A31 User Manual: https://github.com/lupyuen/pinephone-nuttx/releases/download/doc/A31_User_Manual_v1.3_20150510.pdf
 //! This MIPI DSI Interface is compatible with Zephyr MIPI DSI:
 //! https://github.com/zephyrproject-rtos/zephyr/blob/main/include/zephyr/drivers/mipi_dsi.h
 

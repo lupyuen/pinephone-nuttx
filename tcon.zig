@@ -19,7 +19,7 @@
 
 //! PinePhone Allwinner A64 Timing Controller (TCON0) Driver for Apache NuttX RTOS
 //! See https://lupyuen.github.io/articles/de#appendix-timing-controller-tcon0
-//! "A64 Page ???" refers to Allwinner A64 User Manual: https://linux-sunxi.org/images/b/b4/Allwinner_A64_User_Manual_V1.1.pdf
+//! "A64 Page ???" refers to Allwinner A64 User Manual: https://github.com/lupyuen/pinephone-nuttx/releases/download/doc/Allwinner_A64_User_Manual_V1.1.pdf
 
 /// Import the Zig Standard Library
 const std = @import("std");

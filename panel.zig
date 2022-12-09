@@ -19,7 +19,7 @@
 
 //! PinePhone LCD Panel Driver for Apache NuttX RTOS
 //! See https://lupyuen.github.io/articles/de#appendix-reset-lcd-panel
-//! "A64 Page ???" refers to Allwinner A64 User Manual: https://linux-sunxi.org/images/b/b4/Allwinner_A64_User_Manual_V1.1.pdf
+//! "A64 Page ???" refers to Allwinner A64 User Manual: https://github.com/lupyuen/pinephone-nuttx/releases/download/doc/Allwinner_A64_User_Manual_V1.1.pdf
 
 /// Import the Zig Standard Library
 const std = @import("std");

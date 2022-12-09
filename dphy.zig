@@ -19,7 +19,7 @@
 
 //! PinePhone Allwinner A64 MIPI DPHY (Display Physical Layer) Driver for Apache NuttX RTOS
 //! See https://lupyuen.github.io/articles/dsi#appendix-enable-mipi-display-physical-layer-dphy
-//! "A64 Page ???" refers to Allwinner A64 User Manual: https://linux-sunxi.org/images/b/b4/Allwinner_A64_User_Manual_V1.1.pdf
+//! "A64 Page ???" refers to Allwinner A64 User Manual: https://github.com/lupyuen/pinephone-nuttx/releases/download/doc/Allwinner_A64_User_Manual_V1.1.pdf
 
 /// Import the Zig Standard Library
 const std = @import("std");
