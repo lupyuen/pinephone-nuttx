@@ -18,6 +18,7 @@ gcc \
 ## Run the test
 ./test
 
+## Diff the actual and expected test logs
 ./test >test.log
 diff \
     --ignore-all-space \
