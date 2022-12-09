@@ -1148,7 +1148,7 @@ pub export fn hello_main(
 
         } else if (std.mem.eql(u8, cmd, "3")) {
             // Render 3 UI Channels
-            test_render(1);
+            test_render(3);
 
         } else {
             usage(); return -1;
