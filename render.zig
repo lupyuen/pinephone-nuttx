@@ -1087,7 +1087,9 @@ pub export fn hello_main(
     argc: c_int, 
     argv: [*c]const [*c]u8
 ) c_int {
+    _ = c.usleep(100);  // TODO: Fix garbled printf
     debug("pinephone-nuttx/render.zig: hello_main", .{});
+    _ = c.usleep(100);  // TODO: Fix garbled printf
 
     // Quit if no args specified
     if (argc <= 1) { usage(); return -1; }
