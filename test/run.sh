@@ -9,6 +9,7 @@ clear
 ## Compile test code
 gcc \
     -o test \
+    -I . \
     -I ../../nuttx/arch/arm64/src/a64 \
     test.c \
     ../../nuttx/arch/arm64/src/a64/a64_mipi_dphy.c \
@@ -20,6 +21,7 @@ gcc \
 
 ## Diff the actual and expected test logs
 ./test >test.log
+set +e  #  Ignore errors
 diff \
     --ignore-all-space \
     expected.log test.log \
@@ -32,3 +34,5 @@ diff \
     | grep -v "ret=" \
     | grep -v "pktlen=" \
     | grep -v "hello" \
+
+set -e  #  Exit when any command fails
