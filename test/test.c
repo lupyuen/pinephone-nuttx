@@ -72,9 +72,7 @@ void putreg32(uint32_t data, unsigned long addr)
   _info("  *0x%lx = 0x%x\n", addr, data);
 }
 
-#ifdef NOTUSED
-void up_udelay(unsigned long microseconds)
+void up_mdelay(unsigned int milliseconds)
 {
-  _info("  up_udelay %ld\n", microseconds);
+  _info("  up_mdelay %d ms\n", milliseconds);
 }
-#endif  // NOTUSED

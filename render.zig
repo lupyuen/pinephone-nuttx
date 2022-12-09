@@ -1110,36 +1110,28 @@ pub export fn hello_main(
             pmic.display_board_init();
 
         } else if (std.mem.eql(u8, cmd, "d")) {
-            // Enable MIPI DSI Block: a64_mipi_dsi_enable
+            // Enable MIPI DSI Block
             // dsi.enable_dsi_block();
-            const fd = c.open("/dev/userleds", c.O_WRONLY); assert(fd > 0);
-            const ret = c.ioctl(fd, c.ULEDIOC_SETALL, @intCast(c_int, 3)); assert(ret >= 0);
-            _ = c.close(fd);
+            _ = a64_mipi_dsi_enable();
 
         } else if (std.mem.eql(u8, cmd, "e")) {
-            // Enable MIPI Display Physical Layer: a64_mipi_dphy_enable
+            // Enable MIPI Display Physical Layer
             // dphy.dphy_enable();
-            const fd = c.open("/dev/userleds", c.O_WRONLY); assert(fd > 0);
-            const ret = c.ioctl(fd, c.ULEDIOC_SETALL, @intCast(c_int, 4)); assert(ret >= 0);
-            _ = c.close(fd);
+            _ = a64_mipi_dphy_enable();
 
         } else if (std.mem.eql(u8, cmd, "f")) {
             // Reset LCD Panel
             panel.panel_reset();
 
         } else if (std.mem.eql(u8, cmd, "g")) {
-            // Init LCD Panel: pinephone_panel_init
+            // Init LCD Panel
             // dsi.panel_init();
-            const fd = c.open("/dev/userleds", c.O_WRONLY); assert(fd > 0);
-            const ret = c.ioctl(fd, c.ULEDIOC_SETALL, @intCast(c_int, 6)); assert(ret >= 0);
-            _ = c.close(fd);
+            _ = pinephone_panel_init();
 
         } else if (std.mem.eql(u8, cmd, "h")) {
-            // Start MIPI DSI HSC and HSD: a64_mipi_dsi_start
+            // Start MIPI DSI HSC and HSD
             // dsi.start_dsi();
-            const fd = c.open("/dev/userleds", c.O_WRONLY); assert(fd > 0);
-            const ret = c.ioctl(fd, c.ULEDIOC_SETALL, @intCast(c_int, 7)); assert(ret >= 0);
-            _ = c.close(fd);
+            _ = a64_mipi_dsi_start();
 
         } else if (std.mem.eql(u8, cmd, "i")) {
             // Init Display Engine
@@ -1253,6 +1245,12 @@ pub fn log(
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Imported Functions and Variables
+
+/// NuttX Driver for MIPI DSI
+extern fn a64_mipi_dphy_enable() c_int;
+extern fn a64_mipi_dsi_enable() c_int;
+extern fn a64_mipi_dsi_start() c_int;
+extern fn pinephone_panel_init() c_int;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
 /// We changed `[*c]const u8` to `[*:0]const u8`

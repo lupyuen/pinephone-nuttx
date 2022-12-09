@@ -440,7 +440,7 @@ int pinephone_panel_init(void) {
   assert(ret == OK);
 
   // Wait 120 milliseconds
-  up_udelay(120 * 1000);
+  up_mdelay(120);
 
   // Command #20
   const uint8_t cmd20[] = { 
