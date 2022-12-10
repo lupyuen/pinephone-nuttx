@@ -4637,6 +4637,8 @@ TODO: PinePhone LCD Panel Driver, convert from Zig to C
 
 TODO: PinePhone PMIC, convert from Zig to C, needs more reverse engineering
 
+=   [pmic.zig](pmic.zig)
+
 # Test Logs
 
 PinePhone Logs captured from various tests...
