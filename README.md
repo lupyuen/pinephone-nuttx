@@ -4464,6 +4464,7 @@ Then we compile the Zig Test Program targeting PinePhone...
   ##  Configure NuttX
   cd nuttx
   ./tools/configure.sh pinephone:nsh
+  make menuconfig
 
   ##  Select "System Type > Allwinner A64 Peripheral Selection > MIPI DSI"
   ##  Select "Build Setup > Debug Options > Graphics Debug Features > Graphics Informational Output"
