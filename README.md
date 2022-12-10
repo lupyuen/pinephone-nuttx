@@ -4557,6 +4557,12 @@ If the Addresses or Values are incorrect, our MIPI DSI Driver halts with an Asse
 
 (We remove the Assertion Checks in the final version of our driver)
 
+_What about a smaller, self-contained Unit Test for MIPI DSI?_
+
+Here's the Unit Test that verifies MIPI DSI Packets (Long / Short  / Short with Parameter) are composed correctly...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/46f055eceae268fa7ba20d69c12d4823491a89b9/test/test_mipi_dsi.c#L1-L109
+
 _Can we test the MIPI DSI Driver on our Local Computer? Without running on PinePhone?_
 
 Most certainly! In fact we test the MIPI DSI Driver on our Local Computer first before testing on PinePhone. Here's how...
