@@ -4462,6 +4462,8 @@ TODO
 
 [Test Log](https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7)
 
+_What about Unit Testing? Can we test the MIPI DSI / D-PHY Driver without other drivers?_
+
 TODO: Assertion Checks
 
 [a64_mipi_dsi.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c#L633-L646)
