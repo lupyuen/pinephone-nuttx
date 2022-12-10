@@ -1143,12 +1143,48 @@ pub export fn hello_main(
             // Render Graphics with Display Engine
             renderGraphics(3);  // Render 3 UI Channels
 
+        } else if (std.mem.eql(u8, cmd, "0")) {
+            // Render 3 UI Channels in Zig and C
+
+            // Turn on Display Backlight
+            backlight.backlight_enable(90);
+
+            // Init Timing Controller TCON0
+            tcon.tcon0_init();
+
+            // Init PMIC
+            pmic.display_board_init();
+
+            // Enable MIPI DSI Block
+            _ = a64_mipi_dsi_enable();
+
+            // Enable MIPI Display Physical Layer
+            _ = a64_mipi_dphy_enable();
+
+            // Reset LCD Panel
+            panel.panel_reset();
+
+            // Init LCD Panel
+            _ = pinephone_panel_init();
+
+            // Start MIPI DSI HSC and HSD
+            _ = a64_mipi_dsi_start();
+
+            // Init Display Engine
+            de2_init();
+
+            // Wait a while
+            _ = c.usleep(160000);
+
+            // Render Graphics with Display Engine
+            renderGraphics(3);  // Render 3 UI Channels
+
         } else if (std.mem.eql(u8, cmd, "1")) {
-            // Render 1 UI Channel
+            // Render 1 UI Channel in Zig
             test_render(1);
 
         } else if (std.mem.eql(u8, cmd, "3")) {
-            // Render 3 UI Channels
+            // Render 3 UI Channels in Zig
             test_render(3);
 
         } else {
@@ -1162,27 +1198,29 @@ pub export fn hello_main(
 fn usage() void {
     const err = std.log.err;
     err("hello 1", .{});
-    err(" Render 1 UI Channel", .{});
+    err(" Render 1 UI Channel (in Zig)", .{});
     err("hello 3", .{});
-    err(" Render 3 UI Channels", .{});
+    err(" Render 3 UI Channels (in Zig)", .{});
+    err("hello 0", .{});
+    err(" Render 3 UI Channels (in Zig and C)", .{});
     err("hello a", .{});
-    err(" Turn on Display Backlight", .{});
+    err(" Turn on Display Backlight (in Zig)", .{});
     err("hello b", .{});
-    err(" Init Timing Controller TCON0", .{});
+    err(" Init Timing Controller TCON0 (in Zig)", .{});
     err("hello c", .{});
-    err(" Init PMIC", .{});
+    err(" Init PMIC (in Zig)", .{});
     err("hello d", .{});
     err(" Enable MIPI DSI Block (a64_mipi_dsi_enable)", .{});
     err("hello e", .{});
     err(" Enable MIPI Display Physical Layer (a64_mipi_dphy_enable)", .{});
     err("hello f", .{});
-    err(" Reset LCD Panel", .{});
+    err(" Reset LCD Panel (in Zig)", .{});
     err("hello g", .{});
     err(" Init LCD Panel (pinephone_panel_init)", .{});
     err("hello h", .{});
     err(" Start MIPI DSI HSC and HSD (a64_mipi_dsi_start)", .{});
     err("hello i", .{});
-    err(" Render Graphics with Display Engine", .{});
+    err(" Render Graphics with Display Engine (in Zig)", .{});
 }
 
 ///////////////////////////////////////////////////////////////////////////////
