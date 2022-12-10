@@ -4461,8 +4461,15 @@ https://github.com/lupyuen/pinephone-nuttx/blob/bc560cea04f601542eb1d3d71fb00dbc
 Then we compile the Zig Test Program targeting PinePhone...
 
 ```bash
-  ##  Build NuttX
+  ##  Configure NuttX
   cd nuttx
+  ./tools/configure.sh pinephone:nsh
+
+  ##  Select "System Type > Allwinner A64 Peripheral Selection > MIPI DSI"
+  ##  Select "Build Setup > Debug Options > Graphics Debug Features > Graphics Informational Output"
+  ##  Save and exit menuconfig
+
+  ##  Build NuttX
   make
 
   ##  Download the Zig Test Program
@@ -4627,17 +4634,29 @@ Our Backlight Driver will follow the design of the STM32 Backlight Driver: `stm3
 
 -   [boards/arm/stm32/viewtool-stm32f107/src/stm32_ssd1289.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32/viewtool-stm32f107/src/stm32_ssd1289.c#L298)
 
+The code will go inside our Board LCD Source File, similar to this...
+
+-   [boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c)
+
 # Add LCD Panel Driver to NuttX Kernel
 
 TODO: PinePhone LCD Panel Driver, convert from Zig to C
 
 -   [panel.zig](panel.zig)
 
+The code will go inside our Board LCD Source File, similar to this...
+
+-   [boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c)
+
 # Add Power Management Integrated Circuit Driver to NuttX Kernel
 
 TODO: PinePhone PMIC, convert from Zig to C, needs more reverse engineering
 
-=   [pmic.zig](pmic.zig)
+-   [pmic.zig](pmic.zig)
+
+The code will go inside our Board LCD Source File, similar to this...
+
+-   [boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c)
 
 # Test Logs
 
