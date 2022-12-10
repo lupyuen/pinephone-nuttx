@@ -4581,6 +4581,62 @@ Note that we capture the [Actual Test Log](test/test.log) and we `diff` it with 
 
 https://github.com/lupyuen/pinephone-nuttx/blob/c04f1447933665df207a42f626c726ef7a7def65/test/test.log#L4-L20
 
+# Add Timing Controller Driver to NuttX Kernel
+
+TODO: Allwinner A64 Timing Controller TCON0 Driver, convert from Zig to C
+
+-   [tcon.zig](tcon.zig)
+
+# Add Display Engine Driver to NuttX Kernel
+
+TODO: Allwinner A64 Display Engine Driver, convert from Zig to C
+
+-   [render.zig](render.zig)
+
+Our Display Engine Driver will follow the design of STM32F7 Display Driver...
+
+1.  `stm32_bringup` calls `fb_register`...
+
+    [boards/arm/stm32f7/stm32f746g-disco/src/stm32_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32f7/stm32f746g-disco/src/stm32_bringup.c#L100)
+
+1.  `fb_register` calls `up_fbinitialize`...
+
+    [drivers/video/fb.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/drivers/video/fb.c#L664)
+
+1.  `up_fbinitialize` calls `stm32_ltdcinitialize`...
+
+    [boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c#L72)
+
+1.  `stm32_ltdcinitialize` creates the NuttX Framebuffer...
+
+    [arch/arm/src/stm32f7/stm32_ltdc.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm/src/stm32f7/stm32_ltdc.c#L2971)
+
+1.  NuttX Framebuffer is here...
+
+    [arch/arm/src/stm32f7/stm32_ltdc.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm/src/stm32f7/stm32_ltdc.c#L864)
+
+# Add Backlight Driver to NuttX Kernel
+
+TODO: PinePhone Backlight Driver, convert from Zig to C
+
+-   [backlight.zig](backlight.zig)
+
+Our Backlight Driver will follow the design of the STM32 Backlight Driver: `stm32_backlight`...
+
+-   [boards/arm/stm32/hymini-stm32v/src/stm32_ssd1289.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32/hymini-stm32v/src/stm32_ssd1289.c#L230)
+
+-   [boards/arm/stm32/viewtool-stm32f107/src/stm32_ssd1289.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32/viewtool-stm32f107/src/stm32_ssd1289.c#L298)
+
+# Add LCD Panel Driver to NuttX Kernel
+
+TODO: PinePhone LCD Panel Driver, convert from Zig to C
+
+-   [panel.zig](panel.zig)
+
+# Add Power Management Integrated Circuit Driver to NuttX Kernel
+
+TODO: PinePhone PMIC, convert from Zig to C, needs more reverse engineering
+
 # Test Logs
 
 PinePhone Logs captured from various tests...
