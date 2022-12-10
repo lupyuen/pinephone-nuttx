@@ -4464,9 +4464,7 @@ TODO
 
 _What about Unit Testing? Can we test the MIPI DSI / D-PHY Driver without other drivers?_
 
-TODO: Assertion Checks
-
-[a64_mipi_dsi.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c#L633-L646)
+Yep! Our MIPI DSI Driver simply writes values to a bunch of A64 Hardware Registers, like so: [a64_mipi_dsi.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c#L633-L646)
 
 ```c
   /* DSI Configuration Register 1 (A31 Page 846)
@@ -4494,15 +4492,19 @@ TODO: Assertion Checks
   #include "../../pinephone-nuttx/test/test_a64_mipi_dsi2.c"
 ```
 
-TODO: Assertion Checks
+So we only need to ensure that the Hardware Addresses and the Written Values are correct.
 
-[test_a64_mipi_dsi2.c](https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_mipi_dsi2.c#L34-L35)
+To do that, we use Assertion Checks to verify the Addresses and Values: [test_a64_mipi_dsi2.c](https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_mipi_dsi2.c#L34-L35)
 
 ```c
   // Test Code
   DEBUGASSERT(DSI_BASIC_CTL1_REG == 0x1ca0014);
   DEBUGASSERT(dsi_basic_ctl1 == 0x5bc7);
 ```
+
+If the Addresses or Values are incorrect, our MIPI DSI Driver halts with an Assertion Failure.
+
+(We remove the Assertion Checks in the final version of our driver)
 
 _Can we test the MIPI DSI Driver on our Local Computer? Without running on PinePhone?_
 
