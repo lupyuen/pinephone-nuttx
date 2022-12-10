@@ -4641,7 +4641,7 @@ TODO: PinePhone PMIC, convert from Zig to C, needs more reverse engineering
 
 # Test Logs
 
-PinePhone Logs captured from various tests...
+This section contains PinePhone NuttX Logs captured from various tests...
 
 ## Testing Zig Backlight Driver on PinePhone
 
