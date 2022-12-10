@@ -4332,49 +4332,110 @@ https://github.com/apache/nuttx/pull/7796
 
 # Add MIPI DSI to NuttX Kernel
 
-TODO
+We're adding the MIPI DSI Driver to the NuttX Kernel...
 
-https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dphy.c
+-   [mipi_dsi.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/mipi_dsi.c): Compose MIPI DSI Packets (Long, Short, Short with Parameter)
 
-https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c
+-   [a64_mipi_dsi.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c): MIPI Display Serial Interface (DSI) for Allwinner A64
 
-https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/mipi_dsi.c
+-   [a64_mipi_dphy.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dphy.c): MIPI Display Physical Layer (D-PHY) for Allwinner A64
 
-# Test NuttX MIPI DSI
+We created the above NuttX Source Files (in C) by converting our Zig MIPI DSI Driver to C...
 
-TODO
+-   [display.zig](display.zig): Zig Driver for MIPI DSI
 
-https://github.com/lupyuen/pinephone-nuttx/blob/170c25bc4d22e56967b0fa7866d647f91e75314b/render.zig#L1099-L1153
+-   [dphy.zig](dphy.zig): Zig Driver for MIPI D-PHY
 
-https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm64/a64/pinephone/src/pinephone_userleds.c#L179-L207
+That we Reverse-Engineered from the logs that we captured from PinePhone p-boot.
+
+_Was it difficult to convert Zig to C?_
+
+Not at all!
+
+Here's the Zig code for our MIPI DSI Driver...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/3d33e5a49a5a3857c39fe8aa79af60902a70088e/display.zig#L115-L170
+
+And here's the converted C code for NuttX: [mipi_dsi.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/mipi_dsi.c#L392-L484)
 
 ```c
-void board_userled_all(uint32_t ledset)
+ssize_t mipi_dsi_short_packet(FAR uint8_t *pktbuf,
+                              size_t pktlen,
+                              uint8_t channel,
+                              enum mipi_dsi_e cmd,
+                              FAR const uint8_t *txbuf,
+                              size_t txlen)
 {
-  ...
-  // Added this test code
-  int a64_mipi_dsi_enable(void);
-  int a64_mipi_dphy_enable(void);
-  int pinephone_panel_init(void);
-  int a64_mipi_dsi_start(void);
-  switch (ledset)
+  /* Data Identifier (DI) (1 byte):
+   * Virtual Channel Identifier (Bits 6 to 7)
+   * Data Type (Bits 0 to 5) */
+  const uint8_t vc = channel;
+  const uint8_t dt = cmd;
+  const uint8_t di = (vc << 6) |
+                     dt;
+
+  /* Data (2 bytes): Fill with 0 if Second Byte is missing */
+  const uint8_t data[2] =
     {
-      // Enable MIPI DSI Block
-      case 3: _info("a64_mipi_dsi_enable\n"); a64_mipi_dsi_enable(); break;
-      // Enable MIPI Display Physical Layer
-      case 4: _info("a64_mipi_dphy_enable\n"); a64_mipi_dphy_enable(); break;
-      // Init LCD Panel
-      case 6: _info("pinephone_panel_init\n"); pinephone_panel_init(); break;
-      // Start MIPI DSI HSC and HSD
-      case 7: _info("a64_mipi_dsi_start\n"); a64_mipi_dsi_start(); break;
-      default: break;
-    }
+      txbuf[0],                     /* First Byte */
+      (txlen == 2) ? txbuf[1] : 0,  /* Second Byte */
+    };
+
+  /* Data Identifier + Data (3 bytes):
+   * For computing Error Correction Code (ECC) */
+  const uint8_t di_data[3] =
+    {
+      di,
+      data[0],
+      data[1]
+    };
+
+  /* Compute ECC for Data Identifier + Word Count */
+  const uint8_t ecc = compute_ecc(di_data,
+                                  sizeof(di_data));
+
+  /* Packet Header (4 bytes):
+   * Data Identifier + Data + Error Correction Code */
+  const uint8_t header[4] =
+    {
+      di_data[0],
+      di_data[1],
+      di_data[2],
+      ecc
+    };
+
+  /* Packet Length is Packet Header Size (4 bytes) */
+  const size_t len = sizeof(header);
+
+  ginfo("channel=%d, cmd=0x%x, txlen=%ld\n", channel, cmd, txlen);
+  DEBUGASSERT(pktbuf != NULL && txbuf != NULL);
+  DEBUGASSERT(channel < 4);
+  DEBUGASSERT(cmd < (1 << 6));
+
+  if (txlen < 1 || txlen > 2) { DEBUGPANIC(); return ERROR; }
+  if (len > pktlen) { DEBUGPANIC(); return ERROR; }
+
+  /* Copy Packet Header to Packet Buffer */
+  memcpy(pktbuf,
+         header,
+         sizeof(header));  /* 4 bytes */
+
+  /* Return the Packet Length */
+  return len;
 }
 ```
 
-Test Log:
+The code looks highly similar!
 
-https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7
+# Test MIPI DSI for NuttX Kernel
+
+_How do we test the MIPI DSI Driver in the NuttX Kernel?_
+
+TODO
+
+render.zig
+
+[Test Log](https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7)
 
 # Test Logs
 

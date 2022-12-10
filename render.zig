@@ -1098,85 +1098,81 @@ pub export fn hello_main(
     if (argc == 2) {
         const cmd = std.mem.span(argv[1]);
         if (std.mem.eql(u8, cmd, "a")) {
-            // Turn on Display Backlight
+            // Turn on Display Backlight (in Zig)
             backlight.backlight_enable(90);
 
         } else if (std.mem.eql(u8, cmd, "b")) {
-            // Init Timing Controller TCON0
+            // Init Timing Controller TCON0 (in Zig)
             tcon.tcon0_init();
 
         } else if (std.mem.eql(u8, cmd, "c")) {
-            // Init PMIC
+            // Init PMIC (in Zig)
             pmic.display_board_init();
 
         } else if (std.mem.eql(u8, cmd, "d")) {
-            // Enable MIPI DSI Block
-            // dsi.enable_dsi_block();
+            // Enable MIPI DSI Block (in C)
             _ = a64_mipi_dsi_enable();
 
         } else if (std.mem.eql(u8, cmd, "e")) {
-            // Enable MIPI Display Physical Layer
-            // dphy.dphy_enable();
+            // Enable MIPI Display Physical Layer (in C)
             _ = a64_mipi_dphy_enable();
 
         } else if (std.mem.eql(u8, cmd, "f")) {
-            // Reset LCD Panel
+            // Reset LCD Panel (in Zig)
             panel.panel_reset();
 
         } else if (std.mem.eql(u8, cmd, "g")) {
-            // Init LCD Panel
-            // dsi.panel_init();
+            // Init LCD Panel (in C)
             _ = pinephone_panel_init();
 
         } else if (std.mem.eql(u8, cmd, "h")) {
-            // Start MIPI DSI HSC and HSD
-            // dsi.start_dsi();
+            // Start MIPI DSI HSC and HSD (in C)
             _ = a64_mipi_dsi_start();
 
         } else if (std.mem.eql(u8, cmd, "i")) {
-            // Init Display Engine
+            // Init Display Engine (in Zig)
             de2_init();
 
             // Wait a while
             _ = c.usleep(160000);
 
-            // Render Graphics with Display Engine
+            // Render Graphics with Display Engine (in Zig)
             renderGraphics(3);  // Render 3 UI Channels
 
         } else if (std.mem.eql(u8, cmd, "0")) {
             // Render 3 UI Channels in Zig and C
 
-            // Turn on Display Backlight
+            // Turn on Display Backlight (in Zig)
             backlight.backlight_enable(90);
 
-            // Init Timing Controller TCON0
+            // Init Timing Controller TCON0 (in Zig)
             tcon.tcon0_init();
 
-            // Init PMIC
+            // Init PMIC (in Zig)
             pmic.display_board_init();
 
-            // Enable MIPI DSI Block
+            // Enable MIPI DSI Block (in C)
             _ = a64_mipi_dsi_enable();
 
-            // Enable MIPI Display Physical Layer
+            // Enable MIPI Display Physical Layer (in C)
             _ = a64_mipi_dphy_enable();
 
-            // Reset LCD Panel
+            // Reset LCD Panel (in Zig)
             panel.panel_reset();
 
-            // Init LCD Panel
+            // Init LCD Panel (in C)
             _ = pinephone_panel_init();
 
-            // Start MIPI DSI HSC and HSD
+            // Start MIPI DSI HSC and HSD (in C)
             _ = a64_mipi_dsi_start();
 
-            // Init Display Engine
+            // Init Display Engine (in Zig)
             de2_init();
 
             // Wait a while
             _ = c.usleep(160000);
 
-            // Render Graphics with Display Engine
+            // Render Graphics with Display Engine (in Zig)
             renderGraphics(3);  // Render 3 UI Channels
 
         } else if (std.mem.eql(u8, cmd, "1")) {
