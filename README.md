@@ -4454,13 +4454,64 @@ But to render graphics on PinePhone we need the following drivers, which are sti
 
 Running an Integration Test across the C and Zig Drivers will be a little interesting. Here's how we run the Integration Test...
 
-TODO
+We created this program in Zig that calls the C and Zig Drivers, in the right sequence...
 
 https://github.com/lupyuen/pinephone-nuttx/blob/bc560cea04f601542eb1d3d71fb00dbc647d982d/render.zig#L1143-L1176
 
-TODO
+Then we compile the Zig Test Program targeting PinePhone...
 
-[Test Log](https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7)
+```bash
+  ##  Build NuttX
+  cd nuttx
+  make
+
+  ##  Download the Zig Test Program
+  git clone https://github.com/lupyuen/pinephone-nuttx
+  pushd ../pinephone-nuttx
+
+  ##  Compile the Zig App for PinePhone 
+  ##  (armv8-a with cortex-a53)
+  ##  TODO: Change ".." to your NuttX Project Directory
+  zig build-obj \
+    --verbose-cimport \
+    -target aarch64-freestanding-none \
+    -mcpu cortex_a53 \
+    -isystem "../nuttx/include" \
+    -I "../apps/include" \
+    render.zig
+
+  ##  Copy the compiled app to NuttX and overwrite `hello.o`
+  ##  TODO: Change ".." to your NuttX Project Directory
+  cp render.o \
+    ../apps/examples/hello/*hello.o  
+
+  ##  Return to the NuttX Folder
+  popd
+
+  ##  Link the Compiled Zig App with NuttX
+  make
+```
+
+We boot NuttX on PinePhone and run the Zig Test Program...
+
+```text
+NuttShell (NSH) NuttX-11.0.0-pinephone
+
+nsh> uname -a
+NuttX 11.0.0-pinephone 2a1577a-dirty Dec  9 2022 13:57:47 arm64 pinephone
+
+nsh> hello 0
+```
+
+[(Source)](https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7)
+
+Yep our Zig Test Program renders graphics successfully on PinePhone!
+
+Which means the NuttX Kernel Drivers for MIPI DSI are working OK!
+
+Here's the Test Log for our Zig Test Program running on NuttX and PinePhone...
+
+-   [Test Log for NuttX on PinePhone](https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7)
 
 _What about Unit Testing? Can we test the MIPI DSI / D-PHY Driver without other drivers?_
 
