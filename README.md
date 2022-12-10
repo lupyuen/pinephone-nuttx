@@ -4439,6 +4439,8 @@ TODO
 
 [Test Log](https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7)
 
+TODO: Assertion Checks
+
 [a64_mipi_dsi.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c#L633-L646)
 
 ```c
@@ -4451,11 +4453,20 @@ TODO
    * in A31 User Manual
    */
 
+  #define DSI_BASIC_CTL1_REG (A64_DSI_ADDR + 0x14)
+  #define DSI_MODE                   (1 << 0)
+  #define VIDEO_FRAME_START          (1 << 1)
+  #define VIDEO_PRECISION_MODE_ALIGN (1 << 2)
+  #define VIDEO_START_DELAY(n)       (n << 4)
+
   dsi_basic_ctl1 = VIDEO_START_DELAY(1468) |
                    VIDEO_PRECISION_MODE_ALIGN |
                    VIDEO_FRAME_START |
                    DSI_MODE;
   putreg32(dsi_basic_ctl1, DSI_BASIC_CTL1_REG);
+
+  // Include Test Code
+  #include "../../pinephone-nuttx/test/test_a64_mipi_dsi2.c"
 ```
 
 TODO: Assertion Checks
@@ -4463,6 +4474,7 @@ TODO: Assertion Checks
 [test_a64_mipi_dsi2.c](https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_mipi_dsi2.c#L34-L35)
 
 ```c
+  // Test Code
   DEBUGASSERT(DSI_BASIC_CTL1_REG == 0x1ca0014);
   DEBUGASSERT(dsi_basic_ctl1 == 0x5bc7);
 ```
