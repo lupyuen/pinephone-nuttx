@@ -4452,7 +4452,7 @@ But to render graphics on PinePhone we need the following drivers, which are sti
 -   Driver for LCD Panel
 -   Driver for Display Engine
 
-Running an Integration Test across the C and Zig Drivers will be a little interesting. Here's how we do it...
+Running an Integration Test across the C and Zig Drivers will be a little interesting. Here's how we run the Integration Test...
 
 TODO
 
