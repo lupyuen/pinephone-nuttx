@@ -4439,6 +4439,21 @@ The code looks highly similar!
 
 _How do we test the MIPI DSI Driver in the NuttX Kernel?_
 
+Right now we have implemented the following in the NuttX Kernel...
+
+-   Driver for MIPI Display Serial Interface (DSI)
+-   Driver for MIPI Display Physical Layer (D-PHY)
+
+But to render graphics on PinePhone we need the following drivers, which are still in Zig, pending conversion to C...
+
+-   Driver for Display Backlight
+-   Driver for Timing Controller TCON0
+-   Driver for Power Mgmt IC
+-   Driver for LCD Panel
+-   Driver for Display Engine
+
+Running an Integration Test across the C and Zig Drivers will be a little interesting. Here's how we do it...
+
 TODO
 
 https://github.com/lupyuen/pinephone-nuttx/blob/bc560cea04f601542eb1d3d71fb00dbc647d982d/render.zig#L1143-L1176
