@@ -4569,11 +4569,11 @@ Most certainly! In fact we test the MIPI DSI Driver on our Local Computer first 
 
 Remember that our MIPI DSI Driver simply writes values to a bunch of A64 Hardware Registers. So we only need to ensure that the Hardware Addresses and the Written Values are correct.
 
-We created a Test Scaffolding that simulates the NuttX Build Environment...
+We created a Test Scaffold that simulates the NuttX Build Environment...
 
 https://github.com/lupyuen/pinephone-nuttx/blob/44167d81edbd054d3285ca3a6087926e6fc9ce79/test/test.c#L7-L51
 
-Then we compile the Test Scaffolding and run it on our Local Computer...
+Then we compile the Test Scaffold and run it on our Local Computer...
 
 https://github.com/lupyuen/pinephone-nuttx/blob/cdb6bbc8e57ef02104bdbde721f8ff6787d74efc/test/run.sh#L9-L36
 
