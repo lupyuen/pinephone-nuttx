@@ -1,0 +1,29 @@
+// Test Code for Allwinner A64 MIPI D-PHY
+// Add `#include "../../pinephone-nuttx/test/test_a64_mipi_dphy.c"` to the end of a64_mipi_dphy_enable() in:
+// https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dphy.c
+
+{
+
+  DEBUGASSERT(MIPI_DSI_CLK_REG == 0x1c20168);
+  DEBUGASSERT(mipi_dsi_clk == 0x8203);
+
+  DEBUGASSERT(DPHY_TX_CTL_REG == 0x1ca1004);
+  DEBUGASSERT(DPHY_TX_TIME0_REG == 0x1ca1010);
+  DEBUGASSERT(DPHY_TX_TIME1_REG == 0x1ca1014);
+  DEBUGASSERT(DPHY_TX_TIME2_REG == 0x1ca1018);
+  DEBUGASSERT(DPHY_TX_TIME3_REG == 0x1ca101c);
+  DEBUGASSERT(DPHY_TX_TIME4_REG == 0x1ca1020);
+
+  DEBUGASSERT(DPHY_GCTL_REG == 0x1ca1000);
+  DEBUGASSERT(DPHY_ANA0_REG == 0x1ca104c);
+  DEBUGASSERT(DPHY_ANA1_REG == 0x1ca1050);
+  DEBUGASSERT(DPHY_ANA4_REG == 0x1ca105c);
+  DEBUGASSERT(DPHY_ANA2_REG == 0x1ca1054);
+
+  DEBUGASSERT(DPHY_ANA3_REG == 0x1ca1058);
+  DEBUGASSERT(DPHY_ANA3_REG == 0x1ca1058);
+  DEBUGASSERT(DPHY_ANA3_REG == 0x1ca1058);
+  DEBUGASSERT(DPHY_ANA2_REG == 0x1ca1054);
+  DEBUGASSERT(DPHY_ANA1_REG == 0x1ca1050);
+  DEBUGASSERT(DPHY_ANA2_REG == 0x1ca1054);
+}

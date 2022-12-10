@@ -4439,6 +4439,8 @@ TODO
 
 [Test Log](https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7)
 
+TODO: Test Locally
+
 # Test Logs
 
 PinePhone Logs captured from various tests...

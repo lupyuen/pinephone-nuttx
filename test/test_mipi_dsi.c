@@ -1,5 +1,5 @@
 // Test Code for MIPI DSI
-// Add `#include "../../pinephone-nuttx/test/mipi_dsi_inc.c"` to the end of this file:
+// Add `#include "../../pinephone-nuttx/test/test_mipi_dsi.c"` to the end of this file:
 // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/mipi_dsi.c
 
 void mipi_dsi_test(void)  //// TODO: Remove
