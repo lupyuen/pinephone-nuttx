@@ -4346,7 +4346,15 @@ We created the above NuttX Source Files (in C) by converting our Zig MIPI DSI Dr
 
 -   [dphy.zig](dphy.zig): Zig Driver for MIPI D-PHY
 
-That we Reverse-Engineered from the logs that we captured from PinePhone p-boot.
+That we Reverse-Engineered from the logs that we captured from PinePhone p-boot...
+
+-   ["Understanding PinePhone's Display (MIPI DSI)"](https://lupyuen.github.io/articles/dsi)
+
+-   ["NuttX RTOS for PinePhone: Display Driver in Zig"](https://lupyuen.github.io/articles/dsi2)
+
+-   ["Rendering PinePhone's Display (DE and TCON0)"](https://lupyuen.github.io/articles/de)
+
+-   ["NuttX RTOS for PinePhone: Render Graphics in Zig"](https://lupyuen.github.io/articles/de2)
 
 _Was it difficult to convert Zig to C?_
 
@@ -4479,9 +4487,23 @@ TODO: Assertion Checks
   DEBUGASSERT(dsi_basic_ctl1 == 0x5bc7);
 ```
 
-TODO: Test Locally
+_Can we test the MIPI DSI Driver on our Local Computer? Without running on PinePhone?_
+
+Most certainly! In fact we test the MIPI DSI Driver on our Local Computer first before testing on PinePhone. Here's how...
+
+Remember that our MIPI DSI Driver simply writes values to a bunch of A64 Hardware Registers. So we only need to ensure that the Hardware Addresses and the Written Values are correct.
+
+We created a Test Scaffolding that simulates the NuttX Build Environment...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/44167d81edbd054d3285ca3a6087926e6fc9ce79/test/test.c#L7-L51
+
+Then we compile the Test Scaffolding and run it on our Local Computer...
 
 https://github.com/lupyuen/pinephone-nuttx/blob/cdb6bbc8e57ef02104bdbde721f8ff6787d74efc/test/run.sh#L9-L36
+
+Note that we capture the Actual Test Log and we `diff` it with the Expected Test Log. That's how we detect discrepancies in the Hardware Addresses and the Written Values...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/c04f1447933665df207a42f626c726ef7a7def65/test/test.log#L4-L20
 
 # Test Logs
 
