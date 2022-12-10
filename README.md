@@ -4439,7 +4439,37 @@ TODO
 
 [Test Log](https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7)
 
+[a64_mipi_dsi.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c#L633-L646)
+
+```c
+  /* DSI Configuration Register 1 (A31 Page 846)
+   * Set Video_Start_Delay (Bits 4 to 16) to 1468 (Line Delay)
+   * Set Video_Precision_Mode_Align (Bit 2) to 1 (Fill Mode)
+   * Set Video_Frame_Start (Bit 1) to 1 (Precision Mode)
+   * Set DSI_Mode (Bit 0) to 1 (Video Mode)
+   * Note: Video_Start_Delay is actually 13 bits, not 8 bits as stated
+   * in A31 User Manual
+   */
+
+  dsi_basic_ctl1 = VIDEO_START_DELAY(1468) |
+                   VIDEO_PRECISION_MODE_ALIGN |
+                   VIDEO_FRAME_START |
+                   DSI_MODE;
+  putreg32(dsi_basic_ctl1, DSI_BASIC_CTL1_REG);
+```
+
+TODO: Assertion Checks
+
+[test_a64_mipi_dsi2.c](https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_mipi_dsi2.c#L34-L35)
+
+```c
+  DEBUGASSERT(DSI_BASIC_CTL1_REG == 0x1ca0014);
+  DEBUGASSERT(dsi_basic_ctl1 == 0x5bc7);
+```
+
 TODO: Test Locally
+
+https://github.com/lupyuen/pinephone-nuttx/blob/cdb6bbc8e57ef02104bdbde721f8ff6787d74efc/test/run.sh#L9-L36
 
 # Test Logs
 
