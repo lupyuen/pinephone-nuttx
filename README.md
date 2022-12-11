@@ -4467,7 +4467,7 @@ Then we compile the Zig Test Program targeting PinePhone...
   make menuconfig
 
   ##  Select "System Type > Allwinner A64 Peripheral Selection > MIPI DSI"
-  ##  Select "Build Setup > Debug Options > Graphics Debug Features > Graphics Informational Output"
+  ##  Select "Build Setup > Debug Options > Graphics Debug Features > Graphics Errors / Warnings / Informational Output"
   ##  Save and exit menuconfig
 
   ##  Build NuttX
