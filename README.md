@@ -4519,7 +4519,7 @@ Which means the NuttX Kernel Drivers for MIPI DSI are working OK!
 
 Here's the Test Log for our Zig Test Program running on NuttX and PinePhone...
 
--   [Test Log for NuttX on PinePhone](https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7)
+-   [Test Log for NuttX MIPI DSI on PinePhone](https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7)
 
 _What about Unit Testing? Can we test the MIPI DSI / D-PHY Driver without other drivers?_
 
