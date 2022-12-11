@@ -1122,8 +1122,11 @@ pub export fn hello_main(
             panel.panel_reset();
 
         } else if (std.mem.eql(u8, cmd, "g")) {
-            // Init LCD Panel (in C)
-            _ = pinephone_panel_init();
+            // TODO: Init LCD Panel (in C)
+            // _ = pinephone_panel_init();
+
+            // Init LCD Panel (in Zig)
+            dsi.panel_init();  // TODO: Remove this
 
         } else if (std.mem.eql(u8, cmd, "h")) {
             // Start MIPI DSI HSC and HSD (in C)
@@ -1160,8 +1163,11 @@ pub export fn hello_main(
             // Reset LCD Panel (in Zig)
             panel.panel_reset();
 
-            // Init LCD Panel (in C)
-            _ = pinephone_panel_init();
+            // TODO: Init LCD Panel (in C)
+            // _ = pinephone_panel_init();
+
+            // Init LCD Panel (in Zig)
+            dsi.panel_init();  // TODO: Remove this
 
             // Start MIPI DSI HSC and HSD (in C)
             _ = a64_mipi_dsi_start();
