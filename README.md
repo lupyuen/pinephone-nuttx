@@ -4437,6 +4437,8 @@ ssize_t mipi_dsi_short_packet(FAR uint8_t *pktbuf,
 
 The code looks highly similar!
 
+![Rendering graphics on PinePhone with Apache NuttX RTOS](https://lupyuen.github.io/images/dsi3-title.jpg)
+
 # Test MIPI DSI for NuttX Kernel
 
 _How do we test the MIPI DSI Driver in the NuttX Kernel?_
@@ -4515,7 +4517,7 @@ nsh> hello 0
 
 [(Source)](https://gist.github.com/lupyuen/f1a02068aeb0785278c482116a4eedc7)
 
-Yep our Zig Test Program renders graphics successfully on PinePhone!
+Yep our Zig Test Program renders graphics successfully on PinePhone! (Pic above)
 
 Which means the NuttX Kernel Drivers for MIPI DSI are working OK!
 
