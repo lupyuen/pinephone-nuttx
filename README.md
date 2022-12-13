@@ -4478,24 +4478,25 @@ Then we compile the Zig Test Program targeting PinePhone...
   make
 
   ##  Download the Zig Test Program
+  pushd $HOME
   git clone https://github.com/lupyuen/pinephone-nuttx
-  pushd ../pinephone-nuttx
+  cd pinephone-nuttx
 
   ##  Compile the Zig App for PinePhone 
   ##  (armv8-a with cortex-a53)
-  ##  TODO: Change ".." to your NuttX Project Directory
+  ##  TODO: Change "$HOME/nuttx" to your NuttX Project Directory
   zig build-obj \
     --verbose-cimport \
     -target aarch64-freestanding-none \
     -mcpu cortex_a53 \
-    -isystem "../nuttx/include" \
-    -I "../apps/include" \
+    -isystem "$HOME/nuttx/nuttx/include" \
+    -I "$HOME/nuttx/apps/include" \
     render.zig
 
   ##  Copy the compiled app to NuttX and overwrite `hello.o`
-  ##  TODO: Change ".." to your NuttX Project Directory
+  ##  TODO: Change "$HOME/nuttx" to your NuttX Project Directory
   cp render.o \
-    ../apps/examples/hello/*hello.o  
+    $HOME/nuttx/apps/examples/hello/*hello.o  
 
   ##  Return to the NuttX Folder
   popd
