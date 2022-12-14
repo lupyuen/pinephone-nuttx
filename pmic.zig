@@ -105,48 +105,57 @@ pub export fn display_board_init() void {
 
     {
         // Set DLDO1 Voltage to 3.3V
-        //   pmic_write: reg=0x15, val=0x1a
-        //   rsb_write: rt_addr=0x2d, reg_addr=0x15, value=0x1a
+        // (DLDO1 powers the Front Camera / USB HSIC / I2C Sensors)
+        // Register 0x15: DLDO1 Voltage Control (AXP803 Page 52)
+        // Set Voltage (Bits 0 to 4) to 26 (2.6V + 0.7V = 3.3V)
+
         debug("Set DLDO1 Voltage to 3.3V", .{});
         const ret = pmic_write(0x15, 0x1a);
         assert(ret == 0);
     }
     {
-        //   pmic_clrsetbits: reg=0x12, clr_mask=0x0, set_mask=0x8
-        //   rsb_read: rt_addr=0x2d, reg_addr=0x12
-        //   rsb_write: rt_addr=0x2d, reg_addr=0x12, value=0xd9
+        // Power on DLDO1
+        // Register 0x12: Output Power On-Off Control 2 (AXP803 Page 51)
+        // Set DLDO1 On-Off Control (Bit 3) to 1 (Power On)
+
         const ret = pmic_clrsetbits(0x12, 0, 1 << 3);
         assert(ret == 0);
     }
     {
         // Set LDO Voltage to 3.3V
-        //   pmic_write: reg=0x91, val=0x1a
-        //   rsb_write: rt_addr=0x2d, reg_addr=0x91, value=0x1a
+        // (GPIO0LDO powers the Capacitive Touch Panel)
+        // Register 0x91: GPIO0LDO and GPIO0 High Level Voltage Setting (AXP803 Page 77)
+        // Set GPIO0LDO and GPIO0 High Level Voltage (Bits 0 to 4) to 26 (2.6V + 0.7V = 3.3V)
+
         debug("Set LDO Voltage to 3.3V", .{});
         const ret = pmic_write(0x91, 0x1a);
         assert(ret == 0);
     }
     {
-        // Enable LDO mode on GPIO0
-        //   pmic_write: reg=0x90, val=0x3
-        //   rsb_write: rt_addr=0x2d, reg_addr=0x90, value=0x3
+        // Enable LDO Mode on GPIO0
+        // Register 0x90: GPIO0 (GPADC) Control (AXP803 Page 76)
+        // Set GPIO0 Pin Function Control (Bits 0 to 2) to 0b11 (Low Noise LDO on)
+
         debug("Enable LDO mode on GPIO0", .{});
         const ret = pmic_write(0x90, 0x03);
         assert(ret == 0);
     }
     {
         // Set DLDO2 Voltage to 1.8V
-        //   pmic_write: reg=0x16, val=0xb
-        //   rsb_write: rt_addr=0x2d, reg_addr=0x16, value=0xb
+        // (DLDO2 powers the MIPI DSI Connector)
+        // Register 0x16: DLDO2 Voltage Control (AXP803 Page 52)
+        // Set Voltage (Bits 0 to 4) to 11 (1.1V + 0.7V = 1.8V)
+
         debug("Set DLDO2 Voltage to 1.8V", .{});
         const ret = pmic_write(0x16, 0x0b);
         if (ret != 0) { debug("ret={}", .{ ret }); }
         assert(ret == 0);
     }
     {
-        //   pmic_clrsetbits: reg=0x12, clr_mask=0x0, set_mask=0x10
-        //   rsb_read: rt_addr=0x2d, reg_addr=0x12
-        //   rsb_write: rt_addr=0x2d, reg_addr=0x12, value=0xd9
+        // Power on DLDO2
+        // Register 0x12: Output Power On-Off Control 2 (AXP803 Page 51)
+        // Set DLDO2 On-Off Control (Bit 4) to 1 (Power On)
+
         const ret = pmic_clrsetbits(0x12, 0x0, 1 << 4);
         assert(ret == 0);
     }
