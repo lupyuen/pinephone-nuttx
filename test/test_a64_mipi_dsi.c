@@ -3,7 +3,7 @@
 // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c
 
 /// Write the DCS Command to MIPI DSI
-static int write_dcs(FAR const uint8_t *buf, size_t len)
+static int write_dcs(const uint8_t *buf, size_t len)
 {
   int ret = -1;
   ginfo("writeDcs: len=%d\n", (int) len);
