@@ -1,5 +1,40 @@
 TODO: Turn on Display Backlight
-TODO: Init Timing Controller TCON0
+Configure PLL_VIDEO0
+  *0x1c20010 = 0x81006207
+Enable LDO1 and LDO2
+  *0x1c20040 = 0xc00000
+  up_mdelay 1 ms
+Configure MIPI PLL
+  *0x1c20040 = 0x80c0071a
+Set TCON0 Clock Source to MIPI PLL
+  *0x1c20118 = 0x80000000
+Enable TCON0 Clock
+  *0x1c20064 = 0x8
+Deassert TCON0 Reset
+  *0x1c202c4 = 0x8
+Disable TCON0 and Interrupts
+  *0x1c0c000 = 0x0
+  *0x1c0c004 = 0x0
+  *0x1c0c008 = 0x0
+Enable Tristate Output
+  *0x1c0c08c = 0xffffffff
+  *0x1c0c0f4 = 0xffffffff
+Set DCLK to MIPI PLL / 6
+  *0x1c0c044 = 0x80000006
+  *0x1c0c040 = 0x81000000
+  *0x1c0c048 = 0x2cf059f
+  *0x1c0c0f8 = 0x8
+  *0x1c0c060 = 0x10010005
+Set CPU Panel Trigger
+  *0x1c0c160 = 0x2f02cf
+  *0x1c0c164 = 0x59f
+  *0x1c0c168 = 0x1bc2000a
+Set Safe Period
+  *0x1c0c1f0 = 0xbb80003
+Enable Output Triggers
+  *0x1c0c08c = 0xe0000000
+Enable TCON0
+  *0x1c0c000: clear 0x80000000, set 0x80000000
 TODO: Init PMIC
 Enable MIPI DSI Bus
   *0x1c20060: clear 0x2, set 0x2

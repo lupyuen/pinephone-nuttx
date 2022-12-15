@@ -14,6 +14,7 @@ gcc \
     test.c \
     ../../nuttx/arch/arm64/src/a64/a64_mipi_dphy.c \
     ../../nuttx/arch/arm64/src/a64/a64_mipi_dsi.c \
+    ../../nuttx/arch/arm64/src/a64/a64_tcon0.c \
     ../../nuttx/arch/arm64/src/a64/mipi_dsi.c
 
 ## Run the test

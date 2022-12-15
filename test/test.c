@@ -9,10 +9,11 @@
 #include "mipi_dsi.h"
 #include "a64_mipi_dsi.h"
 #include "a64_mipi_dphy.h"
+#include "a64_tcon0.h"
 
 // TODO: Fix test code
 #include "test_mipi_dsi.c"
-#include "test_a64_mipi_dsi.c"
+// TODO: #include "test_a64_mipi_dsi.c"  // For pinephone_panel_init
 
 int pinephone_panel_init(void);
 
@@ -22,7 +23,9 @@ int main()
 
   ginfo("TODO: Turn on Display Backlight\n");
 
-  ginfo("TODO: Init Timing Controller TCON0\n");
+  // Init Timing Controller TCON0
+  ret = a64_tcon0_init();
+  assert(ret == OK);
   
   ginfo("TODO: Init PMIC\n");
 
