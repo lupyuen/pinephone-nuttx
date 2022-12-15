@@ -1106,8 +1106,8 @@ pub export fn hello_main(
             tcon.tcon0_init();
 
         } else if (std.mem.eql(u8, cmd, "c")) {
-            // Init PMIC (in Zig)
-            pmic.display_board_init();
+            // Init PMIC (in C)
+            _ = a64_tcon0_init();
 
         } else if (std.mem.eql(u8, cmd, "d")) {
             // Enable MIPI DSI Block (in C)
@@ -1148,8 +1148,8 @@ pub export fn hello_main(
             // Turn on Display Backlight (in Zig)
             backlight.backlight_enable(90);
 
-            // Init Timing Controller TCON0 (in Zig)
-            tcon.tcon0_init();
+            // Init Timing Controller TCON0 (in C)
+            _ = a64_tcon0_init();
 
             // Init PMIC (in Zig)
             pmic.display_board_init();
@@ -1163,7 +1163,8 @@ pub export fn hello_main(
             // Reset LCD Panel (in Zig)
             panel.panel_reset();
 
-            // TODO: Init LCD Panel (in C)
+            // Init LCD Panel (in C)
+            // From https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_mipi_dsi.c
             _ = pinephone_panel_init();
 
             // Init LCD Panel (in Zig)
@@ -1290,6 +1291,7 @@ pub fn log(
 extern fn a64_mipi_dphy_enable() c_int;
 extern fn a64_mipi_dsi_enable() c_int;
 extern fn a64_mipi_dsi_start() c_int;
+extern fn a64_tcon0_init() c_int;
 extern fn pinephone_panel_init() c_int;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
