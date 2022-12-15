@@ -105,7 +105,7 @@ pub export fn display_board_init() void {
 
     {
         // Set DLDO1 Voltage to 3.3V
-        // (DLDO1 powers the Front Camera / USB HSIC / I2C Sensors)
+        // DLDO1 powers the Front Camera / USB HSIC / I2C Sensors
         // Register 0x15: DLDO1 Voltage Control (AXP803 Page 52)
         // Set Voltage (Bits 0 to 4) to 26 (2.6V + 0.7V = 3.3V)
 
@@ -123,7 +123,7 @@ pub export fn display_board_init() void {
     }
     {
         // Set LDO Voltage to 3.3V
-        // (GPIO0LDO powers the Capacitive Touch Panel)
+        // GPIO0LDO powers the Capacitive Touch Panel
         // Register 0x91: GPIO0LDO and GPIO0 High Level Voltage Setting (AXP803 Page 77)
         // Set GPIO0LDO and GPIO0 High Level Voltage (Bits 0 to 4) to 26 (2.6V + 0.7V = 3.3V)
 
@@ -142,7 +142,7 @@ pub export fn display_board_init() void {
     }
     {
         // Set DLDO2 Voltage to 1.8V
-        // (DLDO2 powers the MIPI DSI Connector)
+        // DLDO2 powers the MIPI DSI Connector
         // Register 0x16: DLDO2 Voltage Control (AXP803 Page 52)
         // Set Voltage (Bits 0 to 4) to 11 (1.1V + 0.7V = 1.8V)
 
