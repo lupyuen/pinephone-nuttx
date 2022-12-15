@@ -20,6 +20,7 @@
 //! PinePhone Power Management IC Driver for Apache NuttX RTOS
 //! See https://lupyuen.github.io/articles/de#appendix-power-management-integrated-circuit
 //! "A64 Page ???" refers to Allwinner A64 User Manual: https://github.com/lupyuen/pinephone-nuttx/releases/download/doc/Allwinner_A64_User_Manual_V1.1.pdf
+//! "AXP803 Page ???" refers to X-Powers AXP803 PMIC Datasheet: https://files.pine64.org/doc/datasheet/pine64/AXP803_Datasheet_V1.0.pdf
 
 /// Import the Zig Standard Library
 const std = @import("std");
