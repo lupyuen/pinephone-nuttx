@@ -1164,10 +1164,10 @@ pub export fn hello_main(
             panel.panel_reset();
 
             // TODO: Init LCD Panel (in C)
-            // _ = pinephone_panel_init();
+            _ = pinephone_panel_init();
 
             // Init LCD Panel (in Zig)
-            dsi.panel_init();  // TODO: Remove this
+            // dsi.panel_init();  // TODO: Remove this
 
             // Start MIPI DSI HSC and HSD (in C)
             _ = a64_mipi_dsi_start();
