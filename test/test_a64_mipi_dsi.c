@@ -1,6 +1,6 @@
 // Test Code for Allwinner A64 MIPI DSI
 // Add `#include "../../pinephone-nuttx/test/test_a64_mipi_dsi.c"` to the end of this file:
-// https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c
+// https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c
 
 /// Write the DCS Command to MIPI DSI
 static int write_dcs(const uint8_t *buf, size_t len)

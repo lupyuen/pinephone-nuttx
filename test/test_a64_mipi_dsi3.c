@@ -1,6 +1,6 @@
 // Test Code for Allwinner A64 MIPI DSI
 // Add `#include "../../pinephone-nuttx/test/test_a64_mipi_dsi3.c"` to the end of a64_mipi_dsi_start() in this file:
-// https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c
+// https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c
 
 {
   DEBUGASSERT(DSI_INST_JUMP_SEL_REG == 0x1ca0048);

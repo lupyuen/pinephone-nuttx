@@ -4336,11 +4336,11 @@ https://github.com/apache/nuttx/pull/7796
 
 We're adding the MIPI DSI Driver to the NuttX Kernel...
 
--   [mipi_dsi.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/mipi_dsi.c): Compose MIPI DSI Packets (Long, Short, Short with Parameter)
+-   [mipi_dsi.c](https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/mipi_dsi.c): Compose MIPI DSI Packets (Long, Short, Short with Parameter)
 
--   [a64_mipi_dsi.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c): MIPI Display Serial Interface (DSI) for Allwinner A64
+-   [a64_mipi_dsi.c](https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c): MIPI Display Serial Interface (DSI) for Allwinner A64
 
--   [a64_mipi_dphy.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dphy.c): MIPI Display Physical Layer (D-PHY) for Allwinner A64
+-   [a64_mipi_dphy.c](https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dphy.c): MIPI Display Physical Layer (D-PHY) for Allwinner A64
 
 We created the above NuttX Source Files (in C) by converting our Zig MIPI DSI Driver to C...
 
@@ -4366,7 +4366,7 @@ Here's the Zig code for our MIPI DSI Driver...
 
 https://github.com/lupyuen/pinephone-nuttx/blob/3d33e5a49a5a3857c39fe8aa79af60902a70088e/display.zig#L115-L170
 
-And here's the converted C code for NuttX: [mipi_dsi.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/mipi_dsi.c#L392-L484)
+And here's the converted C code for NuttX: [mipi_dsi.c](https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/mipi_dsi.c#L392-L484)
 
 ```c
 ssize_t mipi_dsi_short_packet(FAR uint8_t *pktbuf,
@@ -4530,7 +4530,7 @@ Here's the Test Log for our Zig Test Program running on NuttX and PinePhone...
 
 _What about Unit Testing? Can we test the MIPI DSI / D-PHY Driver without other drivers?_
 
-Yep! Our MIPI DSI Driver simply writes values to a bunch of A64 Hardware Registers, like so: [a64_mipi_dsi.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm64/src/a64/a64_mipi_dsi.c#L633-L646)
+Yep! Our MIPI DSI Driver simply writes values to a bunch of A64 Hardware Registers, like so: [a64_mipi_dsi.c](https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c#L633-L646)
 
 ```c
   /* DSI Configuration Register 1 (A31 Page 846)
@@ -4612,23 +4612,23 @@ Our Display Engine Driver will follow the design of STM32F7 Display Driver...
 
 1.  `stm32_bringup` calls `fb_register`...
 
-    [boards/arm/stm32f7/stm32f746g-disco/src/stm32_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32f7/stm32f746g-disco/src/stm32_bringup.c#L100)
+    [boards/arm/stm32f7/stm32f746g-disco/src/stm32_bringup.c](https://github.com/apache/nuttx/blob/master/boards/arm/stm32f7/stm32f746g-disco/src/stm32_bringup.c#L100)
 
 1.  `fb_register` calls `up_fbinitialize`...
 
-    [drivers/video/fb.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/drivers/video/fb.c#L664)
+    [drivers/video/fb.c](https://github.com/apache/nuttx/blob/master/drivers/video/fb.c#L664)
 
 1.  `up_fbinitialize` calls `stm32_ltdcinitialize`...
 
-    [boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c#L72)
+    [boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c](https://github.com/apache/nuttx/blob/master/boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c#L72)
 
 1.  `stm32_ltdcinitialize` creates the NuttX Framebuffer...
 
-    [arch/arm/src/stm32f7/stm32_ltdc.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm/src/stm32f7/stm32_ltdc.c#L2971)
+    [arch/arm/src/stm32f7/stm32_ltdc.c](https://github.com/apache/nuttx/blob/master/arch/arm/src/stm32f7/stm32_ltdc.c#L2971)
 
 1.  NuttX Framebuffer is here...
 
-    [arch/arm/src/stm32f7/stm32_ltdc.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/arch/arm/src/stm32f7/stm32_ltdc.c#L864)
+    [arch/arm/src/stm32f7/stm32_ltdc.c](https://github.com/apache/nuttx/blob/master/arch/arm/src/stm32f7/stm32_ltdc.c#L864)
 
 # Add Backlight Driver to NuttX Kernel
 
@@ -4638,13 +4638,13 @@ TODO: PinePhone Backlight Driver, convert from Zig to C
 
 Our Backlight Driver will follow the design of the STM32 Backlight Driver: `stm32_backlight`...
 
--   [boards/arm/stm32/hymini-stm32v/src/stm32_ssd1289.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32/hymini-stm32v/src/stm32_ssd1289.c#L230)
+-   [boards/arm/stm32/hymini-stm32v/src/stm32_ssd1289.c](https://github.com/apache/nuttx/blob/master/boards/arm/stm32/hymini-stm32v/src/stm32_ssd1289.c#L230)
 
--   [boards/arm/stm32/viewtool-stm32f107/src/stm32_ssd1289.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32/viewtool-stm32f107/src/stm32_ssd1289.c#L298)
+-   [boards/arm/stm32/viewtool-stm32f107/src/stm32_ssd1289.c](https://github.com/apache/nuttx/blob/master/boards/arm/stm32/viewtool-stm32f107/src/stm32_ssd1289.c#L298)
 
 The code will go inside our Board LCD Source File, similar to this...
 
--   [boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c)
+-   [boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c](https://github.com/apache/nuttx/blob/master/boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c)
 
 # Add LCD Panel Driver to NuttX Kernel
 
@@ -4654,7 +4654,7 @@ TODO: PinePhone LCD Panel Driver, convert from Zig to C
 
 The code will go inside our Board LCD Source File, similar to this...
 
--   [boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c)
+-   [boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c](https://github.com/apache/nuttx/blob/master/boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c)
 
 # Add Power Management Integrated Circuit Driver to NuttX Kernel
 
@@ -4664,7 +4664,7 @@ TODO: PinePhone PMIC, convert from Zig to C, needs more reverse engineering
 
 The code will go inside our Board LCD Source File, similar to this...
 
--   [boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/dsi/boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c)
+-   [boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c](https://github.com/apache/nuttx/blob/master/boards/arm/stm32f7/stm32f746g-disco/src/stm32_lcd.c)
 
 # Test Logs
 
