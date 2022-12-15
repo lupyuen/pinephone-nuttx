@@ -104,62 +104,60 @@ pub export fn display_board_init() void {
     const PD23: u24 = 1 << 23;
     modreg32(0, PD23, PD_DATA_REG);  // TODO: DMB
 
-    {
-        // Set DLDO1 Voltage to 3.3V
-        // DLDO1 powers the Front Camera / USB HSIC / I2C Sensors
-        // Register 0x15: DLDO1 Voltage Control (AXP803 Page 52)
-        // Set Voltage (Bits 0 to 4) to 26 (2.6V + 0.7V = 3.3V)
+    // Set DLDO1 Voltage to 3.3V
+    // DLDO1 powers the Front Camera / USB HSIC / I2C Sensors
+    // Register 0x15: DLDO1 Voltage Control (AXP803 Page 52)
+    // Set Voltage (Bits 0 to 4) to 26 (2.6V + 0.7V = 3.3V)
+    debug("Set DLDO1 Voltage to 3.3V", .{});
+    const DLDO1_Voltage_Control = 0x15;
+    const DLDO1_Voltage: u5 = 26 << 0;
+    const ret1 = pmic_write(DLDO1_Voltage_Control, DLDO1_Voltage);
+    assert(ret1 == 0);
 
-        debug("Set DLDO1 Voltage to 3.3V", .{});
-        const ret = pmic_write(0x15, 0x1a);
-        assert(ret == 0);
-    }
-    {
-        // Power on DLDO1
-        // Register 0x12: Output Power On-Off Control 2 (AXP803 Page 51)
-        // Set DLDO1 On-Off Control (Bit 3) to 1 (Power On)
+    // Power on DLDO1
+    // Register 0x12: Output Power On-Off Control 2 (AXP803 Page 51)
+    // Set DLDO1 On-Off Control (Bit 3) to 1 (Power On)
+    const Output_Power_On_Off_Control2 = 0x12;
+    const DLDO1_On_Off_Control: u4 = 1 << 3;
+    const ret2 = pmic_clrsetbits(Output_Power_On_Off_Control2, 0, DLDO1_On_Off_Control);
+    assert(ret2 == 0);
 
-        const ret = pmic_clrsetbits(0x12, 0, 1 << 3);
-        assert(ret == 0);
-    }
-    {
-        // Set LDO Voltage to 3.3V
-        // GPIO0LDO powers the Capacitive Touch Panel
-        // Register 0x91: GPIO0LDO and GPIO0 High Level Voltage Setting (AXP803 Page 77)
-        // Set GPIO0LDO and GPIO0 High Level Voltage (Bits 0 to 4) to 26 (2.6V + 0.7V = 3.3V)
+    // Set LDO Voltage to 3.3V
+    // GPIO0LDO powers the Capacitive Touch Panel
+    // Register 0x91: GPIO0LDO and GPIO0 High Level Voltage Setting (AXP803 Page 77)
+    // Set GPIO0LDO and GPIO0 High Level Voltage (Bits 0 to 4) to 26 (2.6V + 0.7V = 3.3V)
+    debug("Set LDO Voltage to 3.3V", .{});
+    const GPIO0LDO_High_Level_Voltage_Setting = 0x91;
+    const GPIO0LDO_High_Level_Voltage: u5 = 26 << 0;
+    const ret3 = pmic_write(GPIO0LDO_High_Level_Voltage_Setting, GPIO0LDO_High_Level_Voltage);
+    assert(ret3 == 0);
 
-        debug("Set LDO Voltage to 3.3V", .{});
-        const ret = pmic_write(0x91, 0x1a);
-        assert(ret == 0);
-    }
-    {
-        // Enable LDO Mode on GPIO0
-        // Register 0x90: GPIO0 (GPADC) Control (AXP803 Page 76)
-        // Set GPIO0 Pin Function Control (Bits 0 to 2) to 0b11 (Low Noise LDO on)
+    // Enable LDO Mode on GPIO0
+    // Register 0x90: GPIO0 (GPADC) Control (AXP803 Page 76)
+    // Set GPIO0 Pin Function Control (Bits 0 to 2) to 0b11 (Low Noise LDO on)
+    debug("Enable LDO mode on GPIO0", .{});
+    const GPIO0_Control = 0x90;
+    const GPIO0_Pin_Function: u3 = 0b11 << 0;
+    const ret4 = pmic_write(GPIO0_Control, GPIO0_Pin_Function);
+    assert(ret4 == 0);
 
-        debug("Enable LDO mode on GPIO0", .{});
-        const ret = pmic_write(0x90, 0x03);
-        assert(ret == 0);
-    }
-    {
-        // Set DLDO2 Voltage to 1.8V
-        // DLDO2 powers the MIPI DSI Connector
-        // Register 0x16: DLDO2 Voltage Control (AXP803 Page 52)
-        // Set Voltage (Bits 0 to 4) to 11 (1.1V + 0.7V = 1.8V)
+    // Set DLDO2 Voltage to 1.8V
+    // DLDO2 powers the MIPI DSI Connector
+    // Register 0x16: DLDO2 Voltage Control (AXP803 Page 52)
+    // Set Voltage (Bits 0 to 4) to 11 (1.1V + 0.7V = 1.8V)
+    debug("Set DLDO2 Voltage to 1.8V", .{});
+    const DLDO2_Voltage_Control = 0x16;
+    const DLDO2_Voltage: u5 = 11 << 0;
+    const ret5 = pmic_write(DLDO2_Voltage_Control, DLDO2_Voltage);
+    assert(ret5 == 0);
 
-        debug("Set DLDO2 Voltage to 1.8V", .{});
-        const ret = pmic_write(0x16, 0x0b);
-        if (ret != 0) { debug("ret={}", .{ ret }); }
-        assert(ret == 0);
-    }
-    {
-        // Power on DLDO2
-        // Register 0x12: Output Power On-Off Control 2 (AXP803 Page 51)
-        // Set DLDO2 On-Off Control (Bit 4) to 1 (Power On)
-
-        const ret = pmic_clrsetbits(0x12, 0x0, 1 << 4);
-        assert(ret == 0);
-    }
+    // Power on DLDO2
+    // Register 0x12: Output Power On-Off Control 2 (AXP803 Page 51)
+    // Set DLDO2 On-Off Control (Bit 4) to 1 (Power On)
+    comptime { assert(Output_Power_On_Off_Control2 == 0x12); }
+    const DLDO2: u5 = 1 << 4;
+    const ret6 = pmic_clrsetbits(Output_Power_On_Off_Control2, 0x0, DLDO2);
+    assert(ret6 == 0);
 
     // Wait for power supply and power-on init
     debug("Wait for power supply and power-on init", .{});
