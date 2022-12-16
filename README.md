@@ -4596,11 +4596,13 @@ Note that we capture the [Actual Test Log](test/test.log) and we `diff` it with 
 
 https://github.com/lupyuen/pinephone-nuttx/blob/c04f1447933665df207a42f626c726ef7a7def65/test/test.log#L4-L20
 
-# Add Timing Controller Driver to NuttX Kernel
+# Test Timing Controller TCON0 Driver for NuttX Kernel
 
-TODO: Allwinner A64 Timing Controller TCON0 Driver, convert from Zig to C
+We're adding the Timing Controller TCON0 Driver to NuttX Kernel...
 
--   [tcon.zig](tcon.zig)
+-   [arch/arm64/src/a64/a64_tcon0.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon/arch/arm64/src/a64/a64_tcon0.c)
+
+TODO
 
 # Add Display Engine Driver to NuttX Kernel
 

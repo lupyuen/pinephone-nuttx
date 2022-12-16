@@ -1165,10 +1165,10 @@ pub export fn hello_main(
 
             // Init LCD Panel (in C)
             // From https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_mipi_dsi.c
-            // TODO: _ = pinephone_panel_init();
+            _ = pinephone_panel_init();
 
             // Init LCD Panel (in Zig)
-            dsi.panel_init();  // TODO: Remove this
+            // dsi.panel_init();  // TODO: Remove this
 
             // Start MIPI DSI HSC and HSD (in C)
             _ = a64_mipi_dsi_start();
