@@ -4694,6 +4694,35 @@ lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
 :n sBhe>g i.n[nKing Idle Loop
 ```
 
+TODO
+
+https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfilelock.c#L39-L64
+
+```c
+void flockfile(FAR struct file_struct *stream)
+{
+  _info("%p\n", stream); ////
+  nxrmutex_lock(&stream->fs_lock);
+}
+
+void funlockfile(FAR struct file_struct *stream)
+{
+  _info("%p\n", stream); ////
+  nxrmutex_unlock(&stream->fs_lock);
+}
+```
+
+TODO
+
+```text
+lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
+flockfile: 0x40a5cc78
+flockfile: 0x40a5cc78
+flockfile: 0x40a5cc78
+funlockfile: 0x40a5cc78
+funlockfile: 0x40a5cc78
+```
+
 # Add Display Engine Driver to NuttX Kernel
 
 TODO: Allwinner A64 Display Engine Driver, convert from Zig to C
