@@ -4644,6 +4644,8 @@ We also tested with Graphics Logging Disabled, to preempt any timing issues...
 
 -   [NuttX Kernel TCON0 Test Log (Graphics Logging Disabled)](https://gist.github.com/lupyuen/61a1374c9ea6a1b7826488da688e8c6c)
 
+The log appears garbled when `printf` is called by our Zig Test Program, due to concurrent printing by multiple tasks. This will be fixed.
+
 # Add Display Engine Driver to NuttX Kernel
 
 TODO: Allwinner A64 Display Engine Driver, convert from Zig to C
