@@ -4604,6 +4604,8 @@ We're adding the Timing Controller TCON0 Driver to NuttX Kernel...
 
 TODO
 
+[(Or download the binaries here)](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.1.9)
+
 # Add Display Engine Driver to NuttX Kernel
 
 TODO: Allwinner A64 Display Engine Driver, convert from Zig to C
