@@ -1,5 +1,5 @@
 // Test Code for Allwinner A64 MIPI DSI
-// Add `#include "../../pinephone-nuttx/test/test_a64_mipi_dsi3.c"` to the end of a64_mipi_dsi_start() in this file:
+// Add `#include "../../pinephone-nuttx/test/test_a64_mipi_dsi3.c"` to the end of a64_mipi_dsi_start(), before `return OK` in this file:
 // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c
 
 {

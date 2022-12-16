@@ -1,5 +1,5 @@
 // Test Code for Allwinner A64 MIPI D-PHY
-// Add `#include "../../pinephone-nuttx/test/test_a64_mipi_dphy.c"` to the end of a64_mipi_dphy_enable() in:
+// Add `#include "../../pinephone-nuttx/test/test_a64_mipi_dphy.c"` to the end of a64_mipi_dphy_enable(), before `return OK` in this file:
 // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dphy.c
 
 {

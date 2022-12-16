@@ -1,0 +1,59 @@
+// Test Code for Allwinner A64 MIPI DSI
+// Add `#include "../../pinephone-nuttx/test/test_a64_tcon0.c"` to the end of a64_tcon0_init(), before `return OK` in this file:
+// https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_tcon0.c
+
+{
+  DEBUGASSERT(PLL_VIDEO0_CTRL_REG == 0x1c20010);
+  DEBUGASSERT(pll_video0_ctrl == 0x81006207);
+
+  DEBUGASSERT(PLL_MIPI_CTRL_REG == 0x1c20040);
+  DEBUGASSERT(pll_mipi_ctrl1 == 0xc00000);
+
+  DEBUGASSERT(PLL_MIPI_CTRL_REG == 0x1c20040);
+  DEBUGASSERT(pll_mipi_ctrl2 == 0x80c0071a);
+
+  DEBUGASSERT(TCON0_CLK_REG == 0x1c20118);
+  DEBUGASSERT(tcon0_clk == 0x80000000);
+
+  DEBUGASSERT(BUS_CLK_GATING_REG1 == 0x1c20064);
+
+  DEBUGASSERT(BUS_SOFT_RST_REG1 == 0x1c202c4);
+
+  DEBUGASSERT(TCON_GCTL_REG == 0x1c0c000);
+  DEBUGASSERT(TCON_GINT0_REG == 0x1c0c004);
+  DEBUGASSERT(TCON_GINT1_REG == 0x1c0c008);
+
+  DEBUGASSERT(TCON0_IO_TRI_REG == 0x1c0c08c);
+  DEBUGASSERT(TCON1_IO_TRI_REG == 0x1c0c0f4);
+
+  DEBUGASSERT(TCON0_DCLK_REG == 0x1c0c044);
+  DEBUGASSERT(tcon0_dclk == 0x80000006);
+
+  DEBUGASSERT(TCON0_CTL_REG == 0x1c0c040);
+  DEBUGASSERT(tcon0_ctl == 0x81000000);
+
+  DEBUGASSERT(TCON0_BASIC0_REG == 0x1c0c048);
+  DEBUGASSERT(tcon0_basic0 == 0x2cf059f);
+
+  DEBUGASSERT(TCON0_ECC_FIFO == 0x1c0c0f8);
+
+  DEBUGASSERT(TCON0_CPU_IF_REG == 0x1c0c060);
+  DEBUGASSERT(tcon0_cpu_if == 0x10010005);
+
+  DEBUGASSERT(TCON0_CPU_TRI0_REG == 0x1c0c160);
+  DEBUGASSERT(tcon0_cpu_tri0 == 0x2f02cf);
+
+  DEBUGASSERT(TCON0_CPU_TRI1_REG == 0x1c0c164);
+  DEBUGASSERT(tcon0_cpu_tri1 == 0x59f);
+
+  DEBUGASSERT(TCON0_CPU_TRI2_REG == 0x1c0c168);
+  DEBUGASSERT(tcon0_cpu_tri2 == 0x1bc2000a);
+
+  DEBUGASSERT(TCON_SAFE_PERIOD_REG == 0x1c0c1f0);
+  DEBUGASSERT(tcon_safe_period == 0xbb80003);
+
+  DEBUGASSERT(TCON0_IO_TRI_REG == 0x1c0c08c);
+  DEBUGASSERT(tcon0_io_tri == 0xe0000000);
+
+  DEBUGASSERT(TCON_GCTL_REG == 0x1c0c000);
+}
