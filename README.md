@@ -4716,9 +4716,20 @@ funlockfile: 0x40a5cc78, ret=0
 funlockfile: 0x40a5cc78, ret=0
 ```
 
-`nxrmutex_lock` calls `nxsem_wait`, which calls [`up_switch_context`](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_switchcontext.c#L41-L103)
+`nxrmutex_lock` calls [`nxsem_wait`](https://github.com/apache/nuttx/blob/master/sched/semaphore/sem_wait.c#L42-L210), which calls [`up_switch_context`](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_switchcontext.c#L41-L103)
 
 Is there an issue with [`up_switch_context`](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_switchcontext.c#L41-L103)?
+
+Checking that CPU ID is 0...
+
+```
+#include "../arch/arm64/src/common/arm64_arch.h" ////
+_info("%p, ret=%d, up_cpu_index=%d\n", stream, ret, MPIDR_TO_CORE(GET_MPIDR())); ////
+// Shows: `flockfile: 0x40a5cc78, ret=0, up_cpu_index=0`
+
+_info("%p, ret=%d, mpidr_el1=%p\n", stream, ret, read_sysreg(mpidr_el1)); ////
+// Shows `flockfile: 0x40a5cc78, ret=0, mpidr_el1=0x80000000`
+```
 
 TODO
 
