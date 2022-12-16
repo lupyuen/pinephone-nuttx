@@ -4650,6 +4650,8 @@ The log appears garbled when `printf` is called by our Zig Test Program, due to 
 
 TODO: The log appears garbled when `printf` is called by our NuttX Test Apps, due to concurrent printing by multiple tasks. Why?
 
+Let's check whether Console Output Stream is locked and unlocked properly...
+
 https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfilelock.c#L39-L64
 
 ```c
@@ -4666,7 +4668,7 @@ void funlockfile(FAR struct file_struct *stream)
 }
 ```
 
-TODO
+Output log shows that `{` and `}` are nested! Locking is incorrect!
 
 ```text
 - Ready to Boot CPU
@@ -4694,7 +4696,7 @@ lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
 :n sBhe>g i.n[nKing Idle Loop
 ```
 
-TODO
+Let's print the stream to verify it's the same Console Output Stream...
 
 https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfilelock.c#L39-L64
 
@@ -4712,7 +4714,7 @@ void funlockfile(FAR struct file_struct *stream)
 }
 ```
 
-TODO
+Yep it's the same Console Output Stream. How can be it locked twice without unlocking?
 
 ```text
 lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
@@ -4722,6 +4724,8 @@ flockfile: 0x40a5cc78
 funlockfile: 0x40a5cc78
 funlockfile: 0x40a5cc78
 ```
+
+TODO
 
 # Add Display Engine Driver to NuttX Kernel
 
