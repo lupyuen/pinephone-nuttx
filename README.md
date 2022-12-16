@@ -4602,9 +4602,47 @@ We're adding the Timing Controller TCON0 Driver to NuttX Kernel...
 
 -   [arch/arm64/src/a64/a64_tcon0.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon/arch/arm64/src/a64/a64_tcon0.c)
 
-TODO
+Right now we have implemented the following in the NuttX Kernel...
 
-[(Or download the binaries here)](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.1.9)
+-   Driver for MIPI Display Serial Interface (DSI)
+-   Driver for MIPI Display Physical Layer (D-PHY)
+-   Driver for Timing Controller TCON0
+
+But to render graphics on PinePhone we need the following drivers, which are still in Zig, pending conversion to C...
+
+-   Driver for Display Backlight
+-   Driver for Power Mgmt IC
+-   Driver for LCD Panel
+-   Driver for Display Engine
+
+So we created this Test Program in Zig that calls the C and Zig Drivers, in the right sequence...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/32351d5a189b50af3bcfa2347bd993db615c465d/render.zig#L1143-L1176
+
+[(Download the binaries here)](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.1.9)
+
+We boot NuttX on PinePhone and run the Zig Test Program...
+
+```text
+NuttShell (NSH) NuttX-11.0.0-pinephone
+
+nsh> uname -a
+NuttX 11.0.0-pinephone 893b147 Dec 14 2022 23:01:27 arm64 pinephone
+
+nsh> hello 0
+```
+
+[(Source)](https://gist.github.com/lupyuen/33d7cc006e841a9e5fdff264b4c759c4)
+
+Our Zig Test Program renders the Test Pattern successfully on PinePhone. [(Like this)](https://lupyuen.github.io/images/dsi3-title.jpg)
+
+Here's the Test Log, with Graphics Logging Enabled...
+
+-   [NuttX Kernel TCON0 Test Log](https://gist.github.com/lupyuen/33d7cc006e841a9e5fdff264b4c759c4)
+
+We also tested with Graphics Logging Disabled, to preempt any timing issues...
+
+-   [NuttX Kernel TCON0 Test Log (Graphics Logging Disabled)](https://gist.github.com/lupyuen/61a1374c9ea6a1b7826488da688e8c6c)
 
 # Add Display Engine Driver to NuttX Kernel
 
