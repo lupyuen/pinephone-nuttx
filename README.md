@@ -4648,7 +4648,16 @@ The log appears garbled when `printf` is called by our Zig Test Program, due to 
 
 # Garbled Console Output
 
-TODO: The log appears garbled when `printf` is called by our NuttX Test Apps, due to concurrent printing by multiple tasks. Why?
+The log appears garbled when `printf` is called by our NuttX Test Apps, due to concurrent printing by multiple tasks. Why?
+
+```text
+nx_start_application: Starting init thread
+lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
+nsh: sysinit: fopen failed: 2
+nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
+```
+
+[(Source)](https://gist.github.com/lupyuen/33d7cc006e841a9e5fdff264b4c759c4)
 
 Let's check whether Console Output Stream is locked and unlocked properly...
 
@@ -4671,29 +4680,11 @@ void funlockfile(FAR struct file_struct *stream)
 Output log shows that `{` and `}` are nested! Locking is incorrect!
 
 ```text
-- Ready to Boot CPU
-- Boot from EL2
-- Boot from EL1
-- Boot to C runtime for OS Initialize
-psci_detect: Detected PSCI v1.1
-nx_start: Entry
-up_allocate_heap: heap_start=0x0x40a59000, heap_size=0x75a7000
-gic_validate_dist_version: GICv2 detected
-up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
-uart_register: Registering /dev/console
-uart_register: Registering /dev/ttyS0
-work_start_highpri: Starting high-priority kernel worker thread(s)
 nx_start_application: Starting init thread
 lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
 {{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{n}s}h{:} {s}y{s}i{n}i{t}:{ }f{o}p{e}n{ }f{a}i{l}e{d}:{ }2{
 }
 {}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{n}s}h{:} {m{k}f}a{t}f{s{:} }c{o{m}m}a{n{d} }n{o{t} }f{o{u}n}d{
-{
-}
-}
-{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{N}u{t}t{S{h}e}l{l{ }(}N{S{H})} {N{u}t}t{X{-}1}1{.}0n.x0_-sptianretp:h oCnPeU
-0
-:n sBhe>g i.n[nKing Idle Loop
 ```
 
 Let's print the stream to verify it's the same Console Output Stream...
@@ -4703,14 +4694,14 @@ https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfilelock.c#L3
 ```c
 void flockfile(FAR struct file_struct *stream)
 {
-  _info("%p\n", stream); ////
-  nxrmutex_lock(&stream->fs_lock);
+  int ret = nxrmutex_lock(&stream->fs_lock); ////
+  _info("%p, ret=%d\n", stream, ret); ////
 }
 
 void funlockfile(FAR struct file_struct *stream)
 {
-  _info("%p\n", stream); ////
-  nxrmutex_unlock(&stream->fs_lock);
+  int ret = nxrmutex_unlock(&stream->fs_lock); ////
+  _info("%p, ret=%d\n", stream, ret); ////
 }
 ```
 
@@ -4718,11 +4709,11 @@ Yep it's the same Console Output Stream. How can be it locked twice without unlo
 
 ```text
 lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
-flockfile: 0x40a5cc78
-flockfile: 0x40a5cc78
-flockfile: 0x40a5cc78
-funlockfile: 0x40a5cc78
-funlockfile: 0x40a5cc78
+flockfile: 0x40a5cc78, ret=0
+flockfile: 0x40a5cc78, ret=0
+flockfile: 0x40a5cc78, ret=0
+funlockfile: 0x40a5cc78, ret=0
+funlockfile: 0x40a5cc78, ret=0
 ```
 
 TODO
