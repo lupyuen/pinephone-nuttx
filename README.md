@@ -4716,6 +4716,10 @@ funlockfile: 0x40a5cc78, ret=0
 funlockfile: 0x40a5cc78, ret=0
 ```
 
+`nxrmutex_lock` calls `nxsem_wait`, which calls [`up_switch_context`](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_switchcontext.c#L41-L103)
+
+Is there an issue with [`up_switch_context`](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_switchcontext.c#L41-L103)?
+
 TODO
 
 # Add Display Engine Driver to NuttX Kernel
