@@ -4646,6 +4646,54 @@ We also tested with Graphics Logging Disabled, to preempt any timing issues...
 
 The log appears garbled when `printf` is called by our Zig Test Program, due to concurrent printing by multiple tasks. This will be fixed.
 
+# Garbled Console Output
+
+TODO: The log appears garbled when `printf` is called by our NuttX Test Apps, due to concurrent printing by multiple tasks. Why?
+
+https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfilelock.c#L39-L64
+
+```c
+void flockfile(FAR struct file_struct *stream)
+{
+  up_putc('{');////
+  nxrmutex_lock(&stream->fs_lock);
+}
+...
+void funlockfile(FAR struct file_struct *stream)
+{
+  up_putc('}');////
+  nxrmutex_unlock(&stream->fs_lock);
+}
+```
+
+TODO
+
+```text
+- Ready to Boot CPU
+- Boot from EL2
+- Boot from EL1
+- Boot to C runtime for OS Initialize
+psci_detect: Detected PSCI v1.1
+nx_start: Entry
+up_allocate_heap: heap_start=0x0x40a59000, heap_size=0x75a7000
+gic_validate_dist_version: GICv2 detected
+up_timer_initialize: up_timer_initialize: cp15 timer(s) running at 24.00MHz, cycle 24000
+uart_register: Registering /dev/console
+uart_register: Registering /dev/ttyS0
+work_start_highpri: Starting high-priority kernel worker thread(s)
+nx_start_application: Starting init thread
+lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
+{{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{n}s}h{:} {s}y{s}i{n}i{t}:{ }f{o}p{e}n{ }f{a}i{l}e{d}:{ }2{
+}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{n}s}h{:} {m{k}f}a{t}f{s{:} }c{o{m}m}a{n{d} }n{o{t} }f{o{u}n}d{
+{
+}
+}
+{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{N}u{t}t{S{h}e}l{l{ }(}N{S{H})} {N{u}t}t{X{-}1}1{.}0n.x0_-sptianretp:h oCnPeU
+0
+:n sBhe>g i.n[nKing Idle Loop
+```
+
 # Add Display Engine Driver to NuttX Kernel
 
 TODO: Allwinner A64 Display Engine Driver, convert from Zig to C
