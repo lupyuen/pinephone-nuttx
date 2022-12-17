@@ -4716,19 +4716,48 @@ funlockfile: 0x40a5cc78, ret=0
 funlockfile: 0x40a5cc78, ret=0
 ```
 
-`nxrmutex_lock` calls [`nxsem_wait`](https://github.com/apache/nuttx/blob/master/sched/semaphore/sem_wait.c#L42-L210), which calls [`up_switch_context`](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_switchcontext.c#L41-L103)
+[`nxrmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L335-L377) calls [`nxmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L135-L179), which calls [`nxsem_wait`](https://github.com/apache/nuttx/blob/master/sched/semaphore/sem_wait.c#L42-L210), which calls [`up_switch_context`](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_switchcontext.c#L41-L103)
 
-Is there an issue with [`up_switch_context`](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_switchcontext.c#L41-L103)?
+_Maybe it's caused by Multiple CPU Cores calling the same code?_
 
-Checking that CPU ID is 0...
+Let's check that CPU ID is 0...
 
-```
+```c
 #include "../arch/arm64/src/common/arm64_arch.h" ////
 _info("%p, ret=%d, up_cpu_index=%d\n", stream, ret, MPIDR_TO_CORE(GET_MPIDR())); ////
 // Shows: `flockfile: 0x40a5cc78, ret=0, up_cpu_index=0`
 
 _info("%p, ret=%d, mpidr_el1=%p\n", stream, ret, read_sysreg(mpidr_el1)); ////
 // Shows `flockfile: 0x40a5cc78, ret=0, mpidr_el1=0x80000000`
+```
+
+Yep CPU ID is always 0.
+
+Let's print the Thread ID and Mutex Count...
+
+```text
+void flockfile(FAR struct file_struct *stream)
+{
+  nxrmutex_lock(&stream->fs_lock);
+  _info("%p, thread=%d, mutex.count=%d\n", stream, gettid(), stream->fs_lock.count); ////
+}
+
+void funlockfile(FAR struct file_struct *stream)
+{
+  _info("%p, thread=%d, mutex.count=%d\n", stream, gettid(), stream->fs_lock.count); ////
+  nxrmutex_unlock(&stream->fs_lock);
+}
+```
+
+Thread ID is always the same. Mutex Count goes from 1 to 3 and drops to 2...
+
+```text
+lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
+flockfile: 0x40a5cc78, thread=2, mutex.count=1
+flockfile: 0x40a5cc78, thread=2, mutex.count=2
+flockfile: 0x40a5cc78, thread=2, mutex.count=3
+funlockfile: 0x40a5cc78, thread=2, mutex.count=3
+funlockfile: 0x40a5cc78, thread=2, mutex.count=2
 ```
 
 TODO
