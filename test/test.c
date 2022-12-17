@@ -18,7 +18,6 @@
 
 int pinephone_panel_init(void);
 int render_graphics(void);
-void test_pattern(void);
 
 int main()
 {
@@ -49,9 +48,6 @@ int main()
   // Start MIPI DSI HSC and HSD
   ret = a64_mipi_dsi_start();
   assert(ret == OK);
-
-  // Fill Framebuffer with Test Pattern
-  test_pattern();
 
   // Init Display Engine
   ret = a64_de_init();

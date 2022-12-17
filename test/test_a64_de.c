@@ -7,6 +7,8 @@
 #include <nuttx/video/fb.h>
 #include "a64_tcon0.h"
 
+static void test_pattern(void);
+
 #ifdef TODO
 /// NuttX Video Controller for PinePhone (3 UI Channels)
 static struct fb_videoinfo_s videoInfo =
@@ -85,6 +87,9 @@ static struct fb_overlayinfo_s overlayInfo[2] =
 
 int render_graphics(void)
 {
+  // Fill Framebuffer with Test Pattern
+  test_pattern();
+
   // Init the UI Blender for PinePhone's A64 Display Engine
   int ret = a64_de_blender_init();
   assert(ret == OK);
@@ -134,12 +139,14 @@ int render_graphics(void)
   return OK;
 }
 
-void test_pattern(void)
+// Fill the Framebuffers with a Test Pattern
+static void test_pattern(void)
 {
   memset(fb0, 0, sizeof(fb0));
   memset(fb1, 0, sizeof(fb1));
   memset(fb2, 0, sizeof(fb2));
 
+  // TODO: Test Pattern
   memset(fb0, 0, 0b10101010);
   memset(fb1, 0, 0b11001100);
   memset(fb2, 0, 0b11100111);
