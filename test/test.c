@@ -17,7 +17,7 @@
 // TODO: #include "test_a64_mipi_dsi.c"  // For pinephone_panel_init
 
 int pinephone_panel_init(void);
-void render_graphics(void);
+int render_graphics(void);
 void test_pattern(void);
 
 int main()
