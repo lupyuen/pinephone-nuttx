@@ -1174,7 +1174,6 @@ pub export fn hello_main(
 
             // Init LCD Panel (in C)
             // https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_mipi_dsi.c
-            // TODO: 
             _ = pinephone_panel_init();
 
             // Init LCD Panel (in Zig)
@@ -1186,7 +1185,7 @@ pub export fn hello_main(
             // Init Display Engine (in C)
             _ = a64_de_init();
 
-            // Wait a while
+            // Wait 160 milliseconds
             _ = c.usleep(160000);
 
             // Render Graphics with Display Engine (in C)
