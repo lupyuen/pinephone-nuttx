@@ -1148,11 +1148,17 @@ pub export fn hello_main(
             // Turn on Display Backlight (in Zig)
             backlight.backlight_enable(90);
 
+            // TODO: Remove this when Backlight is converted to C
+            // _ = c.sleep(1);
+
             // Init Timing Controller TCON0 (in C)
             _ = a64_tcon0_init();
 
             // Init PMIC (in Zig)
             pmic.display_board_init();
+
+            // TODO: Remove this when PMIC is converted to C
+            // _ = c.sleep(1);
 
             // Enable MIPI DSI Block (in C)
             _ = a64_mipi_dsi_enable();
@@ -1163,12 +1169,16 @@ pub export fn hello_main(
             // Reset LCD Panel (in Zig)
             panel.panel_reset();
 
+            // TODO: Remove this when Panel is converted to C
+            // _ = c.sleep(1);
+
             // Init LCD Panel (in C)
-            // From https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_mipi_dsi.c
-            // TODO: _ = pinephone_panel_init();
+            // https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_mipi_dsi.c
+            // TODO: 
+            _ = pinephone_panel_init();
 
             // Init LCD Panel (in Zig)
-            dsi.panel_init();  // TODO: Remove this
+            // TODO: Remove this: dsi.panel_init();
 
             // Start MIPI DSI HSC and HSD (in C)
             _ = a64_mipi_dsi_start();

@@ -4644,8 +4644,6 @@ We also tested with Graphics Logging Disabled, to preempt any timing issues...
 
 -   [NuttX Kernel TCON0 Test Log (Graphics Logging Disabled)](https://gist.github.com/lupyuen/61a1374c9ea6a1b7826488da688e8c6c)
 
-The log appears garbled when `printf` is called by our Zig Test Program, due to concurrent printing by multiple tasks. This will be fixed.
-
 # Garbled Console Output
 
 The log appears garbled when `printf` is called by our NuttX Test Apps, due to concurrent printing by multiple tasks. Why?
@@ -4654,12 +4652,34 @@ The log appears garbled when `printf` is called by our NuttX Test Apps, due to c
 nx_start_application: Starting init thread
 lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
 nsh: sysinit: fopen failed: 2
-nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddl
+nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddleLoNouptt
+Shell (NSH) NuttX-11.0.0-RC2
 ```
 
-[(Source)](https://gist.github.com/lupyuen/33d7cc006e841a9e5fdff264b4c759c4)
+[(Source)](https://gist.github.com/lupyuen/e49a22a9e39b7c024b984bea40377712)
 
-Let's check whether Console Output Stream is locked and unlocked properly...
+It's supposed to show...
+
+```text
+nsh: sysinit: fopen failed: 2
+nsh: mkfatfs: command not found
+NuttShell (NSH) NuttX-11.0.0-RC2
+nsh> nx_start: CPU0: Beginning Idle Loop
+```
+
+[(Source)](https://gist.github.com/lupyuen/7537da777d728a22ab379b1ef234a2d1)
+
+Solution: Disable "Scheduler Informational Output" in...
+
+"Build Setup > Debug Options > Enable Debug Features > Scheduler Debug Features"
+
+This prevents `sinfo` from garbling the `printf` output...
+
+- `sinfo` writes directly to UART Port character by character, whereas...
+
+- `printf` is buffered and writes the buffer to the UART Driver
+
+FYI: `printf` Console Output Stream is locked and unlocked with a Mutex...
 
 https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfilelock.c#L39-L64
 
@@ -4677,7 +4697,7 @@ void funlockfile(FAR struct file_struct *stream)
 }
 ```
 
-Output log shows that `{` and `}` are nested! Locking is incorrect!
+Output log shows that `{` and `}` are nested...
 
 ```text
 nx_start_application: Starting init thread
@@ -4687,51 +4707,12 @@ lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
 {}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{n}s}h{:} {m{k}f}a{t}f{s{:} }c{o{m}m}a{n{d} }n{o{t} }f{o{u}n}d{
 ```
 
-Let's print the stream to verify it's the same Console Output Stream...
+How can be it locked twice without unlocking?
 
-https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfilelock.c#L39-L64
-
-```c
-void flockfile(FAR struct file_struct *stream)
-{
-  int ret = nxrmutex_lock(&stream->fs_lock); ////
-  _info("%p, ret=%d\n", stream, ret); ////
-}
-
-void funlockfile(FAR struct file_struct *stream)
-{
-  int ret = nxrmutex_unlock(&stream->fs_lock); ////
-  _info("%p, ret=%d\n", stream, ret); ////
-}
-```
-
-Yep it's the same Console Output Stream. How can be it locked twice without unlocking?
-
-```text
-lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
-flockfile: 0x40a5cc78, ret=0
-flockfile: 0x40a5cc78, ret=0
-flockfile: 0x40a5cc78, ret=0
-funlockfile: 0x40a5cc78, ret=0
-funlockfile: 0x40a5cc78, ret=0
-```
-
-[`nxrmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L335-L377) calls [`nxmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L135-L179), which calls [`nxsem_wait`](https://github.com/apache/nuttx/blob/master/sched/semaphore/sem_wait.c#L42-L210), which calls [`up_switch_context`](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_switchcontext.c#L41-L103)
-
-_Maybe it's caused by Multiple CPU Cores calling the same code?_
-
-Let's check that CPU ID is 0...
-
-```c
-#include "../arch/arm64/src/common/arm64_arch.h" ////
-_info("%p, ret=%d, up_cpu_index=%d\n", stream, ret, MPIDR_TO_CORE(GET_MPIDR())); ////
-// Shows: `flockfile: 0x40a5cc78, ret=0, up_cpu_index=0`
-
-_info("%p, ret=%d, mpidr_el1=%p\n", stream, ret, read_sysreg(mpidr_el1)); ////
-// Shows `flockfile: 0x40a5cc78, ret=0, mpidr_el1=0x80000000`
-```
-
-Yep CPU ID is always 0.
+[`nxrmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L335-L377) calls...
+- [`nxmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L135-L179), which calls...
+- [`nxsem_wait`](https://github.com/apache/nuttx/blob/master/sched/semaphore/sem_wait.c#L42-L210), which calls...
+- [`up_switch_context`](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_switchcontext.c#L41-L103)
 
 Let's print the Thread ID and Mutex Count...
 
@@ -4760,7 +4741,32 @@ funlockfile: 0x40a5cc78, thread=2, mutex.count=3
 funlockfile: 0x40a5cc78, thread=2, mutex.count=2
 ```
 
-TODO
+That's because [`nxrmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L335-L377) allows the Mutex to be locked multiple times within the same thread.
+
+FYI: Here's how we verify whether our code is called by multiple CPU Cores...
+
+```c
+#include "../arch/arm64/src/common/arm64_arch.h" ////
+_info("up_cpu_index=%d\n", MPIDR_TO_CORE(GET_MPIDR())); ////
+// Shows: `up_cpu_index=0`
+
+_info("mpidr_el1=%p\n", read_sysreg(mpidr_el1)); ////
+// Shows `mpidr_el1=0x80000000`
+```
+
+FYI: How `printf` works...
+
+[`printf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_printf.c#L32-L51_ calls...
+- [`vfprintf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_vfprintf.c#L34-L56), which calls...
+- [`libvsprintf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libvsprintf.c#L1336-L1381), which calls...
+- [`vsprintf_internal`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libvsprintf.c#L171-L1332), which calls...
+- [`stream_putc`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libvsprintf.c#L70), which calls...
+- ???, which calls...
+- [`fputc`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_fputc.c#L31-L61), which calls...
+- [`libfwrite`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfwrite.c#L41-L180)
+
+[`fputc`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_fputc.c#L31-L61) also calls...
+- [`lib_libfflush`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfflush.c#L40-L171)
 
 # Add Display Engine Driver to NuttX Kernel
 
