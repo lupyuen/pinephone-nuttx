@@ -592,6 +592,7 @@ Set Blender Background
 Set Blender Pre-Multiply
   *0x1101084 = 0x0
 Channel 1: Set Overlay (720 x 1440)
+  *0x1103000 = 0xff000405
   *0x1103010 = 0x12345678
   *0x110300c = 0xb40
   *0x1103004 = 0x59f02cf
@@ -608,6 +609,7 @@ Channel 1: Set Blender Input Pipe 0 (720 x 1440)
 Channel 1: Disable Scaler
   *0x1140000 = 0x0
 Channel 2: Set Overlay (600 x 600)
+  *0x1104000 = 0xff000005
   *0x1104010 = 0x23456789
   *0x110400c = 0x960
   *0x1104004 = 0x2570257
@@ -621,6 +623,7 @@ Channel 2: Set Blender Input Pipe 1 (600 x 600)
 Channel 2: Disable Scaler
   *0x1150000 = 0x0
 Channel 3: Set Overlay (720 x 1440)
+  *0x1105000 = 0x7f000005
   *0x1105010 = 0x34567890
   *0x110500c = 0xb40
   *0x1105004 = 0x59f02cf
@@ -634,7 +637,9 @@ Channel 3: Set Blender Input Pipe 2 (720 x 1440)
 Channel 3: Disable Scaler
   *0x1160000 = 0x0
 Set Blender Route
+  *0x1101080 = 0x321
 Enable Blender Pipes
+  *0x1101000 = 0x701
 Apply Settings
   *0x1100008 = 0x1
 Testing Compose Short Packet (Without Parameter)...
