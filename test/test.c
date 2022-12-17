@@ -229,7 +229,7 @@ int main()
   }
 
   // Set UI Blender Route, enable Blender Pipes and apply the settings
-  ret = a64_de_enable();
+  ret = a64_de_enable(CHANNELS);
   assert(ret == OK);
 
   // Test MIPI DSI
