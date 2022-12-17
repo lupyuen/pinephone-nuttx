@@ -22,17 +22,23 @@ static struct fb_videoinfo_s videoInfo =
 
 // Framebuffer 0: (Base UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
-static uint32_t fb0[A64_TCON0_PANEL_WIDTH * A64_TCON0_PANEL_HEIGHT];
+// TODO: Does alignment fix missing lines?
+static uint32_t fb0[A64_TCON0_PANEL_WIDTH * A64_TCON0_PANEL_HEIGHT]
+  __attribute__ ((aligned (0x1000)));
 
 // Framebuffer 1: (First Overlay UI Channel)
 // Square 600 x 600 (4 bytes per ARGB 8888 pixel)
+// TODO: Does alignment fix missing lines?
 #define FB1_WIDTH  600
 #define FB1_HEIGHT 600
-static uint32_t fb1[FB1_WIDTH * FB1_HEIGHT];
+static uint32_t fb1[FB1_WIDTH * FB1_HEIGHT]
+  __attribute__ ((aligned (0x1000)));
 
 // Framebuffer 2: (Second Overlay UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per ARGB 8888 pixel)
-static uint32_t fb2[A64_TCON0_PANEL_WIDTH * A64_TCON0_PANEL_HEIGHT];
+// TODO: Does alignment fix missing lines?
+static uint32_t fb2[A64_TCON0_PANEL_WIDTH * A64_TCON0_PANEL_HEIGHT]
+  __attribute__ ((aligned (0x1000)));
 
 /// NuttX Color Plane for PinePhone (Base UI Channel):
 /// Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
@@ -87,6 +93,7 @@ static struct fb_overlayinfo_s overlayInfo[2] =
 int render_graphics(void)
 {
   // Validate the Framebuffer Sizes at Compile Time
+  ginfo("fb0=%p, fb1=%p, fb2=%p\n", fb0, fb1, fb2);
   DEBUGASSERT(CHANNELS == 1 || CHANNELS == 3);
   DEBUGASSERT(planeInfo.xres_virtual == videoInfo.xres);
   DEBUGASSERT(planeInfo.yres_virtual == videoInfo.yres);

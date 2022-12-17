@@ -587,6 +587,7 @@ Disable MIXER0 DRC
 Enable MIXER0
   *0x1100000 = 0x1
   up_mdelay 160 ms
+fb0=0x10b404000, fb1=0x10b7f9000, fb2=0x10b959000
 Set Blender Background
   *0x1101088 = 0xff000000
 Set Blender Pre-Multiply
