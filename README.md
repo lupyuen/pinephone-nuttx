@@ -4675,9 +4675,18 @@ Solution: Disable "Scheduler Informational Output" in...
 
 This prevents `sinfo` from garbling the `printf` output...
 
-- `sinfo` writes directly to UART Port character by character, whereas...
+- `sinfo` writes directly to UART Port character by character...
 
-- `printf` is buffered and writes the buffer to the UART Driver
+  ```text
+  nx_start: CPU0: Beginning Idle Loop
+  ```
+
+- Whereas `printf` is buffered and writes the buffer to the UART Driver...
+
+  ```text
+  nsh: mkfatfs: command not found
+  NuttShell (NSH) NuttX-11.0.0-RC2
+  ```
 
 FYI: `printf` Console Output Stream is locked and unlocked with a Mutex...
 
