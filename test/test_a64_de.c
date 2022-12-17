@@ -3,13 +3,13 @@
 // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_de.c
 
 #define CONFIG_FB_OVERLAY y
+#define CHANNELS 3
 
 #include <nuttx/video/fb.h>
 #include "a64_tcon0.h"
 
 static void test_pattern(void);
 
-#ifdef TODO
 /// NuttX Video Controller for PinePhone (3 UI Channels)
 static struct fb_videoinfo_s videoInfo =
 {
@@ -19,7 +19,6 @@ static struct fb_videoinfo_s videoInfo =
   .nplanes   = 1,     // Number of color planes supported (Base UI Channel)
   .noverlays = 2      // Number of overlays supported (2 Overlay UI Channels)
 };
-#endif  // TODO
 
 // Framebuffer 0: (Base UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
@@ -87,12 +86,23 @@ static struct fb_overlayinfo_s overlayInfo[2] =
 
 int render_graphics(void)
 {
+  // Validate the Framebuffer Sizes at Compile Time
+  DEBUGASSERT(CHANNELS == 1 || CHANNELS == 3);
+  DEBUGASSERT(planeInfo.xres_virtual == videoInfo.xres);
+  DEBUGASSERT(planeInfo.yres_virtual == videoInfo.yres);
+  DEBUGASSERT(planeInfo.fblen  == planeInfo.xres_virtual * planeInfo.yres_virtual * 4);
+  DEBUGASSERT(planeInfo.stride == planeInfo.xres_virtual * 4);
+  DEBUGASSERT(overlayInfo[0].fblen  == (overlayInfo[0].sarea.w) * overlayInfo[0].sarea.h * 4);
+  DEBUGASSERT(overlayInfo[0].stride == overlayInfo[0].sarea.w * 4);
+  DEBUGASSERT(overlayInfo[1].fblen  == (overlayInfo[1].sarea.w) * overlayInfo[1].sarea.h * 4);
+  DEBUGASSERT(overlayInfo[1].stride == overlayInfo[1].sarea.w * 4);
+
   // Fill Framebuffer with Test Pattern
   test_pattern();
 
   // Init the UI Blender for PinePhone's A64 Display Engine
   int ret = a64_de_blender_init();
-  assert(ret == OK);
+  DEBUGASSERT(ret == OK);
 
 #ifndef __NuttX__
 #warning Local Testing Only
@@ -113,10 +123,9 @@ int render_graphics(void)
     planeInfo.xoffset,  // Horizontal offset in pixel columns
     planeInfo.yoffset  // Vertical offset in pixel rows
   );
-  assert(ret == OK);
+  DEBUGASSERT(ret == OK);
 
   // Init the 2 Overlay UI Channels
-  #define CHANNELS 3
   for (int i = 0; i < sizeof(overlayInfo) / sizeof(overlayInfo[0]); i++)
   {
     const struct fb_overlayinfo_s *ov = &overlayInfo[i];
@@ -130,12 +139,12 @@ int render_graphics(void)
       ov->sarea.x,  // Horizontal offset in pixel columns
       ov->sarea.y  // Vertical offset in pixel rows
     );
-    assert(ret == OK);
+    DEBUGASSERT(ret == OK);
   }
 
   // Set UI Blender Route, enable Blender Pipes and apply the settings
   ret = a64_de_enable(CHANNELS);
-  assert(ret == OK);    
+  DEBUGASSERT(ret == OK);    
 
   return OK;
 }
@@ -143,12 +152,69 @@ int render_graphics(void)
 // Fill the Framebuffers with a Test Pattern
 static void test_pattern(void)
 {
+  // Zero the Framebuffers
   memset(fb0, 0, sizeof(fb0));
   memset(fb1, 0, sizeof(fb1));
   memset(fb2, 0, sizeof(fb2));
 
-  // TODO: Test Pattern
-  memset(fb0, 0b10101010, sizeof(fb0));
-  memset(fb1, 0b11001100, sizeof(fb1));
-  memset(fb2, 0b11100111, sizeof(fb2));
+  // Init Framebuffer 0:
+  // Fill with Blue, Green and Red
+  int i;
+  const int fb0_len = sizeof(fb0) / sizeof(fb0[0]);
+  for (i = 0; i < fb0_len; i++)
+    {
+      // Colours are in XRGB 8888 format
+      if (i < fb0_len / 4)
+        {
+          // Blue for top quarter
+          fb0[i] = 0x80000080;
+        }
+      else if (i < fb0_len / 2)
+        {
+          // Green for next quarter
+          fb0[i] = 0x80008000;
+        }
+      else
+        {
+          // Red for lower half
+          fb0[i] = 0x80800000;
+        }
+    }
+
+  // Init Framebuffer 1:
+  // Fill with Semi-Transparent Blue
+  const int fb1_len = sizeof(fb1) / sizeof(fb1[0]);
+  for (i = 0; i < fb1_len; i++)
+    {
+      // Colours are in ARGB 8888 format
+      fb1[i] = 0x80000080;
+    }
+
+  // Init Framebuffer 2:
+  // Fill with Semi-Transparent Green Circle
+  const int fb2_len = sizeof(fb2) / sizeof(fb2[0]);
+  int y;
+  for (y = 0; y < A64_TCON0_PANEL_HEIGHT; y++)
+  {
+    int x;
+    for (x = 0; x < A64_TCON0_PANEL_WIDTH; x++)
+    {
+      // Get pixel index
+      const int p = (y * A64_TCON0_PANEL_WIDTH) + x;
+      DEBUGASSERT(p < fb2_len);
+
+      // Shift coordinates so that centre of screen is (0,0)
+      const int half_width  = A64_TCON0_PANEL_WIDTH  / 2;
+      const int half_height = A64_TCON0_PANEL_HEIGHT / 2;
+      const int x_shift = x - half_width;
+      const int y_shift = y - half_height;
+
+      // If x^2 + y^2 < radius^2, set the pixel to Semi-Transparent Green
+      if (x_shift*x_shift + y_shift*y_shift < half_width*half_width) {
+          fb2[p] = 0x80008000;  // Semi-Transparent Green in ARGB 8888 Format
+      } else {  // Otherwise set to Transparent Black
+          fb2[p] = 0x00000000;  // Transparent Black in ARGB 8888 Format
+      }
+    }
+  }
 }
