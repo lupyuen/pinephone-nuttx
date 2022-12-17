@@ -133,7 +133,8 @@ int render_graphics(void)
   DEBUGASSERT(ret == OK);
 
   // Init the 2 Overlay UI Channels
-  for (int i = 0; i < sizeof(overlayInfo) / sizeof(overlayInfo[0]); i++)
+  int i;
+  for (i = 0; i < sizeof(overlayInfo) / sizeof(overlayInfo[0]); i++)
   {
     const struct fb_overlayinfo_s *ov = &overlayInfo[i];
     ret = a64_de_ui_channel_init(
