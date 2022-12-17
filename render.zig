@@ -1183,14 +1183,15 @@ pub export fn hello_main(
             // Start MIPI DSI HSC and HSD (in C)
             _ = a64_mipi_dsi_start();
 
-            // Init Display Engine (in Zig)
-            de2_init();
+            // Init Display Engine (in C)
+            _ = a64_de_init();
 
             // Wait a while
             _ = c.usleep(160000);
 
-            // Render Graphics with Display Engine (in Zig)
-            renderGraphics(3);  // Render 3 UI Channels
+            // Render Graphics with Display Engine (in C)
+            // https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_de.c
+            _ = render_graphics();
 
         } else if (std.mem.eql(u8, cmd, "1")) {
             // Render 1 UI Channel in Zig
@@ -1297,12 +1298,14 @@ pub fn log(
 ///////////////////////////////////////////////////////////////////////////////
 //  Imported Functions and Variables
 
-/// NuttX Driver for MIPI DSI
+/// NuttX Drivers and Test Functions
+extern fn a64_de_init() c_int;
 extern fn a64_mipi_dphy_enable() c_int;
 extern fn a64_mipi_dsi_enable() c_int;
 extern fn a64_mipi_dsi_start() c_int;
 extern fn a64_tcon0_init() c_int;
 extern fn pinephone_panel_init() c_int;
+extern fn render_graphics() c_int;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
 /// We changed `[*c]const u8` to `[*:0]const u8`

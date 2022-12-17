@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 #define CONFIG_BOARD_LOOPSPERMSEC 5000
-#define CONFIG_FB_OVERLAY y
 #define DEBUGASSERT assert
 #define DEBUGPANIC() assert(false)
 #define ERROR -1
