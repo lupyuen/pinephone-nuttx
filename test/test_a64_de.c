@@ -93,7 +93,7 @@ static struct fb_overlayinfo_s overlayInfo[2] =
 int render_graphics(void)
 {
   // Validate the Framebuffer Sizes at Compile Time
-  ginfo("fb0=%p, fb1=%p, fb2=%p\n", fb0, fb1, fb2);
+  // ginfo("fb0=%p, fb1=%p, fb2=%p\n", fb0, fb1, fb2);
   DEBUGASSERT(CHANNELS == 1 || CHANNELS == 3);
   DEBUGASSERT(planeInfo.xres_virtual == videoInfo.xres);
   DEBUGASSERT(planeInfo.yres_virtual == videoInfo.yres);
@@ -189,12 +189,12 @@ static void test_pattern(void)
     }
 
   // Init Framebuffer 1:
-  // Fill with Semi-Transparent Blue
+  // Fill with Semi-Transparent White
   const int fb1_len = sizeof(fb1) / sizeof(fb1[0]);
   for (i = 0; i < fb1_len; i++)
     {
       // Colours are in ARGB 8888 format
-      fb1[i] = 0x80000080;
+      fb1[i] = 0x80FFFFFF;
     }
 
   // Init Framebuffer 2:
@@ -202,26 +202,26 @@ static void test_pattern(void)
   const int fb2_len = sizeof(fb2) / sizeof(fb2[0]);
   int y;
   for (y = 0; y < A64_TCON0_PANEL_HEIGHT; y++)
-  {
-    int x;
-    for (x = 0; x < A64_TCON0_PANEL_WIDTH; x++)
     {
-      // Get pixel index
-      const int p = (y * A64_TCON0_PANEL_WIDTH) + x;
-      DEBUGASSERT(p < fb2_len);
+      int x;
+      for (x = 0; x < A64_TCON0_PANEL_WIDTH; x++)
+        {
+          // Get pixel index
+          const int p = (y * A64_TCON0_PANEL_WIDTH) + x;
+          DEBUGASSERT(p < fb2_len);
 
-      // Shift coordinates so that centre of screen is (0,0)
-      const int half_width  = A64_TCON0_PANEL_WIDTH  / 2;
-      const int half_height = A64_TCON0_PANEL_HEIGHT / 2;
-      const int x_shift = x - half_width;
-      const int y_shift = y - half_height;
+          // Shift coordinates so that centre of screen is (0,0)
+          const int half_width  = A64_TCON0_PANEL_WIDTH  / 2;
+          const int half_height = A64_TCON0_PANEL_HEIGHT / 2;
+          const int x_shift = x - half_width;
+          const int y_shift = y - half_height;
 
-      // If x^2 + y^2 < radius^2, set the pixel to Semi-Transparent Green
-      if (x_shift*x_shift + y_shift*y_shift < half_width*half_width) {
-          fb2[p] = 0x80008000;  // Semi-Transparent Green in ARGB 8888 Format
-      } else {  // Otherwise set to Transparent Black
-          fb2[p] = 0x00000000;  // Transparent Black in ARGB 8888 Format
-      }
+          // If x^2 + y^2 < radius^2, set the pixel to Semi-Transparent Green
+          if (x_shift*x_shift + y_shift*y_shift < half_width*half_width) {
+              fb2[p] = 0x80008000;  // Semi-Transparent Green in ARGB 8888 Format
+          } else {  // Otherwise set to Transparent Black
+              fb2[p] = 0x00000000;  // Transparent Black in ARGB 8888 Format
+          }
+        }
     }
-  }
 }
