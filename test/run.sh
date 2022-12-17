@@ -36,5 +36,12 @@ diff \
     | grep -v "ret=" \
     | grep -v "pktlen=" \
     | grep -v "hello" \
+    | grep -v "*0x1100004 = 0x0" \
+    | grep -v "*0x1100008 = 0x0" \
+    | grep -v "*0x1105ff8 = 0x0" \
+    | grep -v "*0x1105ffc = 0x0" \
+    | grep -v "*0x1103010 = 0x12345678" \
+    | grep -v "*0x1104010 = 0x23456789" \
+    | grep -v "*0x1105010 = 0x34567890" \
 
 set -e  #  Exit when any command fails

@@ -197,6 +197,13 @@ int main()
   ret = a64_de_blender_init();
   assert(ret == OK);
 
+#ifndef __NuttX__
+  // For Local Testing: Only 32-bit addresses allowed
+  planeInfo.fbmem = (void *)0x12345678;
+  overlayInfo[0].fbmem = (void *)0x23456789;
+  overlayInfo[1].fbmem = (void *)0x34567890;
+#endif // !__NuttX__
+
   // Init the Base UI Channel
   ret = a64_de_ui_channel_init(
     1,  // UI Channel Number (1 for Base UI Channel)
@@ -336,14 +343,52 @@ void modreg32(
   assert((val & mask) == val);
 }
 
+#define PLL_DE_CTRL_REG 0x1C20048
+#define PREV_ADDR_LEN 4
+static unsigned long prev_addr[PREV_ADDR_LEN];
+const unsigned long log_stop[PREV_ADDR_LEN] = {
+  0x1100000,
+  0x1100004,
+  0x1100008,
+  0x110000c,
+};
+const unsigned long log_start[PREV_ADDR_LEN] = {
+  0x1105fec,
+  0x1105ff0,
+  0x1105ff4,
+  0x1105ff8,
+};
+static bool log_enabled = true;
+
 uint32_t getreg32(unsigned long addr)
 {
+  if (addr == PLL_DE_CTRL_REG)
+  {
+    return (1 << 28);
+  }
   return 0;
 }
 
 void putreg32(uint32_t data, unsigned long addr)
 {
-  ginfo("  *0x%lx = 0x%x\n", addr, data);
+  for (int i = 0; i < PREV_ADDR_LEN - 1; i++)
+    {
+      prev_addr[i] = prev_addr[i + 1];
+    }
+  prev_addr[PREV_ADDR_LEN - 1] = addr;
+  if (memcmp(prev_addr, log_stop, sizeof(prev_addr)) == 0)
+    {
+      log_enabled = false;
+    }
+  else if (memcmp(prev_addr, log_start, sizeof(prev_addr)) == 0)
+    {
+      log_enabled = true;
+    }
+
+  if (log_enabled)
+    {
+      ginfo("  *0x%lx = 0x%x\n", addr, data);
+    }
 }
 
 void up_mdelay(unsigned int milliseconds)
