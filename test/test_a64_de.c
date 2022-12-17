@@ -188,9 +188,10 @@ static void test_pattern(void)
           fb0[i] = 0x80800000;
         }
       ARM64_DMB();
+      ARM64_DSB();
+      ARM64_ISB();
     }
 
-#ifdef TODO
   // Init Framebuffer 1:
   // Fill with Semi-Transparent White
   const int fb1_len = sizeof(fb1) / sizeof(fb1[0]);
@@ -227,5 +228,4 @@ static void test_pattern(void)
           }
         }
     }
-#endif
 }
