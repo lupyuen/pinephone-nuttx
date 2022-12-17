@@ -537,7 +537,7 @@ Start HSD
   *0x1ca0048 = 0x63f07006
 Commit
   *0x1ca0010: clear 0x1, set 0x1
-TODO: Render Graphics with Display Engine
+  up_mdelay 160 ms
 Testing Compose Short Packet (Without Parameter)...
 channel=0, cmd=0x5, txlen=1
 Result:
