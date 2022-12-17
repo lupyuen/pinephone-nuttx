@@ -187,6 +187,8 @@ static void test_pattern(void)
           // Red for lower half
           fb0[i] = 0x80800000;
         }
+
+      // This is needed to reduce the missing lines, not sure why
       ARM64_DMB();
       ARM64_DSB();
       ARM64_ISB();
@@ -199,6 +201,11 @@ static void test_pattern(void)
     {
       // Colours are in ARGB 8888 format
       fb1[i] = 0x80FFFFFF;
+
+      // This is needed to reduce the missing lines, not sure why
+      ARM64_DMB();
+      ARM64_DSB();
+      ARM64_ISB();
     }
 
   // Init Framebuffer 2:
@@ -226,6 +233,11 @@ static void test_pattern(void)
           } else {  // Otherwise set to Transparent Black
               fb2[p] = 0x00000000;  // Transparent Black in ARGB 8888 Format
           }
+
+          // This is needed to reduce the missing lines, not sure why
+          ARM64_DMB();
+          ARM64_DSB();
+          ARM64_ISB();
         }
     }
 }
