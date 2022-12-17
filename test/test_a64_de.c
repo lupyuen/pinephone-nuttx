@@ -186,8 +186,10 @@ static void test_pattern(void)
           // Red for lower half
           fb0[i] = 0x80800000;
         }
+      ARM64_DMB();
     }
 
+#ifdef TODO
   // Init Framebuffer 1:
   // Fill with Semi-Transparent White
   const int fb1_len = sizeof(fb1) / sizeof(fb1[0]);
@@ -224,4 +226,5 @@ static void test_pattern(void)
           }
         }
     }
+#endif
 }
