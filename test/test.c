@@ -237,12 +237,16 @@ int main()
   mipi_dsi_test();
 }
 
-#warning TODO: test_pattern
 void test_pattern(void)
 {
   memset(fb0, 0, sizeof(fb0));
   memset(fb1, 0, sizeof(fb1));
   memset(fb2, 0, sizeof(fb2));
+
+#warning TODO: test_pattern
+  memset(fb0, 0, 0b10101010);
+  memset(fb1, 0, 0b11001100);
+  memset(fb2, 0, 0b11100111);
 }
 
 // TODO: Sync with nuttx/libs/libc/misc/lib_crc16ccitt.c
