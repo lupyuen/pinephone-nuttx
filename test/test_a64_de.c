@@ -22,23 +22,17 @@ static struct fb_videoinfo_s videoInfo =
 
 // Framebuffer 0: (Base UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
-// TODO: Does alignment fix missing lines?
-static uint32_t fb0[A64_TCON0_PANEL_WIDTH * A64_TCON0_PANEL_HEIGHT]
-  __attribute__ ((aligned (0x1000)));
+static uint32_t fb0[A64_TCON0_PANEL_WIDTH * A64_TCON0_PANEL_HEIGHT];
 
 // Framebuffer 1: (First Overlay UI Channel)
 // Square 600 x 600 (4 bytes per ARGB 8888 pixel)
-// TODO: Does alignment fix missing lines?
 #define FB1_WIDTH  600
 #define FB1_HEIGHT 600
-static uint32_t fb1[FB1_WIDTH * FB1_HEIGHT]
-  __attribute__ ((aligned (0x1000)));
+static uint32_t fb1[FB1_WIDTH * FB1_HEIGHT];
 
 // Framebuffer 2: (Second Overlay UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per ARGB 8888 pixel)
-// TODO: Does alignment fix missing lines?
-static uint32_t fb2[A64_TCON0_PANEL_WIDTH * A64_TCON0_PANEL_HEIGHT]
-  __attribute__ ((aligned (0x1000)));
+static uint32_t fb2[A64_TCON0_PANEL_WIDTH * A64_TCON0_PANEL_HEIGHT];
 
 /// NuttX Color Plane for PinePhone (Base UI Channel):
 /// Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
@@ -205,7 +199,7 @@ static void test_pattern(void)
   for (i = 0; i < fb1_len; i++)
     {
       // Colours are in ARGB 8888 format
-      fb1[i] = 0x80FFFFFF;
+      fb1[i] = 0x40FFFFFF;
 
       // Needed to fix black rows, not sure why
       ARM64_DMB();
