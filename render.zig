@@ -1152,6 +1152,7 @@ pub export fn hello_main(
             // _ = c.sleep(1);
 
             // Init Timing Controller TCON0 (in C)
+            // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon2/arch/arm64/src/a64/a64_tcon0.c#L180-L474
             _ = a64_tcon0_init();
 
             // Init PMIC (in Zig)
@@ -1161,9 +1162,11 @@ pub export fn hello_main(
             // _ = c.sleep(1);
 
             // Enable MIPI DSI Block (in C)
+            // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c#L526-L914
             _ = a64_mipi_dsi_enable();
 
             // Enable MIPI Display Physical Layer (in C)
+            // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dphy.c#L86-L162
             _ = a64_mipi_dphy_enable();
 
             // Reset LCD Panel (in Zig)
@@ -1180,13 +1183,15 @@ pub export fn hello_main(
             // TODO: Remove this: dsi.panel_init();
 
             // Start MIPI DSI HSC and HSD (in C)
+            // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c#L914-L993
             _ = a64_mipi_dsi_start();
 
             // Init Display Engine (in C)
+            // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon2/arch/arm64/src/a64/a64_de.c
             _ = a64_de_init();
 
             // Wait 160 milliseconds
-            _ = c.usleep(160000);
+            _ = c.usleep(160_000);
 
             // Render Graphics with Display Engine (in C)
             // https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_de.c

@@ -104,9 +104,6 @@ int render_graphics(void)
   DEBUGASSERT(overlayInfo[1].fblen  == (overlayInfo[1].sarea.w) * overlayInfo[1].sarea.h * 4);
   DEBUGASSERT(overlayInfo[1].stride == overlayInfo[1].sarea.w * 4);
 
-  // Fill Framebuffer with Test Pattern
-  test_pattern();
-
   // Init the UI Blender for PinePhone's A64 Display Engine
   int ret = a64_de_blender_init();
   DEBUGASSERT(ret == OK);
@@ -120,6 +117,7 @@ int render_graphics(void)
 #endif // !__NuttX__
 
   // Init the Base UI Channel
+  // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon2/arch/arm64/src/a64/a64_de.c
   ret = a64_de_ui_channel_init(
     1,  // UI Channel Number (1 for Base UI Channel)
     planeInfo.fbmem,    // Start of frame buffer memory
@@ -133,6 +131,7 @@ int render_graphics(void)
   DEBUGASSERT(ret == OK);
 
   // Init the 2 Overlay UI Channels
+  // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon2/arch/arm64/src/a64/a64_de.c
   int i;
   for (i = 0; i < sizeof(overlayInfo) / sizeof(overlayInfo[0]); i++)
   {
@@ -151,13 +150,19 @@ int render_graphics(void)
   }
 
   // Set UI Blender Route, enable Blender Pipes and apply the settings
+  // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon2/arch/arm64/src/a64/a64_de.c
   ret = a64_de_enable(CHANNELS);
   DEBUGASSERT(ret == OK);    
+
+  // Fill Framebuffer with Test Pattern.
+  // Must be called after Display Engine is Enabled, or black rows will appear.
+  test_pattern();
 
   return OK;
 }
 
-// Fill the Framebuffers with a Test Pattern
+// Fill the Framebuffers with a Test Pattern.
+// Must be called after Display Engine is Enabled, or black rows will appear.
 static void test_pattern(void)
 {
   // Zero the Framebuffers
@@ -188,7 +193,7 @@ static void test_pattern(void)
           fb0[i] = 0x80800000;
         }
 
-      // This is needed to reduce the missing lines, not sure why
+      // Needed to fix black rows, not sure why
       ARM64_DMB();
       ARM64_DSB();
       ARM64_ISB();
@@ -202,7 +207,7 @@ static void test_pattern(void)
       // Colours are in ARGB 8888 format
       fb1[i] = 0x80FFFFFF;
 
-      // This is needed to reduce the missing lines, not sure why
+      // Needed to fix black rows, not sure why
       ARM64_DMB();
       ARM64_DSB();
       ARM64_ISB();
@@ -234,7 +239,7 @@ static void test_pattern(void)
               fb2[p] = 0x00000000;  // Transparent Black in ARGB 8888 Format
           }
 
-          // This is needed to reduce the missing lines, not sure why
+          // Needed to fix black rows, not sure why
           ARM64_DMB();
           ARM64_DSB();
           ARM64_ISB();

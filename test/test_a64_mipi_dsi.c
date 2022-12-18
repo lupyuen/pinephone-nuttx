@@ -11,6 +11,7 @@ static int write_dcs(const uint8_t *buf, size_t len)
   assert(len > 0);
 
   // Do DCS Short Write or Long Write depending on command length
+  // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c#L366-L526
   switch (len)
   {
     // DCS Short Write (without parameter)

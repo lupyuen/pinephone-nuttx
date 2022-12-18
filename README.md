@@ -4688,25 +4688,25 @@ This prevents `sinfo` from garbling the `printf` output...
   NuttShell (NSH) NuttX-11.0.0-RC2
   ```
 
-FYI: `printf` Console Output Stream is locked and unlocked with a Mutex...
+FYI: `printf` Console Output Stream is locked and unlocked with a Mutex. Let's log the locking and unlocking of the Mutex...
 
-https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfilelock.c#L39-L64
+[nuttx/libs/libc/stdio/lib_libfilelock.c](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfilelock.c#L39-L64)
 
 ```c
 void flockfile(FAR struct file_struct *stream)
 {
-  up_putc('{');////
+  up_putc('{'); // Log the Mutex Locking
   nxrmutex_lock(&stream->fs_lock);
 }
 ...
 void funlockfile(FAR struct file_struct *stream)
 {
-  up_putc('}');////
+  up_putc('}'); // Log the Mutex Unlocking
   nxrmutex_unlock(&stream->fs_lock);
 }
 ```
 
-Output log shows that `{` and `}` are nested...
+Output log shows that `{` and `}` (Mutex Locking and Unlocking) are nested...
 
 ```text
 nx_start_application: Starting init thread
@@ -4729,12 +4729,12 @@ Let's print the Thread ID and Mutex Count...
 void flockfile(FAR struct file_struct *stream)
 {
   nxrmutex_lock(&stream->fs_lock);
-  _info("%p, thread=%d, mutex.count=%d\n", stream, gettid(), stream->fs_lock.count); ////
+  _info("%p, thread=%d, mutex.count=%d\n", stream, gettid(), stream->fs_lock.count); // Log the Thread ID and Mutex Count
 }
 
 void funlockfile(FAR struct file_struct *stream)
 {
-  _info("%p, thread=%d, mutex.count=%d\n", stream, gettid(), stream->fs_lock.count); ////
+  _info("%p, thread=%d, mutex.count=%d\n", stream, gettid(), stream->fs_lock.count); // Log the Thread ID and Mutex Count
   nxrmutex_unlock(&stream->fs_lock);
 }
 ```
@@ -4750,22 +4750,22 @@ funlockfile: 0x40a5cc78, thread=2, mutex.count=3
 funlockfile: 0x40a5cc78, thread=2, mutex.count=2
 ```
 
-That's because [`nxrmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L335-L377) allows the Mutex to be locked multiple times within the same thread.
+Why? That's because [`nxrmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L335-L377) allows the Mutex to be locked multiple times __within the same thread.__
 
 FYI: Here's how we verify whether our code is called by multiple CPU Cores...
 
 ```c
-#include "../arch/arm64/src/common/arm64_arch.h" ////
-_info("up_cpu_index=%d\n", MPIDR_TO_CORE(GET_MPIDR())); ////
+#include "../arch/arm64/src/common/arm64_arch.h"
+_info("up_cpu_index=%d\n", MPIDR_TO_CORE(GET_MPIDR()));
 // Shows: `up_cpu_index=0`
 
-_info("mpidr_el1=%p\n", read_sysreg(mpidr_el1)); ////
+_info("mpidr_el1=%p\n", read_sysreg(mpidr_el1));
 // Shows `mpidr_el1=0x80000000`
 ```
 
 FYI: How `printf` works...
 
-[`printf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_printf.c#L32-L51_ calls...
+[`printf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_printf.c#L32-L51) calls...
 - [`vfprintf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_vfprintf.c#L34-L56), which calls...
 - [`libvsprintf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libvsprintf.c#L1336-L1381), which calls...
 - [`vsprintf_internal`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libvsprintf.c#L171-L1332), which calls...
