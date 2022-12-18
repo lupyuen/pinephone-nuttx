@@ -738,7 +738,7 @@ const UI_SCALER2_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x05_0000;
 // FCE (Fresh and Contrast Enhancement) is at MIXER0 Offset 0x0A 0000 (DE Page 61, 0x11A 0000)
 const FCE_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_0000;
 
-// BWS (Black and White Stetch) is at MIXER0 Offset 0x0A 2000 (DE Page 42, 0x11A 2000)
+// BWS (Black and White Stretch) is at MIXER0 Offset 0x0A 2000 (DE Page 42, 0x11A 2000)
 const BWS_BASE_ADDRESS = MIXER0_BASE_ADDRESS + 0x0A_2000;
 
 // LTI (Luminance Transient Improvement) is at MIXER0 Offset 0x0A 4000 (DE Page 71, 0x11A 4000)
