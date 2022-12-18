@@ -765,7 +765,7 @@ pub export fn de2_init() void {
 
     // Set High Speed SRAM to DMA Mode
     // Set BIST_DMA_CTRL_SEL to 0 for DMA (DMB) (A31 Page 191, 0x1C0 0004)
-    // BIST_DMA_CTRL_SEL (Bist and DMA Control Select) is Bit 0 of SRAM_CTRL_REG1
+    // BIST_DMA_CTRL_SEL (Bist and DMA Control Select) is Bit 31 of SRAM_CTRL_REG1
     // SRAM_CTRL_REG1 (SRAM Control Register 1) is at SRAM Registers Offset 0x4
     debug("Set High Speed SRAM to DMA Mode", .{});
     const SRAM_CTRL_REG1 = SRAM_REGISTERS_BASE_ADDRESS + 0x4;
