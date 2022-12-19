@@ -1151,6 +1151,7 @@ pub export fn hello_main(
             // _ = c.sleep(1);  // TODO: Remove this when Backlight is converted to C
 
             // Init Timing Controller TCON0 (in C)
+            // PANEL_WIDTH is 720, PANEL_HEIGHT is 1440
             // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon2/arch/arm64/src/a64/a64_tcon0.c#L180-L474
             _ = a64_tcon0_init(PANEL_WIDTH, PANEL_HEIGHT);
 
