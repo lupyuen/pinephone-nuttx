@@ -4644,6 +4644,54 @@ We also tested with Graphics Logging Disabled, to preempt any timing issues...
 
 -   [NuttX Kernel TCON0 Test Log (Graphics Logging Disabled)](https://gist.github.com/lupyuen/61a1374c9ea6a1b7826488da688e8c6c)
 
+# Test Display Engine Driver for NuttX Kernel
+
+We're adding the Display Engine Driver to NuttX Kernel...
+
+-   [arch/arm64/src/a64/a64_de.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon2/arch/arm64/src/a64/a64_de.c)
+
+Right now we have implemented the following in the NuttX Kernel...
+
+-   Driver for MIPI Display Serial Interface (DSI)
+-   Driver for MIPI Display Physical Layer (D-PHY)
+-   Driver for Timing Controller TCON0
+-   Driver for Display Engine
+
+But to render graphics on PinePhone we need the following drivers, which are still in Zig, pending conversion to C...
+
+-   Driver for Display Backlight
+-   Driver for Power Mgmt IC
+-   Driver for LCD Panel
+
+So we created this Test Program in Zig that calls the C and Zig Drivers, in the right sequence...
+
+https://github.com/lupyuen/pinephone-nuttx/blob/fc32ae3d6eeaebe2daf2c1b984bc80d603003c9c/render.zig#L1146-L1193
+
+[(Download the binaries here)](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.2.0)
+
+We boot NuttX on PinePhone and run the Zig Test Program...
+
+```text
+NuttShell (NSH) NuttX-11.0.0-pinephone
+
+nsh> uname -a
+NuttX 11.0.0-pinephone 7d85079-dirty Dec 17 2022 11:43:03 arm64 pinephone
+
+nsh> hello 0
+```
+
+[(Source)](https://gist.github.com/lupyuen/f76ec0bcafce670220ab304a70c28fab)
+
+Our Zig Test Program renders the Test Pattern successfully on PinePhone. [(Like this)](https://lupyuen.github.io/images/dsi3-title.jpg)
+
+Here's the Test Log, with Graphics Logging Enabled...
+
+-   [NuttX Kernel Display Engine Test Log](https://gist.github.com/lupyuen/f76ec0bcafce670220ab304a70c28fab)
+
+We also tested with Graphics Logging Disabled, to preempt any timing issues...
+
+-   [NuttX Kernel TCON0 Test Log (Graphics Logging Disabled)](https://gist.github.com/lupyuen/ff133730c07730cb3b588a5027e7f524)
+
 # Garbled Console Output
 
 The log appears garbled when `printf` is called by our NuttX Test Apps, due to concurrent printing by multiple tasks. Why?
