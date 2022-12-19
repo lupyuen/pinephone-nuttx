@@ -1107,7 +1107,7 @@ pub export fn hello_main(
 
         } else if (std.mem.eql(u8, cmd, "c")) {
             // Init PMIC (in C)
-            _ = a64_tcon0_init();
+            _ = a64_tcon0_init(PANEL_WIDTH, PANEL_HEIGHT);
 
         } else if (std.mem.eql(u8, cmd, "d")) {
             // Enable MIPI DSI Block (in C)
@@ -1153,7 +1153,7 @@ pub export fn hello_main(
 
             // Init Timing Controller TCON0 (in C)
             // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon2/arch/arm64/src/a64/a64_tcon0.c#L180-L474
-            _ = a64_tcon0_init();
+            _ = a64_tcon0_init(PANEL_WIDTH, PANEL_HEIGHT);
 
             // Init PMIC (in Zig)
             pmic.display_board_init();
@@ -1307,7 +1307,7 @@ extern fn a64_de_init() c_int;
 extern fn a64_mipi_dphy_enable() c_int;
 extern fn a64_mipi_dsi_enable() c_int;
 extern fn a64_mipi_dsi_start() c_int;
-extern fn a64_tcon0_init() c_int;
+extern fn a64_tcon0_init(width: u16, height: u16) c_int;
 extern fn pinephone_panel_init() c_int;
 extern fn render_graphics() c_int;
 

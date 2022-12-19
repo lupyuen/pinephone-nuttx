@@ -26,7 +26,7 @@ int main()
   ginfo("TODO: Turn on Display Backlight\n");
 
   // Init Timing Controller TCON0
-  ret = a64_tcon0_init();
+  ret = a64_tcon0_init(A64_TCON0_PANEL_WIDTH, A64_TCON0_PANEL_HEIGHT);
   assert(ret == OK);
   
   ginfo("TODO: Init PMIC\n");
