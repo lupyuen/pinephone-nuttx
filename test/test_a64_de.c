@@ -118,9 +118,8 @@ int render_graphics(void)
   // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon2/arch/arm64/src/a64/a64_de.c
   ret = a64_de_ui_channel_init(
     1,  // UI Channel Number (1 for Base UI Channel)
-    planeInfo.fbmem,    // Start of frame buffer memory
-    planeInfo.fblen,    // Length of frame buffer memory in bytes
-    planeInfo.stride,   // Length of a line in bytes (4 bytes per pixel)
+    planeInfo.fbmem,    // Start of Frame Buffer Memory (address should be 32-bit)
+    planeInfo.fblen,    // Length of Frame Buffer Memory in bytes
     planeInfo.xres_virtual,  // Horizontal resolution in pixel columns
     planeInfo.yres_virtual,  // Vertical resolution in pixel rows
     planeInfo.xoffset,  // Horizontal offset in pixel columns
@@ -136,9 +135,8 @@ int render_graphics(void)
     const struct fb_overlayinfo_s *ov = &overlayInfo[i];
     ret = a64_de_ui_channel_init(
       i + 2,  // UI Channel Number (2 and 3 for Overlay UI Channels)
-      (CHANNELS == 3) ? ov->fbmem : NULL,  // Start of frame buffer memory
-      ov->fblen,    // Length of frame buffer memory in bytes
-      ov->stride,   // Length of a line in bytes (4 bytes per pixel)
+      (CHANNELS == 3) ? ov->fbmem : NULL,  // Start of Frame Buffer Memory (address should be 32-bit)
+      ov->fblen,    // Length of Frame Buffer Memory in bytes
       ov->sarea.w,  // Horizontal resolution in pixel columns
       ov->sarea.h,  // Vertical resolution in pixel rows
       ov->sarea.x,  // Horizontal offset in pixel columns
