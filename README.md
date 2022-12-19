@@ -4619,7 +4619,7 @@ So we created this Test Program in Zig that calls the C and Zig Drivers, in the 
 
 https://github.com/lupyuen/pinephone-nuttx/blob/15111a227a62204b2bd6b13c489ff4a972e6d8ad/render.zig#L1146-L1199
 
-[(Download the binaries here)](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.1.9)
+[(Download the binaries here)](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.2.0)
 
 We boot NuttX on PinePhone and run the Zig Test Program...
 
