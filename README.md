@@ -4667,7 +4667,7 @@ But to render graphics on PinePhone we need the following drivers, which are sti
 
 So we created this Test Program in Zig that calls the C and Zig Drivers, in the right sequence...
 
-https://github.com/lupyuen/pinephone-nuttx/blob/fc32ae3d6eeaebe2daf2c1b984bc80d603003c9c/render.zig#L1146-L1193
+https://github.com/lupyuen/pinephone-nuttx/blob/720b8042aa2f86b336947b8ce4744872a77d13f5/render.zig#L1146-L1194
 
 [(Download the binaries here)](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.2.0)
 
