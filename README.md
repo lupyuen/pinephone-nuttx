@@ -4662,6 +4662,8 @@ But to render graphics on PinePhone we need the following drivers, which are sti
 -   Driver for Display Backlight
 -   Driver for Power Mgmt IC
 -   Driver for LCD Panel
+-   Driver for Pulse-Width Modulation
+-   Driver for Reduced Serial Bus
 
 So we created this Test Program in Zig that calls the C and Zig Drivers, in the right sequence...
 
