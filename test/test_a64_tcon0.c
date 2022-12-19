@@ -1,4 +1,4 @@
-// Test Code for Allwinner A64 MIPI DSI
+// Test Code for Allwinner A64 TCON0
 // Add `#include "../../pinephone-nuttx/test/test_a64_tcon0.c"` to the end of a64_tcon0_init(), before `return OK` in this file:
 // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_tcon0.c
 
