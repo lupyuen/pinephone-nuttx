@@ -1146,20 +1146,18 @@ pub export fn hello_main(
             // Render 3 UI Channels in Zig and C
 
             // Turn on Display Backlight (in Zig)
+            // https://github.com/lupyuen/pinephone-nuttx/blob/main/backlight.zig
             backlight.backlight_enable(90);
-
-            // TODO: Remove this when Backlight is converted to C
-            // _ = c.sleep(1);
+            // _ = c.sleep(1);  // TODO: Remove this when Backlight is converted to C
 
             // Init Timing Controller TCON0 (in C)
             // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon2/arch/arm64/src/a64/a64_tcon0.c#L180-L474
             _ = a64_tcon0_init(PANEL_WIDTH, PANEL_HEIGHT);
 
             // Init PMIC (in Zig)
-            pmic.display_board_init();
-
-            // TODO: Remove this when PMIC is converted to C
-            // _ = c.sleep(1);
+            // https://github.com/lupyuen/pinephone-nuttx/blob/main/pmic.zig
+            pmic.display_board_init();            
+            // _ = c.sleep(1);  // TODO: Remove this when PMIC is converted to C
 
             // Enable MIPI DSI Block (in C)
             // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c#L526-L914
@@ -1170,17 +1168,13 @@ pub export fn hello_main(
             _ = a64_mipi_dphy_enable();
 
             // Reset LCD Panel (in Zig)
+            // https://github.com/lupyuen/pinephone-nuttx/blob/main/panel.zig
             panel.panel_reset();
-
-            // TODO: Remove this when Panel is converted to C
-            // _ = c.sleep(1);
+            // _ = c.sleep(1);  // TODO: Remove this when Panel is converted to C
 
             // Init LCD Panel (in C)
             // https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_mipi_dsi.c
             _ = pinephone_panel_init();
-
-            // Init LCD Panel (in Zig)
-            // TODO: Remove this: dsi.panel_init();
 
             // Start MIPI DSI HSC and HSD (in C)
             // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c#L914-L993
