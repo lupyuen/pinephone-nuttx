@@ -16,6 +16,10 @@
 #include "test_mipi_dsi.c"
 // TODO: #include "test_a64_mipi_dsi.c"  // For pinephone_panel_init
 
+// TODO: Sync with test_a64_de.c
+#define PANEL_WIDTH  720
+#define PANEL_HEIGHT 1440
+
 int pinephone_panel_init(void);
 int render_graphics(void);
 
@@ -26,7 +30,7 @@ int main()
   ginfo("TODO: Turn on Display Backlight\n");
 
   // Init Timing Controller TCON0
-  ret = a64_tcon0_init(A64_TCON0_PANEL_WIDTH, A64_TCON0_PANEL_HEIGHT);
+  ret = a64_tcon0_init(PANEL_WIDTH, PANEL_HEIGHT);
   assert(ret == OK);
   
   ginfo("TODO: Init PMIC\n");

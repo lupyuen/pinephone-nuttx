@@ -5,6 +5,10 @@
 #define CONFIG_FB_OVERLAY y
 #define CHANNELS 3
 
+// TODO: Sync with test_.c
+#define PANEL_WIDTH  720
+#define PANEL_HEIGHT 1440
+
 #include <nuttx/video/fb.h>
 #include "a64_tcon0.h"
 
@@ -14,15 +18,15 @@ static void test_pattern(void);
 static struct fb_videoinfo_s videoInfo =
 {
   .fmt       = FB_FMT_RGBA32,  // Pixel format (XRGB 8888)
-  .xres      = A64_TCON0_PANEL_WIDTH,      // Horizontal resolution in pixel columns
-  .yres      = A64_TCON0_PANEL_HEIGHT,     // Vertical resolution in pixel rows
+  .xres      = PANEL_WIDTH,      // Horizontal resolution in pixel columns
+  .yres      = PANEL_HEIGHT,     // Vertical resolution in pixel rows
   .nplanes   = 1,     // Number of color planes supported (Base UI Channel)
   .noverlays = 2      // Number of overlays supported (2 Overlay UI Channels)
 };
 
 // Framebuffer 0: (Base UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
-static uint32_t fb0[A64_TCON0_PANEL_WIDTH * A64_TCON0_PANEL_HEIGHT];
+static uint32_t fb0[PANEL_WIDTH * PANEL_HEIGHT];
 
 // Framebuffer 1: (First Overlay UI Channel)
 // Square 600 x 600 (4 bytes per ARGB 8888 pixel)
@@ -32,7 +36,7 @@ static uint32_t fb1[FB1_WIDTH * FB1_HEIGHT];
 
 // Framebuffer 2: (Second Overlay UI Channel)
 // Fullscreen 720 x 1440 (4 bytes per ARGB 8888 pixel)
-static uint32_t fb2[A64_TCON0_PANEL_WIDTH * A64_TCON0_PANEL_HEIGHT];
+static uint32_t fb2[PANEL_WIDTH * PANEL_HEIGHT];
 
 /// NuttX Color Plane for PinePhone (Base UI Channel):
 /// Fullscreen 720 x 1440 (4 bytes per XRGB 8888 pixel)
@@ -40,11 +44,11 @@ static struct fb_planeinfo_s planeInfo =
 {
   .fbmem   = &fb0,     // Start of frame buffer memory
   .fblen   = sizeof(fb0),  // Length of frame buffer memory in bytes
-  .stride  = A64_TCON0_PANEL_WIDTH * 4,  // Length of a line in bytes (4 bytes per pixel)
+  .stride  = PANEL_WIDTH * 4,  // Length of a line in bytes (4 bytes per pixel)
   .display = 0,        // Display number (Unused)
   .bpp     = 32,       // Bits per pixel (XRGB 8888)
-  .xres_virtual = A64_TCON0_PANEL_WIDTH,   // Virtual Horizontal resolution in pixel columns
-  .yres_virtual = A64_TCON0_PANEL_HEIGHT,  // Virtual Vertical resolution in pixel rows
+  .xres_virtual = PANEL_WIDTH,   // Virtual Horizontal resolution in pixel columns
+  .yres_virtual = PANEL_HEIGHT,  // Virtual Vertical resolution in pixel rows
   .xoffset      = 0,     // Offset from virtual to visible resolution
   .yoffset      = 0      // Offset from virtual to visible resolution
 };
@@ -72,14 +76,14 @@ static struct fb_overlayinfo_s overlayInfo[2] =
   {
     .fbmem     = &fb2,     // Start of frame buffer memory
     .fblen     = sizeof(fb2),  // Length of frame buffer memory in bytes
-    .stride    = A64_TCON0_PANEL_WIDTH * 4,  // Length of a line in bytes
+    .stride    = PANEL_WIDTH * 4,  // Length of a line in bytes
     .overlay   = 1,        // Overlay number (Second Overlay)
     .bpp       = 32,       // Bits per pixel (ARGB 8888)
     .blank     = 0,        // TODO: Blank or unblank
     .chromakey = 0,        // TODO: Chroma key argb8888 formatted
     .color     = 0,        // TODO: Color argb8888 formatted
     .transp    = { .transp = 0, .transp_mode = 0 },  // TODO: Transparency
-    .sarea     = { .x = 0, .y = 0, .w = A64_TCON0_PANEL_WIDTH, .h = A64_TCON0_PANEL_HEIGHT },  // Selected area within the overlay
+    .sarea     = { .x = 0, .y = 0, .w = PANEL_WIDTH, .h = PANEL_HEIGHT },  // Selected area within the overlay
     .accl      = 0         // TODO: Supported hardware acceleration
   },
 };
@@ -211,18 +215,18 @@ static void test_pattern(void)
   // Fill with Semi-Transparent Green Circle
   const int fb2_len = sizeof(fb2) / sizeof(fb2[0]);
   int y;
-  for (y = 0; y < A64_TCON0_PANEL_HEIGHT; y++)
+  for (y = 0; y < PANEL_HEIGHT; y++)
     {
       int x;
-      for (x = 0; x < A64_TCON0_PANEL_WIDTH; x++)
+      for (x = 0; x < PANEL_WIDTH; x++)
         {
           // Get pixel index
-          const int p = (y * A64_TCON0_PANEL_WIDTH) + x;
+          const int p = (y * PANEL_WIDTH) + x;
           DEBUGASSERT(p < fb2_len);
 
           // Shift coordinates so that centre of screen is (0,0)
-          const int half_width  = A64_TCON0_PANEL_WIDTH  / 2;
-          const int half_height = A64_TCON0_PANEL_HEIGHT / 2;
+          const int half_width  = PANEL_WIDTH  / 2;
+          const int half_height = PANEL_HEIGHT / 2;
           const int x_shift = x - half_width;
           const int y_shift = y - half_height;
 
