@@ -120,9 +120,9 @@ static int pmic_write(
 )
 {
   // Write to AXP803 PMIC on Reduced Serial Bus
-  ginfo("pmic_write: reg=0x%x, val=0x%x\n", reg, val);
+  ginfo("  pmic_write: reg=0x%x, val=0x%x\n", reg, val);
   int ret = a64_rsb_write(AXP803_RT_ADDR, reg, val);
-  if (ret != 0) { gerr("pmic_write Error: ret=%d\n", ret); }
+  if (ret != 0) { gerr("  pmic_write Error: ret=%d\n", ret); }
   return ret;
 }
 
@@ -133,9 +133,9 @@ static int pmic_read(
 )
 {
   // Read from AXP803 PMIC on Reduced Serial Bus
-  ginfo("pmic_read: reg_addr=0x%x\n", reg_addr);
+  ginfo("  pmic_read: reg_addr=0x%x\n", reg_addr);
   int ret = a64_rsb_read(AXP803_RT_ADDR, reg_addr);
-  if (ret < 0) { gerr("pmic_read Error: ret=%d\n", ret); }
+  if (ret < 0) { gerr("  pmic_read Error: ret=%d\n", ret); }
   return ret;
 }
 #endif
@@ -148,7 +148,7 @@ static int pmic_clrsetbits(
 )
 {
   // Read from AXP803 PMIC on Reduced Serial Bus
-  ginfo("pmic_clrsetbits: reg=0x%x, clr_mask=0x%x, set_mask=0x%x\n", reg, clr_mask, set_mask);
+  ginfo("  pmic_clrsetbits: reg=0x%x, clr_mask=0x%x, set_mask=0x%x\n", reg, clr_mask, set_mask);
   int ret = a64_rsb_read(AXP803_RT_ADDR, reg);
   if (ret < 0) { return ret; }
 
