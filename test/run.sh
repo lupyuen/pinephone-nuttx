@@ -53,5 +53,6 @@ diff \
     | grep -v "rt_addr=0x2d, reg_addr=0x90, value=0x3" \
     | grep -v "rt_addr=0x2d, reg_addr=0x16, value=0xb" \
     | grep -v "rt_addr=0x2d, reg_addr=0x12, value=0x10" \
+    | grep -v "rt_addr=0x2d, reg_addr=0x12" \
 
 set -e  #  Exit when any command fails
