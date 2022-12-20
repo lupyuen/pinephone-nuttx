@@ -1159,6 +1159,10 @@ pub export fn hello_main(
             // https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_rsb.c
             _ = display_board_init();            
 
+            // Wait 15 milliseconds for power supply and power-on init
+            debug("Wait for power supply and power-on init", .{});
+            _ = c.usleep(15000);
+
             // Enable MIPI DSI Block (in C)
             // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c#L526-L914
             _ = a64_mipi_dsi_enable();

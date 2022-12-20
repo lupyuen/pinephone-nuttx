@@ -110,11 +110,6 @@ int display_board_init(void)
   int ret6 = pmic_clrsetbits(Output_Power_On_Off_Control2, 0x0, DLDO2);
   assert(ret6 == 0);
 
-  // Wait for power supply and power-on init
-  _info("Wait for power supply and power-on init\n");
-
-  #warning TODO: c.usleep(15000);
-
   return OK;
 }
 
