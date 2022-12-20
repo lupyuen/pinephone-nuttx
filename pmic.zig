@@ -60,10 +60,10 @@ const RSB_DATA   = 0x1c;  // RSB Data Buffer Register
 const RSB_CMD    = 0x2c;  // RSB Command Register
 const RSB_DAR    = 0x30;  // RSB Device Address Register
 
-/// Read a byte from Reduced Serial Bus
+/// Read a byte from Reduced Serial Bus (A80 Page 918)
 const RSBCMD_RD8 = 0x8B;
 
-/// Write a byte to Reduced Serial Bus
+/// Write a byte to Reduced Serial Bus (A80 Page 918)
 const RSBCMD_WR8 = 0x4E;
 
 /// Init Display Board.
@@ -210,17 +210,35 @@ fn rsb_read(
     rt_addr: u8,
     reg_addr: u8
 ) i32 {
-    // Read a byte
+    // RSB Command Register (RSB_CMD) (A80 Page 928)
+    // At RSB Offset 0x002C
+    // Set to 0x8B (RD8) to read one byte
     debug("  rsb_read: rt_addr=0x{x}, reg_addr=0x{x}", .{ rt_addr, reg_addr });
-    const rt_addr_shift: u32 = @intCast(u32, rt_addr) << 16;
-    putreg32(RSBCMD_RD8,    R_RSB_BASE_ADDRESS + RSB_CMD);   // TODO: DMB
-    putreg32(rt_addr_shift, R_RSB_BASE_ADDRESS + RSB_DAR);   // TODO: DMB
-    putreg32(reg_addr,      R_RSB_BASE_ADDRESS + RSB_AR);    // TODO: DMB
+    putreg32(RSBCMD_RD8, R_RSB_BASE_ADDRESS + RSB_CMD);   // TODO: DMB
 
-    // Start transaction
-    putreg32(0x80,          R_RSB_BASE_ADDRESS + RSB_CTRL);  // TODO: DMB
+    // RSB Device Address Register (RSB_DAR) (A80 Page 928)
+    // At RSB Offset 0x0030
+    // Set RTA (Bits 16 to 23) to the Run-Time Address (0x2D for AXP803 PMIC)
+    const rt_addr_shift: u32 = @intCast(u32, rt_addr) << 16;
+    putreg32(rt_addr_shift, R_RSB_BASE_ADDRESS + RSB_DAR);   // TODO: DMB
+
+    // RSB Address Register (RSB_AR) (A80 Page 926)
+    // At RSB Offset 0x0010
+    // Set to the Register Address that we’ll read from AXP803 PMIC
+    putreg32(reg_addr, R_RSB_BASE_ADDRESS + RSB_AR);    // TODO: DMB
+
+    // RSB Control Register (RSB_CTRL) (A80 Page 923)
+    // At RSB Offset 0x0000
+    // Set START_TRANS (Bit 7) to 1 (Start Transaction)
+    putreg32(0x80, R_RSB_BASE_ADDRESS + RSB_CTRL);  // TODO: DMB
+
+    // Wait for RSB Status
     const ret = rsb_wait_stat("Read RSB");
     if (ret != 0) { return ret; }
+
+    // RSB Data Buffer Register (RSB_DATA) (A80 Page 926)
+    // At RSB Offset 0x001c
+    // Contains the Register Value read from AXP803 PMIC
     return getreg8(R_RSB_BASE_ADDRESS + RSB_DATA);
 }
 
@@ -231,16 +249,34 @@ fn rsb_write(
     reg_addr: u8, 
     value: u8
 ) i32 {
-    // Write a byte
+    // RSB Command Register (RSB_CMD) (A80 Page 928)
+    // At RSB Offset 0x002C
+    // Set to 0x4E (WR8) to write one byte
     debug("  rsb_write: rt_addr=0x{x}, reg_addr=0x{x}, value=0x{x}", .{ rt_addr, reg_addr, value });
-    const rt_addr_shift: u32 = @intCast(u32, rt_addr) << 16;
-    putreg32(RSBCMD_WR8,    R_RSB_BASE_ADDRESS + RSB_CMD);   // TODO: DMB
-    putreg32(rt_addr_shift, R_RSB_BASE_ADDRESS + RSB_DAR);   // TODO: DMB
-    putreg32(reg_addr,      R_RSB_BASE_ADDRESS + RSB_AR);    // TODO: DMB
-    putreg32(value,         R_RSB_BASE_ADDRESS + RSB_DATA);  // TODO: DMB
+    putreg32(RSBCMD_WR8, R_RSB_BASE_ADDRESS + RSB_CMD);   // TODO: DMB
 
-    // Start transaction
-    putreg32(0x80,          R_RSB_BASE_ADDRESS + RSB_CTRL);  // TODO: DMB
+    // RSB Device Address Register (RSB_DAR) (A80 Page 928)
+    // At RSB Offset 0x0030
+    // Set RTA (Bits 16 to 23) to the Run-Time Address (0x2D for AXP803 PMIC)
+    const rt_addr_shift: u32 = @intCast(u32, rt_addr) << 16;
+    putreg32(rt_addr_shift, R_RSB_BASE_ADDRESS + RSB_DAR);   // TODO: DMB
+
+    // RSB Address Register (RSB_AR) (A80 Page 926)
+    // At RSB Offset 0x0010
+    // Set to the Register Address that we’ll write to AXP803 PMIC
+    putreg32(reg_addr, R_RSB_BASE_ADDRESS + RSB_AR);    // TODO: DMB
+
+    // RSB Data Buffer Register (RSB_DATA) (A80 Page 926)
+    // At RSB Offset 0x001c
+    // Set to the Register Value that will be written to AXP803 PMIC
+    putreg32(value, R_RSB_BASE_ADDRESS + RSB_DATA);  // TODO: DMB
+
+    // RSB Control Register (RSB_CTRL) (A80 Page 923)
+    // At RSB Offset 0x0000
+    // Set START_TRANS (Bit 7) to 1 (Start Transaction)
+    putreg32(0x80, R_RSB_BASE_ADDRESS + RSB_CTRL);  // TODO: DMB
+
+    // Wait for RSB Status
     return rsb_wait_stat("Write RSB");
 }
 
@@ -249,12 +285,18 @@ fn rsb_write(
 fn rsb_wait_stat(
     desc: []const u8
 ) i32 {
+    // RSB Control Register (RSB_CTRL) (A80 Page 923)
+    // At RSB Offset 0x0000
+    // Wait for START_TRANS (Bit 7) to be 0 (Transaction Completed or Error)
     const ret = rsb_wait_bit(desc, RSB_CTRL, 1 << 7);
     if (ret != 0) {
         debug("rsb_wait_stat Timeout ({s})", .{ desc });
         return ret;
     }
 
+    // RSB Status Register (RSB_STAT) (A80 Page 924)
+    // At RSB Offset 0x000c
+    // If TRANS_OVER (Bit 0) is 1, then RSB Transfer has completed without error
     const reg = getreg32(R_RSB_BASE_ADDRESS + RSB_STAT);
     if (reg == 0x01) { return 0; }
 
@@ -274,6 +316,9 @@ fn rsb_wait_bit(
     // Wait for transaction to complete
     var tries: u32 = 100000;
     while (true) {
+        // RSB Control Register (RSB_CTRL) (A80 Page 923)
+        // At RSB Offset 0x0000
+        // Wait for START_TRANS (Bit 7) to be 0 (Transaction Completed or Error)
         // `offset` is RSB_CTRL
         // `mask`   is 1 << 7
         const reg = getreg32(R_RSB_BASE_ADDRESS + offset); 
