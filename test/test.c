@@ -20,6 +20,7 @@
 #define PANEL_WIDTH  720
 #define PANEL_HEIGHT 1440
 
+int display_board_init(void);
 int pinephone_panel_init(void);
 int render_graphics(void);
 
@@ -33,7 +34,9 @@ int main()
   ret = a64_tcon0_init(PANEL_WIDTH, PANEL_HEIGHT);
   assert(ret == OK);
   
-  ginfo("TODO: Init PMIC\n");
+  // Init PMIC
+  ret = display_board_init();
+  assert(ret == OK);
 
   // Enable MIPI DSI Block
   ret = a64_mipi_dsi_enable();
