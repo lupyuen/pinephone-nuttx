@@ -46,7 +46,7 @@ const c = @cImport({
 /// PIO Base Address (CPUx-PORT) (A64 Page 376)
 const PIO_BASE_ADDRESS = 0x01C2_0800;
 
-/// Reduced Serial Bus Base Address
+/// Address of AXP803 PMIC on Reduced Serial Bus
 const AXP803_RT_ADDR = 0x2d;
 
 /// Reduced Serial Bus Base Address (R_RSB) (A64 Page 75)
