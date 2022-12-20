@@ -4684,7 +4684,7 @@ nsh> hello 0
 
 [(Source)](https://gist.github.com/lupyuen/f76ec0bcafce670220ab304a70c28fab)
 
-Our Zig Test Program renders the Test Pattern successfully on PinePhone. [(Like this)](https://lupyuen.github.io/images/dsi3-title.jpg)
+Our Zig Test Program renders the Test Pattern successfully on PinePhone. [(Like this)](https://lupyuen.github.io/images/de3-title.jpg)
 
 Here's the Test Log, with Graphics Logging Enabled...
 
