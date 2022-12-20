@@ -184,9 +184,13 @@ uint8_t getreg8(unsigned long addr)
 uint32_t getreg32(unsigned long addr)
 {
   if (addr == PLL_DE_CTRL_REG)
-  {
-    return (1 << 28);
-  }
+    {
+      return (1 << 28);
+    }
+  else if (addr == 0x01f03400 + 0x0c)
+    {
+      return 1;
+    }
   return 0;
 }
 
