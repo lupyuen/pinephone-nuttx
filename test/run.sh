@@ -45,5 +45,13 @@ diff \
     | grep -v "*0x1103010 = 0x12345678" \
     | grep -v "*0x1104010 = 0x23456789" \
     | grep -v "*0x1105010 = 0x34567890" \
+    | grep -v "*0x1f0341c = 0x8" \
+    | grep -v "*0x1f0341c = 0x10" \
+    | grep -v "rt_addr=0x2d, reg_addr=0x15, value=0x1a" \
+    | grep -v "rt_addr=0x2d, reg_addr=0x12, value=0x8" \
+    | grep -v "rt_addr=0x2d, reg_addr=0x91, value=0x1a" \
+    | grep -v "rt_addr=0x2d, reg_addr=0x90, value=0x3" \
+    | grep -v "rt_addr=0x2d, reg_addr=0x16, value=0xb" \
+    | grep -v "rt_addr=0x2d, reg_addr=0x12, value=0x10" \
 
 set -e  #  Exit when any command fails
