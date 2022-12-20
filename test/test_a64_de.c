@@ -107,7 +107,6 @@ int render_graphics(void)
   DEBUGASSERT(ret == OK);
 
 #ifndef __NuttX__
-#warning Local Testing Only
   // For Local Testing: Only 32-bit addresses allowed
   planeInfo.fbmem = (void *)0x12345678;
   overlayInfo[0].fbmem = (void *)0x23456789;

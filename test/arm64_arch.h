@@ -6,6 +6,8 @@ void modreg32(
     unsigned long addr  // Address to modify
 );
 
+uint8_t getreg8(unsigned long addr);
+
 uint32_t getreg32(unsigned long addr);
 
 void putreg32(uint32_t data, unsigned long addr);

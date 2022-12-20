@@ -173,6 +173,11 @@ const unsigned long log_start[PREV_ADDR_LEN] = {
 };
 static bool log_enabled = true;
 
+uint8_t getreg8(unsigned long addr)
+{
+  return 0;
+}
+
 uint32_t getreg32(unsigned long addr)
 {
   if (addr == PLL_DE_CTRL_REG)
