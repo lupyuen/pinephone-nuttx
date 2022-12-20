@@ -170,6 +170,7 @@ fn pmic_write(
     reg: u8,
     val: u8
 ) i32 {
+    // Write to AXP803 PMIC on Reduced Serial Bus
     debug("  pmic_write: reg=0x{x}, val=0x{x}", .{ reg, val });
     const ret = rsb_write(AXP803_RT_ADDR, reg, val);
     if (ret != 0) { debug("  pmic_write Error: ret={}", .{ ret }); }
@@ -180,6 +181,7 @@ fn pmic_write(
 fn pmic_read(
     reg_addr: u8
 ) i32 {
+    // Read from AXP803 PMIC on Reduced Serial Bus
     debug("  pmic_read: reg_addr=0x{x}", .{ reg_addr });
     const ret = rsb_read(AXP803_RT_ADDR, reg_addr);
     if (ret < 0) { debug("  pmic_read Error: ret={}", .{ ret }); }
@@ -192,15 +194,18 @@ fn pmic_clrsetbits(
     clr_mask: u8, 
     set_mask: u8
 ) i32 {
+    // Read from AXP803 PMIC on Reduced Serial Bus
     debug("  pmic_clrsetbits: reg=0x{x}, clr_mask=0x{x}, set_mask=0x{x}", .{ reg, clr_mask, set_mask });
     const ret = rsb_read(AXP803_RT_ADDR, reg);
     if (ret < 0) { return ret; }
 
+    // Write to AXP803 PMIC on Reduced Serial Bus
     const regval = (@intCast(u8, ret) & ~clr_mask) | set_mask;
     return rsb_write(AXP803_RT_ADDR, reg, regval);
 }
 
-/// Read a byte from Reduced Serial Bus
+/// Read a byte from Reduced Serial Bus.
+/// Returns -1 on error.
 fn rsb_read(
     rt_addr: u8,
     reg_addr: u8
@@ -219,7 +224,8 @@ fn rsb_read(
     return getreg8(R_RSB_BASE_ADDRESS + RSB_DATA);
 }
 
-/// Write a byte to Reduced Serial Bus
+/// Write a byte to Reduced Serial Bus.
+/// Returns -1 on error.
 fn rsb_write(
     rt_addr: u8, 
     reg_addr: u8, 
@@ -238,7 +244,8 @@ fn rsb_write(
     return rsb_wait_stat("Write RSB");
 }
 
-/// Wait for Reduced Serial Bus and read Status
+/// Wait for Reduced Serial Bus and read Status.
+/// Returns -1 on error.
 fn rsb_wait_stat(
     desc: []const u8
 ) i32 {
@@ -255,7 +262,10 @@ fn rsb_wait_stat(
     return -1;
 }
 
-/// Wait for Reduced Serial Bus Transaction to complete
+/// Wait for Reduced Serial Bus Transaction to complete.
+/// Returns -1 on error.
+/// `offset` is RSB_CTRL
+/// `mask`   is 1 << 7
 fn rsb_wait_bit(
     desc: []const u8,
     offset: u32, 
@@ -264,6 +274,8 @@ fn rsb_wait_bit(
     // Wait for transaction to complete
     var tries: u32 = 100000;
     while (true) {
+        // `offset` is RSB_CTRL
+        // `mask`   is 1 << 7
         const reg = getreg32(R_RSB_BASE_ADDRESS + offset); 
         if (reg & mask == 0) { break; }
 
