@@ -88,7 +88,7 @@ static struct fb_overlayinfo_s overlayInfo[2] =
   },
 };
 
-int render_graphics(void)
+int pinephone_render_graphics(void)
 {
   // Validate the Framebuffer Sizes at Compile Time
   // ginfo("fb0=%p, fb1=%p, fb2=%p\n", fb0, fb1, fb2);

@@ -20,9 +20,9 @@
 #define PANEL_WIDTH  720
 #define PANEL_HEIGHT 1440
 
-int display_board_init(void);
 int pinephone_panel_init(void);
-int render_graphics(void);
+int pinephone_pmic_init(void);
+int pinephone_render_graphics(void);
 
 int main()
 {
@@ -35,8 +35,10 @@ int main()
   assert(ret == OK);
   
   // Init PMIC
-  ret = display_board_init();
+  ret = pinephone_pmic_init();
   assert(ret == OK);
+
+  // TODO: Wait 15 milliseconds for power supply and power-on init
 
   // Enable MIPI DSI Block
   ret = a64_mipi_dsi_enable();
@@ -64,7 +66,7 @@ int main()
   up_mdelay(160);
 
   // Render Graphics with Display Engine (in C)
-  ret = render_graphics();
+  ret = pinephone_render_graphics();
   assert(ret == OK);
 
   // Test MIPI DSI

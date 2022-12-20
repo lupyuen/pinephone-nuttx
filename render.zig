@@ -1157,7 +1157,7 @@ pub export fn hello_main(
 
             // Init PMIC (in C)
             // https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_rsb.c
-            _ = display_board_init();            
+            _ = pinephone_pmic_init();            
 
             // Wait 15 milliseconds for power supply and power-on init
             debug("Wait for power supply and power-on init", .{});
@@ -1193,7 +1193,7 @@ pub export fn hello_main(
 
             // Render Graphics with Display Engine (in C)
             // https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_de.c
-            _ = render_graphics();
+            _ = pinephone_render_graphics();
 
         } else if (std.mem.eql(u8, cmd, "1")) {
             // Render 1 UI Channel in Zig
@@ -1306,9 +1306,9 @@ extern fn a64_mipi_dphy_enable() c_int;
 extern fn a64_mipi_dsi_enable() c_int;
 extern fn a64_mipi_dsi_start() c_int;
 extern fn a64_tcon0_init(width: u16, height: u16) c_int;
-extern fn display_board_init() c_int;
 extern fn pinephone_panel_init() c_int;
-extern fn render_graphics() c_int;
+extern fn pinephone_pmic_init() c_int;
+extern fn pinephone_render_graphics() c_int;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
 /// We changed `[*c]const u8` to `[*:0]const u8`

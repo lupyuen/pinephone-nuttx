@@ -18,9 +18,9 @@ static int pmic_clrsetbits(
   uint8_t set_mask
 );
 
-/// Init Display Board.
+/// Init PMIC.
 /// Based on https://lupyuen.github.io/articles/de#appendix-power-management-integrated-circuit
-int display_board_init(void)
+int pinephone_pmic_init(void)
 {
   // Reset LCD Panel at PD23 (Active Low)
   // assert reset: GPD(23), 0  // PD23 - LCD-RST (active low)
