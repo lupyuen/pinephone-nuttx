@@ -20,6 +20,7 @@
 //! PinePhone Power Management IC Driver for Apache NuttX RTOS
 //! See https://lupyuen.github.io/articles/de#appendix-power-management-integrated-circuit
 //! "A64 Page ???" refers to Allwinner A64 User Manual: https://github.com/lupyuen/pinephone-nuttx/releases/download/doc/Allwinner_A64_User_Manual_V1.1.pdf
+//! "A80 Page ???" refers to Allwinner A80 User Manual: https://github.com/lupyuen/pinephone-nuttx/releases/download/doc/A80_User_Manual_v1.3.1_20150513.pdf
 //! "AXP803 Page ???" refers to X-Powers AXP803 PMIC Datasheet: https://files.pine64.org/doc/datasheet/pine64/AXP803_Datasheet_V1.0.pdf
 
 /// Import the Zig Standard Library
@@ -45,19 +46,19 @@ const c = @cImport({
 /// PIO Base Address (CPUx-PORT) (A64 Page 376)
 const PIO_BASE_ADDRESS = 0x01C2_0800;
 
-/// Address of AXP803 PMIC on Reduced Serial Bus
+/// Reduced Serial Bus Base Address
 const AXP803_RT_ADDR = 0x2d;
 
-/// Reduced Serial Bus Base Address
+/// Reduced Serial Bus Base Address (R_RSB) (A64 Page 75)
 const R_RSB_BASE_ADDRESS = 0x01f03400;
 
-/// Reduced Serial Bus Offsets
-const RSB_CTRL   = 0x00;
-const RSB_STAT   = 0x0c;
-const RSB_DADDR0 = 0x10;
-const RSB_DATA0  = 0x1c;
-const RSB_CMD    = 0x2c;
-const RSB_SADDR  = 0x30;
+/// Reduced Serial Bus Offsets (A80 Page 922)
+const RSB_CTRL   = 0x00;  // RSB Control Register
+const RSB_STAT   = 0x0c;  // RSB Status Register
+const RSB_AR     = 0x10;  // RSB Address Register
+const RSB_DATA   = 0x1c;  // RSB Data Buffer Register
+const RSB_CMD    = 0x2c;  // RSB Command Register
+const RSB_DAR    = 0x30;  // RSB Device Address Register
 
 /// Read a byte from Reduced Serial Bus
 const RSBCMD_RD8 = 0x8B;
@@ -199,7 +200,7 @@ fn pmic_clrsetbits(
     return rsb_write(AXP803_RT_ADDR, reg, regval);
 }
 
-/// Write a byte to Reduced Serial Bus
+/// Read a byte from Reduced Serial Bus
 fn rsb_read(
     rt_addr: u8,
     reg_addr: u8
@@ -207,18 +208,18 @@ fn rsb_read(
     // Read a byte
     debug("  rsb_read: rt_addr=0x{x}, reg_addr=0x{x}", .{ rt_addr, reg_addr });
     const rt_addr_shift: u32 = @intCast(u32, rt_addr) << 16;
-    putreg32(RSBCMD_RD8,    R_RSB_BASE_ADDRESS + RSB_CMD);     // TODO: DMB
-    putreg32(rt_addr_shift, R_RSB_BASE_ADDRESS + RSB_SADDR);   // TODO: DMB
-    putreg32(reg_addr,      R_RSB_BASE_ADDRESS + RSB_DADDR0);  // TODO: DMB
+    putreg32(RSBCMD_RD8,    R_RSB_BASE_ADDRESS + RSB_CMD);   // TODO: DMB
+    putreg32(rt_addr_shift, R_RSB_BASE_ADDRESS + RSB_DAR);   // TODO: DMB
+    putreg32(reg_addr,      R_RSB_BASE_ADDRESS + RSB_AR);    // TODO: DMB
 
     // Start transaction
-    putreg32(0x80,          R_RSB_BASE_ADDRESS + RSB_CTRL);    // TODO: DMB
+    putreg32(0x80,          R_RSB_BASE_ADDRESS + RSB_CTRL);  // TODO: DMB
     const ret = rsb_wait_stat("Read RSB");
     if (ret != 0) { return ret; }
-    return getreg8(R_RSB_BASE_ADDRESS + RSB_DATA0);
+    return getreg8(R_RSB_BASE_ADDRESS + RSB_DATA);
 }
 
-/// Read a byte from Reduced Serial Bus
+/// Write a byte to Reduced Serial Bus
 fn rsb_write(
     rt_addr: u8, 
     reg_addr: u8, 
@@ -227,13 +228,13 @@ fn rsb_write(
     // Write a byte
     debug("  rsb_write: rt_addr=0x{x}, reg_addr=0x{x}, value=0x{x}", .{ rt_addr, reg_addr, value });
     const rt_addr_shift: u32 = @intCast(u32, rt_addr) << 16;
-    putreg32(RSBCMD_WR8,    R_RSB_BASE_ADDRESS + RSB_CMD);     // TODO: DMB
-    putreg32(rt_addr_shift, R_RSB_BASE_ADDRESS + RSB_SADDR);   // TODO: DMB
-    putreg32(reg_addr,      R_RSB_BASE_ADDRESS + RSB_DADDR0);  // TODO: DMB
-    putreg32(value,         R_RSB_BASE_ADDRESS + RSB_DATA0);   // TODO: DMB
+    putreg32(RSBCMD_WR8,    R_RSB_BASE_ADDRESS + RSB_CMD);   // TODO: DMB
+    putreg32(rt_addr_shift, R_RSB_BASE_ADDRESS + RSB_DAR);   // TODO: DMB
+    putreg32(reg_addr,      R_RSB_BASE_ADDRESS + RSB_AR);    // TODO: DMB
+    putreg32(value,         R_RSB_BASE_ADDRESS + RSB_DATA);  // TODO: DMB
 
     // Start transaction
-    putreg32(0x80,          R_RSB_BASE_ADDRESS + RSB_CTRL);    // TODO: DMB
+    putreg32(0x80,          R_RSB_BASE_ADDRESS + RSB_CTRL);  // TODO: DMB
     return rsb_wait_stat("Write RSB");
 }
 
