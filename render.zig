@@ -1161,7 +1161,7 @@ pub export fn hello_main(
 
             // Wait 15 milliseconds for power supply and power-on init
             debug("Wait for power supply and power-on init", .{});
-            _ = c.usleep(15000);
+            _ = c.usleep(15_000);
 
             // Enable MIPI DSI Block (in C)
             // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c#L526-L914
