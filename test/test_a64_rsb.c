@@ -33,7 +33,7 @@ int display_board_init(void)
   // sunxi_gpio_set_cfgbank: bank_offset=119, val=1
   //   clrsetbits 0x1c20874, 0xf0000000, 0x10000000
   // TODO: Should 0xf0000000 be 0x70000000 instead?
-  _info("Configure PD23 for Output\n");
+  ginfo("Configure PD23 for Output\n");
   #define PD_CFG2_REG (PIO_BASE_ADDRESS + 0x74)
   DEBUGASSERT(PD_CFG2_REG == 0x1c20874);
   #define PD23_SELECT (0b001 << 28)
@@ -49,7 +49,7 @@ int display_board_init(void)
   // sunxi_gpio_output: pin=0x77, val=0
   //   before: 0x1c2087c = 0x1c0000
   //   after: 0x1c2087c = 0x1c0000 (DMB)
-  _info("Set PD23 to Low\n");
+  ginfo("Set PD23 to Low\n");
   #define PD_DATA_REG (PIO_BASE_ADDRESS + 0x7C)
   DEBUGASSERT(PD_DATA_REG == 0x1c2087c);
   #define PD23 (1 << 23)
@@ -59,7 +59,7 @@ int display_board_init(void)
   // DLDO1 powers the Front Camera / USB HSIC / I2C Sensors
   // Register 0x15: DLDO1 Voltage Control (AXP803 Page 52)
   // Set Voltage (Bits 0 to 4) to 26 (2.6V + 0.7V = 3.3V)
-  _info("Set DLDO1 Voltage to 3.3V\n");
+  ginfo("Set DLDO1 Voltage to 3.3V\n");
   #define DLDO1_Voltage_Control 0x15
   #define DLDO1_Voltage (26 << 0)
   int ret1 = pmic_write(DLDO1_Voltage_Control, DLDO1_Voltage);
@@ -77,7 +77,7 @@ int display_board_init(void)
   // GPIO0LDO powers the Capacitive Touch Panel
   // Register 0x91: GPIO0LDO and GPIO0 High Level Voltage Setting (AXP803 Page 77)
   // Set GPIO0LDO and GPIO0 High Level Voltage (Bits 0 to 4) to 26 (2.6V + 0.7V = 3.3V)
-  _info("Set LDO Voltage to 3.3V\n");
+  ginfo("Set LDO Voltage to 3.3V\n");
   #define GPIO0LDO_High_Level_Voltage_Setting 0x91
   #define GPIO0LDO_High_Level_Voltage (26 << 0)
   int ret3 = pmic_write(GPIO0LDO_High_Level_Voltage_Setting, GPIO0LDO_High_Level_Voltage);
@@ -86,7 +86,7 @@ int display_board_init(void)
   // Enable LDO Mode on GPIO0
   // Register 0x90: GPIO0 (GPADC) Control (AXP803 Page 76)
   // Set GPIO0 Pin Function Control (Bits 0 to 2) to 0b11 (Low Noise LDO on)
-  _info("Enable LDO mode on GPIO0\n");
+  ginfo("Enable LDO mode on GPIO0\n");
   #define GPIO0_Control 0x90
   #define GPIO0_Pin_Function (0b11 << 0)
   int ret4 = pmic_write(GPIO0_Control, GPIO0_Pin_Function);
@@ -96,7 +96,7 @@ int display_board_init(void)
   // DLDO2 powers the MIPI DSI Connector
   // Register 0x16: DLDO2 Voltage Control (AXP803 Page 52)
   // Set Voltage (Bits 0 to 4) to 11 (1.1V + 0.7V = 1.8V)
-  _info("Set DLDO2 Voltage to 1.8V\n");
+  ginfo("Set DLDO2 Voltage to 1.8V\n");
   #define DLDO2_Voltage_Control 0x16
   #define DLDO2_Voltage (11 << 0)
   int ret5 = pmic_write(DLDO2_Voltage_Control, DLDO2_Voltage);
@@ -120,9 +120,9 @@ static int pmic_write(
 )
 {
   // Write to AXP803 PMIC on Reduced Serial Bus
-  _info("pmic_write: reg=0x%x, val=0x%x\n", reg, val);
+  ginfo("pmic_write: reg=0x%x, val=0x%x\n", reg, val);
   int ret = a64_rsb_write(AXP803_RT_ADDR, reg, val);
-  if (ret != 0) { _err("pmic_write Error: ret=%d\n", ret); }
+  if (ret != 0) { gerr("pmic_write Error: ret=%d\n", ret); }
   return ret;
 }
 
@@ -133,9 +133,9 @@ static int pmic_read(
 )
 {
   // Read from AXP803 PMIC on Reduced Serial Bus
-  _info("pmic_read: reg_addr=0x%x\n", reg_addr);
+  ginfo("pmic_read: reg_addr=0x%x\n", reg_addr);
   int ret = a64_rsb_read(AXP803_RT_ADDR, reg_addr);
-  if (ret < 0) { _err("pmic_read Error: ret=%d\n", ret); }
+  if (ret < 0) { gerr("pmic_read Error: ret=%d\n", ret); }
   return ret;
 }
 #endif
@@ -148,7 +148,7 @@ static int pmic_clrsetbits(
 )
 {
   // Read from AXP803 PMIC on Reduced Serial Bus
-  _info("pmic_clrsetbits: reg=0x%x, clr_mask=0x%x, set_mask=0x%x\n", reg, clr_mask, set_mask);
+  ginfo("pmic_clrsetbits: reg=0x%x, clr_mask=0x%x, set_mask=0x%x\n", reg, clr_mask, set_mask);
   int ret = a64_rsb_read(AXP803_RT_ADDR, reg);
   if (ret < 0) { return ret; }
 
