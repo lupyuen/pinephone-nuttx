@@ -1155,10 +1155,9 @@ pub export fn hello_main(
             // https://github.com/lupyuen2/wip-pinephone-nuttx/blob/tcon2/arch/arm64/src/a64/a64_tcon0.c#L180-L474
             _ = a64_tcon0_init(PANEL_WIDTH, PANEL_HEIGHT);
 
-            // Init PMIC (in Zig)
-            // https://github.com/lupyuen/pinephone-nuttx/blob/main/pmic.zig
-            pmic.display_board_init();            
-            // _ = c.sleep(1);  // TODO: Remove this when PMIC is converted to C
+            // Init PMIC (in C)
+            // https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_rsb.c
+            _ = display_board_init();            
 
             // Enable MIPI DSI Block (in C)
             // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c#L526-L914
@@ -1303,6 +1302,7 @@ extern fn a64_mipi_dphy_enable() c_int;
 extern fn a64_mipi_dsi_enable() c_int;
 extern fn a64_mipi_dsi_start() c_int;
 extern fn a64_tcon0_init(width: u16, height: u16) c_int;
+extern fn display_board_init() c_int;
 extern fn pinephone_panel_init() c_int;
 extern fn render_graphics() c_int;
 
