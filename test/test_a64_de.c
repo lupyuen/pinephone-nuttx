@@ -5,7 +5,7 @@
 #define CONFIG_FB_OVERLAY y
 #define CHANNELS 3
 
-// TODO: Sync with test_.c
+// TODO: Sync with test.c
 #define PANEL_WIDTH  720
 #define PANEL_HEIGHT 1440
 
