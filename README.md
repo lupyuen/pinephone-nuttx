@@ -32,6 +32,8 @@ Read the articles...
 
 -   ["NuttX RTOS for PinePhone: MIPI Display Serial Interface"](https://lupyuen.github.io/articles/dsi3)
 
+-   ["NuttX RTOS for PinePhone: Display Engine"](https://lupyuen.github.io/articles/de3)
+
 -   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
 
 Also check out the PinePhone Drivers that we've built in Zig...
