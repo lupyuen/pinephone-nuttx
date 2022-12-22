@@ -4472,8 +4472,11 @@ Then we compile the Zig Test Program targeting PinePhone...
   ./tools/configure.sh pinephone:nsh
   make menuconfig
 
-  ##  Select "System Type > Allwinner A64 Peripheral Selection > MIPI DSI"
-  ##  Select "Build Setup > Debug Options > Graphics Debug Features > Graphics Errors / Warnings / Informational Output"
+  ##  Select "System Type > Allwinner A64 Peripheral Selection > DE"
+  ##  Select "System Type > Allwinner A64 Peripheral Selection > RSB"
+  ##  Select "Build Setup > Debug Options > Graphics Debug Features > Error + Warnings + Info"
+  ##  Select "Build Setup > Debug Options > Battery-related Debug Features > Error + Warnings + Info"
+  ##  Select "Device Drivers > Framebuffer Overlay Support"
   ##  Save and exit menuconfig
 
   ##  Build NuttX
