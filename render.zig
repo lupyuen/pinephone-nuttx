@@ -1237,6 +1237,12 @@ fn usage() void {
     err(" Start MIPI DSI HSC and HSD (a64_mipi_dsi_start)", .{});
     err("hello i", .{});
     err(" Render Graphics with Display Engine (in Zig)", .{});
+
+    // Calibrate CONFIG_BOARD_LOOPSPERMSEC (default is 5000)
+    debug("Calibrate CONFIG_BOARD_LOOPSPERMSEC", .{});
+    debug("Start 10 seconds", .{});
+    up_mdelay(10 * 1000);
+    debug("End 10 seconds", .{});
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1309,6 +1315,7 @@ extern fn a64_tcon0_init(width: u16, height: u16) c_int;
 extern fn pinephone_panel_init() c_int;
 extern fn pinephone_pmic_init() c_int;
 extern fn pinephone_render_graphics() c_int;
+extern fn up_mdelay(milliseconds: c_uint) void;
 
 /// For safety, we import these functions ourselves to enforce Null-Terminated Strings.
 /// We changed `[*c]const u8` to `[*:0]const u8`
