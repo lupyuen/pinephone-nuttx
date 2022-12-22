@@ -4507,7 +4507,7 @@ Then we compile the Zig Test Program targeting PinePhone...
   make
 ```
 
-[(Or download the binaries here)](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.1.8)
+[(Or download the binaries here)](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.2.1)
 
 We boot NuttX on PinePhone and run the Zig Test Program...
 
