@@ -1178,7 +1178,7 @@ pub export fn hello_main(
 
             // Init LCD Panel (in C)
             // https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_mipi_dsi.c
-            _ = pinephone_panel_init();
+            _ = pinephone_lcd_panel_init();
 
             // Start MIPI DSI HSC and HSD (in C)
             // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c#L914-L993
@@ -1312,7 +1312,7 @@ extern fn a64_mipi_dphy_enable() c_int;
 extern fn a64_mipi_dsi_enable() c_int;
 extern fn a64_mipi_dsi_start() c_int;
 extern fn a64_tcon0_init(width: u16, height: u16) c_int;
-extern fn pinephone_panel_init() c_int;
+extern fn pinephone_lcd_panel_init() c_int;
 extern fn pinephone_pmic_init() c_int;
 extern fn pinephone_render_graphics() c_int;
 extern fn up_mdelay(milliseconds: c_uint) void;
