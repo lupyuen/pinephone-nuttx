@@ -2,7 +2,6 @@
 // Add `#include "../../pinephone-nuttx/test/test_a64_de.c"` to the end of this file:
 // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_de.c
 
-#define CONFIG_FB_OVERLAY y
 #define CHANNELS 3
 
 // TODO: Sync with test.c
