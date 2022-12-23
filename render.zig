@@ -1161,7 +1161,7 @@ pub export fn hello_main(
 
             // Wait 15 milliseconds for power supply and power-on init
             debug("Wait for power supply and power-on init", .{});
-            _ = c.usleep(15_000);
+            up_mdelay(15);
 
             // Enable MIPI DSI Block (in C)
             // https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/a64_mipi_dsi.c#L526-L914
@@ -1189,7 +1189,7 @@ pub export fn hello_main(
             _ = a64_de_init();
 
             // Wait 160 milliseconds
-            _ = c.usleep(160_000);
+            up_mdelay(160);
 
             // Render Graphics with Display Engine (in C)
             // https://github.com/lupyuen/pinephone-nuttx/blob/main/test/test_a64_de.c
