@@ -1,8 +1,10 @@
 ![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/de-title.jpg)
 
-[__Watch the Demo on YouTube__](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
+[__Watch the Demo on YouTube__](https://www.youtube.com/shorts/UzR7xLZCc0c)
 
-[__Another Demo Video__](https://youtu.be/MJDxCcKAv0g)
+[__Another Demo__](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
+
+[__And Another Demo__](https://youtu.be/MJDxCcKAv0g)
 
 # Apache NuttX RTOS for PinePhone
 
