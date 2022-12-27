@@ -4836,8 +4836,6 @@ FYI: How `printf` works...
 [`fputc`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_fputc.c#L31-L61) also calls...
 - [`lib_libfflush`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfflush.c#L40-L171)
 
-![Missing Pixels in PinePhone Image](https://lupyuen.github.io/images/fb-test2.jpg)
-
 # Missing Pixels in PinePhone Image
 
 We've just implemented the NuttX Kernel Drivers for MIPI Display Serial Interface, Timing Controller TCON0, Display Engine, Reduced Serial Bus, Power Management Integrated Circuit and LCD Panel...
@@ -4852,11 +4850,13 @@ And we're adding the Framebuffer Driver to NuttX Kernel...
 
 https://github.com/lupyuen2/wip-pinephone-nuttx/pull/19
 
-When we run the `fb` NuttX Example App, we see missing pixels in the rendered image (pic above)...
+When we run the `fb` NuttX Example App, we see missing pixels in the rendered image...
 
 -   Inside the Yellow Box is supposed to be an Orange Box
 
 -   Inside the Orange Box is supposed to be a Red Box
+
+![Missing Pixels in PinePhone Image](https://lupyuen.github.io/images/fb-test2.jpg)
 
 There seems to be a problem with Framebuffer DMA / Display Engine / Timing Controller TCON0?
 
