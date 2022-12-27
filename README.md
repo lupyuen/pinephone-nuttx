@@ -4836,6 +4836,50 @@ FYI: How `printf` works...
 [`fputc`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_fputc.c#L31-L61) also calls...
 - [`lib_libfflush`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfflush.c#L40-L171)
 
+![Missing Pixels in PinePhone Image](https://lupyuen.github.io/images/fb-test2.jpg)
+
+# Missing Pixels in PinePhone Image
+
+We've just implemented the NuttX Kernel Drivers for MIPI Display Serial Interface, Timing Controller TCON0, Display Engine, Reduced Serial Bus, Power Management Integrated Circuit and LCD Panel...
+
+-   ["NuttX RTOS for PinePhone: MIPI Display Serial Interface"](https://lupyuen.github.io/articles/dsi3)
+
+-   ["NuttX RTOS for PinePhone: Display Engine"](https://lupyuen.github.io/articles/de3)
+
+-   ["NuttX RTOS for PinePhone: LCD Panel"](https://lupyuen.github.io/articles/lcd)
+
+And we're adding the Framebuffer Driver to NuttX Kernel...
+
+https://github.com/lupyuen2/wip-pinephone-nuttx/pull/19
+
+When the run the `fb` NuttX Example App, we see missing pixels in the rendered image (pic above)...
+
+-   Inside the Yellow Box is supposed to be an Orange Box
+
+-   Inside the Orange Box is supposed to be a Red Box
+
+There seems to be a problem with Framebuffer DMA / Display Engine / Timing Controller TCON0?
+
+We might need to handle TCON0 Vertical Blanking (`TCON0_Vb_Int_En` / `TCON0_Vb_Int_Flag`) and TCON0 CPU Trigger Mode Finish (`TCON0_Tri_Finish_Int_En` / `TCON0_Tri_Finish_Int_Flag`) like this...
+
+-   [sun4i_tcon_enable_vblank](https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/sun4i/sun4i_tcon.c#L225-L242)
+
+-   [sun4i_tcon_handler](https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/sun4i/sun4i_tcon.c#L746-L777)
+
+p-boot Bootloader seems to handle every TCON0 CPU Trigger Mode Finish (`TCON0_Tri_Finish_Int_En` / `TCON0_Tri_Finish_Int_Flag`) by updating the Display Engine Registers. Which sounds odd...
+
+1.  Render Loop waits forever for `EV_VBLANK`: [dtest.c](https://megous.com/git/p-boot/tree/src/dtest.c#n327)
+
+1.  `EV_VBLANK` is triggered by `display_frame_done`: [gui.c](https://megous.com/git/p-boot/tree/src/gui.c#n64)
+
+1.  `display_frame_done` is triggered by TCON0 CPU Trigger Mode Finish: [display.c](https://megous.com/git/p-boot/tree/src/display.c#n2005)
+
+1.  Render Loop handles `EV_VBLANK` by redrawing and calling `display_commit`:  [dtest.c](https://megous.com/git/p-boot/tree/src/dtest.c#n338)
+
+1.  `display_commit` updates the Display Engine Registers, including the Framebuffer Addresses: [display.c](https://megous.com/git/p-boot/tree/src/display.c#n2017)
+
+Can we handle TCON0 CPU Trigger Mode Finish without refreshing the Display Engine Registers?
+
 # Test Logs
 
 This section contains PinePhone NuttX Logs captured from various tests...
