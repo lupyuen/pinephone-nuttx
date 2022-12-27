@@ -4848,7 +4848,7 @@ We've just implemented the NuttX Kernel Drivers for MIPI Display Serial Interfac
 
 And we're adding the Framebuffer Driver to NuttX Kernel...
 
-https://github.com/lupyuen2/wip-pinephone-nuttx/pull/19
+https://github.com/apache/nuttx/pull/7988
 
 When we run the `fb` NuttX Example App, we see missing pixels in the rendered image...
 
@@ -4857,6 +4857,10 @@ When we run the `fb` NuttX Example App, we see missing pixels in the rendered im
 -   Inside the Orange Box is supposed to be a Red Box
 
 ![Missing Pixels in PinePhone Image](https://lupyuen.github.io/images/fb-test2.jpg)
+
+The missing pixels magically appear later in a curious pattern...
+
+-   [Watch the Demo on YouTube](https://www.youtube.com/shorts/WD5AJj7Rz5U)
 
 There seems to be a problem with Framebuffer DMA / Display Engine / Timing Controller TCON0?
 
