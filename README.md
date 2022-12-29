@@ -4908,7 +4908,7 @@ After writing the pixels to the RAM Framebuffer, NuttX Apps will call `ioctl(FBI
 This triggers `pinephone_updatearea` in our NuttX Framebuffer Driver: [fb_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/pixel/examples/fb/fb_main.c#L265-L274)
 
 ```c
-// Omitted: Write pixels to RAM Framebuffer
+// Omitted: NuttX App write pixels to RAM Framebuffer
 
 // Update the Framebuffer
 #ifdef CONFIG_FB_UPDATE
@@ -4948,7 +4948,9 @@ Can we handle TCON0 CPU Trigger Mode Finish without refreshing the Display Engin
 
 # LVGL on NuttX on PinePhone
 
-TODO
+LVGL on NuttX renders correctly on PinePhone! (Pic below)
+
+Here are the settings in `make menuconfig`...
 
 - Enable "Application Configuration > Examples > LVGL Demo"
 
