@@ -4910,7 +4910,7 @@ After writing the pixels to the RAM Framebuffer, NuttX Apps will call `ioctl(FBI
 This triggers `pinephone_updatearea` in our NuttX Framebuffer Driver: [fb_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/pixel/examples/fb/fb_main.c#L265-L274)
 
 ```c
-// Omitted: NuttX App write pixels to RAM Framebuffer
+// Omitted: NuttX App writes pixels to RAM Framebuffer
 
 // Update the Framebuffer
 #ifdef CONFIG_FB_UPDATE
