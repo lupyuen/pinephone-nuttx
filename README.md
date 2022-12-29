@@ -4868,7 +4868,59 @@ According to the video, the pixels are actually written to correctly to the RAM 
 
 There seems to be a lag between the writing of pixels to framebuffer, and the pushing of pixels to the display over DMA / Display Engine / Timing Controller TCON0.
 
-We need to fix this lag.
+Here's the fix for this lag...
+
+# Fix Missing Pixels in PinePhone Image
+
+In the previous section we saw that there was a lag pushing pixels from the RAM Framebuffer to the PinePhone Display (over DMA / Display Engine / Timing Controller TCON0).
+
+Can we overcome this lag by copying the RAM Framebuffer to itself, forcing the display to refresh? This sounds very strange, but yes it works! 
+
+From [pinephone_display.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/pixel/boards/arm64/a64/pinephone/src/pinephone_display.c#L472-L513):
+
+```c
+// Update the display when there is a change to the framebuffer.
+// (ioctl Entrypoint: FBIO_UPDATE)
+static int pinephone_updatearea(
+  struct fb_vtable_s *vtable,   // Framebuffer driver object
+  const struct fb_area_s *area  // Updated area of framebuffer
+) {
+  uint8_t *fb = (uint8_t *)g_pinephone_fb0;
+  const size_t fbsize = sizeof(g_pinephone_fb0);
+
+  // Copy the entire framebuffer to itself, to fix the missing pixels.
+  // Not sure why this works.
+  for (int i = 0; i < fbsize; i++) {
+    // Declare as volatile to prevent compiler optimization
+    volatile uint8_t v = fb[i];
+    fb[i] = v;
+  }
+  return OK;
+}
+```
+
+With the code above, the Red, Orange and Yellow Boxes are now rendered correctly in our NuttX Framebuffer Driver for PinePhone. (Pic below)
+
+_Who calls pinephone_updatearea?_
+
+After writing the pixels to the RAM Framebuffer, NuttX Apps will call `ioctl(FBIO_UPDATE)` to update the display.
+
+This triggers `pinephone_updatearea` in our NuttX Framebuffer Driver: [fb_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/pixel/examples/fb/fb_main.c#L265-L274)
+
+```c
+// Omitted: Write pixels to RAM Framebuffer
+
+// Update the Framebuffer
+#ifdef CONFIG_FB_UPDATE
+  ret = ioctl(    // I/O Command
+    state->fd,    // Framebuffer File Descriptor
+    FBIO_UPDATE,  // Update the Framebuffer
+    (unsigned long)((uintptr_t)area)  // Updated area
+  );
+#endif
+```
+
+![Fixed Missing Pixels in PinePhone Image](https://lupyuen.github.io/images/fb-test3.jpg)
 
 _How do other PinePhone operating systems handle this?_
 
@@ -4893,6 +4945,24 @@ p-boot Bootloader seems to handle every TCON0 CPU Trigger Mode Finish (`TCON0_Tr
 1.  `display_commit` updates the Display Engine Registers, including the Framebuffer Addresses: [display.c](https://megous.com/git/p-boot/tree/src/display.c#n2017)
 
 Can we handle TCON0 CPU Trigger Mode Finish without refreshing the Display Engine Registers?
+
+# LVGL on NuttX on PinePhone
+
+TODO
+
+- Enable "Application Configuration > Examples > LVGL Demo"
+
+- Enable "Application Configuration > Graphics Support > Light and Versatile Graphic Library (LVGL)"
+
+- Under "LVGL > Graphics settings"...
+  - Set "Horizontal resolution" to 720
+  - Set "Vertical resolution" to 1440
+  - Set "DPI (px/inch)" to 200
+
+- Under "LVGL > Color settings"...
+  - Set "Color depth (8/16/32)" to 32
+
+![LVGL on NuttX on PinePhone](https://lupyuen.github.io/images/fb-lvgl.jpg)
 
 # Test Logs
 
