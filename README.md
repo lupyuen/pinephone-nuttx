@@ -4864,11 +4864,21 @@ The missing pixels magically appear later in a curious pattern...
 
 There seems to be a problem with Framebuffer DMA / Display Engine / Timing Controller TCON0?
 
+According to the video, the pixels are actually written to correctly to the RAM Framebuffer. But the pixels at the lower half don't get pushed to the display until the next screen refresh.
+
+There seems to be a lag between the writing of pixels to framebuffer, and the pushing of pixels to the display over DMA / Display Engine / Timing Controller TCON0.
+
+We need to fix this lag.
+
+_How do other PinePhone operating systems handle this?_
+
 We might need to handle TCON0 Vertical Blanking (`TCON0_Vb_Int_En` / `TCON0_Vb_Int_Flag`) and TCON0 CPU Trigger Mode Finish (`TCON0_Tri_Finish_Int_En` / `TCON0_Tri_Finish_Int_Flag`) like this...
 
 -   [sun4i_tcon_enable_vblank](https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/sun4i/sun4i_tcon.c#L225-L242)
 
 -   [sun4i_tcon_handler](https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/sun4i/sun4i_tcon.c#L746-L777)
+
+    [(More about sun4i_tcon_handler)](https://gist.github.com/lupyuen/214788deabdb37659e806a463f8acc50)
 
 p-boot Bootloader seems to handle every TCON0 CPU Trigger Mode Finish (`TCON0_Tri_Finish_Int_En` / `TCON0_Tri_Finish_Int_Flag`) by updating the Display Engine Registers. Which sounds odd...
 
