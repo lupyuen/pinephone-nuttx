@@ -4888,9 +4888,11 @@ static int pinephone_updatearea(
   uint8_t *fb = (uint8_t *)g_pinephone_fb0;
   const size_t fbsize = sizeof(g_pinephone_fb0);
 
-  // Copy the entire framebuffer to itself, to fix the missing pixels.
+  // Copy the entire framebuffer to itself,
+  // to fix the missing pixels.
   // Not sure why this works.
   for (int i = 0; i < fbsize; i++) {
+
     // Declare as volatile to prevent compiler optimization
     volatile uint8_t v = fb[i];
     fb[i] = v;
