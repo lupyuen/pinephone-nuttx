@@ -1,4 +1,4 @@
-![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/de-title.jpg)
+![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/fb-title.jpg)
 
 [__Watch the Demo on YouTube__](https://www.youtube.com/shorts/UzR7xLZCc0c)
 
@@ -4952,7 +4952,7 @@ Can we handle TCON0 CPU Trigger Mode Finish without refreshing the Display Engin
 
 # LVGL on NuttX on PinePhone
 
-LVGL on NuttX renders correctly on PinePhone! (Pic below)
+LVGL on Apache NuttX RTOS renders correctly on PinePhone! (Pic below)
 
 Here are the settings in `make menuconfig`...
 
@@ -4967,6 +4967,10 @@ Here are the settings in `make menuconfig`...
 
 - Under "LVGL > Color settings"...
   - Set "Color depth (8/16/32)" to 32
+
+For details on the NuttX Framebuffer for PinePhone (and how it works with LVGL) check out this article...
+
+-   ["NuttX RTOS for PinePhone: Framebuffer"](https://lupyuen.github.io/articles/fb)
 
 ![LVGL on NuttX on PinePhone](https://lupyuen.github.io/images/fb-lvgl.jpg)
 
