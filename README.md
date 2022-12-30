@@ -4954,7 +4954,7 @@ Can we handle TCON0 CPU Trigger Mode Finish without refreshing the Display Engin
 
 LVGL on Apache NuttX RTOS renders correctly on PinePhone! (Pic below)
 
-Here are the settings in `make menuconfig`...
+Just select the LVGL Demo App that's bundled with Apache NuttX RTOS. Here are the settings in `make menuconfig`...
 
 - Enable "Application Configuration > Examples > LVGL Demo"
 
