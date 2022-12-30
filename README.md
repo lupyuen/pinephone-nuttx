@@ -38,6 +38,8 @@ Read the articles...
 
 -   ["NuttX RTOS for PinePhone: LCD Panel"](https://lupyuen.github.io/articles/lcd)
 
+-   ["NuttX RTOS for PinePhone: Framebuffer"](https://lupyuen.github.io/articles/fb)
+
 -   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
 
 Also check out the PinePhone Drivers that we've built in Zig...
