@@ -4866,7 +4866,7 @@ The missing pixels magically appear later in a curious pattern...
 
 There seems to be a problem with Framebuffer DMA / Display Engine / Timing Controller TCON0?
 
-According to the video, the pixels are actually written to correctly to the RAM Framebuffer. But the pixels at the lower half don't get pushed to the display until the next screen refresh.
+According to the video, the pixels are actually written correctly to the RAM Framebuffer. But the pixels at the lower half don't get pushed to the display until the next screen refresh.
 
 There seems to be a lag between the writing of pixels to framebuffer, and the pushing of pixels to the display over DMA / Display Engine / Timing Controller TCON0.
 
