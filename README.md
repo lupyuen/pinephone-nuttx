@@ -1,18 +1,14 @@
 ![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/fb-title.jpg)
 
-[__Watch the Demo on YouTube__](https://www.youtube.com/shorts/UzR7xLZCc0c)
+[(Watch the Demo on YouTube)](https://www.youtube.com/shorts/UzR7xLZCc0c)
 
-[__Another Demo__](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
-
-[__And Another Demo__](https://youtu.be/MJDxCcKAv0g)
+[(Another Demo)](https://www.youtube.com/watch?v=WD5AJj7Rz5U)
 
 # Apache NuttX RTOS for PinePhone
 
-PinePhone is now officially supported by Apache NuttX RTOS! See this...
-
--   ["PinePhone is now supported by Apache NuttX RTOS"](https://lupyuen.github.io/articles/uboot#appendix-pinephone-is-now-supported-by-apache-nuttx-rtos)
-
 Read the articles...
+
+-   ["NuttX RTOS for PinePhone: What is it?"](https://lupyuen.github.io/articles/what)
 
 -   ["Apache NuttX RTOS on Arm Cortex-A53: How it might run on PinePhone"](https://lupyuen.github.io/articles/arm)
 
@@ -41,22 +37,6 @@ Read the articles...
 -   ["NuttX RTOS for PinePhone: Framebuffer"](https://lupyuen.github.io/articles/fb)
 
 -   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
-
-Also check out the PinePhone Drivers that we've built in Zig...
-
--   ["Display Backlight"](https://lupyuen.github.io/articles/de#appendix-display-backlight)
-
--   ["Power Management Integrated Circuit"](https://lupyuen.github.io/articles/de#appendix-power-management-integrated-circuit)
-
--   ["Timing Controller (TCON0)"](https://lupyuen.github.io/articles/de#appendix-timing-controller-tcon0)
-
--   ["Enable MIPI DSI Block"](https://lupyuen.github.io/articles/dsi#appendix-enable-mipi-dsi-block)
-
--   ["Enable MIPI Display Physical Layer (DPHY)"](https://lupyuen.github.io/articles/dsi#appendix-enable-mipi-display-physical-layer-dphy)
-
--   ["Reset LCD Panel"](https://lupyuen.github.io/articles/de#appendix-reset-lcd-panel)
-
--   ["Start MIPI DSI HSC and HSD"](https://lupyuen.github.io/articles/dsi#appendix-start-mipi-dsi-hsc-and-hsd)
 
 _Will NuttX run on PinePhone?_
 
