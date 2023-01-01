@@ -4956,8 +4956,6 @@ LVGL on Apache NuttX RTOS (Mainline) renders correctly on PinePhone! (Pic below)
 
 Just select the LVGL Demo App that's bundled with Apache NuttX RTOS. Here are the settings in `make menuconfig`...
 
-- Enable "Application Configuration > Examples > LVGL Demo"
-
 - Enable "Application Configuration > Graphics Support > Light and Versatile Graphic Library (LVGL)"
 
 - Under "LVGL > Graphics settings"...
@@ -4967,6 +4965,8 @@ Just select the LVGL Demo App that's bundled with Apache NuttX RTOS. Here are th
 
 - Under "LVGL > Color settings"...
   - Set "Color depth (8/16/32)" to 32
+
+- Enable "Application Configuration > Examples > LVGL Demo"
 
 Touch Input is not supported yet. We're working on it!
 
