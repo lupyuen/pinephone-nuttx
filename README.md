@@ -4970,9 +4970,17 @@ For details on the NuttX Framebuffer for PinePhone (and how it works with LVGL) 
 
 # PinePhone Touch Panel
 
-TODO
+Now that we can render LVGL Graphical User Interfaces, let's handle Touch Input!
 
-From [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/9ab90bc67a25b8c33e24f62662343950831e7e56/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L102-L166)
+Here's everything we know about PinePhone's Touch Panel...
+
+-   [__"Touch Panel"__](https://lupyuen.github.io/articles/pio#touch-panel)
+
+To detect Touch Events, we'll need to handle the Interrupts triggered by Touch Panel.
+
+Based on our research, PinePhone's Touch Panel Interrupt (CTP-INT) is connected at PH4. 
+
+Let's monitor the interrupts triggered at PH4: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/9ab90bc67a25b8c33e24f62662343950831e7e56/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L102-L166)
 
 ```c
 // Touch Panel Interrupt (CTP-INT) is at PH4
@@ -5033,6 +5041,16 @@ void touch_panel_initialize(void) {
   up_enable_irq(PH_EINT);
 }
 ```
+
+When we run this code, it generates a non-stop stream of "." characters.
+
+Which means that the Touch Input Interrupt is generated continuously. Without touching the screen!
+
+Is our code correct?
+
+Let's verify by reading PH4 as GPIO Input, repeatedly in a loop.
+
+TODO
 
 # Test Logs
 
