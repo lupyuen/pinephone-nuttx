@@ -5019,9 +5019,9 @@ void touch_panel_initialize(void) {
 
   // Enable the Touch Panel Interrupt
   modreg32(
-    PIO_INT_CTL(pin),
-    PIO_INT_CTL(pin),
-    PH_EINT_CTL_REG
+    PIO_INT_CTL(pin),  // Value
+    PIO_INT_CTL(pin),  // Mask
+    PH_EINT_CTL_REG    // Address
   );
 
   // Leave Critical Section
@@ -5031,11 +5031,10 @@ void touch_panel_initialize(void) {
   // putreg32(0, A1X_PIO_INT_CTL);
 
   // Attach the PIO interrupt handler
-  if (irq_attach(PH_EINT, touch_panel_interrupt, NULL) < 0)
-    {
-      _err("irq_attach failed\n");
-      return;
-    }
+  if (irq_attach(PH_EINT, touch_panel_interrupt, NULL) < 0) {
+    _err("irq_attach failed\n");
+    return;
+  }
 
   // And enable the PIO interrupt
   up_enable_irq(PH_EINT);
