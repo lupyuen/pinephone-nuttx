@@ -5046,7 +5046,7 @@ static void touch_panel_read(struct i2c_master_s *i2c)
 }
 ```
 
-To detect Touch Events, we'll need to handle the Interrupts triggered by Touch Panel. (Because the Touch Panel is normally in Sleep Mode and won't respond to I2C Commands until it's touched)
+To detect Touch Events, we'll need to handle the Interrupts triggered by Touch Panel.
 
 Based on our research, PinePhone's Touch Panel Interrupt (CTP-INT) is connected at PH4. 
 
@@ -5094,6 +5094,36 @@ void touch_panel_initialize(struct i2c_master_s *i2c)
     up_mdelay(10);
   }
 }
+```
+
+TODO
+
+```text
+twi_transfer: TWI0 count: 1
+twi_wait: TWI0 Waiting...
+twi_put_addr: TWI address 7bits+r/w = 0xba
+twi_wait: TWI0 Awakened with result: 0
+-+twi_transfer: TWI0 count: 2
+twi_wait: TWI0 Waiting...
+twi_put_addr: TWI address 7bits+r/w = 0xba
+twi_put_addr: TWI address 7bits+r/w = 0xbb
+twi_wait: TWI0 Awakened with result: 0
+buf (0x40a8fd18):
+0000  39 31 37 53                                      917S            
+twi_transfer: TWI0 count: 2
+twi_wait: TWI0 Waiting...
+twi_put_addr: TWI address 7bits+r/w = 0xba
+twi_put_addr: TWI address 7bits+r/w = 0xbb
+twi_wait: TWI0 Awakened with result: 0
+buf (0x40a8fd08):
+0000  81                                               .               
+twi_transfer: TWI0 count: 2
+twi_wait: TWI0 Waiting...
+twi_put_addr: TWI address 7bits+r/w = 0xba
+twi_put_addr: TWI address 7bits+r/w = 0xbb
+twi_wait: TWI0 Awakened with result: 0
+buf (0x40a8fd20):
+0000  51 01 e8 02 25 00                                Q...%. 
 ```
 
 Eventually we'll use an Interrupt Handler to monitor PH4: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/9ab90bc67a25b8c33e24f62662343950831e7e56/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L102-L166)
