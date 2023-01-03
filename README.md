@@ -5046,7 +5046,7 @@ static void touch_panel_read(struct i2c_master_s *i2c)
 }
 ```
 
-To detect Touch Events, we'll need to handle the Interrupts triggered by Touch Panel.
+To detect Touch Events, we'll need to handle the Interrupts triggered by Touch Panel. (Because the Touch Panel is normally in Sleep Mode and won't respond to I2C Commands until it's touched)
 
 Based on our research, PinePhone's Touch Panel Interrupt (CTP-INT) is connected at PH4. 
 
