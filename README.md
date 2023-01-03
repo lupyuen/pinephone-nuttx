@@ -4976,6 +4976,78 @@ Here's everything we know about PinePhone's Touch Panel...
 
 -   [__"Touch Panel"__](https://lupyuen.github.io/articles/pio#touch-panel)
 
+According to our [__Test Code__](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/c4991b1503387d57821d94a549425bcd8f268841/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L316-L355)...
+
+-   __I2C Address__ is __0x5D__
+
+-   __I2C Frequency__ is __400 kHz__
+
+    (What's the max?)
+
+-   __I2C Register Addresses__ are 16-bit
+
+    (Send MSB before LSB, so we should swap the bytes)
+
+-   Reading I2C Register __0x8140__ (Product ID) will return the bytes...
+
+    ```text
+    39 31 37 53
+    ```
+    
+    Which is ASCII for "__`917S`__"
+
+    (Goodix GT917S Touch Panel)
+
+This is how we read the Product ID from the Touch Panel: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/c4991b1503387d57821d94a549425bcd8f268841/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L316-L355)
+
+```c
+// Product ID (LSB 4 bytes)
+#define GOODIX_REG_ID 0x8140
+
+// Read Touch Panel over I2C
+static void touch_panel_read(struct i2c_master_s *i2c)
+{
+  uint32_t freq = 400000;  // 400 kHz
+  uint16_t addr = 0x5d;  // Default I2C Address for Goodix GT917S
+  uint16_t reg = GOODIX_REG_ID;  // Read Product ID
+  uint8_t regbuf[2] = { reg >> 8, reg & 0xff };  // Flip the bytes
+
+  // Erase the receive buffer
+  uint8_t buf[4];
+  ssize_t buflen = sizeof(buf);
+  memset(buf, 0xff, sizeof(buf));
+
+  // Compose the I2C Messages
+  struct i2c_msg_s msgv[2] =
+  {
+    {
+      .frequency = freq,
+      .addr      = addr,
+      .flags     = 0,
+      .buffer    = regbuf,
+      .length    = sizeof(regbuf)
+    },
+    {
+      .frequency = freq,
+      .addr      = addr,
+      .flags     = I2C_M_READ,
+      .buffer    = buf,
+      .length    = buflen
+    }
+  };
+
+  // Execute the I2C Transfer
+  int ret = I2C_TRANSFER(i2c, msgv, 2);
+  if (ret < 0) { _err("I2C Error: %d\n", ret); return; }
+
+  // Dump the receive buffer
+  infodumpbuffer("buf", buf, buflen);
+  // Shows "39 31 37 53" or "917S"
+}
+```
+
+TODO
+
 To detect Touch Events, we'll need to handle the Interrupts triggered by Touch Panel.
 
 Based on our research, PinePhone's Touch Panel Interrupt (CTP-INT) is connected at PH4. 
