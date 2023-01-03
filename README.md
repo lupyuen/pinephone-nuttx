@@ -5096,7 +5096,50 @@ void touch_panel_initialize(struct i2c_master_s *i2c)
 }
 ```
 
-TODO
+To read the Touch Coordinates, we do this: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/e249049370d21a988912f2fb95a21514863dfe8a/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L338-L370)
+
+```c
+#define GOODIX_REG_ID 0x8140
+#define GOODIX_READ_COORD_ADDR 0x814E
+#define GOODIX_POINT1_X_ADDR 0x8150
+
+// Read Touch Panel over I2C
+static void touch_panel_read(struct i2c_master_s *i2c)
+{
+  // Read the Product ID
+  uint8_t id[4];
+  touch_panel_i2c_read(i2c, GOODIX_REG_ID, id, sizeof(id));
+  // Shows "39 31 37 53" or "917S"
+
+  // Read the Touch Panel Status
+  uint8_t status[1];
+  touch_panel_i2c_read(i2c, GOODIX_READ_COORD_ADDR, status, sizeof(status));
+  // Shows "81"
+
+  const uint8_t status_code    = status[0] & 0x80;  // Set to 0x80
+  const uint8_t touched_points = status[0] & 0x0f;  // Set to 0x01
+
+  if (status_code != 0 &&  // If Touch Panel Status is OK and...
+      touched_points >= 1) {  // Touched Points is 1 or more
+
+    // Read the First Touch Coordinates
+    uint8_t touch[6];
+    touch_panel_i2c_read(i2c, GOODIX_POINT1_X_ADDR, touch, sizeof(touch));
+    // Shows "92 02 59 05 1b 00"
+
+    // Decode the Touch Coordinates
+    const uint16_t x = touch[0] + (touch[1] << 8);
+    const uint16_t y = touch[2] + (touch[3] << 8);
+    _info("touch x=%d, y=%d\n", x, y);
+    // Shows "touch x=658, y=1369"
+  }
+
+  // Set the Touch Panel Status to 0
+  touch_panel_set_status(i2c, 0);
+}
+```
+
+When we touch PinePhone near the Lower Right Corner, we see the Touch Coordinates x=658, y=1369 (which is quite close to the 720 x 1440 screen size)...
 
 ```text
 twi_transfer: TWI0 count: 1
@@ -5123,8 +5166,13 @@ twi_put_addr: TWI address 7bits+r/w = 0xba
 twi_put_addr: TWI address 7bits+r/w = 0xbb
 twi_wait: TWI0 Awakened with result: 0
 buf (0x40a8fd20):
-0000  51 01 e8 02 25 00                                Q...%. 
+0000  92 02 59 05 1b 00                                ..Y...          
+touch_panel_read: touch x=658, y=1369
 ```
+
+[(Source)](https://gist.github.com/lupyuen/b1ed009961c4202133879b760cb22833)
+
+Yep we can read the Touch Coordinates correctly, with polling! (But not so efficient)
 
 Eventually we'll use an Interrupt Handler to monitor PH4: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/9ab90bc67a25b8c33e24f62662343950831e7e56/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L102-L166)
 
