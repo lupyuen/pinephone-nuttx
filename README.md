@@ -5046,13 +5046,57 @@ static void touch_panel_read(struct i2c_master_s *i2c)
 }
 ```
 
-TODO
-
 To detect Touch Events, we'll need to handle the Interrupts triggered by Touch Panel.
 
 Based on our research, PinePhone's Touch Panel Interrupt (CTP-INT) is connected at PH4. 
 
-Let's monitor the interrupts triggered at PH4: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/9ab90bc67a25b8c33e24f62662343950831e7e56/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L102-L166)
+Right now we poll PH4 (instead of handling interrupts) because it's easier: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/c4991b1503387d57821d94a549425bcd8f268841/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L256-L296)
+
+```c
+// Test Touch Panel Interrupt by Polling as GPIO Input.
+// Touch Panel Interrupt (CTP-INT) is at PH4.
+// Configure for GPIO Input
+#define CTP_INT (PIO_INPUT | PIO_PORT_PIOH | PIO_PIN4)
+
+static void touch_panel_read(struct i2c_master_s *i2c);
+
+// Poll for Touch Panel Interrupt (PH4) by reading as GPIO Input
+void touch_panel_initialize(struct i2c_master_s *i2c)
+{
+
+  // Configure the Touch Panel Interrupt for GPIO Input
+  int ret = a64_pio_config(CTP_INT);
+  DEBUGASSERT(ret == 0);
+
+  // Poll the Touch Panel Interrupt as GPIO Input
+  bool prev_val = false;
+  for (int i = 0; i < 500; i++) {  // Poll for 5 seconds
+    // Read the GPIO Input
+    bool val = a64_pio_read(CTP_INT);
+
+    // If value has changed...
+    if (val != prev_val) {
+
+      // Print the value
+      if (val) { up_putc('+'); }
+      else     { up_putc('-'); }
+      prev_val = val;
+
+      // If value is High...
+      if (val) {
+
+        // Read the Touch Panel over I2C
+        touch_panel_read(i2c);
+      }
+    }
+
+    // Wait a while
+    up_mdelay(10);
+  }
+}
+```
+
+Eventually we'll use an Interrupt Handler to monitor PH4: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/9ab90bc67a25b8c33e24f62662343950831e7e56/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L102-L166)
 
 ```c
 // Touch Panel Interrupt (CTP-INT) is at PH4
@@ -5118,8 +5162,6 @@ When we run this code, it generates a non-stop stream of "." characters.
 Which means that the Touch Input Interrupt is generated continuously. Without touching the screen!
 
 Is our code correct?
-
-Let's verify by reading PH4 as GPIO Input, repeatedly in a loop.
 
 TODO
 
