@@ -5050,7 +5050,7 @@ To detect Touch Events, we'll need to handle the Interrupts triggered by Touch P
 
 Based on our research, PinePhone's Touch Panel Interrupt (CTP-INT) is connected at PH4. 
 
-Right now we poll PH4 (instead of handling interrupts) because it's easier: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/c4991b1503387d57821d94a549425bcd8f268841/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L256-L296)
+Right now we poll PH4 (instead of handling interrupts) because it's easier: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/e249049370d21a988912f2fb95a21514863dfe8a/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L283-L317)
 
 ```c
 // Test Touch Panel Interrupt by Polling as GPIO Input.
@@ -5070,7 +5070,8 @@ void touch_panel_initialize(struct i2c_master_s *i2c)
 
   // Poll the Touch Panel Interrupt as GPIO Input
   bool prev_val = false;
-  for (int i = 0; i < 500; i++) {  // Poll for 5 seconds
+  for (int i = 0; i < 6000; i++) {  // Poll for 60 seconds
+
     // Read the GPIO Input
     bool val = a64_pio_read(CTP_INT);
 
@@ -5082,7 +5083,7 @@ void touch_panel_initialize(struct i2c_master_s *i2c)
       else     { up_putc('-'); }
       prev_val = val;
 
-      // If value is High...
+      // If we have just transitioned from Low to High...
       if (val) {
 
         // Read the Touch Panel over I2C
