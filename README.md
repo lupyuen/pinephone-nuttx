@@ -5293,6 +5293,33 @@ static int touch_panel_set_status(
 }
 ```
 
+_So we set the Touch Panel Status inside our Interrupt Handler?_
+
+But Interrupt Handlers aren't allowed to make I2C Calls!
+
+We need to __forward the Interrupt__ to a Background Thread to handle. Like so: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/41cd9378cfa2034b419f4fdad8242e3361e811b1/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L240-L256)
+
+```c
+// Interrupt Handler for Touch Panel
+static int gt9xx_isr_handler(int irq, FAR void *context, FAR void *arg)
+{
+   FAR struct gt9xx_dev_s *priv = (FAR struct gt9xx_dev_s *)arg;
+
+ // Set the Interrupt Pending Flag
+  irqstate_t flags = enter_critical_section();
+  priv->int_pending = true;
+  leave_critical_section(flags);
+
+  // Notify the Poll Waiters
+  poll_notify(priv->fds, GT9XX_NPOLLWAITERS, POLLIN);
+  return 0;
+}
+```
+
+This notifies the File Descriptors `fds` that are waiting for Touch Input Interrupts to be triggered.
+
+When the File Descriptor is notified, the Background Process will become unblocked, and can call I2C to read the Touch Input.
+
 TODO
 
 # Test Logs
