@@ -5175,7 +5175,13 @@ touch_panel_read: touch x=658, y=1369
 
 Yep we can read the Touch Coordinates correctly, with polling! (But not so efficient)
 
-Eventually we'll use an Interrupt Handler to monitor PH4: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/9ab90bc67a25b8c33e24f62662343950831e7e56/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L102-L166)
+Let's handle Interrupts from the Touch Panel...
+
+# Handle Interrupts from Touch Panel
+
+In the previous section we've read the Touch Panel by Polling. Which is easier but inefficient.
+
+Eventually we'll use an Interrupt Handler to monitor Touch Panel Interrupts. This is how we monitor PH4 for interrupts: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/9ab90bc67a25b8c33e24f62662343950831e7e56/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L102-L166)
 
 ```c
 // Touch Panel Interrupt (CTP-INT) is at PH4
@@ -5222,9 +5228,6 @@ void touch_panel_initialize(void) {
   // Leave Critical Section
   leave_critical_section(flags);
 
-  // TODO: Disable all external PIO interrupts
-  // putreg32(0, A1X_PIO_INT_CTL);
-
   // Attach the PIO interrupt handler
   if (irq_attach(PH_EINT, touch_panel_interrupt, NULL) < 0) {
     _err("irq_attach failed\n");
@@ -5240,7 +5243,7 @@ When we run this code, it generates a non-stop stream of "." characters.
 
 Which means that the Touch Input Interrupt is generated continuously. Without touching the screen!
 
-Is our code correct?
+_Is our Interrupt Handler code correct?_
 
 TODO
 
