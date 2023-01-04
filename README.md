@@ -5245,6 +5245,54 @@ Which means that the Touch Input Interrupt is generated continuously. Without to
 
 _Is our Interrupt Handler code correct?_
 
+Yep our Interrupt Handler code is correct! But through our experiments we discovered one thing...
+
+To stop the repeated Touch Input Interrupts, we need to set the __Touch Panel Status to 0__! Like so: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/41cd9378cfa2034b419f4fdad8242e3361e811b1/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L419-L528)
+
+```c
+// When the Touch Input Interrupt is triggered...
+// Set the Touch Panel Status to 0
+touch_panel_set_status(i2c, 0);
+...
+
+#define GOODIX_READ_COORD_ADDR 0x814E  // Touch Panel Status (Read / Write)
+#define CTP_FREQ 400000  // I2C Frequency: 400 kHz
+#define CTP_I2C_ADDR 0x5d  // Default I2C Address for Goodix GT917S
+
+// Set the Touch Panel Status
+static int touch_panel_set_status(
+  struct i2c_master_s *i2c,  // I2C Bus
+  uint8_t status  // Status value to be set
+) {
+  uint16_t reg = GOODIX_READ_COORD_ADDR;  // I2C Register
+  uint32_t freq = CTP_FREQ;  // 400 kHz
+  uint16_t addr = CTP_I2C_ADDR;  // Default I2C Address for Goodix GT917S
+  uint8_t buf[3] = {
+    reg >> 8,    // Swap the bytes
+    reg & 0xff,  // Swap the bytes
+    status
+  };
+
+  // Compose the I2C Message
+  struct i2c_msg_s msgv[1] =
+  {
+    {
+      .frequency = freq,
+      .addr      = addr,
+      .flags     = 0,
+      .buffer    = buf,
+      .length    = sizeof(buf)
+    }
+  };
+
+  // Execute the I2C Transfer
+  const int msgv_len = sizeof(msgv) / sizeof(msgv[0]);
+  int ret = I2C_TRANSFER(i2c, msgv, msgv_len);
+  if (ret < 0) { _err("I2C Error: %d\n", ret); return ret; }
+  return OK;
+}
+```
+
 TODO
 
 # Test Logs
