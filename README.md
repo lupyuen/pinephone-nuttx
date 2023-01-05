@@ -5186,7 +5186,6 @@ Eventually we'll use an Interrupt Handler to monitor Touch Panel Interrupts. Thi
 ```c
 // Touch Panel Interrupt (CTP-INT) is at PH4
 #define CTP_INT (PIO_EINT | PIO_PORT_PIOH | PIO_PIN4)
-#define CTP_INT_PIN 4
 
 // IRQ for Touch Panel Interrupt (PH)
 #define PH_EINT 53
@@ -5202,37 +5201,22 @@ static int touch_panel_interrupt(int irq, void *context, void *arg) {
 // Register the Interrupt Handler for Touch Panel
 void touch_panel_initialize(void) {
 
+  // Attach the PIO Interrupt Handler
+  if (irq_attach(PH_EINT, touch_panel_interrupt, NULL) < 0) {
+    _err("irq_attach failed\n");
+    return ERROR;
+  }
+
+  // Enable the PIO Interrupt
+  up_enable_irq(PH_EINT);
+
   // Configure the Touch Panel Interrupt
   int ret = a64_pio_config(CTP_INT);
   DEBUGASSERT(ret == 0);
 
-  // Un-mask the interrupt by setting the corresponding bit in the PIO INT CTL register.
-  int pin = CTP_INT_PIN;
-
-  // PH_EINT_CTL_REG (Interrupt Control Register for PH4) at Offset 0x250
-  #define PH_EINT_CTL_REG (0x1c20800 + 0x250)
-  _info("v=0x%x, m=0x%x, a=0x%x\n", PIO_INT_CTL(pin), PIO_INT_CTL(pin), PH_EINT_CTL_REG);
-  // Shows touch_panel_initialize: v=0x10, m=0x10, a=0x1c20a50
-
-  // Enter Critical Section
-  irqstate_t flags;
-  flags = enter_critical_section();
-
   // Enable the Touch Panel Interrupt
-  modreg32(
-    PIO_INT_CTL(pin),  // Value
-    PIO_INT_CTL(pin),  // Mask
-    PH_EINT_CTL_REG    // Address
-  );
-
-  // Leave Critical Section
-  leave_critical_section(flags);
-
-  // Attach the PIO interrupt handler
-  if (irq_attach(PH_EINT, touch_panel_interrupt, NULL) < 0) {
-    _err("irq_attach failed\n");
-    return;
-  }
+  ret = a64_pio_irqenable(CTP_INT);
+  DEBUGASSERT(ret == 0);
 
   // And enable the PIO interrupt
   up_enable_irq(PH_EINT);
