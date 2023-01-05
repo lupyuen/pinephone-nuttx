@@ -5190,14 +5190,6 @@ Eventually we'll use an Interrupt Handler to monitor Touch Panel Interrupts. Thi
 // IRQ for Touch Panel Interrupt (PH)
 #define PH_EINT 53
 
-// Interrupt Handler for Touch Panel
-static int touch_panel_interrupt(int irq, void *context, void *arg) {
-
-  // Print something
-  up_putc('.');
-  return OK;
-}
-
 // Register the Interrupt Handler for Touch Panel
 void touch_panel_initialize(void) {
 
@@ -5220,6 +5212,14 @@ void touch_panel_initialize(void) {
 
   // And enable the PIO interrupt
   up_enable_irq(PH_EINT);
+}
+
+// Interrupt Handler for Touch Panel
+static int touch_panel_interrupt(int irq, void *context, void *arg) {
+
+  // Print something when interrupt is triggered
+  up_putc('.');
+  return OK;
 }
 ```
 
