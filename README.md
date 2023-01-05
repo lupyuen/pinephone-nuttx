@@ -5181,26 +5181,23 @@ Let's handle Interrupts from the Touch Panel...
 
 In the previous section we've read the Touch Panel by Polling. Which is easier but inefficient.
 
-Eventually we'll use an Interrupt Handler to monitor Touch Panel Interrupts. This is how we monitor PH4 for interrupts: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/9ab90bc67a25b8c33e24f62662343950831e7e56/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L102-L166)
+Eventually we'll use an Interrupt Handler to monitor Touch Panel Interrupts. This is how we monitor PH4 for interrupts: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/c3eccc67d879806a015ae592205e641dcffa7d09/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L255-L328)
 
 ```c
 // Touch Panel Interrupt (CTP-INT) is at PH4
 #define CTP_INT (PIO_EINT | PIO_PORT_PIOH | PIO_PIN4)
 
-// IRQ for Touch Panel Interrupt (PH)
-#define PH_EINT 53
-
 // Register the Interrupt Handler for Touch Panel
 void touch_panel_initialize(void) {
 
-  // Attach the PIO Interrupt Handler
-  if (irq_attach(PH_EINT, touch_panel_interrupt, NULL) < 0) {
+  // Attach the PIO Interrupt Handler for Port PH
+  if (irq_attach(A64_IRQ_PH_EINT, touch_panel_interrupt, NULL) < 0) {
     _err("irq_attach failed\n");
     return ERROR;
   }
 
-  // Enable the PIO Interrupt
-  up_enable_irq(PH_EINT);
+  // Enable the PIO Interrupt for Port PH
+  up_enable_irq(A64_IRQ_PH_EINT);
 
   // Configure the Touch Panel Interrupt
   int ret = a64_pio_config(CTP_INT);
@@ -5228,7 +5225,7 @@ _Is our Interrupt Handler code correct?_
 
 Yep our Interrupt Handler code is correct! But through our experiments we discovered one thing...
 
-To stop the repeated Touch Input Interrupts, we need to set the __Touch Panel Status to 0__! Like so: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/41cd9378cfa2034b419f4fdad8242e3361e811b1/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L419-L528)
+To stop the repeated Touch Input Interrupts, we need to set the __Touch Panel Status to 0__! Like so: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/c3eccc67d879806a015ae592205e641dcffa7d09/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L470-L500)
 
 ```c
 // When the Touch Input Interrupt is triggered...
@@ -5278,7 +5275,7 @@ _So we set the Touch Panel Status inside our Interrupt Handler?_
 
 But Interrupt Handlers aren't allowed to make I2C Calls!
 
-We need to __forward the Interrupt__ to a Background Thread to handle. Like so: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/41cd9378cfa2034b419f4fdad8242e3361e811b1/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L240-L256)
+We need to __forward the Interrupt__ to a Background Thread to handle. Like so: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/c3eccc67d879806a015ae592205e641dcffa7d09/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L237-L253)
 
 ```c
 // Interrupt Handler for Touch Panel
@@ -5301,7 +5298,7 @@ This notifies the File Descriptors `fds` that are waiting for Touch Input Interr
 
 When the File Descriptor is notified, the Background Thread will become unblocked, and can call I2C to read the Touch Input.
 
-Right now we don't have a Background Thread, so we poll and wait for the Touch Input Interrupt to be triggered: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/41cd9378cfa2034b419f4fdad8242e3361e811b1/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L321-L337)
+Right now we don't have a Background Thread, so we poll and wait for the Touch Input Interrupt to be triggered: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/c3eccc67d879806a015ae592205e641dcffa7d09/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L293-L309)
 
 ```c
   // Poll for Touch Panel Interrupt
@@ -5359,7 +5356,7 @@ touch_panel_read: touch x=15, y=1394
 
 [(Source)](https://gist.github.com/lupyuen/91a37a4b54f75f7386374a30821dc1b2)
 
-TODO: Move this into the NuttX Touch Panel Driver for PinePhone
+TODO: Move this code into the NuttX Touch Panel Driver for PinePhone
 
 # Test Logs
 
