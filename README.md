@@ -5209,9 +5209,6 @@ void touch_panel_initialize(void) {
   // Enable the Touch Panel Interrupt
   ret = a64_pio_irqenable(CTP_INT);
   DEBUGASSERT(ret == 0);
-
-  // And enable the PIO interrupt
-  up_enable_irq(PH_EINT);
 }
 
 // Interrupt Handler for Touch Panel
