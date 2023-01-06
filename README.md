@@ -5356,7 +5356,22 @@ touch_panel_read: touch x=15, y=1394
 
 [(Source)](https://gist.github.com/lupyuen/91a37a4b54f75f7386374a30821dc1b2)
 
-TODO: Move this code into the NuttX Touch Panel Driver for PinePhone
+Let's move this code into the NuttX Touch Panel Driver for PinePhone...
+
+# NuttX Touch Panel Driver for PinePhone
+
+We moved the code above into the NuttX Touch Panel Driver for PinePhone...
+
+-   [drivers/input/gt9xx.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/touch2/drivers/input/gt9xx.c)
+
+This is how we start the driver when NuttX boots: [pinephone_bringup.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/touch2/boards/arm64/a64/pinephone/src/pinephone_bringup.c#L197-L204)
+
+```c
+#define CTP_I2C_ADDR 0x5d  // Default I2C Address for Goodix GT917S
+ret = gt9xx_register("/dev/input0", i2c, CTP_I2C_ADDR, &g_pinephone_gt9xx);
+```
+
+And it works with the LVGL Demo App! Now we need to optimise the rendering...
 
 # Test Logs
 
