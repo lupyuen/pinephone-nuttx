@@ -5373,6 +5373,8 @@ ret = gt9xx_register("/dev/input0", i2c, CTP_I2C_ADDR, &g_pinephone_gt9xx);
 
 And it works with the LVGL Demo App! Now we need to optimise the rendering...
 
+-   [Watch the Demo on YouTube](https://www.youtube.com/shorts/xE9U5IQPmlg)
+
 # Test Logs
 
 This section contains PinePhone NuttX Logs captured from various tests...
