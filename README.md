@@ -1,8 +1,6 @@
 ![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/fb-title.jpg)
 
-[(Watch the Demo on YouTube)](https://www.youtube.com/shorts/UzR7xLZCc0c)
-
-[(Another Demo)](https://www.youtube.com/watch?v=WD5AJj7Rz5U)
+[(Watch the Demo on YouTube)](https://www.youtube.com/shorts/APge9bTt-ho)
 
 # Apache NuttX RTOS for PinePhone
 
@@ -5371,9 +5369,9 @@ This is how we start the driver when NuttX boots: [pinephone_bringup.c](https://
 ret = gt9xx_register("/dev/input0", i2c, CTP_I2C_ADDR, &g_pinephone_gt9xx);
 ```
 
-And it works with the LVGL Demo App! Now we need to optimise the rendering...
+And it works with the LVGL Demo App!
 
--   [Watch the Demo on YouTube](https://www.youtube.com/shorts/xE9U5IQPmlg)
+-   [Watch the Demo on YouTube](https://www.youtube.com/shorts/APge9bTt-ho)
 
 # Test Logs
 
