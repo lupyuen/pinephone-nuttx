@@ -1,4 +1,4 @@
-![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/fb-title.jpg)
+![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/what-title.jpg)
 
 [(Watch the Demo on YouTube)](https://www.youtube.com/shorts/APge9bTt-ho)
 
