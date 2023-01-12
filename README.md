@@ -5383,7 +5383,7 @@ Read the article...
 
 # LVGL Settings for PinePhone
 
-The default LVGL Settings for PinePhone will produce a dense screen that's hard to use. (Pic above)
+When we run the LVGL Demo App on PinePhone with Apache NuttX RTOS, it renders a dense screen that's not so Touch-Friendly. (Pic above)
 
 Let's tweak the LVGL Settings to make our LVGL App more accessible. Modify this LVGL Source File...
 
@@ -5457,7 +5457,7 @@ The LVGL Demo App is now less dense and easier to use...
 
 -   [Watch the Demo on YouTube](https://www.youtube.com/shorts/De5ZehlIka8)
 
-But we should increase the Default Font Size.
+But we should increase the Default Font Size. Montserrat 20?
 
 (Shot at ISO 800, F/5.6, Manual Focus on Sony NEX-7)
 
