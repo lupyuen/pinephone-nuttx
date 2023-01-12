@@ -5443,7 +5443,7 @@ void lv_demo_widgets(void)
 
 Configure LVGL with these settings...
 
--   [LVGL Calls Our Driver](https://lupyuen.github.io/articles/touch2#lvgl-calls-our-driver)
+-   ["LVGL Calls Our Driver"](https://lupyuen.github.io/articles/touch2#lvgl-calls-our-driver)
 
 And add the fonts...
 
