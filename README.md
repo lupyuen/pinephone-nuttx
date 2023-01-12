@@ -5457,7 +5457,7 @@ The LVGL Demo App is now less dense and easier to use...
 
 -   [Watch the Demo on YouTube](https://www.youtube.com/shorts/De5ZehlIka8)
 
-But we should increase the Default Font Size. Montserrat 20?
+But we should increase the Default Font Size. From Montserrat 14 to Montserrat 20?
 
 (Shot at ISO 800, F/5.6, Manual Focus on Sony NEX-7)
 
