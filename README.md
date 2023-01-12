@@ -5375,6 +5375,94 @@ And it works with the LVGL Demo App!
 
 -   [Watch the Demo on YouTube](https://www.youtube.com/shorts/APge9bTt-ho)
 
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: Touch Panel"](https://lupyuen.github.io/articles/touch2)
+
+![Before changing LVGL Settings for PinePhone](https://lupyuen.github.io/images/fb-lvgl3.jpg)
+
+# LVGL Settings for PinePhone
+
+The default LVGL Settings for PinePhone will produce a dense screen that's hard to use. (Pic above)
+
+Let's tweak the LVGL Settings to make our LVGL App more accessible. Modify this LVGL Source File...
+
+[apps/graphics/lvgl/lvgl/demos/widgets/lv_demo_widgets.c](https://github.com/lvgl/lvgl/blob/v8.3.3/demos/widgets/lv_demo_widgets.c#L96-L145)
+
+```c
+// Insert this
+#include <stdio.h>
+
+// Modify this function
+void lv_demo_widgets(void)
+{
+    // Note: PinePhone has width 720 pixels.
+    // LVGL will set Display Size to Large, which looks really tiny.
+    // Shouldn't this code depend on DPI? (267 DPI for PinePhone)
+    if(LV_HOR_RES <= 320) disp_size = DISP_SMALL;
+    else if(LV_HOR_RES < 720) disp_size = DISP_MEDIUM;
+    else disp_size = DISP_LARGE;
+
+    // Insert this: Print warning if font is missing
+    #undef LV_LOG_WARN
+    #define LV_LOG_WARN(s) puts(s)
+
+    // Insert this: Change Display Size from Large to Medium, to make Widgets easier to tap
+    printf("Before: disp_size=%d\n", disp_size);
+    disp_size = DISP_MEDIUM;
+    printf("After: disp_size=%d\n", disp_size);
+
+    // Existing Code
+    font_large = LV_FONT_DEFAULT;
+    font_normal = LV_FONT_DEFAULT;
+
+    lv_coord_t tab_h;
+    if(disp_size == DISP_LARGE) {
+        ...
+    }
+    // For Medium Display Size...
+    else if(disp_size == DISP_MEDIUM) {
+        // Change this: Increase Tab Height from 45 to 70, to make Tabs easier to tap
+        tab_h = 70;
+        // Previously: tab_h = 45;
+
+#if LV_FONT_MONTSERRAT_20
+        font_large     = &lv_font_montserrat_20;
+#else
+        LV_LOG_WARN("LV_FONT_MONTSERRAT_20 is not enabled for the widgets demo. Using LV_FONT_DEFAULT instead.");
+#endif
+#if LV_FONT_MONTSERRAT_14
+        font_normal    = &lv_font_montserrat_14;
+#else
+        LV_LOG_WARN("LV_FONT_MONTSERRAT_14 is not enabled for the widgets demo. Using LV_FONT_DEFAULT instead.");
+#endif
+    }
+```
+
+(Maybe we should modify the code above to include DPI? PinePhone's Display has 267 DPI)
+
+Configure LVGL with these settings...
+
+-   [LVGL Calls Our Driver](https://lupyuen.github.io/articles/touch2#lvgl-calls-our-driver)
+
+And add the fonts...
+
+-   Browse into "__LVGL__ > __LVGL Configuration__"
+    
+    -   In "__Font usage__ > __Enable built-in fonts__"
+
+        Enable "__Montserrat 20__"
+
+The LVGL Demo App is now less dense and easier to use...
+
+-   [Watch the Demo on YouTube](https://www.youtube.com/shorts/De5ZehlIka8)
+
+But we should increase the Default Font Size.
+
+(Shot at ISO 800, F/5.6, Manual Focus on Sony NEX-7)
+
+(Maybe should lower the ISO, increase the F-Stop)
+
 # Test Logs
 
 This section contains PinePhone NuttX Logs captured from various tests...
