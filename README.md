@@ -5459,9 +5459,9 @@ The LVGL Demo App is now less dense and easier to use...
 
 But we should increase the Default Font Size. From Montserrat 14 to Montserrat 20?
 
-(Shot at ISO 800, F/5.6, Manual Focus on Sony NEX-7)
+(Shot at ISO 800, F/5.6, Manual Focus on Sony NEX-7. Post-processed for Brightness, Constrast and White Point)
 
-(Maybe should lower the ISO, increase the F-Stop)
+(Maybe lower the ISO, increase the F-Stop?)
 
 # Test Logs
 
