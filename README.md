@@ -5457,11 +5457,27 @@ The LVGL Demo App is now less dense and easier to use...
 
 -   [Watch the Demo on YouTube](https://www.youtube.com/shorts/De5ZehlIka8)
 
-But we should increase the Default Font Size. From Montserrat 14 to Montserrat 20?
+    (Shot at ISO 800, F/5.6, Manual Focus on Sony NEX-7. Post-processed for Brightness, Constrast and White Point)
 
-(Shot at ISO 800, F/5.6, Manual Focus on Sony NEX-7. Post-processed for Brightness, Constrast and White Point)
+_What if we increase the Default Font Size? From Montserrat 14 to Montserrat 20?_
 
-(Maybe lower the ISO, increase the F-Stop?)
+Let's increase the Default Font Size from 14 to 20...
+
+-   Browse into "__LVGL__ > __LVGL Configuration__"
+    
+    -   In "__Font usage__ > __Select theme default title font__"
+
+        Select "__Montserrat 20__"
+
+We run the LVGL Demo App as is, leaving Display Size `disp_size` as default `DISP_LARGE`.
+
+Now the text is legible, but some controls are squished...
+
+-   [Watch the Demo on YouTube](https://www.youtube.com/watch?v=N-Yc2jj3TtQ)
+
+    (Shot at ISO 400, F/5.0, Manual Focus, Exposure 0.3 on Sony NEX-7. No post-processing)
+
+So we need to increase the Default Font Size from 14 to 20, AND set Display Size `disp_size` to `DISP_MEDIUM`.
 
 # Test Logs
 
