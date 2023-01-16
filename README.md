@@ -5477,7 +5477,81 @@ Now the text is legible, but some controls are squished...
 
     (Shot at ISO 400, F/5.0, Manual Focus, Exposure 0.3 on Sony NEX-7. No post-processing)
 
-So we need to increase the Default Font Size from 14 to 20, AND set Display Size `disp_size` to `DISP_MEDIUM`.
+TODO: We need to increase the Default Font Size from 14 to 20, AND set Display Size `disp_size` to `DISP_MEDIUM`.
+
+# LVGL Demos on PinePhone
+
+_We've seen the LVGL Widgets Demo on NuttX for PinePhone. What about other demos?_
+
+Yep there are 5 LVGL Demos available in `make menuconfig`...
+
+-   Browse into "__LVGL__ > __LVGL Configuration__"
+    
+    -   In "__Demos__", select one or more of the these demos...
+        
+        "__Show Some Widgets__"
+
+        "__Demonstrate the usage of encoder and keyboard__"
+
+        "__Benchmark your system__"
+
+        "__Stress test for LVGL__"
+
+        "__Music player demo__"
+
+For Music Player Demo, we need these fonts...
+
+-   Browse into "__LVGL__ > __LVGL Configuration__"
+    
+    -   In "__Font usage__", select...
+
+        "__Montserrat 16__"
+
+        "__Montserrat 20__"
+
+        "__Montserrat 22__"
+        
+        "__Montserrat 32__"
+
+We've seen the LVGL Widgets Demo...
+
+-   [LVGL Widgets Demo on YouTube](https://www.youtube.com/watch?v=N-Yc2jj3TtQ)
+
+Here's the LVGL Music Player Demo...
+
+-   [LVGL Music Player Demo on YouTube](https://www.youtube.com/watch?v=_cxCnKNibtA)
+
+And the LVGL Benchmark Demo...
+
+-   [LVGL Benchmark Demo on YouTube](https://www.youtube.com/watch?v=deBzb-VbHck)
+
+Note that the LVGL Demos start automatically when NuttX boots on PinePhone. Let's talk about this...
+
+# Boot to LVGL on PinePhone
+
+_Can we boot NuttX on PinePhone, directly to LVGL? Without a Serial Cable?_
+
+TODO
+
+Make sure only 1 demo selected: https://github.com/apache/nuttx-apps/pull/1494
+
+In `make menuconfig`...
+
+1. RTOS Features > Tasks and Scheduling
+
+   -  Set "Application entry point" to `lvgldemo_main`
+
+      (INIT_ENTRYPOINT)
+
+   - Set "Application entry name" to `lvgldemo_main`
+
+     (INIT_ENTRYNAME)
+
+2. Application Configuration > NSH Library
+
+    - Disable "Have architecture-specific initialization"
+
+      (NSH_ARCHINIT)
 
 # Test Logs
 
