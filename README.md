@@ -5513,6 +5513,21 @@ For Music Player Demo, we need these fonts...
         
         "__Montserrat 32__"
 
+To run the demos on PinePhone...
+
+```text
+nsh> lvgldemo
+Usage: lvgldemo demo_name
+demo_name:
+  widgets
+  keypad_encoder
+  benchmark
+  stress
+  music
+```
+
+[(Source)](https://gist.github.com/lupyuen/b96ed96db295334db1cfabf461efad83)
+
 We've seen the LVGL Widgets Demo...
 
 -   [LVGL Widgets Demo on YouTube](https://www.youtube.com/watch?v=N-Yc2jj3TtQ)
