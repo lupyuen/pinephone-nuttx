@@ -5525,6 +5525,34 @@ And the LVGL Benchmark Demo...
 
 -   [LVGL Benchmark Demo on YouTube](https://www.youtube.com/watch?v=deBzb-VbHck)
 
+From the video we see the LVGL Benchmark Numbers...
+
+- Weighted Frames Per Second: 20
+- Opa Speed: 100%
+
+| Slow but common cases | Frames Per Sec |
+|-----------------------|-------------------|
+| Image RGB | 19
+| Image RGB + Opa | 17
+| Image ARGB | 18
+| Image ARGB + Opa | 17
+| Image ARGB Recolor | 17
+| Image ARGB Recolor + Opa | 16
+| Substr Image | 19
+
+| All Cases | Frames Per Sec |
+|-----------|-------------------|
+| Rectangle | 24
+| Rectangle + Opa | 23
+| Rectangle Rounded | 23
+| Rectangle Rounded + Opa | 21
+| Circle | 23
+| Circle + Opa | 20
+| Border | 24
+| Border + Opa | 24
+| Border Rounded | 24
+| (Many many more) |
+
 Note that the LVGL Demos start automatically when NuttX boots on PinePhone. Let's talk about this...
 
 # Boot to LVGL on PinePhone
