@@ -5578,7 +5578,9 @@ _Can we boot NuttX on PinePhone, directly to LVGL? Without a Serial Cable?_
 
 Sure can! In the previous section we talked about selecting the LVGL Demos.
 
-To boot directly to an LVGL Demo, make sure only 1 LVGL Demo is selected. [(See this)](https://github.com/apache/nuttx-apps/pull/1494)
+To boot directly to an LVGL Demo, make sure only 1 LVGL Demo is selected.
+
+[(Because of this)](https://github.com/apache/nuttx-apps/pull/1494)
 
 Then in `make menuconfig`...
 
