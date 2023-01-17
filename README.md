@@ -5600,7 +5600,7 @@ Then in `make menuconfig`...
 
       (NSH_ARCHINIT)
 
-NuttX on PinePhone now boots to the LVGL Touchscreen Demo, without a Serial Cable. (Pic below)
+NuttX on PinePhone now boots to the LVGL Touchscreen Demo, without a Serial Cable! (Pic below)
 
 _Why disable "NSH Architecture-Specific Initialization"?_
 
