@@ -5477,7 +5477,9 @@ Now the text is legible, but some controls are squished...
 
     (Shot at ISO 400, F/5.0, Manual Focus, Exposure 0.3 on Sony NEX-7. No post-processing)
 
-TODO: We need to increase the Default Font Size from 14 to 20, AND set Display Size `disp_size` to `DISP_MEDIUM`.
+TODO: We need to increase the Default Font Size from 14 to 20, AND set Display Size `disp_size` to `DISP_MEDIUM`. And we will get this...
+
+![After changing LVGL Settings for PinePhone](https://lupyuen.github.io/images/lvgl2-title.jpg)
 
 # LVGL Demos on PinePhone
 
