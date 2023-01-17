@@ -5602,6 +5602,8 @@ Then in `make menuconfig`...
 
 NuttX on PinePhone now boots to the LVGL Touchscreen Demo, without a Serial Cable! (Pic below)
 
+-   [LVGL Music Player Demo on YouTube](https://www.youtube.com/watch?v=_cxCnKNibtA)
+
 _Why disable "NSH Architecture-Specific Initialization"?_
 
 Normally the NSH NuttX Shell initialises the Display Driver and Touch Panel on PinePhone.
