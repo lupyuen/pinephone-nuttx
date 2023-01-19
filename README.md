@@ -36,6 +36,8 @@ Read the articles...
 
 -   ["NuttX RTOS for PinePhone: Touch Panel"](https://lupyuen.github.io/articles/touch2)
 
+-   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
+
 -   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
 
 _Will NuttX run on PinePhone?_
