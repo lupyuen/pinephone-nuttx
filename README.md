@@ -1,6 +1,6 @@
 ![Apache NuttX RTOS on PinePhone](https://lupyuen.github.io/images/lvgl2-title.jpg)
 
-[(Watch the Demo on YouTube)](https://www.youtube.com/watch?v=N-Yc2jj3TtQ)
+[(Watch the Demo on YouTube)](https://www.youtube.com/watch?v=JQTh3VTTTkc)
 
 # Apache NuttX RTOS for PinePhone
 
@@ -40,19 +40,17 @@ Read the articles...
 
 -   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
 
-_Will NuttX run on PinePhone?_
+How to build NuttX and boot it on PinePhone...
 
-Yep it does! PinePhone boots to the NuttX Shell (needs a Serial Debug Cable)...
+-   ["Build Apache NuttX RTOS for PinePhone"](https://lupyuen.github.io/articles/lvgl2#appendix-build-apache-nuttx-rtos-for-pinephone)
 
--   [Watch the Demo on YouTube](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
+-   ["Boot Apache NuttX RTOS on PinePhone"](https://lupyuen.github.io/articles/lvgl2#appendix-boot-apache-nuttx-rtos-on-pinephone)
 
-_Why NuttX?_
+_What's NuttX? Why run it on PinePhone?_
 
-NuttX is tiny and might be a fun way to teach more people about the internals of Phone Operating Systems. (Without digging deep into the entire Linux Stack)
+If we're new to NuttX, here's a gentle intro...
 
-Someday we might have a cheap, fast, responsive and tweakable phone running on NuttX!
-
-Many thanks to [qinwei2004](https://github.com/qinwei2004) and the NuttX Team for implementing [Cortex-A53 support](https://github.com/apache/incubator-nuttx/pull/6478)!
+-   ["NuttX RTOS for PinePhone: What is it?"](https://lupyuen.github.io/articles/what)
 
 The following is a journal that documents the porting of NuttX to PinePhone. It looks super messy and unstructured, please read the articles (at the top of this page) instead.
 
