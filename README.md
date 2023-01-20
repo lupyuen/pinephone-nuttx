@@ -5576,6 +5576,10 @@ From the video we see the LVGL Benchmark Numbers...
 | Border Rounded | 24
 | (Many many more) |
 
+More details here...
+
+-   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
+
 Note that the LVGL Demos start automatically when NuttX boots on PinePhone. Let's talk about this...
 
 # Boot to LVGL on PinePhone
@@ -5627,6 +5631,10 @@ Maybe we can create an LVGL Terminal App? That will let us interact with the NSH
 LVGL already provides an Onscreen Keyboard that works on PinePhone NuttX.
 
 But I have no idea how to start the NSH Process and redirect the Console Input / Output to LVGL 🤔
+
+More details here...
+
+-   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
 
 ![NuttX on PinePhone now boots to the LVGL Touchscreen Demo, without a Serial Cable](https://lupyuen.github.io/images/lvgl2-title.jpg)
 
