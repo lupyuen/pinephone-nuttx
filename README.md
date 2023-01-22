@@ -5636,9 +5636,15 @@ More details here...
 
 # LVGL Terminal for NuttX
 
-TODO: Start the NSH Process and redirect the Console Input / Output to LVGL
+Let's create an LVGL Terminal App, that will let us interact with the NSH NuttX Shell.
 
-[lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a9d67c135c458088946ed35c1b24be1b4aee3553/examples/lvgldemo/lvgldemo.c#L246-L390)
+Our LVGL Terminal App needs to...
+
+1.  Start the NSH Task
+
+1.  Redirect the Console Input / Output to LVGL
+
+Here's a simple test that starts the NSH Task and sends a command to NSH Console via a Pipe: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a9d67c135c458088946ed35c1b24be1b4aee3553/examples/lvgldemo/lvgldemo.c#L246-L390)
 
 ```c
 void test_terminal(void)
@@ -5659,7 +5665,7 @@ void test_terminal(void)
   close(1);
   close(2);
 
-  /* Use the pipes as stdin, stdout, and stderr */
+  /* Use the pipes as stdin, stdout and stderr */
   #define READ_PIPE  0  // Read Pipes: stdin, stdout, stderr
   #define WRITE_PIPE 1  // Write Pipes: stdin, stdout, stderr
   dup2(nsh_stdin[READ_PIPE], 0);
@@ -5726,7 +5732,7 @@ void test_terminal(void)
 }
 ```
 
-Here's the output...
+And it works! Here's the NSH Task auto-running the `ls` Command received via our Pipe...
 
 ```text
 NuttShell (NSH) NuttX-12.0.0
@@ -5758,6 +5764,30 @@ nsh> ls
 ```
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a9d67c135c458088946ed35c1b24be1b4aee3553/examples/lvgldemo/lvgldemo.c#L340-L390)
+
+TODO: Call `poll()` on `nsh_stdout` so it won't block if there's nothing to read.
+
+```c
+#include <poll.h>
+
+// Check if there's something to read
+struct pollfd fdp;
+fdp.fd = fd;
+fdp.events = POLLIN;
+ret = poll((struct pollfd *)&fdp, 1, POLL_TIMEOUT);
+
+if (ret > 0) {
+  // Poll OK
+  if ((fdp.revents & POLLIN) != 0) {
+    ssize_t len = read(fd, buf, sizeof(buf) - 1);
+  }
+} else if (ret == 0) {
+  // Ignore Timeout
+} else if (ret < 0)
+  // Handle Error
+  ...
+}
+```
 
 # Test Logs
 
