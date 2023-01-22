@@ -5628,13 +5628,136 @@ Maybe we can create an LVGL Terminal App? That will let us interact with the NSH
 
 LVGL already provides an Onscreen Keyboard that works on PinePhone NuttX.
 
-But I have no idea how to start the NSH Process and redirect the Console Input / Output to LVGL 🤔
-
 More details here...
 
 -   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
 
 ![NuttX on PinePhone now boots to the LVGL Touchscreen Demo, without a Serial Cable](https://lupyuen.github.io/images/lvgl2-title.jpg)
+
+# LVGL Terminal for NuttX
+
+TODO: Start the NSH Process and redirect the Console Input / Output to LVGL
+
+[lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a9d67c135c458088946ed35c1b24be1b4aee3553/examples/lvgldemo/lvgldemo.c#L246-L390)
+
+```c
+void test_terminal(void)
+{
+  _info("test_terminal\n");
+
+  /* Create the pipes */
+  int nsh_stdin[2];
+  int nsh_stdout[2];
+  int nsh_stderr[2];
+  int ret;
+  ret = pipe(nsh_stdin);  if (ret < 0) { _err("stdin pipe failed: %d\n", errno);  return; }
+  ret = pipe(nsh_stdout); if (ret < 0) { _err("stdout pipe failed: %d\n", errno); return; }
+  ret = pipe(nsh_stderr); if (ret < 0) { _err("stderr pipe failed: %d\n", errno); return; }
+
+  /* Close default stdin, stdout and stderr */
+  close(0);
+  close(1);
+  close(2);
+
+  /* Use the pipes as stdin, stdout, and stderr */
+  #define READ_PIPE  0  // Read Pipes: stdin, stdout, stderr
+  #define WRITE_PIPE 1  // Write Pipes: stdin, stdout, stderr
+  dup2(nsh_stdin[READ_PIPE], 0);
+  dup2(nsh_stdout[WRITE_PIPE], 1);
+  dup2(nsh_stderr[WRITE_PIPE], 2);
+
+  /* Create a new console using the pipes */
+  char *argv[] = { NULL };
+  pid_t pid = task_create(
+    "NSH Console",
+    100,  // Priority
+    CONFIG_DEFAULT_TASK_STACKSIZE,
+    nsh_consolemain,
+    argv
+  );
+  if (pid < 0) { _err("task_create failed: %d\n", errno); return; }
+  _info("pid=%d\n", pid);
+
+  // Wait a while
+  sleep(1);
+
+  // Send a few commands to NSH
+  for (int i = 0; i < 5; i++) {
+
+    // Send a command to NSH stdin
+    const char cmd[] = "ls\r\n\r\n\r\n";
+    ret = write(
+      nsh_stdin[WRITE_PIPE],
+      cmd,
+      sizeof(cmd)
+    );
+    _info("write nsh_stdin: %d\n", ret);
+
+    // Wait a while
+    sleep(1);
+
+    // Read the output from NSH stdout.
+    // TODO: This will block if there's nothing to read.
+    static char buf[64];
+    ret = read(
+      nsh_stdout[READ_PIPE],
+      buf,
+      sizeof(buf) - 1
+    );
+    _info("read nsh_stdout: %d\n", ret);
+    if (ret > 0) { buf[ret] = 0; _info("%s\n", buf); }
+
+    // Wait a while
+    sleep(1);
+
+#ifdef NOTUSED
+    // Read the output from NSH stderr.
+    // TODO: This will block if there's nothing to read.
+    ret = read(    
+      nsh_stderr[READ_PIPE],
+      buf,
+      sizeof(buf) - 1
+    );
+    _info("read nsh_stderr: %d\n", ret);
+    if (ret > 0) { buf[ret] = 0; _info("%s\n", buf); }
+#endif
+
+  }
+}
+```
+
+Here's the output...
+
+```text
+NuttShell (NSH) NuttX-12.0.0
+nsh> ls
+/:
+ dev/
+ var/
+nsh> est_terminal: write nsh_stdin: 9
+test_terminal: read nsh_stdout: 63
+test_terminal: K
+nsh> 
+nsh> 
+nsh> 
+nsh> 
+nsh> ls
+/:
+ dev/
+ var/
+test_terminal: write nsh_stdin: 9
+test_terminal: read nsh_stdout: 63
+test_terminal: 
+nsh> 
+nsh> 
+nsh> 
+nsh> 
+nsh> 
+nsh> ls
+...
+```
+
+[(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a9d67c135c458088946ed35c1b24be1b4aee3553/examples/lvgldemo/lvgldemo.c#L340-L390)
 
 # Test Logs
 
