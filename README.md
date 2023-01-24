@@ -5789,6 +5789,56 @@ if (ret > 0) {
 }
 ```
 
+# Timer for LVGL Terminal
+
+TODO
+
+[lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/2f591f4e2589298caf6613ba409d667be61a9881/examples/lvgldemo/lvgldemo.c#L257-L269)
+
+```c
+// Create an LVGL Terminal that will let us interact with NuttX NSH Shell
+void test_terminal(void) {
+
+  // Create an LVGL Timer to poll for output from NSH Shell
+  static uint32_t user_data = 10;
+  lv_timer_t *timer = lv_timer_create(
+    my_timer,   // Callback
+    5000,       // Timer Period (Milliseconds)
+    &user_data  // Callback Data
+  );
+```
+
+TODO
+
+[lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/2f591f4e2589298caf6613ba409d667be61a9881/examples/lvgldemo/lvgldemo.c#L350-L363)
+
+```c
+// Callback for LVGL Timer
+void my_timer(lv_timer_t *timer) {
+
+  // Get the Callback Data
+  uint32_t *user_data = timer->user_data;
+  _info("my_timer called with callback data: %d\n", *user_data);
+  *user_data += 1;
+
+  // TODO: Call poll() to check if NSH Stdout has output to be read
+
+  // TODO: Read the NSH Stdout
+
+  // TODO: Write the NSH Output to LVGL Label Widget
+}
+```
+
+TODO
+
+```text
+my_timer: my_timer called with callback data: 10
+my_timer: my_timer called with callback data: 11
+my_timer: my_timer called with callback data: 12
+```
+
+[(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/2f591f4e2589298caf6613ba409d667be61a9881/examples/lvgldemo/lvgldemo.c#L369-L436)
+
 # Test Logs
 
 This section contains PinePhone NuttX Logs captured from various tests...
