@@ -5774,7 +5774,7 @@ TODO: Call `poll()` on `nsh_stdout` so it won't block if there's nothing to read
 struct pollfd fdp;
 fdp.fd = fd;
 fdp.events = POLLIN;
-ret = poll((struct pollfd *)&fdp, 1, POLL_TIMEOUT);
+ret = poll((struct pollfd *)&fdp, 1, 0);
 
 if (ret > 0) {
   // Poll OK
@@ -5783,7 +5783,7 @@ if (ret > 0) {
   }
 } else if (ret == 0) {
   // Ignore Timeout
-} else if (ret < 0)
+} else if (ret < 0) {
   // Handle Error
   ...
 }
