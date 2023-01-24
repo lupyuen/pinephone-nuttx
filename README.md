@@ -5646,7 +5646,7 @@ Our LVGL Terminal App needs to...
 
 1.  Redirect the Console Input / Output to LVGL
 
-Here's a simple test that starts the NSH Task and sends a command to NSH Console via a Pipe: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a9d67c135c458088946ed35c1b24be1b4aee3553/examples/lvgldemo/lvgldemo.c#L246-L390)
+Here's a simple test that starts the NSH Task and sends a command to NSH Console via a POSIX Pipe: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a9d67c135c458088946ed35c1b24be1b4aee3553/examples/lvgldemo/lvgldemo.c#L246-L390)
 
 ```c
 void test_terminal(void) {
