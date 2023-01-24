@@ -5762,7 +5762,7 @@ Let's call `poll()` on `nsh_stdout` to check if there's NSH Output to be read...
 
 In the previous sections we started an NSH Shell that will execute NSH Commands that we pipe to it.
 
-But there's a problem: Calling `read()` on `nsh_stdout` will block if there's no NSH Output to be read.
+But there's a problem: Calling `read()` on `nsh_stdout` will block if there's no NSH Output to be read. And we can't block our LVGL App, since it needs to handle UI Events periodically.
 
 Solution: We call `has_input` to check if there's NSH Output ready to be read, before reading the output: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/c30e1968d5106794f435882af69dfb7b1858d694/examples/lvgldemo/lvgldemo.c#L330-L353)
 
