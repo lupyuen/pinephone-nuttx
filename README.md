@@ -5912,38 +5912,20 @@ _Why poll for NSH Output? Why not run a Background Thread that will block on NSH
 
 If we ran a Background Thread that will block until NSH Output is available, we still need to write the NSH Output to an LVGL Widget for display.
 
-But LVGL is Not Thread-Safe. Thus we need a Mutex to lock the LVGL Widgets, which gets messy.
+But LVGL is NOT Thread-Safe. Thus we need a Mutex to lock the LVGL Widgets, which gets messy.
 
 For now, it's simpler to run an LVGL Timer to poll for NSH Output.
 
 # Poll for NSH Output in LVGL Timer
 
-TODO
+In the previous section we've created an LVGL Timer that's triggered periodically.
 
-[lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/c30e1968d5106794f435882af69dfb7b1858d694/examples/lvgldemo/lvgldemo.c#L309-L356)
+Inside the LVGL Timer Callback, let's poll the NSH Output and check if there's any output to be read: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/c30e1968d5106794f435882af69dfb7b1858d694/examples/lvgldemo/lvgldemo.c#L309-L356)
 
 ```c
 // Callback for LVGL Timer
 static void my_timer(lv_timer_t *timer) {
-  int ret;
-
-  // Get the Callback Data
-  uint32_t *user_data = timer->user_data;
-  _info("my_timer called with callback data: %d\n", *user_data);
-  *user_data += 1;
-
-  // Send a command to NSH stdin
-  if (*user_data % 5 == 0) {
-    const char cmd[] = "ls\r";
-    DEBUGASSERT(nsh_stdin[WRITE_PIPE] != 0);
-    ret = write(
-      nsh_stdin[WRITE_PIPE],
-      cmd,
-      sizeof(cmd)
-    );
-    _info("write nsh_stdin: %d\n", ret);
-  }
-
+  ...
   // Read the output from NSH stdout
   static char buf[64];
   DEBUGASSERT(nsh_stdout[READ_PIPE] != 0);
@@ -5970,12 +5952,73 @@ static void my_timer(lv_timer_t *timer) {
   }
 
   // TODO: Write the NSH Output to LVGL Label Widget
-}
 ```
 
-TODO: Call `poll()` to check if NSH Stdout has output to be read
+NSH won't emit any output until we run some NSH Commands. So let's trigger some NSH Commands inside the LVGL Timer Callback: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/c30e1968d5106794f435882af69dfb7b1858d694/examples/lvgldemo/lvgldemo.c#L309-L356)
 
-TODO: Read the NSH Stdout
+```c
+// Callback for LVGL Timer
+static void my_timer(lv_timer_t *timer) {
+
+  // Get the Callback Data
+  uint32_t *user_data = timer->user_data;
+  _info("my_timer called with callback data: %d\n", *user_data);
+  *user_data += 1;
+
+  // Send a command to NSH stdin
+  if (*user_data % 5 == 0) {
+    const char cmd[] = "ls\r";
+    DEBUGASSERT(nsh_stdin[WRITE_PIPE] != 0);
+    ret = write(
+      nsh_stdin[WRITE_PIPE],
+      cmd,
+      sizeof(cmd)
+    );
+    _info("write nsh_stdin: %d\n", ret);
+  }
+  
+  // Read the output from NSH stdout
+  ...
+```
+
+When we run this, we see the LVGL Timer Callback sending NSH Commands and printing the NSH Output...
+
+```text
+my_timer: my_timer called with callback data: 10
+has_input: has input: fd=8
+my_timer: read nsh_stdout: 63
+my_timer: createWidgetsWrapped: start
+createWidgetsWrapped: end
+NuttShel
+has_input: timeout: fd=10
+my_timer: my_timer called with callback data: 11
+has_input: has input: fd=8
+my_timer: read nsh_stdout: 29
+my_timer: l (NSH) NuttX-12.0.0
+nsh> 
+has_input: timeout: fd=10
+my_timer: my_timer called with callback data: 12
+has_input: timeout: fd=8
+has_input: timeout: fd=10
+my_timer: my_timer called with callback data: 13
+has_input: timeout: fd=8
+has_input: timeout: fd=10
+my_timer: my_timer called with callback data: 14
+my_timer: write nsh_stdin: 4
+has_input: timeout: fd=8
+has_input: timeout: fd=10
+my_timer: my_timer called with callback data: 15
+has_input: has input: fd=8
+my_timer: read nsh_stdout: 33
+my_timer: ls
+/:
+ dev/
+ proc/
+ var/
+nsh> 
+```
+
+[(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/c30e1968d5106794f435882af69dfb7b1858d694/examples/lvgldemo/lvgldemo.c#L403-L556)
 
 TODO: Write the NSH Output to LVGL Label Widget
 
