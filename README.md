@@ -6020,13 +6020,136 @@ nsh>
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/c30e1968d5106794f435882af69dfb7b1858d694/examples/lvgldemo/lvgldemo.c#L403-L556)
 
-TODO: Write the NSH Output to LVGL Label Widget
-
-TODO: Read input from LVGL Text Area Widget
-
-TODO: Send input to NSH Stdin
+# Render Terminal with LVGL Widgets
 
 TODO: Use the [LVGL Keyboard Widget](https://docs.lvgl.io/master/widgets/keyboard.html)
+
+[lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a37872d85c865557bee740cecd6adc35ae3197d2/examples/lvgldemo/lvgldemo.c#L374-L415)
+
+```c
+// PinePhone LCD Panel Width and Height (pixels)
+#define PINEPHONE_LCD_PANEL_WIDTH  720
+#define PINEPHONE_LCD_PANEL_HEIGHT 1440
+
+// Margin of 10 pixels all around
+#define TERMINAL_MARGIN 10
+
+// Terminal Width is LCD Width minus Left and Right Margins
+#define TERMINAL_WIDTH  (PINEPHONE_LCD_PANEL_WIDTH - 2 * TERMINAL_MARGIN)
+
+// Keyboard is Lower Half of LCD.
+// Terminal Height is Upper Half of LCD minus Top and Bottom Margins.
+#define TERMINAL_HEIGHT ((PINEPHONE_LCD_PANEL_HEIGHT / 2) - 2 * TERMINAL_MARGIN)
+
+// Height of Input Text Area
+#define INPUT_HEIGHT 100
+
+// Height of Output Text Area is Terminal Height minus Input Height minus Middle Margin
+#define OUTPUT_HEIGHT (TERMINAL_HEIGHT - INPUT_HEIGHT - TERMINAL_MARGIN)
+
+// Create the LVGL Widgets for the LVGL Terminal.
+// Based on https://docs.lvgl.io/master/widgets/keyboard.html#keyboard-with-text-area
+static void create_widgets(void) {
+
+  // Create an LVGL Keyboard Widget
+  lv_obj_t *kb = lv_keyboard_create(lv_scr_act());
+
+  // Create an LVGL Text Area Widget for NSH Output
+  output = lv_textarea_create(lv_scr_act());
+  lv_obj_align(output, LV_ALIGN_TOP_LEFT, TERMINAL_MARGIN, TERMINAL_MARGIN);
+  lv_textarea_set_placeholder_text(output, "Hello");
+  lv_obj_set_size(output, TERMINAL_WIDTH, OUTPUT_HEIGHT);
+
+  // Create an LVGL Text Area Widget for NSH Input
+  input = lv_textarea_create(lv_scr_act());
+  lv_obj_align(input, LV_ALIGN_TOP_LEFT, TERMINAL_MARGIN, OUTPUT_HEIGHT + 2 * TERMINAL_MARGIN);
+  lv_obj_add_event_cb(input, input_callback, LV_EVENT_ALL, kb);
+  lv_obj_set_size(input, TERMINAL_WIDTH, INPUT_HEIGHT);
+
+  // Set the Keyboard to populate the NSH Input Text Area
+  lv_keyboard_set_textarea(kb, input);
+}
+```
+
+# Handle Input from LVGL Keyboard
+
+TODO
+
+[lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a37872d85c865557bee740cecd6adc35ae3197d2/examples/lvgldemo/lvgldemo.c#L417-L466)
+
+```c
+// Callback Function for NSH Input Text Area.
+// Based on https://docs.lvgl.io/master/widgets/keyboard.html#keyboard-with-text-area
+static void input_callback(lv_event_t *e) {
+  int ret;
+
+  // Decode the LVGL Event
+  const lv_event_code_t code = lv_event_get_code(e);
+
+  // If Enter has been pressed, send the Command to NSH Input
+  if (code == LV_EVENT_VALUE_CHANGED) {
+
+    // Get the Keyboard Widget from the LVGL Event
+    const lv_obj_t *kb = lv_event_get_user_data(e);
+    DEBUGASSERT(kb != NULL);
+
+    // Get the Button Index of the Keyboard Button Pressed
+    const uint16_t id = lv_keyboard_get_selected_btn(kb);
+
+    // Get the Text of the Keyboard Button
+    const char *key = lv_keyboard_get_btn_text(kb, id);
+    if (key == NULL) { return; }
+
+    // If Enter is pressed...
+    if (key[0] == 0xef && key[1] == 0xa2 && key[2] == 0xa2) {
+
+      // Read the NSH Input
+      DEBUGASSERT(input != NULL);
+      const char *cmd = lv_textarea_get_text(input);
+      if (cmd == NULL || cmd[0] == 0) { return; }
+
+      // Send the Command to NSH stdin
+      DEBUGASSERT(nsh_stdin[WRITE_PIPE] != 0);
+      ret = write(
+        nsh_stdin[WRITE_PIPE],
+        cmd,
+        strlen(cmd)
+      );
+
+      // Erase the NSH Input
+      lv_textarea_set_text(input, "");
+    }
+  }
+}
+```
+
+TODO: Write the NSH Output to LVGL Label Widget
+
+[lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a37872d85c865557bee740cecd6adc35ae3197d2/examples/lvgldemo/lvgldemo.c#L320-L372)
+
+```c
+// Callback Function for LVGL Timer.
+// Based on https://docs.lvgl.io/master/overview/timer.html#create-a-timer
+static void timer_callback(lv_timer_t *timer) {
+
+  // Read the output from NSH stdout
+  static char buf[64];
+  DEBUGASSERT(nsh_stdout[READ_PIPE] != 0);
+  if (has_input(nsh_stdout[READ_PIPE])) {
+    ret = read(
+      nsh_stdout[READ_PIPE],
+      buf,
+      sizeof(buf) - 1
+    );
+    if (ret > 0) {
+      // Add to NSH Output Text Area
+      buf[ret] = 0;
+      remove_escape_codes(buf, ret);
+      DEBUGASSERT(output != NULL);
+      lv_textarea_add_text(output, buf);
+    }
+  }
+```
 
 # Test Logs
 
