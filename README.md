@@ -5847,6 +5847,12 @@ my_timer: my_timer called with callback data: 12
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/2f591f4e2589298caf6613ba409d667be61a9881/examples/lvgldemo/lvgldemo.c#L369-L436)
 
+TODO: Call `poll()` to check if NSH Stdout has output to be read
+
+TODO: Read the NSH Stdout
+
+TODO: Write the NSH Output to LVGL Label Widget
+
 TODO: Read input from LVGL Text Area Widget
 
 TODO: Send input to NSH Stdin
