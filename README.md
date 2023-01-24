@@ -5636,7 +5636,9 @@ More details here...
 
 # LVGL Terminal for NuttX
 
-Let's create an LVGL Terminal App, that will let us interact with the NSH NuttX Shell.
+Let's create an LVGL Terminal App, that will let us interact with the NSH NuttX Shell...
+
+![LVGL Terminal for NuttX](https://lupyuen.github.io/images/lvgl2-terminal.jpg)
 
 Our LVGL Terminal App needs to...
 
