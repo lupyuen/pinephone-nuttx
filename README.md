@@ -5797,11 +5797,11 @@ Our LVGL Terminal for NSH Shell will need to periodically check for output from 
 
 -   Every couple of milliseconds...
 
-1.  We call `poll()` to check if NSH Shell has output data
+    -   We call `poll()` to check if NSH Shell has output data
 
-1.  We read the output from NSH Shell
+    -   We read the output from NSH Shell
 
-1.  We display the NSH Output in an LVGL Label Widget
+    -   We display the NSH Output in an LVGL Label Widget
 
 We'll do this with an [LVGL Timer](https://docs.lvgl.io/master/overview/timer.html) like so: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/2f591f4e2589298caf6613ba409d667be61a9881/examples/lvgldemo/lvgldemo.c#L257-L269)
 
