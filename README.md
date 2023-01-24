@@ -5710,7 +5710,6 @@ void test_terminal(void)
       buf,
       sizeof(buf) - 1
     );
-    _info("read nsh_stdout: %d\n", ret);
     if (ret > 0) { buf[ret] = 0; _info("%s\n", buf); }
 
     // Wait a while
@@ -5724,7 +5723,6 @@ void test_terminal(void)
       buf,
       sizeof(buf) - 1
     );
-    _info("read nsh_stderr: %d\n", ret);
     if (ret > 0) { buf[ret] = 0; _info("%s\n", buf); }
 #endif
 
@@ -5756,35 +5754,105 @@ test_terminal:
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a9d67c135c458088946ed35c1b24be1b4aee3553/examples/lvgldemo/lvgldemo.c#L340-L390)
 
-TODO: Call `poll()` on `nsh_stdout` so it won't block if there's nothing to read.
+There's a problem with the code above... Calling `read()` on `nsh_stdout` will block if there's no NSH Output to be read.
+
+Let's call `poll()` on `nsh_stdout` to check if there's NSH Output to be read...
+
+# Poll for NSH Output
+
+In the previous sections we started an NSH Shell that will execute NSH Commands that we pipe to it.
+
+But there's a problem: Calling `read()` on `nsh_stdout` will block if there's no NSH Output to be read.
+
+Solution: We call `has_input` to check if there's NSH Output ready to be read, before reading the output: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/c30e1968d5106794f435882af69dfb7b1858d694/examples/lvgldemo/lvgldemo.c#L330-L353)
 
 ```c
-#include <poll.h>
-
-// Check if there's something to read
-struct pollfd fdp;
-fdp.fd = fd;
-fdp.events = POLLIN;
-ret = poll((struct pollfd *)&fdp, 1, 0);
-
-if (ret > 0) {
-  // Poll OK
-  if ((fdp.revents & POLLIN) != 0) {
-    ssize_t len = read(fd, buf, sizeof(buf) - 1);
+  // Read the output from NSH stdout
+  static char buf[64];
+  if (has_input(nsh_stdout[READ_PIPE])) {
+    ret = read(
+      nsh_stdout[READ_PIPE],
+      buf,
+      sizeof(buf) - 1
+    );
+    if (ret > 0) { buf[ret] = 0; _info("%s\n", buf); }
   }
-} else if (ret == 0) {
-  // Ignore Timeout
-} else if (ret < 0) {
-  // Handle Error
-  ...
+
+  // Read the output from NSH stderr
+  if (has_input(nsh_stderr[READ_PIPE])) {
+    ret = read(    
+      nsh_stderr[READ_PIPE],
+      buf,
+      sizeof(buf) - 1
+    );
+    if (ret > 0) { buf[ret] = 0; _info("%s\n", buf); }
+  }
+```
+
+`has_input` calls `poll()` on `nsh_stdout` to check if there's NSH Output ready to be read: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/c30e1968d5106794f435882af69dfb7b1858d694/examples/lvgldemo/lvgldemo.c#L358-L397)
+
+```c
+// Return true if the File Descriptor has data to be read
+static bool has_input(int fd) {
+
+  // Poll the File Descriptor for Input
+  struct pollfd fdp;
+  fdp.fd = fd;
+  fdp.events = POLLIN;
+  int ret = poll(
+    (struct pollfd *)&fdp,  // File Descriptors
+    1,  // Number of File Descriptors
+    0   // Poll Timeout (Milliseconds)
+  );
+
+  if (ret > 0) {
+    // If Poll is OK and there is Input...
+    if ((fdp.revents & POLLIN) != 0) {
+      // Report that there's Input
+      _info("has input: fd=%d\n", fd);
+      return true;
+    }
+
+    // Else report No Input
+    _info("no input: fd=%d\n", fd);
+    return false;
+
+  } else if (ret == 0) {
+    // Ignore Timeout
+    _info("timeout: fd=%d\n", fd);
+    return false;
+
+  } else if (ret < 0) {
+    // Handle Error
+    _err("poll failed: %d, fd=%d\n", ret, fd);
+    return false;
+  }
+
+  // Never comes here
+  DEBUGASSERT(false);
+  return false;
 }
 ```
+
+`has_input` returns True if there's NSH Output waiting to be read...
+
+```text
+has_input: has input: fd=8
+```
+
+And `has_input` returns False (due to timeout) if there's nothing waiting to be read...
+
+```text
+has_input: timeout: fd=8
+```
+
+[(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/c30e1968d5106794f435882af69dfb7b1858d694/examples/lvgldemo/lvgldemo.c#L403-L556)
 
 Let's talk about the LVGL Timer...
 
 # Timer for LVGL Terminal
 
-In the previous section we started an NSH Shell that will execute NSH Commands that we pipe to it.
+In the previous sections we started an NSH Shell that will execute NSH Commands that we pipe to it.
 
 Our LVGL Terminal for shall periodically check for output from the NSH Shell, and write the output to the LVGL Display...
 
