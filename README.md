@@ -5789,11 +5789,21 @@ if (ret > 0) {
 }
 ```
 
+Let's talk about the LVGL Timer...
+
 # Timer for LVGL Terminal
 
-TODO
+Our LVGL Terminal for NSH Shell will need to periodically check for output from NSH Shell, and write the output to the LVGL Display...
 
-[lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/2f591f4e2589298caf6613ba409d667be61a9881/examples/lvgldemo/lvgldemo.c#L257-L269)
+-   Every couple of milliseconds...
+
+    1.  We call `poll()` to check if NSH Shell has output data
+
+    1.  We read the output from NSH Shell
+
+    1.  We display the NSH Output in an LVGL Label Widget
+
+We'll do this with an [LVGL Timer](https://docs.lvgl.io/master/overview/timer.html) like so: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/2f591f4e2589298caf6613ba409d667be61a9881/examples/lvgldemo/lvgldemo.c#L257-L269)
 
 ```c
 // Create an LVGL Terminal that will let us interact with NuttX NSH Shell
@@ -5808,9 +5818,7 @@ void test_terminal(void) {
   );
 ```
 
-TODO
-
-[lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/2f591f4e2589298caf6613ba409d667be61a9881/examples/lvgldemo/lvgldemo.c#L350-L363)
+`my_timer` is our Timer Callback Function: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/2f591f4e2589298caf6613ba409d667be61a9881/examples/lvgldemo/lvgldemo.c#L350-L363)
 
 ```c
 // Callback for LVGL Timer
@@ -5829,7 +5837,7 @@ void my_timer(lv_timer_t *timer) {
 }
 ```
 
-TODO
+When we run this, LVGL calls our Timer Callback Function every 5 seconds...
 
 ```text
 my_timer: my_timer called with callback data: 10
@@ -5838,6 +5846,10 @@ my_timer: my_timer called with callback data: 12
 ```
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/2f591f4e2589298caf6613ba409d667be61a9881/examples/lvgldemo/lvgldemo.c#L369-L436)
+
+TODO: Read input from LVGL Text Area Widget
+
+TODO: Send input to NSH Stdin
 
 # Test Logs
 
