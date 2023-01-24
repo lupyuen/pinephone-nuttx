@@ -5691,7 +5691,7 @@ void test_terminal(void)
   for (int i = 0; i < 5; i++) {
 
     // Send a command to NSH stdin
-    const char cmd[] = "ls\r\n\r\n\r\n";
+    const char cmd[] = "ls\r";
     ret = write(
       nsh_stdin[WRITE_PIPE],
       cmd,
@@ -5743,10 +5743,7 @@ nsh> ls
 nsh> est_terminal: write nsh_stdin: 9
 test_terminal: read nsh_stdout: 63
 test_terminal: K
-nsh> 
-nsh> 
-nsh> 
-nsh> 
+...
 nsh> ls
 /:
  dev/
@@ -5754,12 +5751,6 @@ nsh> ls
 test_terminal: write nsh_stdin: 9
 test_terminal: read nsh_stdout: 63
 test_terminal: 
-nsh> 
-nsh> 
-nsh> 
-nsh> 
-nsh> 
-nsh> ls
 ...
 ```
 
