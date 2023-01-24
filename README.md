@@ -5857,6 +5857,8 @@ TODO: Read input from LVGL Text Area Widget
 
 TODO: Send input to NSH Stdin
 
+TODO: Use the [LVGL Keyboard Widget](https://docs.lvgl.io/master/widgets/keyboard.html)
+
 # Test Logs
 
 This section contains PinePhone NuttX Logs captured from various tests...
