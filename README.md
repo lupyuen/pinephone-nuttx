@@ -5916,6 +5916,63 @@ But LVGL is Not Thread-Safe. Thus we need a Mutex to lock the LVGL Widgets, whic
 
 For now, it's simpler to run an LVGL Timer to poll for NSH Output.
 
+# Poll for NSH Output in LVGL Timer
+
+TODO
+
+[lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/c30e1968d5106794f435882af69dfb7b1858d694/examples/lvgldemo/lvgldemo.c#L309-L356)
+
+```c
+// Callback for LVGL Timer
+static void my_timer(lv_timer_t *timer) {
+  int ret;
+
+  // Get the Callback Data
+  uint32_t *user_data = timer->user_data;
+  _info("my_timer called with callback data: %d\n", *user_data);
+  *user_data += 1;
+
+  // Send a command to NSH stdin
+  if (*user_data % 5 == 0) {
+    const char cmd[] = "ls\r";
+    DEBUGASSERT(nsh_stdin[WRITE_PIPE] != 0);
+    ret = write(
+      nsh_stdin[WRITE_PIPE],
+      cmd,
+      sizeof(cmd)
+    );
+    _info("write nsh_stdin: %d\n", ret);
+  }
+
+  // Read the output from NSH stdout
+  static char buf[64];
+  DEBUGASSERT(nsh_stdout[READ_PIPE] != 0);
+  if (has_input(nsh_stdout[READ_PIPE])) {
+    ret = read(
+      nsh_stdout[READ_PIPE],
+      buf,
+      sizeof(buf) - 1
+    );
+    _info("read nsh_stdout: %d\n", ret);
+    if (ret > 0) { buf[ret] = 0; _info("%s\n", buf); }
+  }
+
+  // Read the output from NSH stderr
+  DEBUGASSERT(nsh_stderr[READ_PIPE] != 0);
+  if (has_input(nsh_stderr[READ_PIPE])) {
+    ret = read(    
+      nsh_stderr[READ_PIPE],
+      buf,
+      sizeof(buf) - 1
+    );
+    _info("read nsh_stderr: %d\n", ret);
+    if (ret > 0) { buf[ret] = 0; _info("%s\n", buf); }
+  }
+
+  // TODO: Write the NSH Output to LVGL Label Widget
+}
+```
+
 TODO: Call `poll()` to check if NSH Stdout has output to be read
 
 TODO: Read the NSH Stdout
