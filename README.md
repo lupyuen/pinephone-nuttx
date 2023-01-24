@@ -5672,7 +5672,7 @@ void test_terminal(void) {
   dup2(nsh_stdout[WRITE_PIPE], 1);
   dup2(nsh_stderr[WRITE_PIPE], 2);
 
-  // Create a new console using the pipes
+  // Create a new NSH Task using the pipes
   char *argv[] = { NULL };
   pid_t pid = task_create(
     "NSH Console",
