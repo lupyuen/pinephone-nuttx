@@ -5793,7 +5793,7 @@ Let's talk about the LVGL Timer...
 
 # Timer for LVGL Terminal
 
-In the previous section we have started an NSH Shell that will execute NSH Commands that we pipe to it.
+In the previous section we started an NSH Shell that will execute NSH Commands that we pipe to it.
 
 Our LVGL Terminal for shall periodically check for output from the NSH Shell, and write the output to the LVGL Display...
 
@@ -5848,6 +5848,14 @@ my_timer: my_timer called with callback data: 12
 ```
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/2f591f4e2589298caf6613ba409d667be61a9881/examples/lvgldemo/lvgldemo.c#L369-L436)
+
+_Why poll for NSH Output? Why not run a Background Thread that will block on NSH Output?_
+
+If we ran a Background Thread that will block until NSH Output is available, we still need to write the NSH Output to an LVGL Widget for display.
+
+But LVGL is Not Thread-Safe. Thus we need a Mutex to lock the LVGL Widgets, which gets messy.
+
+For now, it's simpler to run an LVGL Timer to poll for NSH Output.
 
 TODO: Call `poll()` to check if NSH Stdout has output to be read
 
