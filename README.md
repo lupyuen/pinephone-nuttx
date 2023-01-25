@@ -5644,11 +5644,15 @@ Let's create a Terminal App in LVGL, that will let us interact with the NuttX NS
 
 ![LVGL Terminal for NuttX](https://lupyuen.github.io/images/lvgl2-terminal2.jpg)
 
+We begin by piping a command to NSH Shell...
+
+# Pipe a Command to NuttX NSH Shell
+
 Our LVGL Terminal App needs to...
 
-1.  Start the NSH Task
+1.  Start the NuttX Task for NSH Shell
 
-1.  Redirect the Console Input / Output to LVGL
+1.  Redirect the NSH Console Input / Output to LVGL
 
 Here's a simple test that starts the NSH Task and sends a command to NSH Console via a POSIX Pipe: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a9d67c135c458088946ed35c1b24be1b4aee3553/examples/lvgldemo/lvgldemo.c#L246-L390)
 
@@ -5852,7 +5856,7 @@ has_input: timeout: fd=8
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/c30e1968d5106794f435882af69dfb7b1858d694/examples/lvgldemo/lvgldemo.c#L403-L556)
 
-Let's talk about the LVGL Timer...
+This polling needs to be done in an LVGL Timer, here's why...
 
 # Timer for LVGL Terminal
 
@@ -5919,6 +5923,8 @@ If we ran a Background Thread that will block until NSH Output is available, we 
 But LVGL is NOT Thread-Safe. Thus we need a Mutex to lock the LVGL Widgets, which gets messy.
 
 For now, it's simpler to run an LVGL Timer to poll for NSH Output.
+
+Let's add the polling to the LVGL Timer Callback...
 
 # Poll for NSH Output in LVGL Timer
 
@@ -6023,6 +6029,8 @@ nsh>
 ```
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/c30e1968d5106794f435882af69dfb7b1858d694/examples/lvgldemo/lvgldemo.c#L403-L556)
+
+Now that our background processing is ready, let's render the LVGL Widgets for our terminal...
 
 # Render Terminal with LVGL Widgets
 
