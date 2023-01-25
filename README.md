@@ -6073,7 +6073,7 @@ static void create_widgets(void) {
 
 # Set LVGL Terminal Font to Monospace
 
-Our LVGL Terminal looks nicer with a Monospace Font, but watch what happens if we change the LVGL Default Font from Montserrat 20 (proportional) to UNSCII 16 (monospace)...
+Our LVGL Terminal looks nicer with a Monospace Font. But watch what happens if we change the LVGL Default Font from Montserrat 20 (proportional) to UNSCII 16 (monospace)...
 
 ![Set Default Font to Monospace](https://lupyuen.github.io/images/lvgl2-terminal2.jpg)
 
