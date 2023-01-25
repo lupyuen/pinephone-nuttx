@@ -6,39 +6,39 @@
 
 Read the articles...
 
--   ["NuttX RTOS for PinePhone: What is it?"](https://lupyuen.github.io/articles/what)
+1.  ["NuttX RTOS for PinePhone: What is it?"](https://lupyuen.github.io/articles/what)
 
--   ["Apache NuttX RTOS on Arm Cortex-A53: How it might run on PinePhone"](https://lupyuen.github.io/articles/arm)
+1.  ["Apache NuttX RTOS on Arm Cortex-A53: How it might run on PinePhone"](https://lupyuen.github.io/articles/arm)
 
--   ["PinePhone boots Apache NuttX RTOS"](https://lupyuen.github.io/articles/uboot)
+1.  ["PinePhone boots Apache NuttX RTOS"](https://lupyuen.github.io/articles/uboot)
 
--   ["NuttX RTOS for PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
+1.  ["NuttX RTOS for PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
 
--   ["NuttX RTOS for PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
+1.  ["NuttX RTOS for PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
 
--   ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
+1.  ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
 
--   ["Understanding PinePhone's Display (MIPI DSI)"](https://lupyuen.github.io/articles/dsi)
+1.  ["Understanding PinePhone's Display (MIPI DSI)"](https://lupyuen.github.io/articles/dsi)
 
--   ["NuttX RTOS for PinePhone: Display Driver in Zig"](https://lupyuen.github.io/articles/dsi2)
+1.  ["NuttX RTOS for PinePhone: Display Driver in Zig"](https://lupyuen.github.io/articles/dsi2)
 
--   ["Rendering PinePhone's Display (DE and TCON0)"](https://lupyuen.github.io/articles/de)
+1.  ["Rendering PinePhone's Display (DE and TCON0)"](https://lupyuen.github.io/articles/de)
 
--   ["NuttX RTOS for PinePhone: Render Graphics in Zig"](https://lupyuen.github.io/articles/de2)
+1.  ["NuttX RTOS for PinePhone: Render Graphics in Zig"](https://lupyuen.github.io/articles/de2)
 
--   ["NuttX RTOS for PinePhone: MIPI Display Serial Interface"](https://lupyuen.github.io/articles/dsi3)
+1.  ["NuttX RTOS for PinePhone: MIPI Display Serial Interface"](https://lupyuen.github.io/articles/dsi3)
 
--   ["NuttX RTOS for PinePhone: Display Engine"](https://lupyuen.github.io/articles/de3)
+1.  ["NuttX RTOS for PinePhone: Display Engine"](https://lupyuen.github.io/articles/de3)
 
--   ["NuttX RTOS for PinePhone: LCD Panel"](https://lupyuen.github.io/articles/lcd)
+1.  ["NuttX RTOS for PinePhone: LCD Panel"](https://lupyuen.github.io/articles/lcd)
 
--   ["NuttX RTOS for PinePhone: Framebuffer"](https://lupyuen.github.io/articles/fb)
+1.  ["NuttX RTOS for PinePhone: Framebuffer"](https://lupyuen.github.io/articles/fb)
 
--   ["NuttX RTOS for PinePhone: Touch Panel"](https://lupyuen.github.io/articles/touch2)
+1.  ["NuttX RTOS for PinePhone: Touch Panel"](https://lupyuen.github.io/articles/touch2)
 
--   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
+1.  ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
 
--   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
+1.  ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
 
 How to build NuttX and boot it on PinePhone...
 
@@ -5638,6 +5638,10 @@ More details here...
 
 Let's create a Terminal App in LVGL, that will let us interact with the NuttX NSH Shell...
 
+-   [Watch the Demo on YouTube](https://www.youtube.com/watch?v=WdiXaMK8cNw)
+
+-   [Source Code: lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/term/examples/lvgldemo/lvgldemo.c#L246-L739)
+
 ![LVGL Terminal for NuttX](https://lupyuen.github.io/images/lvgl2-terminal2.jpg)
 
 Our LVGL Terminal App needs to...
@@ -6099,6 +6103,8 @@ Thus we set the LVGL Default Font back to Montserrat 20. And we set the Font Sty
 ```
 
 Now we see the LVGL Keyboard without missing symbols...
+
+-   [Watch the Demo on YouTube](https://www.youtube.com/watch?v=WdiXaMK8cNw)
 
 ![Set Terminal Font to Monospace](https://lupyuen.github.io/images/lvgl2-terminal3.jpg)
 
