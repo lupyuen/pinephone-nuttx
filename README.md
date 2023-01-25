@@ -5640,7 +5640,7 @@ Let's create a Terminal App in LVGL, that will let us interact with the NuttX NS
 
 -   [Watch the Demo on YouTube](https://www.youtube.com/watch?v=WdiXaMK8cNw)
 
--   [Source Code: lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/term/examples/lvgldemo/lvgldemo.c#L246-L739)
+-   [Source Code: lvglterm.c](https://github.com/lupyuen/lvglterm/blob/main/lvglterm.c)
 
 ![LVGL Terminal for NuttX](https://lupyuen.github.io/images/lvgl2-terminal2.jpg)
 
