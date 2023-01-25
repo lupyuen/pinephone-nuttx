@@ -6142,9 +6142,9 @@ Let's look at our Callback Function for the LVGL Keyboard...
 
 # Handle Input from LVGL Keyboard
 
-TODO
+Here's the Callback Function that handles input from the LVGL Keyboard.
 
-[lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a37872d85c865557bee740cecd6adc35ae3197d2/examples/lvgldemo/lvgldemo.c#L417-L466)
+It waits for the Enter key to be pressed, then it sends the typed command to NSH Shell via a POSIX Pipe: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a37872d85c865557bee740cecd6adc35ae3197d2/examples/lvgldemo/lvgldemo.c#L417-L466)
 
 ```c
 // Callback Function for NSH Input Text Area.
@@ -6192,10 +6192,13 @@ static void input_callback(lv_event_t *e) {
 }
 ```
 
+The command runs in NSH Shell and produces NSH Output. Which is handled by the LVGL Timer Callback Function...
+
 # Handle Output from NSH Shell
 
-TODO: Write the NSH Output to LVGL Label Widget
+Our LVGL Timer Callback Function checks periodically whether there's any NSH Output waiting to be processed.
 
+If there's NSH Output, the Callback Function writes the output to the NSH Output Text Area:
 [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/a37872d85c865557bee740cecd6adc35ae3197d2/examples/lvgldemo/lvgldemo.c#L320-L372)
 
 ```c
@@ -6221,6 +6224,12 @@ static void timer_callback(lv_timer_t *timer) {
     }
   }
 ```
+
+`remove_escape_codes` searches for Escape Codes in the NSH Output and replaces them by spaces.
+
+That's why we see 3 spaces between the `nsh>` prompt and the NSH Command...
+
+![3 spaces between the `nsh>` prompt and the NSH Command](https://lupyuen.github.io/images/lvgl2-terminal3.jpg)
 
 # Test Logs
 
