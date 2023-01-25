@@ -6071,6 +6071,37 @@ static void create_widgets(void) {
 }
 ```
 
+# Set LVGL Terminal Font to Monospace
+
+Our LVGL Terminal looks nicer with a Monospace Font, but watch what happens if we change the LVGL Default Font from Montserrat 20 (proportional) to UNSCII 16 (monospace)...
+
+![Set Default Font to Monospace](https://lupyuen.github.io/images/lvgl2-terminal2.jpg)
+
+The LVGL Keyboard has missing symbols: Enter, Backspace, ...
+
+Thus we set the LVGL Default Font back to Montserrat 20. And we set the Font Style for NSH Input and Output to UNSCII 16: [lvgldemo.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/58537ff2c0111e89c4bbe23a5683dc561fad6881/examples/lvgldemo/lvgldemo.c#L405-L422)
+
+```c
+  // Set the Font Style for NSH Input and Output to a Monospaced Font
+  static lv_style_t terminal_style;
+  lv_style_init(&terminal_style);
+  lv_style_set_text_font(&terminal_style, &lv_font_unscii_16);
+
+  // Create an LVGL Text Area Widget for NSH Output
+  output = lv_textarea_create(lv_scr_act());
+  lv_obj_add_style(output, &terminal_style, 0);
+  ...
+
+  // Create an LVGL Text Area Widget for NSH Input
+  input = lv_textarea_create(lv_scr_act());
+  lv_obj_add_style(input, &terminal_style, 0);
+  ...
+```
+
+Now we see the LVGL Keyboard without missing symbols...
+
+![Set Terminal Font to Monospace](https://lupyuen.github.io/images/lvgl2-terminal3.jpg)
+
 # Handle Input from LVGL Keyboard
 
 TODO
