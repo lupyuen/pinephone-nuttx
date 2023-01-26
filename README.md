@@ -5642,9 +5642,13 @@ Let's create a Terminal App in LVGL, that will let us interact with the NuttX NS
 
 -   [Source Code: lvglterm.c](https://github.com/lupyuen/lvglterm/blob/main/lvglterm.c)
 
+-   [How to compile LVGL Terminal](https://github.com/lupyuen/lvglterm)
+
 ![LVGL Terminal for NuttX](https://lupyuen.github.io/images/lvgl2-terminal2.jpg)
 
-We begin by piping a command to NSH Shell...
+We begin by starting the NSH Task and piping a command to NSH Shell...
+
+![Flow of LVGL Terminal for PinePhone on Apache NuttX RTOS](https://lupyuen.github.io/images/terminal-flow.jpg)
 
 # Pipe a Command to NuttX NSH Shell
 
