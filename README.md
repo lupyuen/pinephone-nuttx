@@ -48,6 +48,12 @@ How to build NuttX and boot it on PinePhone...
 
 -   ["Boot Apache NuttX RTOS on PinePhone"](https://lupyuen.github.io/articles/lvgl2#appendix-boot-apache-nuttx-rtos-on-pinephone)
 
+Download the binaries...
+
+-   [Apache NuttX RTOS for PinePhone (Boot to LVGL Terminal)](https://github.com/lupyuen2/wip-pinephone-nuttx/releases/tag/nuttx-12.0.1)
+
+-   [Apache NuttX RTOS for PinePhone (Boot to LVGL Demo)](https://github.com/lupyuen2/wip-pinephone-nuttx/releases/tag/nuttx-12.0.0)
+
 _What's NuttX? Why run it on PinePhone?_
 
 If we're new to NuttX, here's a gentle intro...
