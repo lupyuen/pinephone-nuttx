@@ -5135,7 +5135,7 @@ For details on the NuttX Framebuffer for PinePhone (and how it works with LVGL) 
 
 ![LVGL on NuttX on PinePhone](https://lupyuen.github.io/images/fb-lvgl.jpg)
 
-# LVGL Settings for PinePhone
+## LVGL Settings for PinePhone
 
 When we run the LVGL Demo App on PinePhone with Apache NuttX RTOS, it renders a dense screen that's not so Touch-Friendly...
 
@@ -11358,7 +11358,7 @@ fi
 # EOF
 ```
 
-# GIC Register Dump
+## GIC Register Dump
 
 Below is the dump of PinePhone's registers for [Arm Generic Interrupt Controller version 2](https://developer.arm.com/documentation/ihi0048/latest/)...
 
