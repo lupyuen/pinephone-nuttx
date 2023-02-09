@@ -6448,7 +6448,7 @@ So we can pop a microSD Card (and SIM) into any PinePhone...
 
 And turn it instantly into an __Emergency Phone__?
 
-_What NuttX Drivers would be need?_
+_What NuttX Drivers would we need?_
 
 We need a NuttX Driver for the PinePhone's __Quectel LTE Modem__.
 
@@ -6458,21 +6458,27 @@ More about this in the next section.
 
 _And if there's no LTE Network Coverage? Like in a Natural Disaster?_
 
-TODO: LoRa, natural disasters 
+The Long-Range, Low-Power __LoRa Network__ might be good for search and rescue communications. Just attach the LoRa Case to PinePhone...
 
-PineDio LoRa add-on case
+-   [PineDio LoRa Add-On Case](https://pine64.com/product/pinephone-pinephone-pro-pindio-lora-add-on-case/)
 
-https://pine64.com/product/pinephone-pinephone-pro-pindio-lora-add-on-case/
+    (Still in stock!)
 
-Still in stock!
+We might use JF's Driver...
 
-https://codeberg.org/JF002/pinedio-lora-driver
+-   [JF002/pinedio-lora-driver](https://codeberg.org/JF002/pinedio-lora-driver)
+
+Or the LoRa Driver that we have ported to NuttX...
+
+-   ["LoRa SX1262 on Apache NuttX RTOS"](https://lupyuen.github.io/articles/sx1262)
 
 # USB Driver and LTE Modem Driver for PinePhone
 
 TODO: Usb, imx8, bsd
 
 "7.5. USB", Page 583, A64 User Manual
+
+_But Allwinner A64's Official Docs are horrigibly lacking..._
 
 https://nuttx.apache.org/docs/latest/components/drivers/special/usbhost.html
 
