@@ -6478,7 +6478,7 @@ Or the LoRa Driver that we have ported to NuttX...
 
 # USB Driver and LTE Modem Driver for PinePhone
 
-_What NuttX Drivers would we need to turn PinePhone into a Feature Phone? (Phone Calls and SMS only)_
+_What NuttX Drivers would we need to turn PinePhone into a Feature Phone? (Only Voice Calls and SMS)_
 
 We need a NuttX Driver for the PinePhone's __Quectel LTE Modem__.
 
