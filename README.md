@@ -8,13 +8,13 @@ Apache NuttX is a Real-Time Operating System (RTOS) that runs on PINE64 PinePhon
 
     [(Watch the Demo on YouTube)](https://youtu.be/kGI_0yK1vws)
 
-PinePhone Display...
+__PinePhone Display__
 
 -   ["NuttX RTOS for PinePhone: MIPI Display Serial Interface"](https://lupyuen.github.io/articles/dsi3)
 
 -   ["NuttX RTOS for PinePhone: Display Engine"](https://lupyuen.github.io/articles/de3)
 
-PinePhone LCD Touch Panel...
+__LCD Touch Panel__
 
 -   ["NuttX RTOS for PinePhone: LCD Panel"](https://lupyuen.github.io/articles/lcd)
 
@@ -22,37 +22,37 @@ PinePhone LCD Touch Panel...
 
 -   ["NuttX RTOS for PinePhone: Touch Panel"](https://lupyuen.github.io/articles/touch2)
 
-LVGL on PinePhone...
+__LVGL on PinePhone__
 
 -   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
 
 -   ["NuttX RTOS for PinePhone: LVGL Terminal for NSH Shell"](https://lupyuen.github.io/articles/terminal)
 
-PinePhone Interrupts...
+__Interrupts__
 
 -   ["NuttX RTOS for PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
 
-PinePhone UART...
+__UART__
 
 -   ["NuttX RTOS for PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
 
-PinePhone LEDs...
+__LEDs__
 
 -   ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
 
-How to build NuttX and boot on PinePhone...
+__Build and Boot NuttX__
 
 -   ["Build Apache NuttX RTOS for PinePhone"](https://lupyuen.github.io/articles/lvgl2#appendix-build-apache-nuttx-rtos-for-pinephone)
 
 -   ["Boot Apache NuttX RTOS on PinePhone"](https://lupyuen.github.io/articles/lvgl2#appendix-boot-apache-nuttx-rtos-on-pinephone)
 
-Download the NuttX binaries...
+__Download NuttX Binaries__
 
 -   [Apache NuttX RTOS for PinePhone (Boot to LVGL Terminal)](https://github.com/lupyuen2/wip-pinephone-nuttx/releases/tag/nuttx-12.0.1)
 
 -   [Apache NuttX RTOS for PinePhone (Boot to LVGL Demo)](https://github.com/lupyuen2/wip-pinephone-nuttx/releases/tag/nuttx-12.0.0)
 
-How it started...
+__How It Started__
 
 -   ["Apache NuttX RTOS on Arm Cortex-A53: How it might run on PinePhone"](https://lupyuen.github.io/articles/arm)
 
@@ -60,7 +60,7 @@ How it started...
 
 -   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
 
-Older articles...
+__Older Articles__
 
 -   ["Understanding PinePhone's Display (MIPI DSI)"](https://lupyuen.github.io/articles/dsi)
 
