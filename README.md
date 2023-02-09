@@ -6444,9 +6444,19 @@ Just __Voice Calls and SMS__, using PinePhone's LTE Modem.
 
 _This is useful because...?_
 
-TODO: Emergency, sd, sim, usb driver, uart
+So we can pop a microSD Card (and SIM) into any PinePhone...
 
-_What if there's no LTE Network Coverage? Like in a Natural Disaster?_
+And turn it instantly into an __Emergency Phone__?
+
+_What NuttX Drivers would be need?_
+
+We need a NuttX Driver for the PinePhone's __Quectel LTE Modem__.
+
+Which talks over USB Serial. Thus we also need a NuttX Driver for PinePhone's __Allwinner A64 USB Controller__.
+
+More about this in the next section.
+
+_And if there's no LTE Network Coverage? Like in a Natural Disaster?_
 
 TODO: LoRa, natural disasters 
 
