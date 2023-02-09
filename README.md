@@ -6436,6 +6436,8 @@ For more details, check out the article...
 
 # PinePhone on NuttX becomes a Feature Phone
 
+_Now that NuttX can run Touchscreen Apps on PinePhone... What next?_
+
 TODO: Voice calls, SMS, Feature phone, emergency, sd, sim, 
 
 TODO: LoRa, natural disasters 
