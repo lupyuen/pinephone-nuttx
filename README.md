@@ -6458,7 +6458,11 @@ More about this in the next section.
 
 _And if there's no LTE Network Coverage? Like in a Natural Disaster?_
 
-The Long-Range, Low-Power __LoRa Network__ might be good for search and rescue communications. Just attach the LoRa Case to PinePhone...
+The Long-Range, Low-Power __LoRa Network__ might be good for search and rescue communications.
+
+(Short Text Messages only plus GPS Geolocation, non-guaranteed message delivery)
+
+Just attach the LoRa Case to PinePhone...
 
 -   [PineDio LoRa Add-On Case](https://pine64.com/product/pinephone-pinephone-pro-pindio-lora-add-on-case/)
 
