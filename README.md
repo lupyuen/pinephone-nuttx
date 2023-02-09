@@ -175,7 +175,7 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Download NuttX
+# NuttX on QEMU
 
 [Apache NuttX RTOS](https://nuttx.apache.org/docs/latest/) now runs on Arm Cortex-A53 with Multi-Core SMP...
 
@@ -186,6 +186,8 @@ PinePhone is based on [Allwinner A64 SoC](https://linux-sunxi.org/A64) with 4 Co
 -   [PinePhone Wiki](https://wiki.pine64.org/index.php/PinePhone)
 
 We start with NuttX Mainline, run it on QEMU, then mod it for PinePhone.
+
+## Download NuttX
 
 Download the Source Code for NuttX Mainline, which supports Arm Cortex-A53...
 
@@ -216,7 +218,7 @@ Install the Build Prerequisites, skip the RISC-V Toolchain...
 
 -   ["Install Prerequisites"](https://lupyuen.github.io/articles/nuttx#install-prerequisites)
 
-# Download Toolchain
+## Download Toolchain
 
 Download the Arm Toolchain for AArch64 ELF Bare-Metal Target (`aarch64-none-elf`)...
 
@@ -250,7 +252,7 @@ aarch64-none-elf-gcc -v
 
 [(Based on the instructions here)](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53)
 
-# Download QEMU
+## Download QEMU
 
 Download and install QEMU...
 
@@ -262,7 +264,7 @@ For macOS we may use `brew`...
 brew install qemu
 ```
 
-# Build NuttX: Single Core
+## Build NuttX: Single Core
 
 First we build NuttX for a Single Core of Arm Cortex-A53...
 
@@ -285,7 +287,7 @@ The NuttX Output Files may be found here...
 
 -   [NuttX for Arm Cortex-A53 Single Core](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.0.1)
 
-# Test NuttX with QEMU: Single Core
+## Test NuttX with QEMU: Single Core
 
 This is how we test NuttX on QEMU with a Single Core of Arm Cortex-A53...
 
@@ -400,7 +402,7 @@ NuttX is [POSIX Compliant](https://nuttx.apache.org/docs/latest/introduction/inv
 
 And NuttX runs everything in RAM, no File System needed. (For now)
 
-# Build NuttX: Multi Core
+## Build NuttX: Multi Core
 
 From Single Core to Multi Core! Now we build NuttX for 4 Cores of Arm Cortex-A53...
 
@@ -426,7 +428,7 @@ The NuttX Output Files may be found here...
 
 -   [NuttX for Arm Cortex-A53 Multi-Core](https://github.com/lupyuen/pinephone-nuttx/releases/tag/v1.0.0)
 
-# Test NuttX with QEMU: Multi Core
+## Test NuttX with QEMU: Multi Core
 
 And this is how we test NuttX on QEMU with 4 Cores of Arm Cortex-A53...
 
@@ -535,7 +537,7 @@ We see each of the 4 Cores starting NuttX (CPU0 to CPU3). That's so cool!
 
 (Can we use QEMU to partially emulate PinePhone? That would be extremely helpful!)
 
-# Inside NuttX for Cortex-A53
+## Inside NuttX for Cortex-A53
 
 Now we browse the Source Files for the implementation of Cortex-A53 on NuttX.
 
@@ -565,7 +567,7 @@ Which implements all kinds of Arm64 Features: [FPU](https://github.com/apache/in
 
 (We'll reuse them for PinePhone)
 
-# NuttX Image
+## NuttX Image
 
 Next we analyse the NuttX Image with [Ghidra](https://ghidra-sre.org/), to understand the NuttX Image Header and Startup Code.
 
@@ -711,7 +713,7 @@ We'll change this to 0x4008 0000 for PinePhone, since Kernel Start Address is 0x
 
 We've seen the NuttX Image (which looks like a Linux Kernel Image), let's compare with a PinePhone Linux Kernel Image and see how NuttX needs to be tweaked...
 
-# PinePhone Image
+## PinePhone Image
 
 Will NuttX run on PinePhone? Let's analyse a PinePhone Linux Kernel Image with Ghidra, to look at the Linux Kernel Header and Startup Code.
 
@@ -768,7 +770,7 @@ So we shift `Image` in Ghidra to start at 0x4008 0000...
 
 ![Ghidra with PinePhone Linux Image](https://lupyuen.github.io/images/arm-ghidra3.png)
 
-# Will NuttX Boot On PinePhone?
+## Will NuttX Boot On PinePhone?
 
 _So will NuttX boot on PinePhone?_
 
@@ -1535,7 +1537,7 @@ __Timer IRQ `ARM_ARCH_TIMER_IRQ`__ is defined in [arch/arm64/src/common/arm64_ar
 #define GIC_NUM_PRI_PER_REG         4
 ```
 
-# Timer Interrupt Isn't Handled
+## Timer Interrupt Isn't Handled
 
 Previously NuttX hangs midsentence while booting on PinePhone, let's find out how we fixed it...
 
@@ -1582,7 +1584,7 @@ Let's troubleshoot the Timer Interrupt...
 
 And we're right! The Arm64 Vector Table is indeed incorrectly configured! Here why...
 
-# Arm64 Vector Table Is Wrong
+## Arm64 Vector Table Is Wrong
 
 Earlier we saw that the Interrupt Handler wasn't called for System Timer Interrupt. And it might be due to problems in the __Arm64 Vector Table `_vector_table`__: [arch/arm64/src/common/arm64_vector_table.S](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_vector_table.S#L93-L232)
 
@@ -2067,7 +2069,7 @@ From this we see that NuttX runs mostly in EL1.
 
 (EL1 is less privileged than EL2, which supports Processor Virtualization)
 
-# Dump Interrupt Vector Table
+## Dump Interrupt Vector Table
 
 This is how we dump the Interrupt Vector Table to troubleshoot Interrupts...
 
@@ -2406,7 +2408,7 @@ This section describes the Boot Sequence for NuttX on PinePhone...
 
 The next section talks about debugging the Boot Sequence...
 
-# Boot Debugging
+## Boot Debugging
 
 _How can we debug NuttX while it boots?_
 
@@ -2661,7 +2663,7 @@ tcon0_lvds_if_reg=0x80000000
 nsh> 
 ```
 
-# BASIC Blinks The LEDs
+## BASIC Blinks The LEDs
 
 In the previous section we lit up PinePhone's Red, Green and Blue LEDs. Below are the values we wrote to the Allwinner A64 Port Controller...
 
@@ -3165,7 +3167,7 @@ And yet Zig is so similar to C that we can test the Zig Driver with the rest of 
 
 Also `comptime` Compile-Time Expressions in Zig will be helpful when we initialise the ST7703 LCD Controller. [(See this)](https://lupyuen.github.io/articles/dsi#initialise-lcd-controller)
 
-# Compose MIPI DSI Long Packet in Zig
+## Compose MIPI DSI Long Packet in Zig
 
 To initialise PinePhone's ST7703 LCD Controller, our PinePhone Display Driver for NuttX shall send MIPI DSI Long Packets to ST7703...
 
@@ -3175,7 +3177,7 @@ This is how our Zig Driver composes a MIPI DSI Long Packet...
 
 https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc57871308ed1/display.zig#L140-L204
 
-# Compose MIPI DSI Short Packet in Zig
+## Compose MIPI DSI Short Packet in Zig
 
 For 1 or 2 bytes of data, our PinePhone Display Driver shall send MIPI DSI Short Packets (instead of Long Packets)...
 
@@ -3185,7 +3187,7 @@ This is how our Zig Driver composes a MIPI DSI Short Packet...
 
 https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc57871308ed1/display.zig#L206-L261
 
-# Compute Error Correction Code in Zig
+## Compute Error Correction Code in Zig
 
 In our PinePhone Display Driver for NuttX, this is how we compute the Error Correction Code for a MIPI DSI Packet...
 
@@ -3193,7 +3195,7 @@ https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc578
 
 The Error Correction Code is the last byte of the 4-byte Packet Header for Long Packets and Short Packets.
 
-# Compute Cyclic Redundancy Check in Zig
+## Compute Cyclic Redundancy Check in Zig
 
 This is how our PinePhone Display Driver computes the 16-bit Cyclic Redundancy Check (CCITT) in Zig...
 
@@ -3201,7 +3203,7 @@ https://github.com/lupyuen/pinephone-nuttx/blob/1262f46622dc07442cf2aa59a4bbc578
 
 The Cyclic Redundancy Check is the 2-byte Packet Footer for Long Packets.
 
-# Test PinePhone MIPI DSI Driver with QEMU
+## Test PinePhone MIPI DSI Driver with QEMU
 
 The above Zig Code for composing Long Packets and Short Packets was tested in QEMU for Arm64 with GIC Version 2...
 
@@ -3295,7 +3297,7 @@ Result:
 00 00 00 00 65 03 
 ```
 
-# Test Case for PinePhone MIPI DSI Driver
+## Test Case for PinePhone MIPI DSI Driver
 
 This is how we write a Test Case for the PinePhone MIPI DSI Driver on NuttX...
 
@@ -3318,7 +3320,7 @@ Result:
 00 00 00 00 65 03 
 ```
 
-# Initialise ST7703 LCD Controller in Zig
+## Initialise ST7703 LCD Controller in Zig
 
 PinePhone's ST7703 LCD Controller needs to be initialised with these 20 Commands...
 
@@ -3332,7 +3334,7 @@ To send a command, `writeDcs` executes a DCS Short Write or DCS Long Write, depe
 
 https://github.com/lupyuen/pinephone-nuttx/blob/40098cd9ea37ab5e0192b2dc006a98630fa6a7e8/display.zig#L431-L453
 
-# Test Zig Display Driver for PinePhone
+## Test Zig Display Driver for PinePhone
 
 To test our Zig Display Driver with NuttX on PinePhone, we'll run this p-boot Display Code...
 
@@ -3518,7 +3520,7 @@ Let's look at the DE Mixers...
 
 ![A64 Display Engine](https://lupyuen.github.io/images/de-block1a.jpg)
 
-# Display Engine Mixers
+## Display Engine Mixers
 
 _What's a Display Engine Mixer?_
 
@@ -3571,7 +3573,7 @@ The 3 UI Overlay Channels would be useful for overlaying a Text UI on top of a V
 
 [(Wait... Wasn't Pine64 created thanks to OTT Boxes? 🤔)](https://en.wikipedia.org/wiki/Pine64#:~:text=Pine64%20initially%20operated%20as%20Pine%20Microsystems%20Inc.%20(Fremont%2C%20California)%2C%20founded%20by%20TL%20Lim%2C%20the%20inventor%20of%20the%20PopBox%20and%20Popcorn%20Hour%20series%20of%20media%20players%20sold%20under%20the%20Syabas%20and%20Cloud%20Media%20brands.%5B2%5D)
 
-# Render Colours
+## Render Colours
 
 Let's render simple colour blocks on the PinePhone Display.
 
@@ -3646,7 +3648,7 @@ We should see these Blue, Green and Red Blocks...
 
 Channels 2 and 3 are disabled for now. We'll use them to render UI Overlays later.
 
-# Render Mandelbrot Set
+## Render Mandelbrot Set
 
 Let's render something more interesting... Mandelbrot Set: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
@@ -3739,7 +3741,7 @@ Nope, remember that the Display Engine reads our Framebuffer directly via DMA.
 
 So any updates to the Framebuffer will be pushed to the display instantly.
 
-# Render Square Overlay
+## Render Square Overlay
 
 This is how we render a Blue Square as an Overlay on UI Channel 2: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
@@ -3767,7 +3769,7 @@ d->planes[1].dst_x    = 52;   // Dest X
 d->planes[1].dst_y    = 52;   // Dest Y
 ```
 
-# Render Circle Overlay
+## Render Circle Overlay
 
 This is how we render a Green Circle as an Overlay on UI Channel 3: [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c)
 
@@ -3818,7 +3820,7 @@ We should see the Animated Mandelbrot Set, with Blue Square and Green Circle as 
 
 (Why the missing horizontal lines in the Blue Square and Green Circle?)
 
-# Test PinePhone Display Engine
+## Test PinePhone Display Engine
 
 To test the A64 Display Engine with NuttX on PinePhone, we'll run this p-boot Display Code...
 
@@ -3950,7 +3952,7 @@ nuttx
 
 (The steps look messy today, hopefully we'll remove p-boot after we have created our NuttX Display Driver)
 
-# Display Engine Usage
+## Display Engine Usage
 
 Based on the log captured from our instrumented [test_display.c](https://github.com/lupyuen/incubator-nuttx-apps/blob/de2/examples/hello/test_display.c), we have identified the steps to render 3 UI Channels (1 to 3) with the Display Engine [(`display_commit`)](https://megous.com/git/p-boot/tree/src/display.c#n2017)
 
@@ -4100,7 +4102,7 @@ This is how we'll create a NuttX Driver for PinePhone's A64 Display Engine that 
 
 (See Memory Mapping List and Register List at Page 90)
 
-# Other Display Engine Features
+## Other Display Engine Features
 
 We won't use these Display Engine Features today...
 
@@ -4220,7 +4222,7 @@ https://github.com/lupyuen/pinephone-nuttx/blob/6ba90edb155a0132400ce66752eea761
 
 ![Blue, Green, Red Blocks with Overlays](https://lupyuen.github.io/images/de2-test3.jpg)
 
-# Test Zig Driver for PinePhone Display Engine
+## Test Zig Driver for PinePhone Display Engine
 
 To test the A64 Display Engine with NuttX on PinePhone, we'll run our NuttX Test App...
 
@@ -4548,7 +4550,7 @@ The code looks highly similar!
 
 ![Rendering graphics on PinePhone with Apache NuttX RTOS](https://lupyuen.github.io/images/dsi3-title.jpg)
 
-# Test MIPI DSI for NuttX Kernel
+## Test MIPI DSI for NuttX Kernel
 
 _How do we test the MIPI DSI Driver in the NuttX Kernel?_
 
@@ -4708,7 +4710,7 @@ Note that we capture the [Actual Test Log](test/test.log) and we `diff` it with 
 
 https://github.com/lupyuen/pinephone-nuttx/blob/c04f1447933665df207a42f626c726ef7a7def65/test/test.log#L4-L20
 
-# Test Timing Controller TCON0 Driver for NuttX Kernel
+## Test Timing Controller TCON0 Driver for NuttX Kernel
 
 We're adding the Timing Controller TCON0 Driver to NuttX Kernel...
 
@@ -4756,7 +4758,7 @@ We also tested with Graphics Logging Disabled, to preempt any timing issues...
 
 -   [NuttX Kernel TCON0 Test Log (Graphics Logging Disabled)](https://gist.github.com/lupyuen/61a1374c9ea6a1b7826488da688e8c6c)
 
-# Test Display Engine Driver for NuttX Kernel
+## Test Display Engine Driver for NuttX Kernel
 
 We're adding the Display Engine Driver to NuttX Kernel...
 
@@ -4973,7 +4975,7 @@ There seems to be a lag between the writing of pixels to framebuffer, and the pu
 
 Here's the fix for this lag...
 
-# Fix Missing Pixels in PinePhone Image
+## Fix Missing Pixels in PinePhone Image
 
 In the previous section we saw that there was a lag pushing pixels from the RAM Framebuffer to the PinePhone Display (over DMA / Display Engine / Timing Controller TCON0).
 
@@ -5298,7 +5300,7 @@ Yep we can read the Touch Coordinates correctly, with polling! (But not so effic
 
 Let's handle Interrupts from the Touch Panel...
 
-# Handle Interrupts from Touch Panel
+## Handle Interrupts from Touch Panel
 
 In the previous section we've read the Touch Panel by Polling. Which is easier but inefficient.
 
@@ -5479,7 +5481,7 @@ touch_panel_read: touch x=15, y=1394
 
 Let's move this code into the NuttX Touch Panel Driver for PinePhone...
 
-# NuttX Touch Panel Driver for PinePhone
+## NuttX Touch Panel Driver for PinePhone
 
 We moved the code above into the NuttX Touch Panel Driver for PinePhone...
 
@@ -5606,7 +5608,7 @@ More details here...
 
 -   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
 
-# LVGL Demos on PinePhone
+## LVGL Demos on PinePhone
 
 _We've seen the LVGL Widgets Demo on NuttX for PinePhone. What about other demos?_
 
@@ -5701,7 +5703,7 @@ More details here...
 
 Note that the LVGL Demos start automatically when NuttX boots on PinePhone. Let's talk about this...
 
-# Boot to LVGL on PinePhone
+## Boot to LVGL on PinePhone
 
 _Can we boot NuttX on PinePhone, directly to LVGL? Without a Serial Cable?_
 
@@ -5775,7 +5777,7 @@ We begin by starting the NSH Task and piping a command to NSH Shell...
 
 ![Flow of LVGL Terminal for PinePhone on Apache NuttX RTOS](https://lupyuen.github.io/images/terminal-flow.jpg)
 
-# Pipe a Command to NuttX NSH Shell
+## Pipe a Command to NuttX NSH Shell
 
 Our LVGL Terminal App needs to...
 
@@ -5895,7 +5897,7 @@ There's a problem with the code above... Calling `read()` on `nsh_stdout` will b
 
 Let's call `poll()` on `nsh_stdout` to check if there's NSH Output to be read...
 
-# Poll for NSH Output
+## Poll for NSH Output
 
 In the previous sections we started an NSH Shell that will execute NSH Commands that we pipe to it.
 
@@ -5987,7 +5989,7 @@ has_input: timeout: fd=8
 
 This polling needs to be done in an LVGL Timer, here's why...
 
-# Timer for LVGL Terminal
+## Timer for LVGL Terminal
 
 In the previous sections we started an NSH Shell that will execute NSH Commands that we pipe to it.
 
@@ -6055,7 +6057,7 @@ For now, it's simpler to run an LVGL Timer to poll for NSH Output.
 
 Let's add the polling to the LVGL Timer Callback...
 
-# Poll for NSH Output in LVGL Timer
+## Poll for NSH Output in LVGL Timer
 
 In the previous section we've created an LVGL Timer that's triggered periodically.
 
@@ -6161,7 +6163,7 @@ nsh>
 
 Now that our background processing is ready, let's render the LVGL Widgets for our terminal...
 
-# Render Terminal with LVGL Widgets
+## Render Terminal with LVGL Widgets
 
 Our LVGL Terminal will have 3 LVGL Widgets...
 
@@ -6230,7 +6232,7 @@ static void create_widgets(void) {
 
 Note that we're using the LVGL Default Font for all 3 LVGL Widgets. Which has a problem...
 
-# Set LVGL Terminal Font to Monospace
+## Set LVGL Terminal Font to Monospace
 
 Our LVGL Terminal looks nicer with a Monospace Font.
 
@@ -6269,7 +6271,7 @@ Let's look at our Callback Function for the LVGL Keyboard...
 
 ![Set Terminal Font to Monospace](https://lupyuen.github.io/images/lvgl2-terminal3.jpg)
 
-# Handle Input from LVGL Keyboard
+## Handle Input from LVGL Keyboard
 
 Here's the Callback Function that handles input from the LVGL Keyboard.
 
@@ -6323,7 +6325,7 @@ static void input_callback(lv_event_t *e) {
 
 The command runs in NSH Shell and produces NSH Output. Which is handled by the LVGL Timer Callback Function...
 
-# Handle Output from NSH Shell
+## Handle Output from NSH Shell
 
 Our LVGL Timer Callback Function checks periodically whether there's any NSH Output waiting to be processed.
 
