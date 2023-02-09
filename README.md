@@ -178,6 +178,8 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
 
 # NuttX on QEMU
 
+(This section is outdated, please check the articles above for updates)
+
 [Apache NuttX RTOS](https://nuttx.apache.org/docs/latest/) now runs on Arm Cortex-A53 with Multi-Core SMP...
 
 -   [nuttx/boards/arm64/qemu/qemu-a53](https://github.com/apache/incubator-nuttx/tree/master/boards/arm64/qemu/qemu-a53)
@@ -1146,7 +1148,7 @@ With the above changes, NuttX boots on PinePhone yay!
 
 [__Watch the Demo on YouTube__](https://youtube.com/shorts/WmRzfCiWV6o?feature=share)
 
-# NuttX Boot Log
+## NuttX Boot Log
 
 This is how we build NuttX for PinePhone...
 
