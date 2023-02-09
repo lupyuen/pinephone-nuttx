@@ -6488,31 +6488,45 @@ Which talks over USB Serial. Thus we also need a NuttX Driver for PinePhone's __
 
 _Any sample code?_
 
-TODO: Refer to the Allwinner A64 USB Drivers in FreeBSD and NetBSD
+Refer to the Allwinner A64 USB Drivers in FreeBSD and NetBSD...
 
-https://github.com/freebsd/freebsd-src/blob/main/sys/dev/usb/controller/musb_otg_allwinner.c#L95
+-   [freebsd-src/sys/dev/usb/controller/musb_otg_allwinner.c](https://github.com/freebsd/freebsd-src/blob/main/sys/dev/usb/controller/musb_otg_allwinner.c#L95)
 
-https://github.com/NetBSD/src/blob/trunk/sys/arch/arm/sunxi/sunxi_usbphy.c#L95
+-   [NetBSD/sys/arch/arm/sunxi/sunxi_usbphy.c](https://github.com/NetBSD/src/blob/trunk/sys/arch/arm/sunxi/sunxi_usbphy.c#L95)
 
 _But Allwinner A64's Official Docs are horrigibly lacking..._
 
-Maybe we refer to the NXP i.MX 8 docs, compare with the FreeBSD and NetBSD USB Drivers for i.MX 8?
+Maybe we refer to the NXP i.MX 8 docs, and we compare with the FreeBSD / NetBSD USB Drivers for i.MX 8?
 
 (Since NXP i.MX 8 is so much better documented than Allwinner A64)
 
 _How do USB Drivers work in NuttX?_
 
-TODO: USB Drivers in NuttX
+Check out this NuttX Doc on USB Drivers...
 
-https://nuttx.apache.org/docs/latest/components/drivers/special/usbhost.html
+-   ["USB Host-Side Drivers"](https://nuttx.apache.org/docs/latest/components/drivers/special/usbhost.html)
 
-https://github.com/lupyuen2/wip-pinephone-nuttx/blob/master/arch/arm/src/stm32/stm32_otgfshost.c
+And the NuttX USB Driver for STM32...
 
-https://github.com/lupyuen2/wip-pinephone-nuttx/blob/master/arch/arm/src/stm32/stm32_usbhost.c
+-   [stm32_otgfshost.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/master/arch/arm/src/stm32/stm32_otgfshost.c)
+
+-   [stm32_usbhost.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/master/arch/arm/src/stm32/stm32_usbhost.c)
 
 _How did we get the FreeBSD and NetBSD Drivers?_
 
-TODO: From the PinePhone Device Tree: [sun50i-a64-pinephone-1.2.dts](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L647-L721)
+PinePhone's Device Tree says that the USB Drivers are...
+
+```text
+		usb@1c19000 {
+			compatible = "allwinner,sun8i-a33-musb";
+    ...
+		phy@1c19400 {
+			compatible = "allwinner,sun50i-a64-usb-phy";
+```
+
+So we searched for `allwinner,sun8i-a33-musb` and `allwinner,sun50i-a64-usb-phy`.
+
+Here's the PinePhone USB Device Tree: [sun50i-a64-pinephone-1.2.dts](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L647-L721)
 
 ```text
 		usb@1c19000 {
