@@ -176,6 +176,8 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
   - [Set LVGL Terminal Font to Monospace](#set-lvgl-terminal-font-to-monospace)
   - [Handle Input from LVGL Keyboard](#handle-input-from-lvgl-keyboard)
   - [Handle Output from NSH Shell](#handle-output-from-nsh-shell)
+- [PinePhone on NuttX becomes a Feature Phone](#pinephone-on-nuttx-becomes-a-feature-phone)
+- [USB Driver and LTE Modem Driver for PinePhone](#usb-driver-and-lte-modem-driver-for-pinephone)
 - [Test Logs](#test-logs)
   - [USB Devices on PinePhone](#usb-devices-on-pinephone)
   - [Testing Zig Backlight Driver on PinePhone](#testing-zig-backlight-driver-on-pinephone)
