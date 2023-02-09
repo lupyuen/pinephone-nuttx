@@ -22,23 +22,23 @@ __LCD Touch Panel__
 
 -   ["NuttX RTOS for PinePhone: Touch Panel"](https://lupyuen.github.io/articles/touch2)
 
-__LVGL on PinePhone__
+__LVGL Graphics__
 
 -   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
 
 -   ["NuttX RTOS for PinePhone: LVGL Terminal for NSH Shell"](https://lupyuen.github.io/articles/terminal)
 
-__Interrupts__
+__LEDs__
 
--   ["NuttX RTOS for PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
+-   ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
 
 __UART__
 
 -   ["NuttX RTOS for PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
 
-__LEDs__
+__Interrupts__
 
--   ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
+-   ["NuttX RTOS for PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
 
 __Build and Boot NuttX__
 
