@@ -6440,6 +6440,14 @@ TODO: Voice calls, SMS, Feature phone, emergency, sd, sim,
 
 TODO: LoRa, natural disasters 
 
+PineDio LoRa add-on case
+
+https://pine64.com/product/pinephone-pinephone-pro-pindio-lora-add-on-case/
+
+Still in stock!
+
+https://codeberg.org/JF002/pinedio-lora-driver
+
 # USB Driver and LTE Modem Driver for PinePhone
 
 TODO: Usb, imx8, bsd
