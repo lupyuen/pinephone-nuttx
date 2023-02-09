@@ -145,7 +145,7 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
   - [Fix Missing Pixels in PinePhone Image](#fix-missing-pixels-in-pinephone-image)
 - [Merge PinePhone into NuttX Mainline](#merge-pinephone-into-nuttx-mainline)
 - [LVGL on NuttX on PinePhone](#lvgl-on-nuttx-on-pinephone)
-- [LVGL Settings for PinePhone](#lvgl-settings-for-pinephone)
+  - [LVGL Settings for PinePhone](#lvgl-settings-for-pinephone)
   - [LVGL Demos on PinePhone](#lvgl-demos-on-pinephone)
   - [Boot to LVGL on PinePhone](#boot-to-lvgl-on-pinephone)
 - [PinePhone Touch Panel](#pinephone-touch-panel)
@@ -174,7 +174,7 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
   - [Testing GIC Version 2 on PinePhone](#testing-gic-version-2-on-pinephone)
   - [Testing GIC Version 2 on QEMU](#testing-gic-version-2-on-qemu)
   - [Boot Files for Manjaro Phosh on PinePhone](#boot-files-for-manjaro-phosh-on-pinephone)
-- [GIC Register Dump](#gic-register-dump)
+  - [GIC Register Dump](#gic-register-dump)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
