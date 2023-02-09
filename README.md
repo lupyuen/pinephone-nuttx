@@ -179,7 +179,9 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
 
 # NuttX on QEMU
 
-(This section is outdated, please check the articles above for updates)
+Note: This section is outdated, please check this article for updates...
+
+-   ["Apache NuttX RTOS on Arm Cortex-A53: How it might run on PinePhone"](https://lupyuen.github.io/articles/arm)
 
 [Apache NuttX RTOS](https://nuttx.apache.org/docs/latest/) now runs on Arm Cortex-A53 with Multi-Core SMP...
 
@@ -827,6 +829,10 @@ Not yet. We'll need to implement the UART Driver for NuttX...
 
 # UART Driver for NuttX
 
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
+
 We won't see any output from NuttX until we implement the UART Driver for NuttX.
 
 These are the Source Files for the QEMU UART Driver (PL011)...
@@ -859,7 +865,146 @@ Which connects to the Headphone Port. Genius!
 
 [_PinePhone UART Port in disguise_](https://wiki.pine64.org/index.php/PinePhone#Serial_console)
 
-# PinePhone U-Boot Log
+## Garbled Console Output
+
+The log appears garbled when `printf` is called by our NuttX Test Apps, due to concurrent printing by multiple tasks. Why?
+
+```text
+nx_start_application: Starting init thread
+lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
+nsh: sysinit: fopen failed: 2
+nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddleLoNouptt
+Shell (NSH) NuttX-11.0.0-RC2
+```
+
+[(Source)](https://gist.github.com/lupyuen/e49a22a9e39b7c024b984bea40377712)
+
+It's supposed to show...
+
+```text
+nsh: sysinit: fopen failed: 2
+nsh: mkfatfs: command not found
+NuttShell (NSH) NuttX-11.0.0-RC2
+nsh> nx_start: CPU0: Beginning Idle Loop
+```
+
+[(Source)](https://gist.github.com/lupyuen/7537da777d728a22ab379b1ef234a2d1)
+
+Solution: Disable "Scheduler Informational Output" in...
+
+"Build Setup > Debug Options > Enable Debug Features > Scheduler Debug Features"
+
+This prevents `sinfo` from garbling the `printf` output...
+
+- `sinfo` writes directly to UART Port character by character...
+
+  ```text
+  nx_start: CPU0: Beginning Idle Loop
+  ```
+
+- Whereas `printf` is buffered and writes the buffer to the UART Driver...
+
+  ```text
+  nsh: mkfatfs: command not found
+  NuttShell (NSH) NuttX-11.0.0-RC2
+  ```
+
+FYI: `printf` Console Output Stream is locked and unlocked with a Mutex. Let's log the locking and unlocking of the Mutex...
+
+[nuttx/libs/libc/stdio/lib_libfilelock.c](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfilelock.c#L39-L64)
+
+```c
+void flockfile(FAR struct file_struct *stream)
+{
+  up_putc('{'); // Log the Mutex Locking
+  nxrmutex_lock(&stream->fs_lock);
+}
+...
+void funlockfile(FAR struct file_struct *stream)
+{
+  up_putc('}'); // Log the Mutex Unlocking
+  nxrmutex_unlock(&stream->fs_lock);
+}
+```
+
+Output log shows that `{` and `}` (Mutex Locking and Unlocking) are nested...
+
+```text
+nx_start_application: Starting init thread
+lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
+{{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{n}s}h{:} {s}y{s}i{n}i{t}:{ }f{o}p{e}n{ }f{a}i{l}e{d}:{ }2{
+}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{n}s}h{:} {m{k}f}a{t}f{s{:} }c{o{m}m}a{n{d} }n{o{t} }f{o{u}n}d{
+```
+
+How can be it locked twice without unlocking?
+
+[`nxrmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L335-L377) calls...
+- [`nxmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L135-L179), which calls...
+- [`nxsem_wait`](https://github.com/apache/nuttx/blob/master/sched/semaphore/sem_wait.c#L42-L210), which calls...
+- [`up_switch_context`](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_switchcontext.c#L41-L103)
+
+Let's print the Thread ID and Mutex Count...
+
+```text
+void flockfile(FAR struct file_struct *stream)
+{
+  nxrmutex_lock(&stream->fs_lock);
+  _info("%p, thread=%d, mutex.count=%d\n", stream, gettid(), stream->fs_lock.count); // Log the Thread ID and Mutex Count
+}
+
+void funlockfile(FAR struct file_struct *stream)
+{
+  _info("%p, thread=%d, mutex.count=%d\n", stream, gettid(), stream->fs_lock.count); // Log the Thread ID and Mutex Count
+  nxrmutex_unlock(&stream->fs_lock);
+}
+```
+
+Thread ID is always the same. Mutex Count goes from 1 to 3 and drops to 2...
+
+```text
+lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
+flockfile: 0x40a5cc78, thread=2, mutex.count=1
+flockfile: 0x40a5cc78, thread=2, mutex.count=2
+flockfile: 0x40a5cc78, thread=2, mutex.count=3
+funlockfile: 0x40a5cc78, thread=2, mutex.count=3
+funlockfile: 0x40a5cc78, thread=2, mutex.count=2
+```
+
+Why? That's because [`nxrmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L335-L377) allows the Mutex to be locked multiple times __within the same thread.__
+
+FYI: Here's how we verify whether our code is called by multiple CPU Cores...
+
+```c
+#include "../arch/arm64/src/common/arm64_arch.h"
+_info("up_cpu_index=%d\n", MPIDR_TO_CORE(GET_MPIDR()));
+// Shows: `up_cpu_index=0`
+
+_info("mpidr_el1=%p\n", read_sysreg(mpidr_el1));
+// Shows `mpidr_el1=0x80000000`
+```
+
+FYI: How `printf` works...
+
+[`printf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_printf.c#L32-L51) calls...
+- [`vfprintf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_vfprintf.c#L34-L56), which calls...
+- [`libvsprintf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libvsprintf.c#L1336-L1381), which calls...
+- [`vsprintf_internal`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libvsprintf.c#L171-L1332), which calls...
+- [`stream_putc`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libvsprintf.c#L70), which calls...
+- ???, which calls...
+- [`fputc`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_fputc.c#L31-L61), which calls...
+- [`libfwrite`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfwrite.c#L41-L180)
+
+[`fputc`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_fputc.c#L31-L61) also calls...
+- [`lib_libfflush`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfflush.c#L40-L171)
+
+# Boot NuttX on PinePhone
+
+Read the article...
+
+-   ["PinePhone boots Apache NuttX RTOS"](https://lupyuen.github.io/articles/uboot)
+
+## PinePhone U-Boot Log
 
 Before starting the Linux Kernel, PinePhone boots by running the U-Boot Bootloader...
 
@@ -1057,7 +1202,7 @@ According to the U-Boot Log, the Start of RAM `kernel_addr_r` is 0x4008 0000.
 
 We need to set this in the NuttX Linker Script and the NuttX Header...
 
-# NuttX Boots On PinePhone
+## NuttX Boots On PinePhone
 
 In the previous section, U-Boot says that the Start of RAM `kernel_addr_r` is 0x4008 0000.
 
@@ -1304,6 +1449,10 @@ The output is slightly garbled, the UART Driver needs fixing.
 
 # Interrupt Controller
 
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
+
 Let's talk about the __Arm Generic Interrupt Controller (GIC)__ for PinePhone...
 
 ```text
@@ -1424,7 +1573,7 @@ int arm64_gic_initialize(void)
 
 See below for the [GIC Register Dump](https://github.com/lupyuen/pinephone-nuttx#gic-register-dump).
 
-# Multi Core SMP
+## Multi Core SMP
 
 Right now NuttX is configured to run on a Single Core for PinePhone.
 
@@ -1481,7 +1630,7 @@ aarch64-none-elf-objdump \
   2>&1
 ```
 
-# System Timer 
+## System Timer 
 
 NuttX starts the System Timer when it boots. Here's how the System Timer is started: [arch/arm64/src/common/arm64_arch_timer.c](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_arch_timer.c#L212-L233)
 
@@ -1643,7 +1792,7 @@ Yep Vector Base Address Register EL1 is now correct.
 
 And our Interrupt Handlers are now working fine yay!
 
-# Test PinePhone GIC with QEMU
+## Test PinePhone GIC with QEMU
 
 This is how we build NuttX for QEMU with [Generic Interrupt Controller (GIC) Version 2](https://github.com/lupyuen/pinephone-nuttx#interrupt-controller)...
 
@@ -1803,7 +1952,7 @@ cp ~/PinePhone/nuttx/nuttx/arch/arm/src/armv7-a/arm_gicv2_dump.c    ~/gicv2/nutt
 cp ~/PinePhone/nuttx/nuttx/arch/arm64/src/common/arm64_arch_timer.c ~/gicv2/nuttx/nuttx/arch/arm64/src/common/arm64_arch_timer.c
 ```
 
-# Handling Interrupts
+## Handling Interrupts
 
 Let's talk about NuttX and how it handles interrupts.
 
@@ -2119,7 +2268,7 @@ up_timer_initialize: g_irqvector[219].handler=0x400820e0
 
 All entries in the Interrupt Vector Table point to the [Unexpected Interrupt Handler `irq_unexpected_isr`](https://github.com/lupyuen/pinephone-nuttx#handling-interrupts), except for `g_irqvector[27]` which points to the [System Timer Interrupt Handler `arm64_arch_timer_compare_isr`](https://github.com/lupyuen/pinephone-nuttx#system-timer).
 
-# Interrupt Debugging
+## Interrupt Debugging
 
 _Can we debug the Arm64 Interrupt Handler?_
 
@@ -2194,7 +2343,7 @@ We can do the same for the __Arm64 Vector Table__: [arch/arm64/src/common/arm64_
     strb  w0, [x1]                /* For Debug */
 ```
 
-# Memory Map
+## Memory Map
 
 PinePhone depends on Arm's Memory Management Unit (MMU). We defined two MMU Memory Regions for PinePhone: RAM and Device I/O: [arch/arm64/include/qemu/chip.h](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/include/qemu/chip.h#L38-L62)
 
@@ -2255,7 +2404,7 @@ The Arm MMU Initialisation is done by `arm64_mmu_init`, defined in [arch/arm64/s
 
 We'll talk more about the Arm MMU in the next section...
 
-# Boot Sequence
+## Boot Sequence
 
 This section describes the Boot Sequence for NuttX on PinePhone...
 
@@ -2435,7 +2584,7 @@ This prints "012" to the Serial Console as NuttX boots.
 
 [`up_putc`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_serial.c#L924-L946) calls [`up_lowputc`](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/qemu/qemu_lowputc.S#L100-L109) to print directly to the UART Port by writing to the UART Register. So it's safe to be called as NuttX boots.
 
-# UART Interrupts
+## UART Interrupts
 
 Previously we noticed that NuttX Shell wasn't generating output on the Serial Console.
 
@@ -2496,6 +2645,10 @@ Here's our implementation...
 -   ["NuttX RTOS on PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
 
 # Backlight and LEDs
+
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
 
 Let's light up the PinePhone Backlight and the Red / Green / Blue LEDs.
 
@@ -2777,6 +2930,43 @@ int FS_memOutput(int address, int value)
 ```
 
 Note that addresses are passed as 32-bit `int`, so some 64-bit addresses will not be accessible via `peek` and `poke`.
+
+## NuttX Drivers for Allwinner A64 PIO and PinePhone LEDs
+
+We built the NuttX Driver for Allwinner A64 PIO (Programmable I/O)...
+
+-   [arch/arm64/src/a64/a64_pio.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/pio/arch/arm64/src/a64/a64_pio.c)
+
+Which is based on the existing NuttX Driver for Allwinner A10 PIO...
+
+-   [arch/arm/src/a1x/a1x_pio.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/pio/arch/arm/src/a1x/a1x_pio.c)
+
+By calling the PIO Driver, we created the NuttX Driver for PinePhone Red / Green / Blue LEDs...
+
+-   [boards/arm64/a64/pinephone/src/pinephone_autoleds.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/pio/boards/arm64/a64/pinephone/src/pinephone_autoleds.c)
+
+-   [boards/arm64/a64/pinephone/src/pinephone_userleds.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/pio/boards/arm64/a64/pinephone/src/pinephone_userleds.c)
+
+We tested the LED Driver with the `leds` Test App, here's the Test Log...
+
+-   [nuttx-pinephone-led.log](https://gist.github.com/lupyuen/b9de190aba4598752d827f1105571a6a)
+
+From the Test Log we see the Red / Green / Blue LEDs set to the colour combinations...
+
+```text
+led_daemon: LED set 0x00 (black)
+led_daemon: LED set 0x01 (green)
+led_daemon: LED set 0x02 (red)
+led_daemon: LED set 0x03 (yellow)
+led_daemon: LED set 0x04 (blue)
+led_daemon: LED set 0x05 (cyan)
+led_daemon: LED set 0x06 (magenta)
+led_daemon: LED set 0x07 (white)
+```
+
+PinePhone PIO and LEDs are now supported in NuttX Mainline...
+
+https://github.com/apache/nuttx/pull/7796
 
 # PinePhone Device Tree
 
@@ -4766,197 +4956,7 @@ We also tested with Graphics Logging Disabled, to preempt any timing issues...
 
 -   [NuttX Kernel TCON0 Test Log (Graphics Logging Disabled)](https://gist.github.com/lupyuen/ff133730c07730cb3b588a5027e7f524)
 
-# Merge PinePhone into NuttX Mainline
-
-We're merging PinePhone into NuttX Mainline!
-
-NuttX Mainline now supports Generic Interrupt Controller Version 2...
-
--   ["arch/arm64: Add support for Generic Interrupt Controller Version 2"](https://github.com/apache/incubator-nuttx/pull/7630)
-
-We created a NuttX Board Configuration for PinePhone that will boot to NuttX Shell (NSH)...
-
--   ["arch/arm64: Add support for PINE64 PinePhone"](https://github.com/apache/incubator-nuttx/pull/7692)
-
-And now PinePhone is officially supported by Apache NuttX RTOS!
-
--   ["PinePhone is now supported by Apache NuttX RTOS"](https://lupyuen.github.io/articles/uboot#appendix-pinephone-is-now-supported-by-apache-nuttx-rtos)
-
-Here's how we prepared the Pull Requests for NuttX...
-
--   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
-
-# NuttX Drivers for Allwinner A64 PIO and PinePhone LEDs
-
-We built the NuttX Driver for Allwinner A64 PIO (Programmable I/O)...
-
--   [arch/arm64/src/a64/a64_pio.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/pio/arch/arm64/src/a64/a64_pio.c)
-
-Which is based on the existing NuttX Driver for Allwinner A10 PIO...
-
--   [arch/arm/src/a1x/a1x_pio.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/pio/arch/arm/src/a1x/a1x_pio.c)
-
-By calling the PIO Driver, we created the NuttX Driver for PinePhone Red / Green / Blue LEDs...
-
--   [boards/arm64/a64/pinephone/src/pinephone_autoleds.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/pio/boards/arm64/a64/pinephone/src/pinephone_autoleds.c)
-
--   [boards/arm64/a64/pinephone/src/pinephone_userleds.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/pio/boards/arm64/a64/pinephone/src/pinephone_userleds.c)
-
-We tested the LED Driver with the `leds` Test App, here's the Test Log...
-
--   [nuttx-pinephone-led.log](https://gist.github.com/lupyuen/b9de190aba4598752d827f1105571a6a)
-
-From the Test Log we see the Red / Green / Blue LEDs set to the colour combinations...
-
-```text
-led_daemon: LED set 0x00 (black)
-led_daemon: LED set 0x01 (green)
-led_daemon: LED set 0x02 (red)
-led_daemon: LED set 0x03 (yellow)
-led_daemon: LED set 0x04 (blue)
-led_daemon: LED set 0x05 (cyan)
-led_daemon: LED set 0x06 (magenta)
-led_daemon: LED set 0x07 (white)
-```
-
-PinePhone PIO and LEDs are now supported in NuttX Mainline...
-
-https://github.com/apache/nuttx/pull/7796
-
-# Garbled Console Output
-
-The log appears garbled when `printf` is called by our NuttX Test Apps, due to concurrent printing by multiple tasks. Why?
-
-```text
-nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
-nsh: sysinit: fopen failed: 2
-nshn:x _msktfaarttf:s :C PcUo0m:m aBnedg innonti nfgo uInddleLoNouptt
-Shell (NSH) NuttX-11.0.0-RC2
-```
-
-[(Source)](https://gist.github.com/lupyuen/e49a22a9e39b7c024b984bea40377712)
-
-It's supposed to show...
-
-```text
-nsh: sysinit: fopen failed: 2
-nsh: mkfatfs: command not found
-NuttShell (NSH) NuttX-11.0.0-RC2
-nsh> nx_start: CPU0: Beginning Idle Loop
-```
-
-[(Source)](https://gist.github.com/lupyuen/7537da777d728a22ab379b1ef234a2d1)
-
-Solution: Disable "Scheduler Informational Output" in...
-
-"Build Setup > Debug Options > Enable Debug Features > Scheduler Debug Features"
-
-This prevents `sinfo` from garbling the `printf` output...
-
-- `sinfo` writes directly to UART Port character by character...
-
-  ```text
-  nx_start: CPU0: Beginning Idle Loop
-  ```
-
-- Whereas `printf` is buffered and writes the buffer to the UART Driver...
-
-  ```text
-  nsh: mkfatfs: command not found
-  NuttShell (NSH) NuttX-11.0.0-RC2
-  ```
-
-FYI: `printf` Console Output Stream is locked and unlocked with a Mutex. Let's log the locking and unlocking of the Mutex...
-
-[nuttx/libs/libc/stdio/lib_libfilelock.c](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfilelock.c#L39-L64)
-
-```c
-void flockfile(FAR struct file_struct *stream)
-{
-  up_putc('{'); // Log the Mutex Locking
-  nxrmutex_lock(&stream->fs_lock);
-}
-...
-void funlockfile(FAR struct file_struct *stream)
-{
-  up_putc('}'); // Log the Mutex Unlocking
-  nxrmutex_unlock(&stream->fs_lock);
-}
-```
-
-Output log shows that `{` and `}` (Mutex Locking and Unlocking) are nested...
-
-```text
-nx_start_application: Starting init thread
-lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
-{{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{n}s}h{:} {s}y{s}i{n}i{t}:{ }f{o}p{e}n{ }f{a}i{l}e{d}:{ }2{
-}
-{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{{}}{n}s}h{:} {m{k}f}a{t}f{s{:} }c{o{m}m}a{n{d} }n{o{t} }f{o{u}n}d{
-```
-
-How can be it locked twice without unlocking?
-
-[`nxrmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L335-L377) calls...
-- [`nxmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L135-L179), which calls...
-- [`nxsem_wait`](https://github.com/apache/nuttx/blob/master/sched/semaphore/sem_wait.c#L42-L210), which calls...
-- [`up_switch_context`](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_switchcontext.c#L41-L103)
-
-Let's print the Thread ID and Mutex Count...
-
-```text
-void flockfile(FAR struct file_struct *stream)
-{
-  nxrmutex_lock(&stream->fs_lock);
-  _info("%p, thread=%d, mutex.count=%d\n", stream, gettid(), stream->fs_lock.count); // Log the Thread ID and Mutex Count
-}
-
-void funlockfile(FAR struct file_struct *stream)
-{
-  _info("%p, thread=%d, mutex.count=%d\n", stream, gettid(), stream->fs_lock.count); // Log the Thread ID and Mutex Count
-  nxrmutex_unlock(&stream->fs_lock);
-}
-```
-
-Thread ID is always the same. Mutex Count goes from 1 to 3 and drops to 2...
-
-```text
-lib_cxx_initialize: _sinit: 0x400e9000 _einit: 0x400e9000
-flockfile: 0x40a5cc78, thread=2, mutex.count=1
-flockfile: 0x40a5cc78, thread=2, mutex.count=2
-flockfile: 0x40a5cc78, thread=2, mutex.count=3
-funlockfile: 0x40a5cc78, thread=2, mutex.count=3
-funlockfile: 0x40a5cc78, thread=2, mutex.count=2
-```
-
-Why? That's because [`nxrmutex_lock`](https://github.com/apache/nuttx/blob/master/include/nuttx/mutex.h#L335-L377) allows the Mutex to be locked multiple times __within the same thread.__
-
-FYI: Here's how we verify whether our code is called by multiple CPU Cores...
-
-```c
-#include "../arch/arm64/src/common/arm64_arch.h"
-_info("up_cpu_index=%d\n", MPIDR_TO_CORE(GET_MPIDR()));
-// Shows: `up_cpu_index=0`
-
-_info("mpidr_el1=%p\n", read_sysreg(mpidr_el1));
-// Shows `mpidr_el1=0x80000000`
-```
-
-FYI: How `printf` works...
-
-[`printf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_printf.c#L32-L51) calls...
-- [`vfprintf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_vfprintf.c#L34-L56), which calls...
-- [`libvsprintf`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libvsprintf.c#L1336-L1381), which calls...
-- [`vsprintf_internal`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libvsprintf.c#L171-L1332), which calls...
-- [`stream_putc`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libvsprintf.c#L70), which calls...
-- ???, which calls...
-- [`fputc`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_fputc.c#L31-L61), which calls...
-- [`libfwrite`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfwrite.c#L41-L180)
-
-[`fputc`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_fputc.c#L31-L61) also calls...
-- [`lib_libfflush`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfflush.c#L40-L171)
-
-# Missing Pixels in PinePhone Image
+## Missing Pixels in PinePhone Image
 
 We've just implemented the NuttX Kernel Drivers for MIPI Display Serial Interface, Timing Controller TCON0, Display Engine, Reduced Serial Bus, Power Management Integrated Circuit and LCD Panel...
 
@@ -5068,7 +5068,35 @@ p-boot Bootloader seems to handle every TCON0 CPU Trigger Mode Finish (`TCON0_Tr
 
 Can we handle TCON0 CPU Trigger Mode Finish without refreshing the Display Engine Registers?
 
+# Merge PinePhone into NuttX Mainline
+
+Read the article...
+
+-   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
+
+We're merging PinePhone into NuttX Mainline!
+
+NuttX Mainline now supports Generic Interrupt Controller Version 2...
+
+-   ["arch/arm64: Add support for Generic Interrupt Controller Version 2"](https://github.com/apache/incubator-nuttx/pull/7630)
+
+We created a NuttX Board Configuration for PinePhone that will boot to NuttX Shell (NSH)...
+
+-   ["arch/arm64: Add support for PINE64 PinePhone"](https://github.com/apache/incubator-nuttx/pull/7692)
+
+And now PinePhone is officially supported by Apache NuttX RTOS!
+
+-   ["PinePhone is now supported by Apache NuttX RTOS"](https://lupyuen.github.io/articles/uboot#appendix-pinephone-is-now-supported-by-apache-nuttx-rtos)
+
+Here's how we prepared the Pull Requests for NuttX...
+
+-   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
+
 # LVGL on NuttX on PinePhone
+
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
 
 LVGL on Apache NuttX RTOS (Mainline) renders correctly on PinePhone! (Pic below)
 
@@ -5106,7 +5134,266 @@ For details on the NuttX Framebuffer for PinePhone (and how it works with LVGL) 
 
 ![LVGL on NuttX on PinePhone](https://lupyuen.github.io/images/fb-lvgl.jpg)
 
+# LVGL Settings for PinePhone
+
+When we run the LVGL Demo App on PinePhone with Apache NuttX RTOS, it renders a dense screen that's not so Touch-Friendly...
+
+![Before changing LVGL Settings for PinePhone](https://lupyuen.github.io/images/fb-lvgl3.jpg)
+
+Let's tweak the LVGL Settings to make our LVGL App more accessible. Modify this LVGL Source File...
+
+[apps/graphics/lvgl/lvgl/demos/widgets/lv_demo_widgets.c](https://github.com/lvgl/lvgl/blob/v8.3.3/demos/widgets/lv_demo_widgets.c#L96-L145)
+
+```c
+// Insert this
+#include <stdio.h>
+
+// Modify this function
+void lv_demo_widgets(void)
+{
+    // Note: PinePhone has width 720 pixels.
+    // LVGL will set Display Size to Large, which looks really tiny.
+    // Shouldn't this code depend on DPI? (267 DPI for PinePhone)
+    if(LV_HOR_RES <= 320) disp_size = DISP_SMALL;
+    else if(LV_HOR_RES < 720) disp_size = DISP_MEDIUM;
+    else disp_size = DISP_LARGE;
+
+    // Insert this: Print warning if font is missing
+    #undef LV_LOG_WARN
+    #define LV_LOG_WARN(s) puts(s)
+
+    // Insert this: Change Display Size from Large to Medium, to make Widgets easier to tap
+    printf("Before: disp_size=%d\n", disp_size);
+    disp_size = DISP_MEDIUM;
+    printf("After: disp_size=%d\n", disp_size);
+
+    // Existing Code
+    font_large = LV_FONT_DEFAULT;
+    font_normal = LV_FONT_DEFAULT;
+
+    lv_coord_t tab_h;
+    if(disp_size == DISP_LARGE) {
+        ...
+    }
+    // For Medium Display Size...
+    else if(disp_size == DISP_MEDIUM) {
+        // Change this: Increase Tab Height from 45 to 70, to make Tabs easier to tap
+        tab_h = 70;
+        // Previously: tab_h = 45;
+
+#if LV_FONT_MONTSERRAT_20
+        font_large     = &lv_font_montserrat_20;
+#else
+        LV_LOG_WARN("LV_FONT_MONTSERRAT_20 is not enabled for the widgets demo. Using LV_FONT_DEFAULT instead.");
+#endif
+#if LV_FONT_MONTSERRAT_14
+        font_normal    = &lv_font_montserrat_14;
+#else
+        LV_LOG_WARN("LV_FONT_MONTSERRAT_14 is not enabled for the widgets demo. Using LV_FONT_DEFAULT instead.");
+#endif
+    }
+```
+
+(Maybe we should modify the code above to include DPI? PinePhone's Display has 267 DPI)
+
+Configure LVGL with these settings...
+
+-   ["LVGL Calls Our Driver"](https://lupyuen.github.io/articles/touch2#lvgl-calls-our-driver)
+
+And add the fonts...
+
+-   Browse into "__LVGL__ > __LVGL Configuration__"
+    
+    -   In "__Font usage__ > __Enable built-in fonts__"
+
+        Enable "__Montserrat 20__"
+
+The LVGL Demo App is now less dense and easier to use...
+
+-   [Watch the Demo on YouTube](https://www.youtube.com/shorts/De5ZehlIka8)
+
+    (Shot at ISO 800, F/5.6, Manual Focus on Sony NEX-7. Post-processed for Brightness, Constrast and White Point)
+
+_What if we increase the Default Font Size? From Montserrat 14 to Montserrat 20?_
+
+Let's increase the Default Font Size from 14 to 20...
+
+-   Browse into "__LVGL__ > __LVGL Configuration__"
+    
+    -   In "__Font usage__ > __Select theme default title font__"
+
+        Select "__Montserrat 20__"
+
+We run the LVGL Demo App as is, leaving Display Size `disp_size` as default `DISP_LARGE`.
+
+Now the text is legible, but some controls are squished...
+
+-   [Watch the Demo on YouTube](https://www.youtube.com/watch?v=N-Yc2jj3TtQ)
+
+    (Shot at ISO 400, F/5.0, Manual Focus, Exposure 0.3 on Sony NEX-7. No post-processing)
+
+We need to increase the Default Font Size from 14 to 20, AND set Display Size `disp_size` to `DISP_MEDIUM`. And we will get this...
+
+![After changing LVGL Settings for PinePhone](https://lupyuen.github.io/images/lvgl2-title.jpg)
+
+More details here...
+
+-   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
+
+## LVGL Demos on PinePhone
+
+_We've seen the LVGL Widgets Demo on NuttX for PinePhone. What about other demos?_
+
+Yep there are 5 LVGL Demos available in `make menuconfig`...
+
+-   Browse into "__LVGL__ > __LVGL Configuration__"
+    
+    -   In "__Demos__", select one or more of the these demos...
+        
+        "__Show Some Widgets__"
+
+        "__Demonstrate the usage of encoder and keyboard__"
+
+        "__Benchmark your system__"
+
+        "__Stress test for LVGL__"
+
+        "__Music player demo__"
+
+For Music Player Demo, we need these fonts...
+
+-   Browse into "__LVGL__ > __LVGL Configuration__"
+    
+    -   In "__Font usage__", select...
+
+        "__Montserrat 16__"
+
+        "__Montserrat 20__"
+
+        "__Montserrat 22__"
+        
+        "__Montserrat 32__"
+
+To run the demos on PinePhone...
+
+```text
+nsh> lvgldemo
+Usage: lvgldemo demo_name
+demo_name:
+  widgets
+  keypad_encoder
+  benchmark
+  stress
+  music
+```
+
+[(Source)](https://gist.github.com/lupyuen/b96ed96db295334db1cfabf461efad83)
+
+We've seen the LVGL Widgets Demo...
+
+-   [LVGL Widgets Demo on YouTube](https://www.youtube.com/watch?v=N-Yc2jj3TtQ)
+
+Here's the LVGL Music Player Demo...
+
+-   [LVGL Music Player Demo on YouTube](https://www.youtube.com/watch?v=_cxCnKNibtA)
+
+And the LVGL Benchmark Demo...
+
+-   [LVGL Benchmark Demo on YouTube](https://www.youtube.com/watch?v=deBzb-VbHck)
+
+From the video we see the LVGL Benchmark Numbers...
+
+- Weighted Frames Per Second: 20
+- Opa Speed: 100%
+
+| Slow but common cases | Frames Per Sec |
+|-----------------------|-------------------|
+| Image RGB | 19
+| Image RGB + Opa | 17
+| Image ARGB | 18
+| Image ARGB + Opa | 17
+| Image ARGB Recolor | 17
+| Image ARGB Recolor + Opa | 16
+| Substr Image | 19
+
+| All Cases | Frames Per Sec |
+|-----------|-------------------|
+| Rectangle | 24
+| Rectangle + Opa | 23
+| Rectangle Rounded | 23
+| Rectangle Rounded + Opa | 21
+| Circle | 23
+| Circle + Opa | 20
+| Border | 24
+| Border + Opa | 24
+| Border Rounded | 24
+| (Many many more) |
+
+More details here...
+
+-   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
+
+Note that the LVGL Demos start automatically when NuttX boots on PinePhone. Let's talk about this...
+
+## Boot to LVGL on PinePhone
+
+_Can we boot NuttX on PinePhone, directly to LVGL? Without a Serial Cable?_
+
+Sure can! In the previous section we talked about selecting the LVGL Demos.
+
+To boot directly to an LVGL Demo, make sure only 1 LVGL Demo is selected.
+
+[(Because of this)](https://github.com/apache/nuttx-apps/pull/1494)
+
+Then in `make menuconfig`...
+
+1. RTOS Features > Tasks and Scheduling
+
+   -  Set "Application entry point" to `lvgldemo_main`
+
+      (INIT_ENTRYPOINT)
+
+   -  Set "Application entry name" to `lvgldemo_main`
+
+      (INIT_ENTRYNAME)
+
+2. Application Configuration > NSH Library
+
+    - Disable "Have architecture-specific initialization"
+
+      (NSH_ARCHINIT)
+
+NuttX on PinePhone now boots to the LVGL Touchscreen Demo, without a Serial Cable! (Pic below)
+
+-   [LVGL Music Player Demo on YouTube](https://www.youtube.com/watch?v=_cxCnKNibtA)
+
+_Why disable "NSH Architecture-Specific Initialization"?_
+
+Normally the NSH NuttX Shell initialises the Display Driver and Touch Panel on PinePhone.
+
+But since we're not running NSH Shell, we'll have to initialise the Display Driver and Touch Panel in our LVGL Demo App.
+
+This is explained here...
+
+-   [lvgldemo.c](https://github.com/apache/nuttx-apps/blob/master/examples/lvgldemo/lvgldemo.c#L42-L59)
+
+_Now that we can boot NuttX to an LVGL Touchscreen App, what next?_
+
+Maybe we can create an LVGL Terminal App? That will let us interact with the NSH NuttX Shell?
+
+LVGL already provides an Onscreen Keyboard that works on PinePhone NuttX.
+
+More details here...
+
+-   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
+
+![NuttX on PinePhone now boots to the LVGL Touchscreen Demo, without a Serial Cable](https://lupyuen.github.io/images/lvgl2-title.jpg)
+
 # PinePhone Touch Panel
+
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: Touch Panel"](https://lupyuen.github.io/articles/touch2)
 
 Now that we can render LVGL Graphical User Interfaces, let's handle Touch Input!
 
@@ -5517,266 +5804,13 @@ Read the article...
 
 -   ["NuttX RTOS for PinePhone: Touch Panel"](https://lupyuen.github.io/articles/touch2)
 
-![Before changing LVGL Settings for PinePhone](https://lupyuen.github.io/images/fb-lvgl3.jpg)
-
-# LVGL Settings for PinePhone
-
-When we run the LVGL Demo App on PinePhone with Apache NuttX RTOS, it renders a dense screen that's not so Touch-Friendly. (Pic above)
-
-Let's tweak the LVGL Settings to make our LVGL App more accessible. Modify this LVGL Source File...
-
-[apps/graphics/lvgl/lvgl/demos/widgets/lv_demo_widgets.c](https://github.com/lvgl/lvgl/blob/v8.3.3/demos/widgets/lv_demo_widgets.c#L96-L145)
-
-```c
-// Insert this
-#include <stdio.h>
-
-// Modify this function
-void lv_demo_widgets(void)
-{
-    // Note: PinePhone has width 720 pixels.
-    // LVGL will set Display Size to Large, which looks really tiny.
-    // Shouldn't this code depend on DPI? (267 DPI for PinePhone)
-    if(LV_HOR_RES <= 320) disp_size = DISP_SMALL;
-    else if(LV_HOR_RES < 720) disp_size = DISP_MEDIUM;
-    else disp_size = DISP_LARGE;
-
-    // Insert this: Print warning if font is missing
-    #undef LV_LOG_WARN
-    #define LV_LOG_WARN(s) puts(s)
-
-    // Insert this: Change Display Size from Large to Medium, to make Widgets easier to tap
-    printf("Before: disp_size=%d\n", disp_size);
-    disp_size = DISP_MEDIUM;
-    printf("After: disp_size=%d\n", disp_size);
-
-    // Existing Code
-    font_large = LV_FONT_DEFAULT;
-    font_normal = LV_FONT_DEFAULT;
-
-    lv_coord_t tab_h;
-    if(disp_size == DISP_LARGE) {
-        ...
-    }
-    // For Medium Display Size...
-    else if(disp_size == DISP_MEDIUM) {
-        // Change this: Increase Tab Height from 45 to 70, to make Tabs easier to tap
-        tab_h = 70;
-        // Previously: tab_h = 45;
-
-#if LV_FONT_MONTSERRAT_20
-        font_large     = &lv_font_montserrat_20;
-#else
-        LV_LOG_WARN("LV_FONT_MONTSERRAT_20 is not enabled for the widgets demo. Using LV_FONT_DEFAULT instead.");
-#endif
-#if LV_FONT_MONTSERRAT_14
-        font_normal    = &lv_font_montserrat_14;
-#else
-        LV_LOG_WARN("LV_FONT_MONTSERRAT_14 is not enabled for the widgets demo. Using LV_FONT_DEFAULT instead.");
-#endif
-    }
-```
-
-(Maybe we should modify the code above to include DPI? PinePhone's Display has 267 DPI)
-
-Configure LVGL with these settings...
-
--   ["LVGL Calls Our Driver"](https://lupyuen.github.io/articles/touch2#lvgl-calls-our-driver)
-
-And add the fonts...
-
--   Browse into "__LVGL__ > __LVGL Configuration__"
-    
-    -   In "__Font usage__ > __Enable built-in fonts__"
-
-        Enable "__Montserrat 20__"
-
-The LVGL Demo App is now less dense and easier to use...
-
--   [Watch the Demo on YouTube](https://www.youtube.com/shorts/De5ZehlIka8)
-
-    (Shot at ISO 800, F/5.6, Manual Focus on Sony NEX-7. Post-processed for Brightness, Constrast and White Point)
-
-_What if we increase the Default Font Size? From Montserrat 14 to Montserrat 20?_
-
-Let's increase the Default Font Size from 14 to 20...
-
--   Browse into "__LVGL__ > __LVGL Configuration__"
-    
-    -   In "__Font usage__ > __Select theme default title font__"
-
-        Select "__Montserrat 20__"
-
-We run the LVGL Demo App as is, leaving Display Size `disp_size` as default `DISP_LARGE`.
-
-Now the text is legible, but some controls are squished...
-
--   [Watch the Demo on YouTube](https://www.youtube.com/watch?v=N-Yc2jj3TtQ)
-
-    (Shot at ISO 400, F/5.0, Manual Focus, Exposure 0.3 on Sony NEX-7. No post-processing)
-
-We need to increase the Default Font Size from 14 to 20, AND set Display Size `disp_size` to `DISP_MEDIUM`. And we will get this...
-
-![After changing LVGL Settings for PinePhone](https://lupyuen.github.io/images/lvgl2-title.jpg)
-
-More details here...
-
--   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
-
-## LVGL Demos on PinePhone
-
-_We've seen the LVGL Widgets Demo on NuttX for PinePhone. What about other demos?_
-
-Yep there are 5 LVGL Demos available in `make menuconfig`...
-
--   Browse into "__LVGL__ > __LVGL Configuration__"
-    
-    -   In "__Demos__", select one or more of the these demos...
-        
-        "__Show Some Widgets__"
-
-        "__Demonstrate the usage of encoder and keyboard__"
-
-        "__Benchmark your system__"
-
-        "__Stress test for LVGL__"
-
-        "__Music player demo__"
-
-For Music Player Demo, we need these fonts...
-
--   Browse into "__LVGL__ > __LVGL Configuration__"
-    
-    -   In "__Font usage__", select...
-
-        "__Montserrat 16__"
-
-        "__Montserrat 20__"
-
-        "__Montserrat 22__"
-        
-        "__Montserrat 32__"
-
-To run the demos on PinePhone...
-
-```text
-nsh> lvgldemo
-Usage: lvgldemo demo_name
-demo_name:
-  widgets
-  keypad_encoder
-  benchmark
-  stress
-  music
-```
-
-[(Source)](https://gist.github.com/lupyuen/b96ed96db295334db1cfabf461efad83)
-
-We've seen the LVGL Widgets Demo...
-
--   [LVGL Widgets Demo on YouTube](https://www.youtube.com/watch?v=N-Yc2jj3TtQ)
-
-Here's the LVGL Music Player Demo...
-
--   [LVGL Music Player Demo on YouTube](https://www.youtube.com/watch?v=_cxCnKNibtA)
-
-And the LVGL Benchmark Demo...
-
--   [LVGL Benchmark Demo on YouTube](https://www.youtube.com/watch?v=deBzb-VbHck)
-
-From the video we see the LVGL Benchmark Numbers...
-
-- Weighted Frames Per Second: 20
-- Opa Speed: 100%
-
-| Slow but common cases | Frames Per Sec |
-|-----------------------|-------------------|
-| Image RGB | 19
-| Image RGB + Opa | 17
-| Image ARGB | 18
-| Image ARGB + Opa | 17
-| Image ARGB Recolor | 17
-| Image ARGB Recolor + Opa | 16
-| Substr Image | 19
-
-| All Cases | Frames Per Sec |
-|-----------|-------------------|
-| Rectangle | 24
-| Rectangle + Opa | 23
-| Rectangle Rounded | 23
-| Rectangle Rounded + Opa | 21
-| Circle | 23
-| Circle + Opa | 20
-| Border | 24
-| Border + Opa | 24
-| Border Rounded | 24
-| (Many many more) |
-
-More details here...
-
--   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
-
-Note that the LVGL Demos start automatically when NuttX boots on PinePhone. Let's talk about this...
-
-## Boot to LVGL on PinePhone
-
-_Can we boot NuttX on PinePhone, directly to LVGL? Without a Serial Cable?_
-
-Sure can! In the previous section we talked about selecting the LVGL Demos.
-
-To boot directly to an LVGL Demo, make sure only 1 LVGL Demo is selected.
-
-[(Because of this)](https://github.com/apache/nuttx-apps/pull/1494)
-
-Then in `make menuconfig`...
-
-1. RTOS Features > Tasks and Scheduling
-
-   -  Set "Application entry point" to `lvgldemo_main`
-
-      (INIT_ENTRYPOINT)
-
-   -  Set "Application entry name" to `lvgldemo_main`
-
-      (INIT_ENTRYNAME)
-
-2. Application Configuration > NSH Library
-
-    - Disable "Have architecture-specific initialization"
-
-      (NSH_ARCHINIT)
-
-NuttX on PinePhone now boots to the LVGL Touchscreen Demo, without a Serial Cable! (Pic below)
-
--   [LVGL Music Player Demo on YouTube](https://www.youtube.com/watch?v=_cxCnKNibtA)
-
-_Why disable "NSH Architecture-Specific Initialization"?_
-
-Normally the NSH NuttX Shell initialises the Display Driver and Touch Panel on PinePhone.
-
-But since we're not running NSH Shell, we'll have to initialise the Display Driver and Touch Panel in our LVGL Demo App.
-
-This is explained here...
-
--   [lvgldemo.c](https://github.com/apache/nuttx-apps/blob/master/examples/lvgldemo/lvgldemo.c#L42-L59)
-
-_Now that we can boot NuttX to an LVGL Touchscreen App, what next?_
-
-Maybe we can create an LVGL Terminal App? That will let us interact with the NSH NuttX Shell?
-
-LVGL already provides an Onscreen Keyboard that works on PinePhone NuttX.
-
-More details here...
-
--   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
-
-![NuttX on PinePhone now boots to the LVGL Touchscreen Demo, without a Serial Cable](https://lupyuen.github.io/images/lvgl2-title.jpg)
-
 # LVGL Terminal for NuttX
 
-Let's create a Terminal App in LVGL, that will let us interact with the NuttX NSH Shell...
+Read the article...
 
 -   ["NuttX RTOS for PinePhone: LVGL Terminal for NSH Shell"](https://lupyuen.github.io/articles/terminal)
+
+Let's create a Terminal App in LVGL, that will let us interact with the NuttX NSH Shell...
 
 -   [Watch the Demo on YouTube](https://www.youtube.com/watch?v=WdiXaMK8cNw)
 
