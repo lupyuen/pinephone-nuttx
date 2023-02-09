@@ -6476,6 +6476,12 @@ Or the LoRa Driver that we have ported to NuttX...
 
 -   ["LoRa SX1262 on Apache NuttX RTOS"](https://lupyuen.github.io/articles/sx1262)
 
+Or maybe Meshtastic (with Portduino), since it has a complete LoRa Messaging App...
+
+-   [Meshtastic](https://meshtastic.org/)
+
+-   [Portduino](https://github.com/geeksville/framework-portduino)
+
 _Will PinePhone on NuttX become a fully-functional smartphone?_
 
 Maybe someday? We're still lacking plenty of drivers: WiFi, Bluetooth LE, GPS, Audio, ...
