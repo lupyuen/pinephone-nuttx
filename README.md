@@ -6,41 +6,39 @@
 
 Read the articles...
 
-1.  ["NuttX RTOS for PinePhone: What is it?"](https://lupyuen.github.io/articles/what)
+-   ["NuttX RTOS for PinePhone: What is it?"](https://lupyuen.github.io/articles/what)
 
-1.  ["Apache NuttX RTOS on Arm Cortex-A53: How it might run on PinePhone"](https://lupyuen.github.io/articles/arm)
+PinePhone Display...
 
-1.  ["PinePhone boots Apache NuttX RTOS"](https://lupyuen.github.io/articles/uboot)
+-   ["NuttX RTOS for PinePhone: MIPI Display Serial Interface"](https://lupyuen.github.io/articles/dsi3)
 
-1.  ["NuttX RTOS for PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
+-   ["NuttX RTOS for PinePhone: Display Engine"](https://lupyuen.github.io/articles/de3)
 
-1.  ["NuttX RTOS for PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
+PinePhone LCD Touch Panel...
 
-1.  ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
+-   ["NuttX RTOS for PinePhone: LCD Panel"](https://lupyuen.github.io/articles/lcd)
 
-1.  ["Understanding PinePhone's Display (MIPI DSI)"](https://lupyuen.github.io/articles/dsi)
+-   ["NuttX RTOS for PinePhone: Framebuffer"](https://lupyuen.github.io/articles/fb)
 
-1.  ["NuttX RTOS for PinePhone: Display Driver in Zig"](https://lupyuen.github.io/articles/dsi2)
+-   ["NuttX RTOS for PinePhone: Touch Panel"](https://lupyuen.github.io/articles/touch2)
 
-1.  ["Rendering PinePhone's Display (DE and TCON0)"](https://lupyuen.github.io/articles/de)
+LVGL on PinePhone...
 
-1.  ["NuttX RTOS for PinePhone: Render Graphics in Zig"](https://lupyuen.github.io/articles/de2)
+-   ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
 
-1.  ["NuttX RTOS for PinePhone: MIPI Display Serial Interface"](https://lupyuen.github.io/articles/dsi3)
+-   ["NuttX RTOS for PinePhone: LVGL Terminal for NSH Shell"](https://lupyuen.github.io/articles/terminal)
 
-1.  ["NuttX RTOS for PinePhone: Display Engine"](https://lupyuen.github.io/articles/de3)
+PinePhone Interrupts...
 
-1.  ["NuttX RTOS for PinePhone: LCD Panel"](https://lupyuen.github.io/articles/lcd)
+-   ["NuttX RTOS for PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
 
-1.  ["NuttX RTOS for PinePhone: Framebuffer"](https://lupyuen.github.io/articles/fb)
+PinePhone UART...
 
-1.  ["NuttX RTOS for PinePhone: Touch Panel"](https://lupyuen.github.io/articles/touch2)
+-   ["NuttX RTOS for PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
 
-1.  ["NuttX RTOS for PinePhone: Boot to LVGL"](https://lupyuen.github.io/articles/lvgl2)
+PinePhone LEDs...
 
-1.  ["NuttX RTOS for PinePhone: LVGL Terminal for NSH Shell"](https://lupyuen.github.io/articles/terminal)
-
-1.  ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
+-   ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
 
 How to build NuttX and boot on PinePhone...
 
@@ -53,6 +51,24 @@ Download the NuttX binaries...
 -   [Apache NuttX RTOS for PinePhone (Boot to LVGL Terminal)](https://github.com/lupyuen2/wip-pinephone-nuttx/releases/tag/nuttx-12.0.1)
 
 -   [Apache NuttX RTOS for PinePhone (Boot to LVGL Demo)](https://github.com/lupyuen2/wip-pinephone-nuttx/releases/tag/nuttx-12.0.0)
+
+How it started...
+
+-   ["Apache NuttX RTOS on Arm Cortex-A53: How it might run on PinePhone"](https://lupyuen.github.io/articles/arm)
+
+-   ["PinePhone boots Apache NuttX RTOS"](https://lupyuen.github.io/articles/uboot)
+
+-   ["Preparing a Pull Request for Apache NuttX RTOS"](https://lupyuen.github.io/articles/pr)
+
+Older articles...
+
+-   ["Understanding PinePhone's Display (MIPI DSI)"](https://lupyuen.github.io/articles/dsi)
+
+-   ["NuttX RTOS for PinePhone: Display Driver in Zig"](https://lupyuen.github.io/articles/dsi2)
+
+-   ["Rendering PinePhone's Display (DE and TCON0)"](https://lupyuen.github.io/articles/de)
+
+-   ["NuttX RTOS for PinePhone: Render Graphics in Zig"](https://lupyuen.github.io/articles/de2)
 
 _What's NuttX? Why run it on PinePhone?_
 
