@@ -3155,6 +3155,12 @@ https://github.com/lupyuen/pinephone-nuttx/blob/2d938b9f09a165c0ff82b5dbbb12f1c4
 
 # PinePhone Display Driver
 
+Read the articles...
+
+-   ["NuttX RTOS for PinePhone: MIPI Display Serial Interface"](https://lupyuen.github.io/articles/dsi3)
+
+-   ["NuttX RTOS for PinePhone: Display Engine"](https://lupyuen.github.io/articles/de3)
+
 Let's talk about the NuttX Driver for PinePhone MIPI DSI, Display Engine and Timing Controller...
 
 ## Zig Driver for PinePhone MIPI DSI
