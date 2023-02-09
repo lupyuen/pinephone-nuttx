@@ -6438,7 +6438,15 @@ For more details, check out the article...
 
 _Now that NuttX can run Touchscreen Apps on PinePhone... What next?_
 
-TODO: Voice calls, SMS, Feature phone, emergency, sd, sim, 
+Maybe we can turn NuttX on PinePhone into a __Feature Phone__?
+
+Just __Voice Calls and SMS__, using PinePhone's LTE Modem.
+
+_This is useful because...?_
+
+TODO: Emergency, sd, sim, usb driver, uart
+
+_What if there's no LTE Network Coverage? Like in a Natural Disaster?_
 
 TODO: LoRa, natural disasters 
 
