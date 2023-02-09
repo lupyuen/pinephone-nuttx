@@ -6478,11 +6478,31 @@ Or the LoRa Driver that we have ported to NuttX...
 
 # USB Driver and LTE Modem Driver for PinePhone
 
-TODO: Usb, imx8, bsd
+_What NuttX Drivers would we need to turn PinePhone into a Feature Phone? (Phone Calls and SMS only)_
 
-"7.5. USB", Page 583, A64 User Manual
+We need a NuttX Driver for the PinePhone's __Quectel LTE Modem__.
+
+Which talks over USB Serial. Thus we also need a NuttX Driver for PinePhone's __Allwinner A64 USB Controller__.
+
+(See the USB Docs in Allwinner A64 User Manual, Section 7.5 "USB", Page 583)
+
+_Any sample code?_
+
+TODO: Refer to the Allwinner A64 USB Drivers in FreeBSD and NetBSD
+
+https://github.com/freebsd/freebsd-src/blob/main/sys/dev/usb/controller/musb_otg_allwinner.c#L95
+
+https://github.com/NetBSD/src/blob/trunk/sys/arch/arm/sunxi/sunxi_usbphy.c#L95
 
 _But Allwinner A64's Official Docs are horrigibly lacking..._
+
+Maybe we refer to the NXP i.MX 8 docs, compare with the FreeBSD and NetBSD USB Drivers for i.MX 8?
+
+(Since NXP i.MX 8 is so much better documented than Allwinner A64)
+
+_How do USB Drivers work in NuttX?_
+
+TODO: USB Drivers in NuttX
 
 https://nuttx.apache.org/docs/latest/components/drivers/special/usbhost.html
 
@@ -6490,11 +6510,9 @@ https://github.com/lupyuen2/wip-pinephone-nuttx/blob/master/arch/arm/src/stm32/s
 
 https://github.com/lupyuen2/wip-pinephone-nuttx/blob/master/arch/arm/src/stm32/stm32_usbhost.c
 
-https://github.com/freebsd/freebsd-src/blob/main/sys/dev/usb/controller/musb_otg_allwinner.c#L95
+_How did we get the FreeBSD and NetBSD Drivers?_
 
-https://github.com/NetBSD/src/blob/trunk/sys/arch/arm/sunxi/sunxi_usbphy.c#L95
-
-https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L647-L721
+TODO: From the PinePhone Device Tree: [sun50i-a64-pinephone-1.2.dts](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L647-L721)
 
 ```text
 		usb@1c19000 {
