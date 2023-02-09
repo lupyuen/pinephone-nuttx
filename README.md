@@ -6436,11 +6436,13 @@ For more details, check out the article...
 
 # PinePhone on NuttX becomes a Feature Phone
 
-TODO: Voice calls, SMS, LoRa
+TODO: Voice calls, SMS, Feature phone, emergency, sd, sim, 
+
+TODO: LoRa, natural disasters 
 
 # USB Driver and LTE Modem Driver for PinePhone
 
-TODO
+TODO: Usb, imx8, bsd
 
 "7.5. USB", Page 583, A64 User Manual
 
