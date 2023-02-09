@@ -2,7 +2,7 @@
 
 # Apache NuttX RTOS for PinePhone
 
-Read the articles...
+Apache NuttX is a Real-Time Operating System (RTOS) that runs on PINE64 PinePhone. Read the articles...
 
 -   ["NuttX RTOS for PinePhone: What is it?"](https://lupyuen.github.io/articles/what)
 
