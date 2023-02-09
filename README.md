@@ -81,7 +81,7 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
 - [UART Driver for NuttX](#uart-driver-for-nuttx)
 - [PinePhone U-Boot Log](#pinephone-u-boot-log)
 - [NuttX Boots On PinePhone](#nuttx-boots-on-pinephone)
-- [NuttX Boot Log](#nuttx-boot-log)
+  - [NuttX Boot Log](#nuttx-boot-log)
 - [Interrupt Controller](#interrupt-controller)
 - [Multi Core SMP](#multi-core-smp)
 - [System Timer](#system-timer)
