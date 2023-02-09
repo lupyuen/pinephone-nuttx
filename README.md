@@ -6476,6 +6476,12 @@ Or the LoRa Driver that we have ported to NuttX...
 
 -   ["LoRa SX1262 on Apache NuttX RTOS"](https://lupyuen.github.io/articles/sx1262)
 
+_Will PinePhone on NuttX become a fully-functional smartphone?_
+
+Maybe someday? We're still lacking plenty of drivers: WiFi, Bluetooth LE, GPS, Audio, ...
+
+Probably better to start as a Feature Phone (or LoRa Communication) and build up.
+
 # USB Driver and LTE Modem Driver for PinePhone
 
 _What NuttX Drivers would we need to turn PinePhone into a Feature Phone? (Only Voice Calls and SMS)_
