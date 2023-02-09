@@ -6517,11 +6517,11 @@ _How did we get the FreeBSD and NetBSD Drivers?_
 PinePhone's Device Tree says that the USB Drivers are...
 
 ```text
-		usb@1c19000 {
-			compatible = "allwinner,sun8i-a33-musb";
-    ...
-		phy@1c19400 {
-			compatible = "allwinner,sun50i-a64-usb-phy";
+usb@1c19000 {
+  compatible = "allwinner,sun8i-a33-musb";
+  ...
+phy@1c19400 {
+  compatible = "allwinner,sun50i-a64-usb-phy";
 ```
 
 So we searched for `allwinner,sun8i-a33-musb` and `allwinner,sun50i-a64-usb-phy`.
@@ -6529,81 +6529,81 @@ So we searched for `allwinner,sun8i-a33-musb` and `allwinner,sun50i-a64-usb-phy`
 Here's the PinePhone USB Device Tree: [sun50i-a64-pinephone-1.2.dts](https://github.com/lupyuen/pinephone-nuttx/blob/main/sun50i-a64-pinephone-1.2.dts#L647-L721)
 
 ```text
-		usb@1c19000 {
-			compatible = "allwinner,sun8i-a33-musb";
-			reg = <0x1c19000 0x400>;
-			clocks = <0x02 0x29>;
-			resets = <0x02 0x12>;
-			interrupts = <0x00 0x47 0x04>;
-			interrupt-names = "mc";
-			phys = <0x31 0x00>;
-			phy-names = "usb";
-			extcon = <0x31 0x00>;
-			dr_mode = "otg";
-			status = "okay";
-		};
+usb@1c19000 {
+  compatible = "allwinner,sun8i-a33-musb";
+  reg = <0x1c19000 0x400>;
+  clocks = <0x02 0x29>;
+  resets = <0x02 0x12>;
+  interrupts = <0x00 0x47 0x04>;
+  interrupt-names = "mc";
+  phys = <0x31 0x00>;
+  phy-names = "usb";
+  extcon = <0x31 0x00>;
+  dr_mode = "otg";
+  status = "okay";
+};
 
-		phy@1c19400 {
-			compatible = "allwinner,sun50i-a64-usb-phy";
-			reg = <0x1c19400 0x14 0x1c1a800 0x04 0x1c1b800 0x04>;
-			reg-names = "phy_ctrl\0pmu0\0pmu1";
-			clocks = <0x02 0x56 0x02 0x57>;
-			clock-names = "usb0_phy\0usb1_phy";
-			resets = <0x02 0x00 0x02 0x01>;
-			reset-names = "usb0_reset\0usb1_reset";
-			status = "okay";
-			#phy-cells = <0x01>;
-			usb-role-switch;
-			phandle = <0x31>;
+phy@1c19400 {
+  compatible = "allwinner,sun50i-a64-usb-phy";
+  reg = <0x1c19400 0x14 0x1c1a800 0x04 0x1c1b800 0x04>;
+  reg-names = "phy_ctrl\0pmu0\0pmu1";
+  clocks = <0x02 0x56 0x02 0x57>;
+  clock-names = "usb0_phy\0usb1_phy";
+  resets = <0x02 0x00 0x02 0x01>;
+  reset-names = "usb0_reset\0usb1_reset";
+  status = "okay";
+  #phy-cells = <0x01>;
+  usb-role-switch;
+  phandle = <0x31>;
 
-			port {
+  port {
 
-				endpoint {
-					remote-endpoint = <0x32>;
-					phandle = <0x47>;
-				};
-			};
-		};
+    endpoint {
+      remote-endpoint = <0x32>;
+      phandle = <0x47>;
+    };
+  };
+};
 
-		usb@1c1a000 {
-			compatible = "allwinner,sun50i-a64-ehci\0generic-ehci";
-			reg = <0x1c1a000 0x100>;
-			interrupts = <0x00 0x48 0x04>;
-			clocks = <0x02 0x2c 0x02 0x2a 0x02 0x5b>;
-			resets = <0x02 0x15 0x02 0x13>;
-			status = "okay";
-		};
+usb@1c1a000 {
+  compatible = "allwinner,sun50i-a64-ehci\0generic-ehci";
+  reg = <0x1c1a000 0x100>;
+  interrupts = <0x00 0x48 0x04>;
+  clocks = <0x02 0x2c 0x02 0x2a 0x02 0x5b>;
+  resets = <0x02 0x15 0x02 0x13>;
+  status = "okay";
+};
 
-		usb@1c1a400 {
-			compatible = "allwinner,sun50i-a64-ohci\0generic-ohci";
-			reg = <0x1c1a400 0x100>;
-			interrupts = <0x00 0x49 0x04>;
-			clocks = <0x02 0x2c 0x02 0x5b>;
-			resets = <0x02 0x15>;
-			status = "okay";
-		};
+usb@1c1a400 {
+  compatible = "allwinner,sun50i-a64-ohci\0generic-ohci";
+  reg = <0x1c1a400 0x100>;
+  interrupts = <0x00 0x49 0x04>;
+  clocks = <0x02 0x2c 0x02 0x5b>;
+  resets = <0x02 0x15>;
+  status = "okay";
+};
 
-		usb@1c1b000 {
-			compatible = "allwinner,sun50i-a64-ehci\0generic-ehci";
-			reg = <0x1c1b000 0x100>;
-			interrupts = <0x00 0x4a 0x04>;
-			clocks = <0x02 0x2d 0x02 0x2b 0x02 0x5d>;
-			resets = <0x02 0x16 0x02 0x14>;
-			phys = <0x31 0x01>;
-			phy-names = "usb";
-			status = "okay";
-		};
+usb@1c1b000 {
+  compatible = "allwinner,sun50i-a64-ehci\0generic-ehci";
+  reg = <0x1c1b000 0x100>;
+  interrupts = <0x00 0x4a 0x04>;
+  clocks = <0x02 0x2d 0x02 0x2b 0x02 0x5d>;
+  resets = <0x02 0x16 0x02 0x14>;
+  phys = <0x31 0x01>;
+  phy-names = "usb";
+  status = "okay";
+};
 
-		usb@1c1b400 {
-			compatible = "allwinner,sun50i-a64-ohci\0generic-ohci";
-			reg = <0x1c1b400 0x100>;
-			interrupts = <0x00 0x4b 0x04>;
-			clocks = <0x02 0x2d 0x02 0x5d>;
-			resets = <0x02 0x16>;
-			phys = <0x31 0x01>;
-			phy-names = "usb";
-			status = "okay";
-		};
+usb@1c1b400 {
+  compatible = "allwinner,sun50i-a64-ohci\0generic-ohci";
+  reg = <0x1c1b400 0x100>;
+  interrupts = <0x00 0x4b 0x04>;
+  clocks = <0x02 0x2d 0x02 0x5d>;
+  resets = <0x02 0x16>;
+  phys = <0x31 0x01>;
+  phy-names = "usb";
+  status = "okay";
+};
 ```
 
 # Test Logs
