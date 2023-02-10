@@ -6512,7 +6512,7 @@ Refer to the Allwinner A64 USB Drivers in FreeBSD and NetBSD...
 
 _But Allwinner A64's Official Docs are horrigibly lacking..._
 
-Maybe we refer to the NXP i.MX 8 docs, and we compare with the FreeBSD / NetBSD USB Drivers for i.MX 8?
+Maybe we refer to the [NXP i.MX 8 USB Docs](https://www.nxp.com/webapp/Download?colCode=IMX8MDQLQRM), and we compare with the FreeBSD / NetBSD USB Drivers for i.MX 8?
 
 (Since NXP i.MX 8 is so much better documented than Allwinner A64)
 
