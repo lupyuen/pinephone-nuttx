@@ -6498,13 +6498,17 @@ Which talks over USB Serial. Thus we also need a NuttX Driver for PinePhone's __
 
 (See the USB Docs in Allwinner A64 User Manual, Section 7.5 "USB", Page 583)
 
-_Any sample code?_
+_Any sample code for Allwinner A64 USB?_
 
 Refer to the Allwinner A64 USB Drivers in FreeBSD and NetBSD...
 
--   [freebsd-src/sys/dev/usb/controller/musb_otg_allwinner.c](https://github.com/freebsd/freebsd-src/blob/main/sys/dev/usb/controller/musb_otg_allwinner.c#L95)
+-   [freebsd/sys/dev/usb/controller/musb_otg_allwinner.c](https://github.com/freebsd/freebsd-src/blob/main/sys/dev/usb/controller/musb_otg_allwinner.c#L95)
 
--   [NetBSD/sys/arch/arm/sunxi/sunxi_usbphy.c](https://github.com/NetBSD/src/blob/trunk/sys/arch/arm/sunxi/sunxi_usbphy.c#L95)
+    [freebsd/sys/arm/allwinner/aw_usbphy.c](https://github.com/freebsd/freebsd-src/blob/main/sys/arm/allwinner/aw_usbphy.c#L135)
+
+-   [NetBSD/sys/arch/arm/sunxi/sunxi_musb.c](https://github.com/NetBSD/src/blob/trunk/sys/arch/arm/sunxi/sunxi_musb.c#L67)
+
+    [NetBSD/sys/arch/arm/sunxi/sunxi_usbphy.c](https://github.com/NetBSD/src/blob/trunk/sys/arch/arm/sunxi/sunxi_usbphy.c#L95)
 
 _But Allwinner A64's Official Docs are horrigibly lacking..._
 
