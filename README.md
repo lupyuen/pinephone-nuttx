@@ -6513,6 +6513,8 @@ Refer to the Allwinner A64 USB Drivers in FreeBSD and NetBSD...
 
 -   [freebsd/sys/dev/usb/controller/musb_otg_allwinner.c](https://github.com/freebsd/freebsd-src/blob/main/sys/dev/usb/controller/musb_otg_allwinner.c#L95)
 
+    [freebsd/sys/dev/usb/controller/musb_otg.c](https://github.com/freebsd/freebsd-src/blob/main/sys/dev/usb/controller/musb_otg.c)
+
     [freebsd/sys/arm/allwinner/aw_usbphy.c](https://github.com/freebsd/freebsd-src/blob/main/sys/arm/allwinner/aw_usbphy.c#L135)
 
 -   [NetBSD/sys/arch/arm/sunxi/sunxi_musb.c](https://github.com/NetBSD/src/blob/trunk/sys/arch/arm/sunxi/sunxi_musb.c#L67)
