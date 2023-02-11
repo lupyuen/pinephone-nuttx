@@ -6499,7 +6499,9 @@ Which talks over USB Serial. Thus we also need a NuttX Driver for PinePhone's __
 
 Here are the docs for Allwinner A64 USB Controller...
 
--   [Allwinner A64 User Manual](https://github.com/lupyuen/pinephone-nuttx/releases/download/doc/Allwinner_A64_User_Manual_V1.1.pdf), Section 7.5 "USB", Page 583
+-   [Allwinner A64 User Manual](https://github.com/lupyuen/pinephone-nuttx/releases/download/doc/Allwinner_A64_User_Manual_V1.1.pdf), Section 7.5 "USB" (Page 583)
+
+-   [Allwinner A20 User Manual](https://github.com/allwinner-zh/documents/raw/master/A20/A20_User_Manual_v1.4_20150510.pdf), Section 6.7 "USB DRD" (Page 682), Section 6.8 "USB Host" (Page 683)
 
 -   [Allwinner USB OTG Controller Register Guide](https://linux-sunxi.org/USB_OTG_Controller_Register_Guide)
 
