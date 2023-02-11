@@ -6621,6 +6621,17 @@ usb@1c1b400 {
   status = "okay";
 };
 ```
+# Compile NuttX on Android with Termux
+
+_Can we compile NuttX on an Android Phone (or Tablet) with Termux?_
+
+That would be really cool for checking whether the Latest NuttX Updates are building OK for our target device... All we need is an Android Phone!
+
+We managed to install the NuttX Build Tools on Android Termux (including `kconfig`)...
+
+-   ["Compile Apache NuttX RTOS on Android with Termux"](https://gist.github.com/lupyuen/f59c681dde9ebac86b331f2577aa04ad)
+
+NuttX `make` starts OK, but it fails later because we couldn't build the GCC Arm64 Toolchain on Android Termux.
 
 # Test Logs
 
