@@ -6497,7 +6497,13 @@ We need a NuttX Driver for the PinePhone's __Quectel LTE Modem__.
 
 Which talks over USB Serial. Thus we also need a NuttX Driver for PinePhone's __Allwinner A64 USB Controller__.
 
-(See the USB Docs in Allwinner A64 User Manual, Section 7.5 "USB", Page 583)
+Here are the docs for Allwinner A64 USB Controller...
+
+-   [Allwinner A64 User Manual](https://github.com/lupyuen/pinephone-nuttx/releases/download/doc/Allwinner_A64_User_Manual_V1.1.pdf), Section 7.5 "USB", Page 583
+
+-   [Allwinner USB OTG Controller Register Guide](https://linux-sunxi.org/USB_OTG_Controller_Register_Guide)
+
+-   [Mentor Graphics MUSBMHDRC USB 2.0 Multi-Point Dual-Role Controller: Product Specification and Programming Guide](https://linux-sunxi.org/images/7/73/Musbmhdrc.pdf)
 
 _Any sample code for Allwinner A64 USB?_
 
