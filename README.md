@@ -6545,7 +6545,11 @@ And the NuttX USB Driver for STM32...
 
 -   [stm32_usbhost.c](https://github.com/apache/nuttx/blob/master/arch/arm/src/stm32/stm32_usbhost.c)
 
-_How did we get the FreeBSD and NetBSD Drivers?_
+(USB OTG FS: Able to act as a device/host/OTG peripheral, at full speed 12Mbps)
+
+(USB OTG HS: Able to act as a device/host/OTG peripheral, at full speed 12Mbps or high speed 480Mbps)
+
+_How did we get the FreeBSD and NetBSD USB Drivers for Allwinner A64?_
 
 PinePhone's Device Tree says that the USB Drivers are...
 
