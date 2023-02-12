@@ -6491,9 +6491,11 @@ Probably better to start as a Feature Phone (or LoRa Communication) and build up
 
 # USB Driver and LTE Modem Driver for PinePhone
 
-_What NuttX Drivers would we need to turn PinePhone into a Feature Phone? (Only Voice Calls and SMS)_
+_What NuttX Drivers would we need to turn PinePhone into a Feature Phone? (Voice Calls and SMS only)_
 
-We need a NuttX Driver for the PinePhone's __Quectel LTE Modem__.
+We need a NuttX Driver for the PinePhone's __Quectel LTE Modem__...
+
+![Quectel LTE Modem in PinePhone](https://lupyuen.github.io/images/usb2-title.jpg)
 
 Which talks over USB Serial. Thus we also need a NuttX Driver for PinePhone's __Allwinner A64 USB Controller__.
 
