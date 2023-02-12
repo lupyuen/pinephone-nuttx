@@ -6537,6 +6537,12 @@ And the NuttX USB Driver for STM32...
 
 -   [stm32_otgfshost.c](https://github.com/apache/nuttx/blob/master/arch/arm/src/stm32/stm32_otgfshost.c)
 
+-   [stm32_otgfsdev.c](https://github.com/apache/nuttx/blob/master/arch/arm/src/stm32/stm32_otgfsdev.c)
+
+-   [stm32_otghshost.c](https://github.com/apache/nuttx/blob/master/arch/arm/src/stm32/stm32_otghshost.c)
+
+-   [stm32_otghsdev.c](https://github.com/apache/nuttx/blob/master/arch/arm/src/stm32/stm32_otghsdev.c)
+
 -   [stm32_usbhost.c](https://github.com/apache/nuttx/blob/master/arch/arm/src/stm32/stm32_usbhost.c)
 
 _How did we get the FreeBSD and NetBSD Drivers?_
