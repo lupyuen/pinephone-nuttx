@@ -6535,9 +6535,9 @@ Check out this NuttX Doc on USB Drivers...
 
 And the NuttX USB Driver for STM32...
 
--   [stm32_otgfshost.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/master/arch/arm/src/stm32/stm32_otgfshost.c)
+-   [stm32_otgfshost.c](https://github.com/apache/nuttx/blob/master/arch/arm/src/stm32/stm32_otgfshost.c)
 
--   [stm32_usbhost.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/master/arch/arm/src/stm32/stm32_usbhost.c)
+-   [stm32_usbhost.c](https://github.com/apache/nuttx/blob/master/arch/arm/src/stm32/stm32_usbhost.c)
 
 _How did we get the FreeBSD and NetBSD Drivers?_
 
