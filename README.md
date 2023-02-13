@@ -6642,6 +6642,7 @@ usb@1c1b400 {
   status = "okay";
 };
 ```
+
 # Compile NuttX on Android with Termux
 
 _Can we compile NuttX on an Android Phone (or Tablet) with Termux?_
