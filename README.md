@@ -2,7 +2,7 @@
 
 # Apache NuttX RTOS for PinePhone
 
-Apache NuttX is a Real-Time Operating System (RTOS) that runs on PINE64 PinePhone. Read the articles...
+Apache NuttX is a lightweight __Real-Time Operating System (RTOS)__ that runs on PINE64 PinePhone. Read the articles...
 
 -   ["NuttX RTOS for PinePhone: What is it?"](https://lupyuen.github.io/articles/what)
 
@@ -28,13 +28,17 @@ __LVGL Graphics__
 
 -   ["NuttX RTOS for PinePhone: LVGL Terminal for NSH Shell"](https://lupyuen.github.io/articles/terminal)
 
-__LEDs__
+__USB__
 
--   ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
+-   ["NuttX RTOS for PinePhone: Exploring USB"](https://lupyuen.github.io/articles/usb2)
 
 __UART__
 
 -   ["NuttX RTOS for PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
+
+__LEDs__
+
+-   ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
 
 __Interrupts__
 
@@ -69,6 +73,10 @@ __Older Articles__
 -   ["Rendering PinePhone's Display (DE and TCON0)"](https://lupyuen.github.io/articles/de)
 
 -   ["NuttX RTOS for PinePhone: Render Graphics in Zig"](https://lupyuen.github.io/articles/de2)
+
+__Can AI Help?__
+
+-   ["Apache NuttX RTOS trips ChatGPT"](https://lupyuen.github.io/articles/chatgpt)
 
 _What's NuttX? Why run it on PinePhone?_
 
