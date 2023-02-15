@@ -28,17 +28,17 @@ __LVGL Graphics__
 
 -   ["NuttX RTOS for PinePhone: LVGL Terminal for NSH Shell"](https://lupyuen.github.io/articles/terminal)
 
-__USB__
+__GPIO__
 
--   ["NuttX RTOS for PinePhone: Exploring USB"](https://lupyuen.github.io/articles/usb2)
+-   ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
 
 __UART__
 
 -   ["NuttX RTOS for PinePhone: UART Driver"](https://lupyuen.github.io/articles/serial)
 
-__LEDs__
+__USB__
 
--   ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
+-   ["NuttX RTOS for PinePhone: Exploring USB"](https://lupyuen.github.io/articles/usb2)
 
 __Interrupts__
 
