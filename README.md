@@ -187,6 +187,7 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
 - [PinePhone on NuttX becomes a Feature Phone](#pinephone-on-nuttx-becomes-a-feature-phone)
 - [USB Driver and LTE Modem Driver for PinePhone](#usb-driver-and-lte-modem-driver-for-pinephone)
 - [Compile NuttX on Android with Termux](#compile-nuttx-on-android-with-termux)
+- [Emulate PinePhone with Unicorn Emulator](#emulate-pinephone-with-unicorn-emulator)
 - [Test Logs](#test-logs)
   - [USB Devices on PinePhone](#usb-devices-on-pinephone)
   - [Testing Zig Backlight Driver on PinePhone](#testing-zig-backlight-driver-on-pinephone)
