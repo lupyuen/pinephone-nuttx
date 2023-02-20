@@ -6499,6 +6499,10 @@ Probably better to start as a Feature Phone (or LoRa Communication) and build up
 
 # USB Driver and LTE Modem Driver for PinePhone
 
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: Exploring USB"](https://lupyuen.github.io/articles/usb2)
+
 _What NuttX Drivers would we need to turn PinePhone into a Feature Phone? (Voice Calls and SMS only)_
 
 We need a NuttX Driver for the PinePhone's __Quectel LTE Modem__...
@@ -6662,6 +6666,16 @@ We managed to install the NuttX Build Tools on Android Termux (including `kconfi
 -   ["Compile Apache NuttX RTOS on Android with Termux"](https://gist.github.com/lupyuen/f59c681dde9ebac86b331f2577aa04ad)
 
 NuttX `make` starts OK, but it fails later because we couldn't build the GCC Arm64 Toolchain on Android Termux.
+
+# Emulate PinePhone with Unicorn Emulator
+
+_To make PinePhone testing easier..._
+
+_Can we emulate Arm64 PinePhone with [Unicorn Emulator](https://www.unicorn-engine.org/)?_
+
+Check the updates here...
+
+-   [lupyuen/pinephone-emulator](https://github.com/lupyuen/pinephone-emulator)
 
 # Test Logs
 
