@@ -6678,6 +6678,8 @@ Check the updates here...
 
 -   [lupyuen/pinephone-emulator](https://github.com/lupyuen/pinephone-emulator)
 
+![Emulate Arm64 Machine Code](https://lupyuen.github.io/images/unicorn-code.png)
+
 # Test Logs
 
 This section contains PinePhone NuttX Logs captured from various tests...
