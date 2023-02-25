@@ -44,6 +44,10 @@ __Interrupts__
 
 -   ["NuttX RTOS for PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
 
+__Arm64 Emulation__
+
+-   ["(Possibly) Emulate PinePhone with Unicorn Emulator"](https://lupyuen.github.io/articles/unicorn)
+
 __Build and Boot NuttX__
 
 -   ["Build Apache NuttX RTOS for PinePhone"](https://lupyuen.github.io/articles/lvgl2#appendix-build-apache-nuttx-rtos-for-pinephone)
@@ -6674,9 +6678,9 @@ _To make PinePhone testing easier..._
 
 _Can we emulate Arm64 PinePhone with [Unicorn Emulator](https://www.unicorn-engine.org/)?_
 
-Check the updates here...
+Read the article...
 
--   [lupyuen/pinephone-emulator](https://github.com/lupyuen/pinephone-emulator)
+-   ["(Possibly) Emulate PinePhone with Unicorn Emulator"](https://lupyuen.github.io/articles/unicorn)
 
 ![Emulate Arm64 Machine Code](https://lupyuen.github.io/images/unicorn-code.png)
 
