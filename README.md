@@ -2441,6 +2441,10 @@ We'll talk more about the Arm MMU in the next section...
 
 ## Boot Sequence
 
+Read the article...
+
+-   ["PinePhone Boots NuttX"](https://lupyuen.github.io/articles/unicorn2#pinephone-boots-nuttx)
+
 This section describes the Boot Sequence for NuttX on PinePhone...
 
 1.  [Startup Code](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L117-L176) (in Arm64 Assembly) inits the Arm64 System Registers and UART Port.
