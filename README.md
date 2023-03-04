@@ -48,6 +48,8 @@ __Arm64 Emulation__
 
 -   ["(Possibly) Emulate PinePhone with Unicorn Emulator"](https://lupyuen.github.io/articles/unicorn)
 
+-   ["(Clickable) Call Graph for Apache NuttX Real-Time Operating System"](https://lupyuen.github.io/articles/unicorn2)
+
 __Build and Boot NuttX__
 
 -   ["Build Apache NuttX RTOS for PinePhone"](https://lupyuen.github.io/articles/lvgl2#appendix-build-apache-nuttx-rtos-for-pinephone)
@@ -6678,9 +6680,11 @@ _To make PinePhone testing easier..._
 
 _Can we emulate Arm64 PinePhone with [Unicorn Emulator](https://www.unicorn-engine.org/)?_
 
-Read the article...
+Read the articles...
 
 -   ["(Possibly) Emulate PinePhone with Unicorn Emulator"](https://lupyuen.github.io/articles/unicorn)
+
+-   ["(Clickable) Call Graph for Apache NuttX Real-Time Operating System"](https://lupyuen.github.io/articles/unicorn2)
 
 ![Emulate Arm64 Machine Code](https://lupyuen.github.io/images/unicorn-code.png)
 
