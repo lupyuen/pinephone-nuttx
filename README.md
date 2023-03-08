@@ -44,6 +44,12 @@ __Interrupts__
 
 -   ["NuttX RTOS for PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
 
+__Boot Sequence__
+
+-   ["PinePhone Boots NuttX"](https://lupyuen.github.io/articles/unicorn2#pinephone-boots-nuttx)
+
+-   ["PinePhone Continues Booting NuttX"](https://lupyuen.github.io/articles/unicorn2#pinephone-continues-booting-nuttx)
+
 __Arm64 Emulation__
 
 -   ["(Possibly) Emulate PinePhone with Unicorn Emulator"](https://lupyuen.github.io/articles/unicorn)
