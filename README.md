@@ -38,6 +38,8 @@ __UART__
 
 __USB__
 
+-   ["NuttX RTOS for PinePhone: Simpler USB with EHCI (Enhanced Host Controller Interface)"](https://lupyuen.github.io/articles/usb3)
+
 -   ["NuttX RTOS for PinePhone: Exploring USB"](https://lupyuen.github.io/articles/usb2)
 
 __Interrupts__
