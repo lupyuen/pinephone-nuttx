@@ -914,7 +914,7 @@ Which connects to the Headphone Port. Genius!
 
 ## Garbled Console Output
 
-The log appears garbled when `printf` is called by our NuttX Test Apps, due to concurrent printing by multiple tasks. Why?
+The log appears garbled when `printf` is called by our NuttX Test Apps, due to concurrent printing by multiple tasks...
 
 ```text
 nx_start_application: Starting init thread
@@ -955,6 +955,40 @@ This prevents `sinfo` from garbling the `printf` output...
   nsh: mkfatfs: command not found
   NuttShell (NSH) NuttX-11.0.0-RC2
   ```
+
+Also we have a temporary workaround until this gets fixed: [a64_serial.c](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/91516c7cef28a79516d6196f070320a16649cf90/arch/arm64/src/a64/a64_serial.c#L424-L452)
+
+```c
+static void a64_uart_send(struct uart_dev_s *dev, int ch)
+{
+  const struct a64_uart_port_s *port = (struct a64_uart_port_s *)dev->priv;
+  const struct a64_uart_config *config = &port->config;
+
+#define BUFFER_UART
+#ifdef BUFFER_UART
+  //// TODO: Fix the garbled output. Buffer the chars until we see CR or LF.
+  static char buf[256];
+  static int pos = 0;
+  if (ch != '>' && ch != '\r' && ch != '\n' && pos < sizeof(buf))
+    {
+      buf[pos] = ch;
+      pos += 1;
+      return;
+    }
+  for (int i = 0; i < pos; i++)
+    {
+      up_putc(buf[i]);      
+    }
+  pos = 0;
+  up_putc(ch);
+  UNUSED(config);
+#else
+  /* Write char to Transmit Holding Register (UART_THR) */
+
+  putreg8(ch, UART_THR(config->uart));
+#endif // BUFFER_UART
+}
+```
 
 FYI: `printf` Console Output Stream is locked and unlocked with a Mutex. Let's log the locking and unlocking of the Mutex...
 
