@@ -122,6 +122,7 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
   - [Will NuttX Boot On PinePhone?](#will-nuttx-boot-on-pinephone)
 - [UART Driver for NuttX](#uart-driver-for-nuttx)
   - [Garbled Console Output](#garbled-console-output)
+  - [Configure UART Port](#configure-uart-port)
 - [Boot NuttX on PinePhone](#boot-nuttx-on-pinephone)
   - [PinePhone U-Boot Log](#pinephone-u-boot-log)
   - [NuttX Boots On PinePhone](#nuttx-boots-on-pinephone)
