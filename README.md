@@ -1091,6 +1091,10 @@ FYI: How `printf` works...
 [`fputc`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_fputc.c#L31-L61) also calls...
 - [`lib_libfflush`](https://github.com/apache/nuttx/blob/master/libs/libc/stdio/lib_libfflush.c#L40-L171)
 
+## Configure UART Port
+
+TODO
+
 # Boot NuttX on PinePhone
 
 Read the article...
