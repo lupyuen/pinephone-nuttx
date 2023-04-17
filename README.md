@@ -937,7 +937,15 @@ nsh> nx_start: CPU0: Beginning Idle Loop
 
 [(Source)](https://gist.github.com/lupyuen/7537da777d728a22ab379b1ef234a2d1)
 
-Solution: Disable "Scheduler Informational Output" in...
+_Why is the output garbled?_
+
+The output is garbled because there 2 ways of writing to the Console Output...
+
+- `up_putc`: Called by the NuttX Kernel to log messages (like `_info`)
+
+- `a64_uart_send`: Allwinner A64 UART Driver is called by NuttX Apps to print messages (like `printf`)
+
+To fix the output garbled at startup: Disable "Scheduler Informational Output" in...
 
 "Build Setup > Debug Options > Enable Debug Features > Scheduler Debug Features"
 
@@ -989,6 +997,10 @@ static void a64_uart_send(struct uart_dev_s *dev, int ch)
 #endif // BUFFER_UART
 }
 ```
+
+This forces `a64_uart_send` to call `up_putc` to print an entire line of text. (Instead of character by character)
+
+This also means that the `nsh` prompt will no longer echo text character by character. We need to press Enter to see the `nsh` output.
 
 FYI: `printf` Console Output Stream is locked and unlocked with a Mutex. Let's log the locking and unlocking of the Mutex...
 
