@@ -1094,7 +1094,15 @@ FYI: How `printf` works...
 
 ## Configure UART Port
 
-TODO
+To support multiple UART Ports, we copied the following functions from Allwinner A1X UART Driver...
+
+- [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/a7d71d23d5a10295f32e96c1a798723357ee3da8/arch/arm64/src/a64/a64_serial.c#L407-L520)
+
+- [`a64_uart_irq_handler`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/a7d71d23d5a10295f32e96c1a798723357ee3da8/arch/arm64/src/a64/a64_serial.c#L295-L405)
+
+And we modified [`a64_uart_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/a7d71d23d5a10295f32e96c1a798723357ee3da8/arch/arm64/src/a64/a64_serial.c#L522-L543) to call [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/a7d71d23d5a10295f32e96c1a798723357ee3da8/arch/arm64/src/a64/a64_serial.c#L407-L520)
+
+This will be used for testing the PinePhone LTE Modem on UART3.
 
 # Boot NuttX on PinePhone
 
