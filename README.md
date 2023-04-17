@@ -123,6 +123,7 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
 - [UART Driver for NuttX](#uart-driver-for-nuttx)
   - [Garbled Console Output](#garbled-console-output)
   - [Configure UART Port](#configure-uart-port)
+  - [Test UART3 Port](#test-uart3-port)
 - [Boot NuttX on PinePhone](#boot-nuttx-on-pinephone)
   - [PinePhone U-Boot Log](#pinephone-u-boot-log)
   - [NuttX Boots On PinePhone](#nuttx-boots-on-pinephone)
