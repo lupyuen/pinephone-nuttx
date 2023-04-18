@@ -1097,11 +1097,15 @@ FYI: How `printf` works...
 
 To support multiple UART Ports, we copied the following functions from the [Allwinner A1X UART Driver](https://github.com/apache/nuttx/blob/master/arch/arm/src/a1x/a1x_serial.c#L695-L987)...
 
-- [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/a7d71d23d5a10295f32e96c1a798723357ee3da8/arch/arm64/src/a64/a64_serial.c#L407-L520)
+- [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/d863c319dd449b6e0c66b3ea4e04d60aa7264105/arch/arm64/src/a64/a64_serial.c#L408-L516)
 
-- [`a64_uart_irq_handler`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/a7d71d23d5a10295f32e96c1a798723357ee3da8/arch/arm64/src/a64/a64_serial.c#L295-L405)
+- [`a64_uart_irq_handler`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/d863c319dd449b6e0c66b3ea4e04d60aa7264105/arch/arm64/src/a64/a64_serial.c#L296-L406)
 
-And we modified [`a64_uart_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/a7d71d23d5a10295f32e96c1a798723357ee3da8/arch/arm64/src/a64/a64_serial.c#L522-L543) to call [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/a7d71d23d5a10295f32e96c1a798723357ee3da8/arch/arm64/src/a64/a64_serial.c#L407-L520)
+We modified [`a64_uart_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/d863c319dd449b6e0c66b3ea4e04d60aa7264105/arch/arm64/src/a64/a64_serial.c#L518-L539) to call [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/d863c319dd449b6e0c66b3ea4e04d60aa7264105/arch/arm64/src/a64/a64_serial.c#L408-L516).
+
+We register UART3 as `/dev/ttyS1` in [`arm64_serialinit`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/d863c319dd449b6e0c66b3ea4e04d60aa7264105/arch/arm64/src/a64/a64_serial.c#L1129-L1196).
+
+[(Here's the log)](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/d863c319dd449b6e0c66b3ea4e04d60aa7264105/arch/arm64/src/a64/a64_serial.c#L1239-L1450)
 
 This will be used for testing the PinePhone LTE Modem on UART3...
 
