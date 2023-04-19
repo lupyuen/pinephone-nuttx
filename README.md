@@ -1190,6 +1190,16 @@ TODO: Check the Allwinner A64 UART Register Addresses
 
 TODO: Why the spurious UART interrupts?
 
+TODO: Why is DLAB Before Value different for UART0 vs UART3?
+
+```text
+// UART0:
+up_serialout: addr=0x1c2800c, before=0x3, after=0x3
+
+// UART3:
+up_serialout: addr=0x1c28c0c, before=0x83, after=0x3
+```
+
 # Boot NuttX on PinePhone
 
 Read the article...
