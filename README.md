@@ -1200,6 +1200,14 @@ up_serialout: addr=0x1c2800c, before=0x3, after=0x3
 up_serialout: addr=0x1c28c0c, before=0x83, after=0x3
 ```
 
+TODO: Why is BAUD Divisor originally 0 for UART0?
+
+```text
+up_setup: Set the BAUD divisor
+up_serialout: addr=0x1c28004, before=0x0, after=0x0
+up_serialout: addr=0x1c28000, before=0x0, after=0xd
+```
+
 # Boot NuttX on PinePhone
 
 Read the article...
