@@ -1113,9 +1113,15 @@ This will be used for testing the PinePhone LTE Modem on UART3...
 
 TODO
 
+This is how we read the UART3 port via `/dev/ttyS1`...
+
 [hello_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/9b88915d00a1e8f712d9a09269a8fb593a9a518b/examples/hello/hello_main.c#L42-L68)
 
+But the data doesn't look meaningful...
+
 [Output Log](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/9b88915d00a1e8f712d9a09269a8fb593a9a518b/examples/hello/hello_main.c#L217-L664)
+
+TODO: Why???
 
 # Boot NuttX on PinePhone
 
