@@ -1208,6 +1208,10 @@ up_serialout: addr=0x1c28004, before=0x0, after=0x0
 up_serialout: addr=0x1c28000, before=0x0, after=0xd
 ```
 
+Maybe because UART is busy?
+
+> "This register may only be accessed when the DLAB bit (UART_LCR[7]) is set and the UART is not busy (UART_USR[0] is zero)"
+
 # Boot NuttX on PinePhone
 
 Read the article...
