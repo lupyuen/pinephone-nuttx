@@ -1111,17 +1111,84 @@ This will be used for testing the PinePhone LTE Modem on UART3...
 
 ## Test UART3 Port
 
-TODO
+This is how we read and write the UART3 port via `/dev/ttyS1`: [hello_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/9b88915d00a1e8f712d9a09269a8fb593a9a518b/examples/hello/hello_main.c#L42-L68)
 
-This is how we read and write the UART3 port via `/dev/ttyS1`...
+```c
+  // Open /dev/ttyS1 (UART3)
+  int fd = open("/dev/ttyS1", O_RDWR);
+  printf("Open /dev/ttyS1: fd=%d\n", fd);
+  assert(fd > 0);
 
-[hello_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/9b88915d00a1e8f712d9a09269a8fb593a9a518b/examples/hello/hello_main.c#L42-L68)
+  // Write command
+  const char cmd[] = "AT\nAT\nAT\r\nAT\r\n";
+  ssize_t nbytes = write(fd, cmd, sizeof(cmd));
+  printf("Write command: nbytes=%ld\n", nbytes);
+  assert(nbytes == sizeof(cmd));
+
+  // Read response
+  for (;;)
+    {
+      static char buf[1024];
+      nbytes = read(fd, buf, sizeof(buf) - 1);
+      if (nbytes >= 0) { buf[nbytes] = 0; }
+      printf("Response: nbytes=%ld, buf=%s\n", nbytes, buf);
+
+      for (int i = 0; i < nbytes; i++)
+        {
+          char c = buf[i];
+          printf("[%02x] %c\n", c, c);
+        }
+    }
+
+  // Close the device
+  close(fd);
+```
 
 But the output from UART3 doesn't look meaningful...
 
-[Output Log](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/9b88915d00a1e8f712d9a09269a8fb593a9a518b/examples/hello/hello_main.c#L217-L664)
+```text
+nsh> hello
+up_setup: baud_rate=115200
+up_setup: Clear fifos
+up_serialout: addr=0x1c28c08, before=0x1, after=0x6
+up_setup: Set trigger
+up_serialout: addr=0x1c28c08, before=0x1, after=0x81
+up_setup: Set up the IER
+up_setup: Enter DLAB=1
+up_serialout: addr=0x1c28c0c, before=0x0, after=0x83
+up_setup: Set the BAUD divisor
+up_serialout: addr=0x1c28c04, before=0x0, after=0x0
+up_serialout: addr=0x1c28c00, before=0x0, after=0xd
+up_setup: Clear DLAB
+up_serialout: addr=0x1c28c0c, before=0x83, after=0x3
+up_setup: Configure the FIFOs
+up_serialout: addr=0x1c28c08, before=0xc1, after=0x87
+Hello, World!!
+Open /dev/ttyS1: fd=3
+Write command: nbytes=15
+Response: nbytes=4, buf=”.
+[d3] ”
+[10] .
+[00] .
+[00] .
+Response: nbytes=4, buf=:.
+[3a] :
+[02] .
+[00] .
+[00] .
+Response: nbytes=5, buf=ﬂ´.
+[df] ﬂ
+[ab] ´
+[04] .
+[00] .
+[00] .
+```
 
-TODO: Why???
+[(Output Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/9b88915d00a1e8f712d9a09269a8fb593a9a518b/examples/hello/hello_main.c#L217-L664)
+
+TODO: Check the Allwinner A64 UART Register Addresses
+
+TODO: Why the spurious UART interrupts?
 
 # Boot NuttX on PinePhone
 
