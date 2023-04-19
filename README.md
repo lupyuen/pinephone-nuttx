@@ -1113,6 +1113,10 @@ This will be used for testing the PinePhone LTE Modem on UART3...
 
 TODO
 
+[hello_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/9b88915d00a1e8f712d9a09269a8fb593a9a518b/examples/hello/hello_main.c#L42-L68)
+
+[Output Log](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/9b88915d00a1e8f712d9a09269a8fb593a9a518b/examples/hello/hello_main.c#L217-L664)
+
 # Boot NuttX on PinePhone
 
 Read the article...
