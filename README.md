@@ -1107,13 +1107,51 @@ We register UART3 as `/dev/ttyS1` in [`arm64_serialinit`](https://github.com/lup
 
 [(Here's the log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/7e9706c3dccc26dd33ddf71fd0ea64f9a17de4a1/examples/hello/hello_main.c#L76-L340)
 
-Be careful when logging to the UART Port! If the UART Port is busy, we won't be able to set the Baud Rate...
+Inside the UART Driver, be careful when logging to the UART Port! If the UART Port is busy doing logging, it won't allow us to the Baud Rate...
 
 > "This register may only be accessed when the DLAB bit (UART_LCR[7]) is set and the UART is not busy (UART_USR[0] is zero)"
+
+That's why we always wait for UART Not Busy before setting the Baud Rate. [(Like this)](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L486-L500)
+
+_What happens if UART Is Busy when we set the Baud Rate?_
+
+```text
+up_setup: Enter DLAB=1
+up_serialout: addr=0x1c2800c, before=0x3, after=0x83
+up_setup: Set the BAUD divisor
+up_serialout: addr=0x1c28004, before=0x0, after=0x0
+up_serialout: addr=0x1c28000, before=0x0, after=0xd
+up_setup: Clear DLAB
+up_serialout: addr=0x1c2800c, before=0x3, after=0x3
+```
+
+[(Source)](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L1306-L1313)
+
+From above, we see that the Baud Rate is not read correctly...
+
+```text
+up_serialout: addr=0x1c28000, before=0x0, after=0xd
+// For UART0: Before should be 0xd
+```
+
+And DLAB doesn't get cleared correctly...
+
+```text
+up_setup: Enter DLAB=1
+up_serialout: addr=0x1c2800c, before=0x3, after=0x83
+...
+up_setup: Clear DLAB
+up_serialout: addr=0x1c2800c, before=0x3, after=0x3
+// Before should be 0x83, not 0x3
+```
+
+We fix this by disabling the logging and waiting for UART Not Busy before setting the Baud Rate. [(Like this)](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L486-L500)
 
 Let's test the PinePhone LTE Modem on UART3...
 
 ## Test UART3 Port
+
+In the previous section we have configured UART3 for PinePhone's [4G LTE Modem](https://lupyuen.github.io/articles/lte).
 
 This is how we read and write the UART3 port via `/dev/ttyS1`: [hello_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/7e9706c3dccc26dd33ddf71fd0ea64f9a17de4a1/examples/hello/hello_main.c#L42-L69)
 
@@ -1195,6 +1233,8 @@ Why???
 TODO: Check the Allwinner A64 UART Register Addresses
 
 TODO: Why the spurious UART interrupts?
+
+TODO: Inside UART Driver, log the received chars
 
 # Boot NuttX on PinePhone
 
