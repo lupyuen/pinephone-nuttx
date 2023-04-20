@@ -1190,6 +1190,8 @@ Response: nbytes=6, buf=[�
 
 [(Output Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/7e9706c3dccc26dd33ddf71fd0ea64f9a17de4a1/examples/hello/hello_main.c#L205-L338)
 
+Why???
+
 TODO: Check the Allwinner A64 UART Register Addresses
 
 TODO: Why the spurious UART interrupts?
