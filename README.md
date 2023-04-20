@@ -1097,21 +1097,25 @@ FYI: How `printf` works...
 
 To support multiple UART Ports, we copied the following functions from the [Allwinner A1X UART Driver](https://github.com/apache/nuttx/blob/master/arch/arm/src/a1x/a1x_serial.c#L695-L987)...
 
-- [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/d863c319dd449b6e0c66b3ea4e04d60aa7264105/arch/arm64/src/a64/a64_serial.c#L408-L516)
+- [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L406-L537)
 
-- [`a64_uart_irq_handler`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/d863c319dd449b6e0c66b3ea4e04d60aa7264105/arch/arm64/src/a64/a64_serial.c#L296-L406)
+- [`a64_uart_irq_handler`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L294-L404)
 
-We modified [`a64_uart_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/d863c319dd449b6e0c66b3ea4e04d60aa7264105/arch/arm64/src/a64/a64_serial.c#L518-L539) to call [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/d863c319dd449b6e0c66b3ea4e04d60aa7264105/arch/arm64/src/a64/a64_serial.c#L408-L516).
+We modified [`a64_uart_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L539-L560) to call [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L406-L537).
 
-We register UART3 as `/dev/ttyS1` in [`arm64_serialinit`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/d863c319dd449b6e0c66b3ea4e04d60aa7264105/arch/arm64/src/a64/a64_serial.c#L1129-L1196).
+We register UART3 as `/dev/ttyS1` in [`arm64_serialinit`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L1150-L1217).
 
-[(Here's the log)](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/d863c319dd449b6e0c66b3ea4e04d60aa7264105/arch/arm64/src/a64/a64_serial.c#L1239-L1450)
+[(Here's the log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/7e9706c3dccc26dd33ddf71fd0ea64f9a17de4a1/examples/hello/hello_main.c#L76-L340)
 
-This will be used for testing the PinePhone LTE Modem on UART3...
+Be careful when logging to the UART Port! If the UART Port is busy, we won't be able to set the Baud Rate...
+
+> "This register may only be accessed when the DLAB bit (UART_LCR[7]) is set and the UART is not busy (UART_USR[0] is zero)"
+
+Let's test the PinePhone LTE Modem on UART3...
 
 ## Test UART3 Port
 
-This is how we read and write the UART3 port via `/dev/ttyS1`: [hello_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/9b88915d00a1e8f712d9a09269a8fb593a9a518b/examples/hello/hello_main.c#L42-L68)
+This is how we read and write the UART3 port via `/dev/ttyS1`: [hello_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/7e9706c3dccc26dd33ddf71fd0ea64f9a17de4a1/examples/hello/hello_main.c#L42-L69)
 
 ```c
   // Open /dev/ttyS1 (UART3)
@@ -1119,20 +1123,20 @@ This is how we read and write the UART3 port via `/dev/ttyS1`: [hello_main.c](ht
   printf("Open /dev/ttyS1: fd=%d\n", fd);
   assert(fd > 0);
 
-  // Write command
-  const char cmd[] = "AT\nAT\nAT\r\nAT\r\n";
-  ssize_t nbytes = write(fd, cmd, sizeof(cmd));
-  printf("Write command: nbytes=%ld\n", nbytes);
-  assert(nbytes == sizeof(cmd));
-
-  // Read response
+  // Forever write and read
   for (;;)
     {
+      // Write command
+      const char cmd[] = "AT\nAT\nAT\r\nAT\r\n";
+      ssize_t nbytes = write(fd, cmd, sizeof(cmd));
+      printf("Write command: nbytes=%ld\n", nbytes);
+      assert(nbytes == sizeof(cmd));
+
+      // Read response
       static char buf[1024];
       nbytes = read(fd, buf, sizeof(buf) - 1);
       if (nbytes >= 0) { buf[nbytes] = 0; }
       printf("Response: nbytes=%ld, buf=%s\n", nbytes, buf);
-
       for (int i = 0; i < nbytes; i++)
         {
           char c = buf[i];
@@ -1147,70 +1151,48 @@ This is how we read and write the UART3 port via `/dev/ttyS1`: [hello_main.c](ht
 But the output from UART3 doesn't look meaningful...
 
 ```text
+NuttShell (NSH) NuttX-12.0.3
 nsh> hello
-up_setup: baud_rate=115200
-up_setup: Clear fifos
-up_serialout: addr=0x1c28c08, before=0x1, after=0x6
-up_setup: Set trigger
-up_serialout: addr=0x1c28c08, before=0x1, after=0x81
-up_setup: Set up the IER
-up_setup: Enter DLAB=1
-up_serialout: addr=0x1c28c0c, before=0x0, after=0x83
-up_setup: Set the BAUD divisor
-up_serialout: addr=0x1c28c04, before=0x0, after=0x0
-up_serialout: addr=0x1c28c00, before=0x0, after=0xd
 up_setup: Clear DLAB
-up_serialout: addr=0x1c28c0c, before=0x83, after=0x3
+up_setup: addr=0x1c28c04, before=0x0, after=0x0
+up_setup: addr=0x1c28c00, before=0x0, after=0xd
 up_setup: Configure the FIFOs
-up_serialout: addr=0x1c28c08, before=0xc1, after=0x87
 Hello, World!!
 Open /dev/ttyS1: fd=3
 Write command: nbytes=15
-Response: nbytes=4, buf=”.
-[d3] ”
-[10] .
-[00] .
-[00] .
-Response: nbytes=4, buf=:.
-[3a] :
-[02] .
-[00] .
-[00] .
-Response: nbytes=5, buf=ﬂ´.
-[df] ﬂ
-[ab] ´
-[04] .
-[00] .
-[00] .
+Response: nbytes=7, buf=�~I
+[db] �
+[7e] ~
+[49] I
+[08] 
+[00] 
+[00] 
+[00] 
+Write command: nbytes=15
+Response: nbytes=8, buf=�W
+[eb] �
+[57] W
+[05] 
+[05] 
+[00] 
+[00] 
+[00] 
+[00] 
+Write command: nbytes=15
+Response: nbytes=6, buf=[� 
+[5b] [
+[ae] �
+[20]  
+[00] 
+[00] 
+[00] 
 ```
 
-[(Output Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/9b88915d00a1e8f712d9a09269a8fb593a9a518b/examples/hello/hello_main.c#L217-L664)
+[(Output Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/7e9706c3dccc26dd33ddf71fd0ea64f9a17de4a1/examples/hello/hello_main.c#L205-L338)
 
 TODO: Check the Allwinner A64 UART Register Addresses
 
 TODO: Why the spurious UART interrupts?
-
-TODO: Why is DLAB Before Value different for UART0 vs UART3?
-
-```text
-// UART0:
-up_serialout: addr=0x1c2800c, before=0x3, after=0x3
-
-// UART3:
-up_serialout: addr=0x1c28c0c, before=0x83, after=0x3
-```
-
-TODO: Why is BAUD Divisor originally 0 for UART0?
-
-```text
-up_setup: Set the BAUD divisor
-up_serialout: addr=0x1c28004, before=0x0, after=0x0
-up_serialout: addr=0x1c28000, before=0x0, after=0xd
-```
-
-Maybe because UART is busy?
-
-> "This register may only be accessed when the DLAB bit (UART_LCR[7]) is set and the UART is not busy (UART_USR[0] is zero)"
 
 # Boot NuttX on PinePhone
 
