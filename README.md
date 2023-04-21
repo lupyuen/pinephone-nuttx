@@ -1242,6 +1242,8 @@ TODO: Test CTS / RTS: Pull RTS (PD4 Output) to Low, check whether CTS (PD5 Input
 
 TODO: What is the meaning of this comment in the PinePhone Schematic? "Ver 1.1: Solved the TRX of UART3 and RTS CTS of UART4 could not work"
 
+TODO: What about DTR? (PB2)
+
 # Boot NuttX on PinePhone
 
 Read the article...
