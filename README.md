@@ -1264,6 +1264,8 @@ TODO: Modem PWR_KEY signal resistor population
 
 [(Source)](https://wiki.pine64.org/wiki/PinePhone_v1.1_-_Braveheart#Modem_PWR_KEY_signal_resistor_population)
 
+TODO: Is PWR_KEY connected to PB3 on my PinePhone?
+
 TODO: Set DTR (PB2) to Low to wake up modem
 
 TODO: Check PinePhone Device Tree for UART3. What is `pinctrl-0`? PD0 and PD1
