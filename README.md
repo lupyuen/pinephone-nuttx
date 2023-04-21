@@ -1244,7 +1244,7 @@ TODO: What is the meaning of this comment in the PinePhone Schematic? "Ver 1.1: 
 
 TODO: Set DTR (PB2) to Low to wake up modem
 
-TODO: Check PinePhone Device Tree for UART3
+TODO: Check PinePhone Device Tree for UART3. What is `pinctrl-0`?
 
 ```text
 		serial@1c28c00 {
@@ -1259,11 +1259,17 @@ TODO: Check PinePhone Device Tree for UART3
 			pinctrl-names = "default";
 			pinctrl-0 = <0x40>;
 		};
+    ...
+		pinctrl@1c20800 {
+      ...
+    	uart3-pins {
+				pins = "PD0\0PD1";
+				function = "uart3";
+				phandle = <0x40>;
+			};
 ```
 
-TODO: What is `pinctrl-0`?
-
-TODO: What does this say about `vbat-bb`?
+TODO: What does this say about `vbat-bb`? VBAT on PL7
 
 ```text
 	vbat-bb {
@@ -1276,6 +1282,8 @@ TODO: What does this say about `vbat-bb`?
 		enable-active-high;
 	};
 ```
+
+TODO: Do we need to program PMIC to enable VBAT?
 
 # Boot NuttX on PinePhone
 
