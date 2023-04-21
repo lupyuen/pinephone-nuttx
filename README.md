@@ -1244,6 +1244,8 @@ TODO: What is the meaning of this comment in the PinePhone Schematic? "Ver 1.1: 
 
 TODO: Set DTR (PB2) to Low to wake up modem
 
+TODO: Check PinePhone Device Tree for UART3
+
 # Boot NuttX on PinePhone
 
 Read the article...
