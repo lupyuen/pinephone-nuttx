@@ -1236,6 +1236,8 @@ TODO: Why the spurious UART interrupts?
 
 TODO: Inside UART Driver, log the received chars
 
+TODO: Do we need CTS / RTS on UART4?
+
 # Boot NuttX on PinePhone
 
 Read the article...
