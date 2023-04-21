@@ -1246,6 +1246,37 @@ TODO: Set DTR (PB2) to Low to wake up modem
 
 TODO: Check PinePhone Device Tree for UART3
 
+```text
+		serial@1c28c00 {
+			compatible = "snps,dw-apb-uart";
+			reg = <0x1c28c00 0x400>;
+			interrupts = <0x00 0x03 0x04>;
+			reg-shift = <0x02>;
+			reg-io-width = <0x04>;
+			clocks = <0x02 0x46>;
+			resets = <0x02 0x31>;
+			status = "okay";
+			pinctrl-names = "default";
+			pinctrl-0 = <0x40>;
+		};
+```
+
+TODO: What is `pinctrl-0`?
+
+TODO: What does this say about `vbat-bb`?
+
+```text
+	vbat-bb {
+		compatible = "regulator-fixed";
+		regulator-always-on;
+		regulator-name = "vbat-bb";
+		regulator-min-microvolt = <0x3567e0>;
+		regulator-max-microvolt = <0x3567e0>;
+		gpio = <0x3f 0x00 0x07 0x00>;
+		enable-active-high;
+	};
+```
+
 # Boot NuttX on PinePhone
 
 Read the article...
