@@ -1297,7 +1297,7 @@ Why???
 
 TODO: Why does PH9 STATUS stay High when we power on PL7 VBAT? It should go Low when we toggle PB3 PWRKEY, but it doesn't
 
-TODO: How does Genode OS do this? [(Modem Manager)](https://github.com/genodelabs/genode-allwinner/blob/master/src/drivers/modem/pinephone/main.cc)
+TODO: How does Genode OS do this? See [Modem Manager main.cc](https://github.com/genodelabs/genode-allwinner/blob/master/src/drivers/modem/pinephone/main.cc) and [power.h](https://github.com/genodelabs/genode-allwinner/blob/master/src/drivers/modem/pinephone/power.h)
 
 TODO: Can we read PH9 STATUS reliably? Is there really a problem with STATUS? Genode OS seems to be able to read STATUS
 
