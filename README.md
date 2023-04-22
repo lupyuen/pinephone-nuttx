@@ -1281,7 +1281,7 @@ Why???
 
   UART3 does not respond. So yes VBAT-BB must be on.
 
-- Increase the PWRKEY delays to 2 seconds. Still the same results.
+- Increase the PWRKEY delays to 2 seconds. Still the same problem.
 
 TODO: Inside UART Driver, log the received chars
 
