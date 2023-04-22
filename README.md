@@ -1277,7 +1277,9 @@ Why???
 
 - Do we need to program PMIC to enable VBAT? No
 
-TODO: Is VBAT-BB really on? What happens if we set PL7 VBAT to Low?
+- Is VBAT-BB really on? What happens if we set PL7 VBAT to Low?
+
+  UART3 does not respond. So yes VBAT-BB must be on.
 
 TODO: Increase the PWRKEY delays
 
