@@ -1283,6 +1283,8 @@ Why???
 
 - Increase the PWRKEY delays to 2 seconds. Still the same problem.
 
+TODO: Don't touch PMIC DCDC1. Might already be powered on.
+
 TODO: Why does PH9 STATUS stay High? Is it still booting? (Needs 30s?)
 
 TODO: Wait longer for PH9 STATUS to become low (>2.5s), then set PB3 PWRKEY to High. (After 30s?)
