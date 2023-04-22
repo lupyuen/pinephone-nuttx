@@ -1283,6 +1283,8 @@ Why???
 
 - Increase the PWRKEY delays to 2 seconds. Still the same problem.
 
+TODO: Can we read PH9 STATUS reliably? Is there really a problem with STATUS?
+
 TODO: Inside UART Driver, log the received chars
 
 TODO: Why the spurious UART interrupts?
