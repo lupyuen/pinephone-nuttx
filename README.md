@@ -1283,6 +1283,8 @@ Why???
 
 - Increase the PWRKEY delays to 2 seconds. Still the same problem.
 
+TODO: Why does PH9 STATUS stay High? Is it still booting? (Needs 30s?)
+
 TODO: Wait longer for PH9 STATUS to become low (>2.5s), then set PB3 PWRKEY to High. (After 30s?)
 
 "After STATUS pin (require external pull-up resistor) outputs a low level, PWRKEY pin can be released"
