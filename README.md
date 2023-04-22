@@ -1295,17 +1295,9 @@ Why???
 
   PH9 STATUS still stays at High. It never becomes Low.
 
-TODO: Why does PH9 STATUS stay High when we power on PL7 VBAT? It should go Low when we toggle PB3 PWRKEY, but it doesn't
+- Follow Genode OS and do this: [Modem Manager main.cc](https://github.com/genodelabs/genode-allwinner/blob/master/src/drivers/modem/pinephone/main.cc) and [power.h](https://github.com/genodelabs/genode-allwinner/blob/master/src/drivers/modem/pinephone/power.h)
 
-TODO: How does Genode OS do this? See [Modem Manager main.cc](https://github.com/genodelabs/genode-allwinner/blob/master/src/drivers/modem/pinephone/main.cc) and [power.h](https://github.com/genodelabs/genode-allwinner/blob/master/src/drivers/modem/pinephone/power.h)
-
-TODO: Can we read PH9 STATUS reliably? Is there really a problem with STATUS? Genode OS seems to be able to read STATUS
-
-TODO: Inside UART Driver, log the received chars
-
-TODO: Why the spurious UART interrupts?
-
-TODO: Don't touch PMIC DCDC1. Might already be powered on.
+  Yep it works OK yay!
 
 __Note:__ Modem UART flow control is broken
 
