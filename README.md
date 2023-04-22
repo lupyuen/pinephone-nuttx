@@ -1283,6 +1283,10 @@ Why???
 
 - Increase the PB3 PWRKEY delays to 2 seconds. Still the same problem.
 
+- What happens if PB3 PWRKEY stays at Low instead of High?
+
+  UART3 stops responding after a while. So we definitely need to boot with PB3 PWRKEY set to High.
+
 TODO: Don't touch PMIC DCDC1. Might already be powered on.
 
 TODO: Why does PH9 STATUS stay High? Is it still booting? (Needs 30s?)
