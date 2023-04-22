@@ -1232,6 +1232,8 @@ Why???
 
 - Check the Allwinner A64 UART Register Addresses: OK
 
+- Try all possible Baud Dates: 4800 bps, 9600 bps, 19200 bps, 38400 bps, 57600 bps, 115200 bps, 230400 bps, 460800 bps and 921600 bps: Still garbled
+
 - Test CTS / RTS: Pull RTS (PD4 Output) to Low, does CTS (PD5 Input) gets pulled to High? No
 
 - Set DTR (PB2) to Low to wake up modem: OK
@@ -1287,13 +1289,13 @@ Why???
 
   UART3 stops responding after a while. So we definitely need to boot with PB3 PWRKEY set to High.
 
-TODO: Don't touch PMIC DCDC1. Might already be powered on.
+- The doc says: "After STATUS pin (require external pull-up resistor) outputs a low level, PWRKEY pin can be released"
 
-TODO: Why does PH9 STATUS stay High? Is it still booting? (Needs 30s?)
+  What if we wait longer for PH9 STATUS to become low (>2.5s), then set PB3 PWRKEY to High. (After 30s?)
 
-TODO: Wait longer for PH9 STATUS to become low (>2.5s), then set PB3 PWRKEY to High. (After 30s?)
+  PH9 STATUS still stays at High. It never becomes Low.
 
-"After STATUS pin (require external pull-up resistor) outputs a low level, PWRKEY pin can be released"
+TODO: Why does PH9 STATUS stay High when we power on PL7 VBAT? It should go Low when we toggle PB3 PWRKEY, but it doesn't
 
 TODO: How does Genode OS do this? [(Modem Manager)](https://github.com/genodelabs/genode-allwinner/blob/master/src/drivers/modem/pinephone/main.cc)
 
@@ -1302,6 +1304,8 @@ TODO: Can we read PH9 STATUS reliably? Is there really a problem with STATUS? Ge
 TODO: Inside UART Driver, log the received chars
 
 TODO: Why the spurious UART interrupts?
+
+TODO: Don't touch PMIC DCDC1. Might already be powered on.
 
 __Note:__ Modem UART flow control is broken
 
