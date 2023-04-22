@@ -1281,7 +1281,7 @@ Why???
 
   UART3 does not respond. So yes VBAT-BB must be on.
 
-- Increase the PWRKEY delays to 2 seconds. Still the same problem.
+- Increase the PB3 PWRKEY delays to 2 seconds. Still the same problem.
 
 TODO: Don't touch PMIC DCDC1. Might already be powered on.
 
