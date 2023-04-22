@@ -1279,6 +1279,8 @@ Why???
 
 TODO: Is VBAT-BB really on? What happens if we set PL7 VBAT to Low?
 
+TODO: Increase the PWRKEY delays
+
 TODO: Inside UART Driver, log the received chars
 
 TODO: Why the spurious UART interrupts?
