@@ -1230,68 +1230,38 @@ Response: nbytes=6, buf=[�
 
 Why???
 
-TODO: Check the Allwinner A64 UART Register Addresses
+- Check the Allwinner A64 UART Register Addresses: OK
 
-TODO: Why the spurious UART interrupts?
+- Test CTS / RTS: Pull RTS (PD4 Output) to Low, does CTS (PD5 Input) gets pulled to High? No
 
-TODO: Inside UART Driver, log the received chars
+- Set DTR (PB2) to Low to wake up modem: OK
 
-TODO: Do we need CTS / RTS on UART4?
+- Check PinePhone Device Tree for UART3. What is `pinctrl-0`? PD0 and PD1
 
-TODO: Test CTS / RTS: Pull RTS (PD4 Output) to Low, check whether CTS (PD5 Input) gets pulled to High
-
-TODO: Modem UART flow control is broken
-
-> "Not resolved in v1.2 -- assumption is that USB will be used for high-bandwidth modem I/O.
-
-> BB-TX and BB-RX are connected to UART3 (PD0/PD1). BB-RTS and BB-CTS are connected to UART4 (PD4/PD5). To use hardware flow control, TX/RX would need to be connected to UART4, swapping PD0/PD1 with the motor control and rear camera reset GPIOs at PD2/PD3. This would need a device tree change.
-
-> Hardware flow control can be disabled with the AT+IFC command, and USB can also be used for commands instead of the UART. So the impact of this problem is unclear."
-
-[(Source)](https://wiki.pine64.org/wiki/PinePhone_v1.1_-_Braveheart#Modem_UART_flow_control_is_broken)
-
-TODO: Modem PWR_KEY signal resistor population
-
-> "Resolved in v1.2 by separating the modem PWRKEY (PB3) and STATUS (PH9) signals.
-
-> On the dev phone (1.0) this signal was connected to PB3. This allows for turning on/off the modem via GPIO from a kernel driver. If proper power down is to be implemented in the kernel for the modem, to allow safe shutdown of the modem before turning off the 4g-pwr-bat, kernel has to be able to signal to the modem to shut down and wait 30s. This is not possible on braveheart. Without this signal, kernel can't do anything to shut down the modem, and would have to rely on userspace to properly manage the modem power up/down sequence. Relying on userspace risks users shutting down the modem without proper wait time of 30s, risking modem damage (flash data corruption).
-
-> It would be nice to also have access to the STATUS signal from the modem, so that the driver can detect whether the modem is on or off (userspace might have turned modem off already via AT commands). Given that PWR_KEY pulse will either turn the modem on or off, based on the current status, it's necessary to know the current status before sending the pulse.
-
-> There's a STATUS signal routed to PWR_KEY on BraveHeart, that keeps the PWRKEY deasserted when the modem is on and it's not possible to pull it up from PB3, even if R1516 would be optionally mounted.
-
-> So after powerup you can't change PWR_KEY signal anymore from PB3 even if R1516 is mounted, and it's not possible to turn off the modem via PB3."
-
-[(Source)](https://wiki.pine64.org/wiki/PinePhone_v1.1_-_Braveheart#Modem_PWR_KEY_signal_resistor_population)
-
-TODO: Set DTR (PB2) to Low to wake up modem
-
-TODO: Check PinePhone Device Tree for UART3. What is `pinctrl-0`? PD0 and PD1
-
-```text
-		serial@1c28c00 {
-			compatible = "snps,dw-apb-uart";
-			reg = <0x1c28c00 0x400>;
-			interrupts = <0x00 0x03 0x04>;
-			reg-shift = <0x02>;
-			reg-io-width = <0x04>;
-			clocks = <0x02 0x46>;
-			resets = <0x02 0x31>;
-			status = "okay";
-			pinctrl-names = "default";
-			pinctrl-0 = <0x40>;
-		};
-    ...
-		pinctrl@1c20800 {
+  ```text
+      serial@1c28c00 {
+        compatible = "snps,dw-apb-uart";
+        reg = <0x1c28c00 0x400>;
+        interrupts = <0x00 0x03 0x04>;
+        reg-shift = <0x02>;
+        reg-io-width = <0x04>;
+        clocks = <0x02 0x46>;
+        resets = <0x02 0x31>;
+        status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <0x40>;
+      };
       ...
-    	uart3-pins {
-				pins = "PD0\0PD1";
-				function = "uart3";
-				phandle = <0x40>;
-			};
-```
+      pinctrl@1c20800 {
+        ...
+        uart3-pins {
+          pins = "PD0\0PD1";
+          function = "uart3";
+          phandle = <0x40>;
+        };
+  ```
 
-TODO: What does this say about `vbat-bb`? VBAT on PL7
+- What does this say about `vbat-bb`? VBAT on PL7
 
 ```text
 	vbat-bb {
@@ -1305,9 +1275,37 @@ TODO: What does this say about `vbat-bb`? VBAT on PL7
 	};
 ```
 
-TODO: Do we need to program PMIC to enable VBAT?
+- Do we need to program PMIC to enable VBAT? No
 
 TODO: Is VBAT-BB really on? What happens if we set PL7 VBAT to Low?
+
+TODO: Inside UART Driver, log the received chars
+
+TODO: Why the spurious UART interrupts?
+
+__Note:__ Modem UART flow control is broken
+
+> "Not resolved in v1.2 -- assumption is that USB will be used for high-bandwidth modem I/O.
+
+> BB-TX and BB-RX are connected to UART3 (PD0/PD1). BB-RTS and BB-CTS are connected to UART4 (PD4/PD5). To use hardware flow control, TX/RX would need to be connected to UART4, swapping PD0/PD1 with the motor control and rear camera reset GPIOs at PD2/PD3. This would need a device tree change.
+
+> Hardware flow control can be disabled with the AT+IFC command, and USB can also be used for commands instead of the UART. So the impact of this problem is unclear."
+
+[(Source)](https://wiki.pine64.org/wiki/PinePhone_v1.1_-_Braveheart#Modem_UART_flow_control_is_broken)
+
+__Note:__ Modem PWR_KEY signal resistor population
+
+> "Resolved in v1.2 by separating the modem PWRKEY (PB3) and STATUS (PH9) signals.
+
+> On the dev phone (1.0) this signal was connected to PB3. This allows for turning on/off the modem via GPIO from a kernel driver. If proper power down is to be implemented in the kernel for the modem, to allow safe shutdown of the modem before turning off the 4g-pwr-bat, kernel has to be able to signal to the modem to shut down and wait 30s. This is not possible on braveheart. Without this signal, kernel can't do anything to shut down the modem, and would have to rely on userspace to properly manage the modem power up/down sequence. Relying on userspace risks users shutting down the modem without proper wait time of 30s, risking modem damage (flash data corruption).
+
+> It would be nice to also have access to the STATUS signal from the modem, so that the driver can detect whether the modem is on or off (userspace might have turned modem off already via AT commands). Given that PWR_KEY pulse will either turn the modem on or off, based on the current status, it's necessary to know the current status before sending the pulse.
+
+> There's a STATUS signal routed to PWR_KEY on BraveHeart, that keeps the PWRKEY deasserted when the modem is on and it's not possible to pull it up from PB3, even if R1516 would be optionally mounted.
+
+> So after powerup you can't change PWR_KEY signal anymore from PB3 even if R1516 is mounted, and it's not possible to turn off the modem via PB3."
+
+[(Source)](https://wiki.pine64.org/wiki/PinePhone_v1.1_-_Braveheart#Modem_PWR_KEY_signal_resistor_population)
 
 # Boot NuttX on PinePhone
 
