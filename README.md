@@ -1153,151 +1153,39 @@ Let's test the PinePhone LTE Modem on UART3...
 
 In the previous section we have configured UART3 for PinePhone's [4G LTE Modem](https://lupyuen.github.io/articles/lte).
 
-This is how we read and write the UART3 port via `/dev/ttyS1`: [hello_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/7e9706c3dccc26dd33ddf71fd0ea64f9a17de4a1/examples/hello/hello_main.c#L42-L69)
+This is how we read and write the UART3 port via `/dev/ttyS1`: [hello_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/e5aa2baba64c8d904d6c16b7c5dbc68cd5c8f1e1/examples/hello/hello_main.c#L38-L70)
 
 ```c
-  // Open /dev/ttyS1 (UART3)
-  int fd = open("/dev/ttyS1", O_RDWR);
-  printf("Open /dev/ttyS1: fd=%d\n", fd);
-  assert(fd > 0);
+// Open /dev/ttyS1 (UART3)
+int fd = open("/dev/ttyS1", O_RDWR);
+printf("Open /dev/ttyS1: fd=%d\n", fd);
+assert(fd > 0);
 
-  // Forever write and read
-  for (;;)
-    {
-      // Write command
-      const char cmd[] = "AT\nAT\nAT\r\nAT\r\n";
-      ssize_t nbytes = write(fd, cmd, sizeof(cmd));
-      printf("Write command: nbytes=%ld\n", nbytes);
-      assert(nbytes == sizeof(cmd));
+// Repeat 5 times: Write command and read response
+for (int i = 0; i < 5; i++) {
+  // Write command
+  const char cmd[] = "AT\r";
+  ssize_t nbytes = write(fd, cmd, sizeof(cmd));
+  printf("Write command: nbytes=%ld\n", nbytes);
+  assert(nbytes == sizeof(cmd));
 
-      // Read response
-      static char buf[1024];
-      nbytes = read(fd, buf, sizeof(buf) - 1);
-      if (nbytes >= 0) { buf[nbytes] = 0; }
-      printf("Response: nbytes=%ld, buf=%s\n", nbytes, buf);
-      for (int i = 0; i < nbytes; i++)
-        {
-          char c = buf[i];
-          printf("[%02x] %c\n", c, c);
-        }
-    }
+  // Read response
+  static char buf[1024];
+  nbytes = read(fd, buf, sizeof(buf) - 1);
+  if (nbytes >= 0) { buf[nbytes] = 0; }
+  printf("Response: nbytes=%ld\n%s\n", nbytes, buf);
 
-  // Close the device
-  close(fd);
+  // Wait a while
+  sleep(2);
+}
+
+// Close the device
+close(fd);
 ```
 
-But the output from UART3 doesn't look meaningful...
+LTE Modem works OK with UART3 on NuttX yay! See the test log here...
 
-```text
-NuttShell (NSH) NuttX-12.0.3
-nsh> hello
-up_setup: Clear DLAB
-up_setup: addr=0x1c28c04, before=0x0, after=0x0
-up_setup: addr=0x1c28c00, before=0x0, after=0xd
-up_setup: Configure the FIFOs
-Hello, World!!
-Open /dev/ttyS1: fd=3
-Write command: nbytes=15
-Response: nbytes=7, buf=�~I
-[db] �
-[7e] ~
-[49] I
-[08] 
-[00] 
-[00] 
-[00] 
-Write command: nbytes=15
-Response: nbytes=8, buf=�W
-[eb] �
-[57] W
-[05] 
-[05] 
-[00] 
-[00] 
-[00] 
-[00] 
-Write command: nbytes=15
-Response: nbytes=6, buf=[� 
-[5b] [
-[ae] �
-[20]  
-[00] 
-[00] 
-[00] 
-```
-
-[(Output Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/7e9706c3dccc26dd33ddf71fd0ea64f9a17de4a1/examples/hello/hello_main.c#L205-L338)
-
-Why???
-
-- Check the Allwinner A64 UART Register Addresses: OK
-
-- Try all possible Baud Dates: 4800 bps, 9600 bps, 19200 bps, 38400 bps, 57600 bps, 115200 bps, 230400 bps, 460800 bps and 921600 bps: Still garbled
-
-- Test CTS / RTS: Pull RTS (PD4 Output) to Low, does CTS (PD5 Input) gets pulled to High? No
-
-- Set DTR (PB2) to Low to wake up modem: OK
-
-- Check PinePhone Device Tree for UART3. What is `pinctrl-0`? PD0 and PD1
-
-  ```text
-  serial@1c28c00 {
-    compatible = "snps,dw-apb-uart";
-    reg = <0x1c28c00 0x400>;
-    interrupts = <0x00 0x03 0x04>;
-    reg-shift = <0x02>;
-    reg-io-width = <0x04>;
-    clocks = <0x02 0x46>;
-    resets = <0x02 0x31>;
-    status = "okay";
-    pinctrl-names = "default";
-    pinctrl-0 = <0x40>;
-  };
-  ...
-  pinctrl@1c20800 {
-    ...
-    uart3-pins {
-      pins = "PD0\0PD1";
-      function = "uart3";
-      phandle = <0x40>;
-    };
-  ```
-
-- What does this say about `vbat-bb`? VBAT on PL7
-
-  ```text
-  vbat-bb {
-    compatible = "regulator-fixed";
-    regulator-always-on;
-    regulator-name = "vbat-bb";
-    regulator-min-microvolt = <0x3567e0>;
-    regulator-max-microvolt = <0x3567e0>;
-    gpio = <0x3f 0x00 0x07 0x00>;
-    enable-active-high;
-  };
-  ```
-
-- Do we need to program PMIC to enable VBAT? No
-
-- Is VBAT-BB really on? What happens if we set PL7 VBAT to Low?
-
-  UART3 does not respond. So yes VBAT-BB must be on.
-
-- Increase the PB3 PWRKEY delays to 2 seconds. Still the same problem.
-
-- What happens if PB3 PWRKEY stays at Low instead of High?
-
-  UART3 stops responding after a while. So we definitely need to boot with PB3 PWRKEY set to High.
-
-- The doc says: "After STATUS pin (require external pull-up resistor) outputs a low level, PWRKEY pin can be released"
-
-  What if we wait longer for PH9 STATUS to become low (>2.5s), then set PB3 PWRKEY to High. (After 30s?)
-
-  PH9 STATUS still stays at High. It never becomes Low.
-
-- Follow Genode OS and do this: [Modem Manager main.cc](https://github.com/genodelabs/genode-allwinner/blob/master/src/drivers/modem/pinephone/main.cc) and [power.h](https://github.com/genodelabs/genode-allwinner/blob/master/src/drivers/modem/pinephone/power.h)
-
-  Yep it works OK yay!
+-   ["Test UART with NuttX"](https://lupyuen.github.io/articles/lte#test-uart-with-nuttx)
 
 __Note:__ Modem UART flow control is broken
 
@@ -1308,20 +1196,6 @@ __Note:__ Modem UART flow control is broken
 > Hardware flow control can be disabled with the AT+IFC command, and USB can also be used for commands instead of the UART. So the impact of this problem is unclear."
 
 [(Source)](https://wiki.pine64.org/wiki/PinePhone_v1.1_-_Braveheart#Modem_UART_flow_control_is_broken)
-
-__Note:__ Modem PWR_KEY signal resistor population
-
-> "Resolved in v1.2 by separating the modem PWRKEY (PB3) and STATUS (PH9) signals.
-
-> On the dev phone (1.0) this signal was connected to PB3. This allows for turning on/off the modem via GPIO from a kernel driver. If proper power down is to be implemented in the kernel for the modem, to allow safe shutdown of the modem before turning off the 4g-pwr-bat, kernel has to be able to signal to the modem to shut down and wait 30s. This is not possible on braveheart. Without this signal, kernel can't do anything to shut down the modem, and would have to rely on userspace to properly manage the modem power up/down sequence. Relying on userspace risks users shutting down the modem without proper wait time of 30s, risking modem damage (flash data corruption).
-
-> It would be nice to also have access to the STATUS signal from the modem, so that the driver can detect whether the modem is on or off (userspace might have turned modem off already via AT commands). Given that PWR_KEY pulse will either turn the modem on or off, based on the current status, it's necessary to know the current status before sending the pulse.
-
-> There's a STATUS signal routed to PWR_KEY on BraveHeart, that keeps the PWRKEY deasserted when the modem is on and it's not possible to pull it up from PB3, even if R1516 would be optionally mounted.
-
-> So after powerup you can't change PWR_KEY signal anymore from PB3 even if R1516 is mounted, and it's not possible to turn off the modem via PB3."
-
-[(Source)](https://wiki.pine64.org/wiki/PinePhone_v1.1_-_Braveheart#Modem_PWR_KEY_signal_resistor_population)
 
 # Boot NuttX on PinePhone
 
