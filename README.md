@@ -6676,9 +6676,11 @@ Probably better to start as a Feature Phone (or LoRa Communication) and build up
 
 # USB Driver and LTE Modem Driver for PinePhone
 
-Read the article...
+Read the articles...
 
 -   ["NuttX RTOS for PinePhone: Exploring USB"](https://lupyuen.github.io/articles/usb2)
+
+-   ["NuttX RTOS for PinePhone: Simpler USB with EHCI (Enhanced Host Controller Interface)"](https://lupyuen.github.io/articles/usb3)
 
 _What NuttX Drivers would we need to turn PinePhone into a Feature Phone? (Voice Calls and SMS only)_
 
@@ -6831,6 +6833,10 @@ usb@1c1b400 {
   status = "okay";
 };
 ```
+
+# 4G LTE Modem
+
+TODO
 
 # Compile NuttX on Android with Termux
 
