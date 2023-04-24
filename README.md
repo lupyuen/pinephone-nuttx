@@ -6683,6 +6683,8 @@ Read the articles...
 
 -   ["NuttX RTOS for PinePhone: Simpler USB with EHCI (Enhanced Host Controller Interface)"](https://lupyuen.github.io/articles/usb3)
 
+-   ["NuttX RTOS for PinePhone: 4G LTE Modem"](https://lupyuen.github.io/articles/lte)
+
 _What NuttX Drivers would we need to turn PinePhone into a Feature Phone? (Voice Calls and SMS only)_
 
 We need a NuttX Driver for the PinePhone's __Quectel LTE Modem__...
@@ -6836,6 +6838,10 @@ usb@1c1b400 {
 ```
 
 # 4G LTE Modem
+
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: 4G LTE Modem"](https://lupyuen.github.io/articles/lte)
 
 TODO
 
