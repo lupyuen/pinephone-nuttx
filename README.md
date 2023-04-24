@@ -206,6 +206,7 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
   - [Handle Output from NSH Shell](#handle-output-from-nsh-shell)
 - [PinePhone on NuttX becomes a Feature Phone](#pinephone-on-nuttx-becomes-a-feature-phone)
 - [USB Driver and LTE Modem Driver for PinePhone](#usb-driver-and-lte-modem-driver-for-pinephone)
+- [4G LTE Modem](#4g-lte-modem)
 - [Compile NuttX on Android with Termux](#compile-nuttx-on-android-with-termux)
 - [Emulate PinePhone with Unicorn Emulator](#emulate-pinephone-with-unicorn-emulator)
 - [Test Logs](#test-logs)
