@@ -1097,21 +1097,23 @@ FYI: How `printf` works...
 
 To support multiple UART Ports, we copied the following functions from the [Allwinner A1X UART Driver](https://github.com/apache/nuttx/blob/master/arch/arm/src/a1x/a1x_serial.c#L695-L987)...
 
-- [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L406-L537)
+- [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/525ae7c40f9258e31771a463d1f4ca1258e0db8e/arch/arm64/src/a64/a64_serial.c#L406-L537)
 
-- [`a64_uart_irq_handler`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L294-L404)
+- [`a64_uart_irq_handler`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/525ae7c40f9258e31771a463d1f4ca1258e0db8e/arch/arm64/src/a64/a64_serial.c#L294-L404)
 
-We modified [`a64_uart_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L539-L560) to call [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L406-L537).
+- [`a64_uart_receive`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/525ae7c40f9258e31771a463d1f4ca1258e0db8e/arch/arm64/src/a64/a64_serial.c#L705-L731)
 
-We register UART3 as `/dev/ttyS1` in [`arm64_serialinit`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L1150-L1217).
+We modified [`a64_uart_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/525ae7c40f9258e31771a463d1f4ca1258e0db8e/arch/arm64/src/a64/a64_serial.c#L539-L560) to call [`up_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/525ae7c40f9258e31771a463d1f4ca1258e0db8e/arch/arm64/src/a64/a64_serial.c#L406-L537).
 
-[(Here's the log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/7e9706c3dccc26dd33ddf71fd0ea64f9a17de4a1/examples/hello/hello_main.c#L76-L340)
+We register UART3 as `/dev/ttyS1` in [`arm64_serialinit`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/525ae7c40f9258e31771a463d1f4ca1258e0db8e/arch/arm64/src/a64/a64_serial.c#L1150-L1217).
+
+[(Here's the log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/e5aa2baba64c8d904d6c16b7c5dbc68cd5c8f1e1/examples/hello/hello_main.c#L72-L270)
 
 Inside the UART Driver, be careful when logging to the UART Port! If the UART Port is busy doing logging, it won't allow us to the Baud Rate...
 
 > "This register may only be accessed when the DLAB bit (UART_LCR[7]) is set and the UART is not busy (UART_USR[0] is zero)"
 
-That's why we always wait for UART Not Busy before setting the Baud Rate. [(Like this)](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L486-L500)
+That's why we always wait for UART Not Busy before setting the Baud Rate. [(Like this)](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/525ae7c40f9258e31771a463d1f4ca1258e0db8e/arch/arm64/src/a64/a64_serial.c#L486-L500)
 
 _What happens if UART Is Busy when we set the Baud Rate?_
 
@@ -1145,7 +1147,7 @@ up_serialout: addr=0x1c2800c, before=0x3, after=0x3
 // Before should be 0x83, not 0x3
 ```
 
-We fix this by disabling the logging and waiting for UART Not Busy before setting the Baud Rate. [(Like this)](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/83566af2e58f92ae42fd434ce97f919404245986/arch/arm64/src/a64/a64_serial.c#L486-L500)
+We fix this by disabling the logging and waiting for UART Not Busy before setting the Baud Rate. [(Like this)](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/525ae7c40f9258e31771a463d1f4ca1258e0db8e/arch/arm64/src/a64/a64_serial.c#L486-L500)
 
 Let's test the PinePhone LTE Modem on UART3...
 
