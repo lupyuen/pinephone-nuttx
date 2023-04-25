@@ -6850,6 +6850,8 @@ Here's the output...
 ```text
 NuttShell (NSH) NuttX-12.0.3
 nsh> hello
+
+// Check Modem Status
 Command: AT
 Response:
 RDY
@@ -6857,26 +6859,36 @@ RDY
 +CPIN: READY
 +QUSIM: 1
 +QIND: SMS DONE
+// SIM and SMS are ready
 
+// Check Network Status
 Command: AT+CREG?
 Response:
 +CREG: 0,1
 +QIND: PB DONE
+// Network and Phonebook are ready
 
+// Get Network Operator
 Command: AT+COPS?
 Response: +COPS: 0,0,"SGP-M1",7
 
+// Get Range of PCM Parameters for Digital Audio
 Command: AT+QDAI=?
 Response: +QDAI: (1-4),(0,1),(0,1),(0-5),(0-2),(0,1)(1)(1-16)
 
+// Get Current PCM Configuration for Digital Audio
 Command: AT+QDAI?
 Response: +QDAI: 1,1,0,1,0,0,1,1
 
+// Make Outgoing Phone Call
 Command: ATDyourphonenumber;
 Response:
 OK
+
+// Receiver has hung up
 NO CARRIER
 
+// Hang up Phone Call
 Command: ATH
 Response: OK
 ```
