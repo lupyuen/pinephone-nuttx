@@ -6895,6 +6895,10 @@ Response: OK
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/ad40aec6b52a47168847f122f4d41241df8275cb/examples/hello/hello_main.c#L222-L586)
 
+TODO: What does this say: `+QDAI: 1,1,0,1,0,0,1,1`
+
+TODO: Send SMS
+
 # Compile NuttX on Android with Termux
 
 _Can we compile NuttX on an Android Phone (or Tablet) with Termux?_
