@@ -6843,7 +6843,45 @@ Read the article...
 
 -   ["NuttX RTOS for PinePhone: 4G LTE Modem"](https://lupyuen.github.io/articles/lte)
 
-TODO
+This is the NuttX App that makes a Phone Call on PinePhone: [hello_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/ad40aec6b52a47168847f122f4d41241df8275cb/examples/hello/hello_main.c)
+
+Here's the output...
+
+```text
+NuttShell (NSH) NuttX-12.0.3
+nsh> hello
+Command: AT
+Response:
+RDY
++CFUN: 1
++CPIN: READY
++QUSIM: 1
++QIND: SMS DONE
+
+Command: AT+CREG?
+Response:
++CREG: 0,1
++QIND: PB DONE
+
+Command: AT+COPS?
+Response: +COPS: 0,0,"SGP-M1",7
+
+Command: AT+QDAI=?
+Response: +QDAI: (1-4),(0,1),(0,1),(0-5),(0-2),(0,1)(1)(1-16)
+
+Command: AT+QDAI?
+Response: +QDAI: 1,1,0,1,0,0,1,1
+
+Command: ATDyourphonenumber;
+Response:
+OK
+NO CARRIER
+
+Command: ATH
+Response: OK
+```
+
+[(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/ad40aec6b52a47168847f122f4d41241df8275cb/examples/hello/hello_main.c#L222-L586)
 
 # Compile NuttX on Android with Termux
 
