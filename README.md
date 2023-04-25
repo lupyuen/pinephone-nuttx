@@ -6899,6 +6899,12 @@ TODO: What does this say: `+QDAI: 1,1,0,1,0,0,1,1`
 
 TODO: Send SMS
 
+SMS Message must be unique or we will get Error 350...
+
+```text
++CMS ERROR: 350
+```
+
 # Compile NuttX on Android with Termux
 
 _Can we compile NuttX on an Android Phone (or Tablet) with Termux?_
