@@ -7043,6 +7043,10 @@ OK
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L663-L681)
 
+Let's talk about the SMS PDU...
+
+## SMS PDU Format
+
 _What's the PDU Length?_
 
 Our SMS Message PDU has 42 total bytes...
@@ -7233,6 +7237,8 @@ Comes from the [Unicode UTF-16 Encoding](https://en.wikipedia.org/wiki/UTF-16) o
 | `!` | `0021`
 
 (These are 7-Bit ASCII Characters, so the UTF-16 Encoding looks identical to ASCII)
+
+## SMS Text Mode vs PDU Mode
 
 _Why send SMS in PDU Mode instead of Text Mode?_
 
