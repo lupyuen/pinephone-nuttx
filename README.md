@@ -6990,7 +6990,7 @@ const char cmd[] =
 
 (We'll talk about PDU Length in a while)
 
-And here's the PDU that we'll send in the AT Command...
+And here's the SMS Message PDU that we'll send in the AT Command...
 
 ```text
 // SMS Message in PDU Format
@@ -7004,7 +7004,7 @@ const char cmd[] =
   "00"  // TP-PID: Protocol identifier
   "08"  // TP-DCS: Data coding scheme
   "01"  // TP-Validity-Period
-  "1C"  // TP-User-Data-Length: Length of message in bytes
+  "1C"  // TP-User-Data-Length: Length of Encoded Message Text in bytes
   // TP-User-Data: Encoded Message Text "Hello,Quectel!"
   "00480065006C006C006F002C005100750065006300740065006C0021"
   "\x1A";  // End of Message (Ctrl-Z)
@@ -7053,7 +7053,7 @@ Our SMS Message PDU has 42 total bytes...
   "00"  // TP-PID: Protocol identifier
   "08"  // TP-DCS: Data coding scheme
   "01"  // TP-Validity-Period
-  "1C"  // TP-User-Data-Length: Length of message in bytes
+  "1C"  // TP-User-Data-Length: Length of Encoded Message Text in bytes
   // TP-User-Data: Assume 28 bytes in Encoded Message Text
   "00480065006C006C006F002C005100750065006300740065006C0021"
 ```
@@ -7069,6 +7069,8 @@ const char cmd[] =
   "41"  // TODO: PDU Length in bytes, excluding the Length of SMSC
   "\r";
 ```
+
+TODO: Explain the fields
 
 TODO: Text Mode vs PDU Mode
 
