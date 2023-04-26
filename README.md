@@ -7107,12 +7107,12 @@ PHONE_NUMBER_PDU  // TODO: Assume 5 bytes in PDU Phone Number (10 Decimal Digits
 
   TP-Validity-Period-Format (TP-VPF, Bits 3 and 4) is `0b10` (Relative Format):
 
-  - Message Validity Period is in Relative Format
+  - Message Validity Period is in Relative Format.
   
     [(GSM 03.40, Validity Period)](https://en.wikipedia.org/wiki/GSM_03.40#Validity_Period)
 
-    (More about Message Validity Period below)
-  
+    Value of Message Validity Period is in TP-Validity-Period below.
+ 
 - TP-Message-Reference: "00"
 
   "00" will let the phone generate the Message Reference Number itself
@@ -7157,11 +7157,13 @@ PHONE_NUMBER_PDU  // TODO: Assume 5 bytes in PDU Phone Number (10 Decimal Digits
 
 - TP-Validity-Period (TP-VP): "01"
 
-  Message is valid for 10 minutes:
+  Message is valid for 10 minutes, relative to current time:
 
   (`"01"` + 1) x 5 minutes
 
   [(GSM 03.40, Validity Period)](https://en.wikipedia.org/wiki/GSM_03.40#Validity_Period)
+
+  (See TP-Validity-Period-Format above)
 
 - TP-User-Data-Length (TP-UDL): "1C"
 
@@ -7218,6 +7220,8 @@ Comes from the [Unicode UTF-16 Encoding](https://en.wikipedia.org/wiki/UTF-16) o
 | `e` | `0065`
 | `l` | `006C`
 | `!` | `0021`
+
+(These are ASCII Characters, so the UTF-16 Encoding looks similar to ASCII)
 
 TODO: Text Mode vs PDU Mode, more reliable, UTF-16
 
