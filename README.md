@@ -32,6 +32,8 @@ __4G LTE Modem__
 
 -   ["NuttX RTOS for PinePhone: 4G LTE Modem"](https://lupyuen.github.io/articles/lte)
 
+-   ["NuttX RTOS for PinePhone: Phone Calls and Text Messages"](https://lupyuen.github.io/articles/lte2)
+
 __GPIO__
 
 -   ["NuttX RTOS for PinePhone: Blinking the LEDs"](https://lupyuen.github.io/articles/pio)
