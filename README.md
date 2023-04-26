@@ -7095,13 +7095,13 @@ PHONE_NUMBER_PDU  // TODO: Assume 5 bytes in PDU Phone Number (10 Decimal Digits
 
   We use the default SMS Centre (SMSC), so the SMSC Info Length is 0.
 
-- SM-TL TPDU is SMS-SUBMIT Message: "11"
+- SM-TL (Short Message Transfer Protocol) TPDU (Transfer Protocol Data Unit) is SMS-SUBMIT Message: "11"
 
   [(GSM 03.40, TPDU Fields)](https://en.wikipedia.org/wiki/GSM_03.40#TPDU_Fields)
 
-  TP-Message Type Indicator (TP-MTI, Bits 0 and 1) is `0b01` (SMS-SUBMIT):
+  TP-Message-Type-Indicator (TP-MTI, Bits 0 and 1) is `0b01` (SMS-SUBMIT):
 
-  - Submit a message to SMSC for transmission
+  - Submit a message to SMSC for transmission.
 
     [(GSM 03.40, TPDU Types)](https://en.wikipedia.org/wiki/GSM_03.40#TPDU_Types)
 
@@ -7113,7 +7113,7 @@ PHONE_NUMBER_PDU  // TODO: Assume 5 bytes in PDU Phone Number (10 Decimal Digits
 
     Value of Message Validity Period is in TP-Validity-Period below.
  
-- TP-Message-Reference: "00"
+- TP-Message-Reference (TP-MR): "00"
 
   "00" will let the phone generate the Message Reference Number itself
 
@@ -7129,7 +7129,7 @@ PHONE_NUMBER_PDU  // TODO: Assume 5 bytes in PDU Phone Number (10 Decimal Digits
 
   91 for International Format of phone number
 
-  Numbering Plan Identification (NPI, Bits 0 to 3) = `0b0001` (ISDN / telephone numbering plan)
+  Numbering Plan Identification (NPI, Bits 0 to 3) = `0b0001` (ISDN / Telephone Numbering Plan)
 
   Type Of Number (TON, Bits 4 to 6) = `0b001` (International Number)
 
@@ -7138,6 +7138,13 @@ PHONE_NUMBER_PDU  // TODO: Assume 5 bytes in PDU Phone Number (10 Decimal Digits
   [(GSM 03.40, Addresses)](https://en.wikipedia.org/wiki/GSM_03.40#Addresses)
 
 - PHONE_NUMBER_PDU: Phone Number in PDU Format (nibbles swapped)
+
+  Remember to insert "F" for odd number of nibbles...
+
+  ```text
+  #define PHONE_NUMBER    "+123456789"
+  #define PHONE_NUMBER_PDU "214365870F9"
+  ```
 
   [(GSM 03.40, Address Examples)](https://en.wikipedia.org/wiki/GSM_03.40#Address_examples)
 
@@ -7175,7 +7182,9 @@ PHONE_NUMBER_PDU  // TODO: Assume 5 bytes in PDU Phone Number (10 Decimal Digits
 
   Message Text is encoded with UCS2 Character Set
 
-  (Because of TP-Data-Coding-Scheme)
+  (Because of TP-Data-Coding-Scheme above)
+
+  [(GSM 03.40, Message Content)](https://en.wikipedia.org/wiki/GSM_03.40#Message_Content)
 
 _How do we encode the Message Text?_
 
@@ -7221,9 +7230,32 @@ Comes from the [Unicode UTF-16 Encoding](https://en.wikipedia.org/wiki/UTF-16) o
 | `l` | `006C`
 | `!` | `0021`
 
-(These are ASCII Characters, so the UTF-16 Encoding looks similar to ASCII)
+(These are 7-Bit ASCII Characters, so the UTF-16 Encoding looks identical to ASCII)
 
-TODO: Text Mode vs PDU Mode, more reliable, UTF-16
+_Why send SMS in PDU Mode instead of Text Mode?_
+
+TODO: More reliable (304 Invalid PDU), UTF-16, Receive messages
+
+```text
+// Select Message Service 3GPP TS 23.040 and 3GPP TS 23.041
+AT+CSMS=1
++CSMS: 1,1,1
+OK
+
+// Set SMS Event Reporting Configuration
+AT+CNMI=1,2,0,0,0
+OK
+
+// Message is dumped directly when an SMS is received
++CMT: "+8615021012496",,"13/03/18,17:07:21+32",145,4,0,0,"+8613800551500",145,28
+This is a test from Quectel.
+
+// Send ACK to the network
+AT+CNMA
+OK
+```
+
+[(EG25-G AT Commands, Page 167)](https://wiki.pine64.org/wiki/File:Quectel_EC2x%26EG9x%26EG2x-G%26EM05_Series_AT_Commands_Manual_V2.0.pdf)
 
 # Compile NuttX on Android with Termux
 
