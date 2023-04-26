@@ -6909,6 +6909,8 @@ TODO: What does this say: `+QDAI: 1,1,0,1,0,0,1,1`
 
 This is how we send an SMS in Text Mode: [send_sms_text](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L162-L253)
 
+Here's the log...
+
 ```text
 // Set Message Format to Text Mode
 Command: AT+CMGF=1
@@ -7008,7 +7010,9 @@ const char cmd[] =
   "\x1A";  // End of Message (Ctrl-Z)
 ```
 
-TODO
+(Update "Address-Length" according to the phone number)
+
+Here's the log...
 
 ```text
 // Set Message Format to PDU Mode
@@ -7023,7 +7027,7 @@ Response: >
 
 // SMS Message in PDU Format, terminate with Ctrl-Z.
 // yourphonenumberpdu looks like 2143658709, which represents +1234567890
-// Country Code is mandatory.
+// Country Code is mandatory. Remember to insert "F" for odd number of nibbles.
 Command:
 0011000A91yourphonenumberpdu0008011C00480065006C006C006F002C005100750065006300740065006C0021<Ctrl-Z>
 
@@ -7034,6 +7038,39 @@ OK
 ```
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L663-L681)
+
+_What's the PDU Length?_
+
+Our SMS Message PDU has 42 total bytes...
+
+```text
+  "00"  // Length of SMSC information (None)
+  "11"  // SMS-SUBMIT message
+  "00"  // TP-Message-Reference: 00 to let the phone set the message reference number itself
+  "0A"  // TODO: Address-Length: Length of phone number (Assume 10  Decimal Digits in Phone Number)
+  "91"  // Type-of-Address: 91 for International Format of phone number
+  PHONE_NUMBER_PDU  // TODO: Assume 5 bytes in PDU Phone Number (10 Decimal Digits)
+  "00"  // TP-PID: Protocol identifier
+  "08"  // TP-DCS: Data coding scheme
+  "01"  // TP-Validity-Period
+  "1C"  // TP-User-Data-Length: Length of message in bytes
+  // TP-User-Data: Assume 28 bytes in Encoded Message Text
+  "00480065006C006C006F002C005100750065006300740065006C0021"
+```
+
+PDU Length excludes the SMSC Information (First Byte).
+
+Thus our PDU Length is 41 bytes...
+
+```text
+// Send SMS Command
+const char cmd[] = 
+  "AT+CMGS="
+  "41"  // TODO: PDU Length in bytes, excluding the Length of SMSC
+  "\r";
+```
+
+TODO: Text Mode vs PDU Mode
 
 # Compile NuttX on Android with Termux
 
