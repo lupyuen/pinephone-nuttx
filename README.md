@@ -6843,6 +6843,10 @@ Read the article...
 
 -   ["NuttX RTOS for PinePhone: 4G LTE Modem"](https://lupyuen.github.io/articles/lte)
 
+Let's make a Phone Call and send a Text Message...
+
+## Outgoing Phone Call
+
 This is the NuttX App that makes a Phone Call on PinePhone: [hello_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/ad40aec6b52a47168847f122f4d41241df8275cb/examples/hello/hello_main.c)
 
 Here's the output...
@@ -6897,6 +6901,8 @@ Response: OK
 
 TODO: What does this say: `+QDAI: 1,1,0,1,0,0,1,1`
 
+## Send SMS in Text Mode
+
 TODO: Send SMS
 
 SMS Message must be unique or we will get Error 350...
@@ -6904,6 +6910,68 @@ SMS Message must be unique or we will get Error 350...
 ```text
 +CMS ERROR: 350
 ```
+
+## Send SMS in PDU Mode
+
+TODO
+
+Send an SMS Message in PDU Mode. Based on...
+
+- Quectel GSM AT Commands Application Note, Section 9.3.2 "Send SMS in PDU mode", Page 26
+
+  https://www.cika.com/soporte/Information/GSMmodules/Quectel/AppNotes/Quectel_GSM_ATC_Application_Note.pdf
+
+- https://www.etsi.org/deliver/etsi_gts/07/0705/05.01.00_60/gsmts_0705v050100p.pdf
+
+- https://en.m.wikipedia.org/wiki/GSM_03.40
+
+Suppose we're sending an SMS to this Phone Number (International Format)...
+
+```text
+#define PHONE_NUMBER    "+1234567890"
+#define PHONE_NUMBER_PDU "2143658709"
+```
+
+Note that we flip the nibbles (half-bytes) from the Original Phone Number to produce the PDU Phone Number.
+
+If the number of nibbles (half-bytes) is odd, insert "F" into the PDU Phone Number like this...
+
+```text
+#define PHONE_NUMBER    "+123456789"
+#define PHONE_NUMBER_PDU "214365870F9"
+```
+
+Assuming there are 10 decimal digits in our Phone Number "+1234567890", here's the AT Command...
+
+```text
+    // Write command
+    const char cmd[] = 
+      "AT+CMGS="
+      "41"  // TODO: PDU Length in bytes, excluding the Length of SMSC
+      "\r";
+```
+
+And here's the PDU that we'll send in the AT Command...
+
+```text
+    // Write message
+    const char cmd[] = 
+      "00"  // Length of SMSC information (None)
+      "11"  // SMS-SUBMIT message
+      "00"  // TP-Message-Reference: 00 to let the phone set the message reference number itself
+      "0A"  // TODO: Address-Length: Length of phone number (Number of Decimal Digits in Phone Number)
+      "91"  // Type-of-Address: 91 for International Format of phone number
+      PHONE_NUMBER_PDU  // TODO: Phone Number
+      "00"  // TP-PID: Protocol identifier
+      "08"  // TP-DCS: Data coding scheme
+      "01"  // TP-Validity-Period
+      "1C"  // TP-User-Data-Length: Length of message in bytes
+      // TP-User-Data: Encoded Message Text "Hello,Quectel!"
+      "00480065006C006C006F002C005100750065006300740065006C0021"
+      "\x1A";  // End of Message (Ctrl-Z)
+```
+
+TODO
 
 # Compile NuttX on Android with Termux
 
