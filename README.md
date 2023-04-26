@@ -6958,7 +6958,7 @@ Now we send an SMS Message in PDU Mode. Based on...
 
 - [ETSI GSM 07.05 Spec](https://www.etsi.org/deliver/etsi_gts/07/0705/05.01.00_60/gsmts_0705v050100p.pdf) (AT Commands)
 
-- [ETSI GSM 03.40 Spec](https://en.m.wikipedia.org/wiki/GSM_03.40) (PDU Format)
+- [ETSI GSM 03.40 Spec](https://en.wikipedia.org/wiki/GSM_03.40) (PDU Format)
 
 This is how we send an SMS in PDU Mode: [send_sms_pdu](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L255-L341)
 
