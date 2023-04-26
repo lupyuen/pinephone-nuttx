@@ -7010,7 +7010,9 @@ const char cmd[] =
   "\x1A";  // End of Message (Ctrl-Z)
 ```
 
-(Update "Address-Length" according to the phone number)
+(We'll talk about Encoded Message Text in a while)
+
+(Remember to update "Address-Length" according to your phone number)
 
 Here's the log...
 
@@ -7044,18 +7046,18 @@ _What's the PDU Length?_
 Our SMS Message PDU has 42 total bytes...
 
 ```text
-  "00"  // Length of SMSC information (None)
-  "11"  // SMS-SUBMIT message
-  "00"  // TP-Message-Reference: 00 to let the phone set the message reference number itself
-  "0A"  // TODO: Address-Length: Length of phone number (Assume 10  Decimal Digits in Phone Number)
-  "91"  // Type-of-Address: 91 for International Format of phone number
-  PHONE_NUMBER_PDU  // TODO: Assume 5 bytes in PDU Phone Number (10 Decimal Digits)
-  "00"  // TP-PID: Protocol identifier
-  "08"  // TP-DCS: Data coding scheme
-  "01"  // TP-Validity-Period
-  "1C"  // TP-User-Data-Length: Length of Encoded Message Text in bytes
-  // TP-User-Data: Assume 28 bytes in Encoded Message Text
-  "00480065006C006C006F002C005100750065006300740065006C0021"
+"00"  // Length of SMSC information (None)
+"11"  // SMS-SUBMIT message
+"00"  // TP-Message-Reference: 00 to let the phone set the message reference number itself
+"0A"  // TODO: Address-Length: Length of phone number (Assume 10  Decimal Digits in Phone Number)
+"91"  // Type-of-Address: 91 for International Format of phone number
+PHONE_NUMBER_PDU  // TODO: Assume 5 bytes in PDU Phone Number (10 Decimal Digits)
+"00"  // TP-PID: Protocol identifier
+"08"  // TP-DCS: Data coding scheme
+"01"  // TP-Validity-Period
+"1C"  // TP-User-Data-Length: Length of Encoded Message Text in bytes
+// TP-User-Data: Assume 28 bytes in Encoded Message Text
+"00480065006C006C006F002C005100750065006300740065006C0021"
 ```
 
 PDU Length excludes the SMSC Information (First Byte).
@@ -7070,9 +7072,154 @@ const char cmd[] =
   "\r";
 ```
 
-TODO: Explain the fields
+Remember to update the PDU Length according to your phone number and message text.
 
-TODO: Text Mode vs PDU Mode
+_What do the fields mean?_
+
+```text
+"00"  // Length of SMSC information (None)
+"11"  // SMS-SUBMIT message
+"00"  // TP-Message-Reference: 00 to let the phone set the message reference number itself
+"0A"  // TODO: Address-Length: Length of phone number (Assume 10 Decimal Digits in Phone Number)
+"91"  // Type-of-Address: 91 for International Format of phone number
+PHONE_NUMBER_PDU  // TODO: Assume 5 bytes in PDU Phone Number (10 Decimal Digits)
+"00"  // TP-PID: Protocol identifier
+"08"  // TP-DCS: Data coding scheme
+"01"  // TP-Validity-Period
+"1C"  // TP-User-Data-Length: Length of Encoded Message Text in bytes
+// TP-User-Data: Assume 28 bytes in Encoded Message Text
+"00480065006C006C006F002C005100750065006300740065006C0021"
+```
+
+- Length of SMSC information: "00"
+
+  We use the default SMS Centre (SMSC), so the SMSC Info Length is 0.
+
+- SM-TL TPDU is SMS-SUBMIT Message: "11"
+
+  [(GSM 03.40, TPDU Fields)](https://en.wikipedia.org/wiki/GSM_03.40#TPDU_Fields)
+
+  TP-Message Type Indicator (TP-MTI, Bits 0 and 1) is `0b01` (SMS-SUBMIT):
+
+  - Submit a message to SMSC for transmission
+
+    [(GSM 03.40, TPDU Types)](https://en.wikipedia.org/wiki/GSM_03.40#TPDU_Types)
+
+  TP-Validity-Period-Format (TP-VPF, Bits 3 and 4) is `0b10` (Relative Format):
+
+  - Message Validity Period is in Relative Format
+  
+    [(GSM 03.40, Validity Period)](https://en.wikipedia.org/wiki/GSM_03.40#Validity_Period)
+
+    (More about Message Validity Period below)
+  
+- TP-Message-Reference: "00"
+
+  "00" will let the phone generate the Message Reference Number itself
+
+  [(GSM 03.40, Message Reference)](https://en.wikipedia.org/wiki/GSM_03.40#Message_Reference)
+
+- Address-Length: "0A"
+
+  Length of phone number (Number of Decimal Digits in Phone Number, excluding "F")
+
+  [(GSM 03.40, Addresses)](https://en.wikipedia.org/wiki/GSM_03.40#Addresses)
+
+- Type-of-Address: "91"
+
+  91 for International Format of phone number
+
+  Numbering Plan Identification (NPI, Bits 0 to 3) = `0b0001` (ISDN / telephone numbering plan)
+
+  Type Of Number (TON, Bits 4 to 6) = `0b001` (International Number)
+
+  EXT (Bit 7) = `1` (No Extension)
+
+  [(GSM 03.40, Addresses)](https://en.wikipedia.org/wiki/GSM_03.40#Addresses)
+
+- PHONE_NUMBER_PDU: Phone Number in PDU Format (nibbles swapped)
+
+  [(GSM 03.40, Address Examples)](https://en.wikipedia.org/wiki/GSM_03.40#Address_examples)
+
+- TP-Protocol-Identifier (TP-PID): "00"
+
+  Default Store-and-Forward Short Message
+
+  [(GSM 03.40, Protocol Identifier)](https://en.wikipedia.org/wiki/GSM_03.40#Protocol_Identifier)
+
+- TP-Data-Coding-Scheme (TP-DCS): "08"
+
+  Message Text is encoded with UCS2 Character Set
+
+  [(GSM 03.40, Data Coding Scheme)](https://en.wikipedia.org/wiki/GSM_03.40#Data_Coding_Scheme)
+
+  [(SMS Data Coding Scheme)](https://en.wikipedia.org/wiki/Data_Coding_Scheme#SMS_data_coding_scheme)
+
+- TP-Validity-Period (TP-VP): "01"
+
+  Message is valid for 10 minutes:
+
+  (`"01"` + 1) x 5 minutes
+
+  [(GSM 03.40, Validity Period)](https://en.wikipedia.org/wiki/GSM_03.40#Validity_Period)
+
+- TP-User-Data-Length (TP-UDL): "1C"
+
+  Length of Encoded Message Text in bytes
+
+  [(GSM 03.40, Message Content)](https://en.wikipedia.org/wiki/GSM_03.40#Message_Content)
+
+- TP-User-Data (TP-UD): Encoded Message Text
+
+  Message Text is encoded with UCS2 Character Set
+
+  (Because of TP-Data-Coding-Scheme)
+
+_How do we encode the Message Text?_
+
+From above we see that the Message Text is encoded with UCS2 Character Set...
+
+- TP-Data-Coding-Scheme (TP-DCS): "08"
+
+  Message Text is encoded in UCS2 Character Set
+
+  [(GSM 03.40, Data Coding Scheme)](https://en.wikipedia.org/wiki/GSM_03.40#Data_Coding_Scheme)
+
+  [(SMS Data Coding Scheme)](https://en.wikipedia.org/wiki/Data_Coding_Scheme#SMS_data_coding_scheme)
+
+The UCS2 Encoding is actually [Unicode UTF-16](https://en.wikipedia.org/wiki/UTF-16)...
+
+> "the SMS standard specifies UCS-2, but almost all users actually implement UTF-16 so that emojis work"
+
+[(Source)](https://en.wikipedia.org/wiki/UTF-16)
+
+So this Encoded Message Text...
+
+```text
+// TP-User-Data: Message Text encoded with UCS2 Character Set
+"00480065006C006C006F002C005100750065006300740065006C0021"
+```
+
+Comes from the [Unicode UTF-16 Encoding](https://en.wikipedia.org/wiki/UTF-16) of the Message Text "Hello,Quectel!"...
+
+| Character | UTF-16 Encoding |
+|:---------:|:---------------:|
+| `H` | `0048`
+| `e` | `0065`
+| `l` | `006C`
+| `l` | `006C`
+| `o` | `006F`
+| `,` | `002C`
+| `Q` | `0051`
+| `u` | `0075`
+| `e` | `0065`
+| `c` | `0063`
+| `t` | `0074`
+| `e` | `0065`
+| `l` | `006C`
+| `!` | `0021`
+
+TODO: Text Mode vs PDU Mode, more reliable, UTF-16
 
 # Compile NuttX on Android with Termux
 
