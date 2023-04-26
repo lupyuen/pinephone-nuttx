@@ -6850,7 +6850,7 @@ Let's make a Phone Call and send a Text Message...
 
 ## Outgoing Phone Call
 
-This is the NuttX App that makes a Phone Call on PinePhone: [hello_main.c](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/ad40aec6b52a47168847f122f4d41241df8275cb/examples/hello/hello_main.c)
+This is the NuttX App that makes a Phone Call on PinePhone: [dial_number](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L343-L432)
 
 Here's the output...
 
@@ -6893,6 +6893,7 @@ Response:
 OK
 
 // Receiver has hung up
+Response:
 NO CARRIER
 
 // Hang up Phone Call
@@ -6900,7 +6901,7 @@ Command: ATH
 Response: OK
 ```
 
-[(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/ad40aec6b52a47168847f122f4d41241df8275cb/examples/hello/hello_main.c#L222-L586)
+[(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L562-L737)
 
 TODO: What does this say: `+QDAI: 1,1,0,1,0,0,1,1`
 
@@ -6908,7 +6909,38 @@ TODO: What does this say: `+QDAI: 1,1,0,1,0,0,1,1`
 
 TODO: Send SMS
 
-SMS Message must be unique or we will get Error 350...
+This is how we send an SMS in Text Mode: [send_sms_text](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L162-L253)
+
+```text
+// Set Message Format to Text Mode
+Command: AT+CMGF=1
+Response: OK
+
+// Set Character Set to GSM
+Command: AT+CSCS="GSM"
+Response: OK
+
+// Send an SMS to the Phone Number
+Command:
+AT+CMGS="yourphonenumber"
+
+// We wait for Modem to respond with ">"
+Response:
+> 
+
+// SMS Message in Text Format, terminate with Ctrl-Z
+Command:
+Hello from Apache NuttX RTOS on PinePhone! (SMS Text Mode)<Ctrl-Z>
+
+// Modem sends the SMS Message
+Response:
++CMGS: 13
+OK
+```
+
+[(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L622-L659)
+
+TODO: SMS Message must be unique or we will get Error 350...
 
 ```text
 +CMS ERROR: 350
@@ -6927,6 +6959,8 @@ Send an SMS Message in PDU Mode. Based on...
 - https://www.etsi.org/deliver/etsi_gts/07/0705/05.01.00_60/gsmts_0705v050100p.pdf
 
 - https://en.m.wikipedia.org/wiki/GSM_03.40
+
+This is how we send an SMS in PDU Mode: [send_sms_pdu](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L255-L341)
 
 Suppose we're sending an SMS to this Phone Number (International Format)...
 
@@ -6947,34 +6981,59 @@ If the number of nibbles (half-bytes) is odd, insert "F" into the PDU Phone Numb
 Assuming there are 10 decimal digits in our Phone Number "+1234567890", here's the AT Command...
 
 ```text
-    // Write command
-    const char cmd[] = 
-      "AT+CMGS="
-      "41"  // TODO: PDU Length in bytes, excluding the Length of SMSC
-      "\r";
+// Send SMS Command
+const char cmd[] = 
+  "AT+CMGS="
+  "41"  // TODO: PDU Length in bytes, excluding the Length of SMSC
+  "\r";
 ```
+
+(We'll talk about PDU Length in a while)
 
 And here's the PDU that we'll send in the AT Command...
 
 ```text
-    // Write message
-    const char cmd[] = 
-      "00"  // Length of SMSC information (None)
-      "11"  // SMS-SUBMIT message
-      "00"  // TP-Message-Reference: 00 to let the phone set the message reference number itself
-      "0A"  // TODO: Address-Length: Length of phone number (Number of Decimal Digits in Phone Number)
-      "91"  // Type-of-Address: 91 for International Format of phone number
-      PHONE_NUMBER_PDU  // TODO: Phone Number
-      "00"  // TP-PID: Protocol identifier
-      "08"  // TP-DCS: Data coding scheme
-      "01"  // TP-Validity-Period
-      "1C"  // TP-User-Data-Length: Length of message in bytes
-      // TP-User-Data: Encoded Message Text "Hello,Quectel!"
-      "00480065006C006C006F002C005100750065006300740065006C0021"
-      "\x1A";  // End of Message (Ctrl-Z)
+// SMS Message in PDU Format
+const char cmd[] = 
+  "00"  // Length of SMSC information (None)
+  "11"  // SMS-SUBMIT message
+  "00"  // TP-Message-Reference: 00 to let the phone set the message reference number itself
+  "0A"  // TODO: Address-Length: Length of phone number (Number of Decimal Digits in Phone Number)
+  "91"  // Type-of-Address: 91 for International Format of phone number
+  PHONE_NUMBER_PDU  // TODO: Phone Number in PDU Format
+  "00"  // TP-PID: Protocol identifier
+  "08"  // TP-DCS: Data coding scheme
+  "01"  // TP-Validity-Period
+  "1C"  // TP-User-Data-Length: Length of message in bytes
+  // TP-User-Data: Encoded Message Text "Hello,Quectel!"
+  "00480065006C006C006F002C005100750065006300740065006C0021"
+  "\x1A";  // End of Message (Ctrl-Z)
 ```
 
 TODO
+
+```text
+// Set Message Format to PDU Mode
+Command: AT+CMGF=0
+Response: OK
+
+// Send an SMS with 41 bytes (excluding SMSC)
+Command: AT+CMGS=41
+
+// We wait for Modem to respond with ">"
+Response: > 
+
+// SMS Message in PDU Format, terminate with Ctrl-Z
+Command:
+0011000A91yourphonenumberpdu0008011C00480065006C006C006F002C005100750065006300740065006C0021<Ctrl-Z>
+
+// Modem sends the SMS Message
+Response: 
++CMGS: 14
+OK
+```
+
+[(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L663-L681)
 
 # Compile NuttX on Android with Termux
 
