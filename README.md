@@ -6918,7 +6918,9 @@ Response: OK
 Command: AT+CSCS="GSM"
 Response: OK
 
-// Send an SMS to the Phone Number
+// Send an SMS to the Phone Number.
+// yourphonenumber looks like +1234567890
+// Works without country code, like 234567890
 Command:
 AT+CMGS="yourphonenumber"
 
@@ -6938,23 +6940,23 @@ OK
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L622-L659)
 
-TODO: SMS Message must be unique or we will get Error 350...
+TODO: Why do we get Error 350 sometimes? (Rejected by SMSC)
 
 ```text
 +CMS ERROR: 350
 ```
 
+Maybe because SMS Message must be unique? Or the Modem isn't ready to transmit SMS? Should we retry?
+
 ## Send SMS in PDU Mode
 
 Now we send an SMS Message in PDU Mode. Based on...
 
-- Quectel GSM AT Commands Application Note, Section 9.3.2 "Send SMS in PDU mode", Page 26
+- [Quectel GSM AT Commands Application Note](https://www.cika.com/soporte/Information/GSMmodules/Quectel/AppNotes/Quectel_GSM_ATC_Application_Note.pdf), Section 9.3.2 "Send SMS in PDU mode", Page 26
 
-  https://www.cika.com/soporte/Information/GSMmodules/Quectel/AppNotes/Quectel_GSM_ATC_Application_Note.pdf
+- [ETSI GSM 07.05 Spec](https://www.etsi.org/deliver/etsi_gts/07/0705/05.01.00_60/gsmts_0705v050100p.pdf) (AT Commands)
 
-- https://www.etsi.org/deliver/etsi_gts/07/0705/05.01.00_60/gsmts_0705v050100p.pdf
-
-- https://en.m.wikipedia.org/wiki/GSM_03.40
+- [ETSI GSM 03.40 Spec](https://en.m.wikipedia.org/wiki/GSM_03.40) (PDU Format)
 
 This is how we send an SMS in PDU Mode: [send_sms_pdu](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L255-L341)
 
@@ -7019,7 +7021,9 @@ Command: AT+CMGS=41
 // We wait for Modem to respond with ">"
 Response: > 
 
-// SMS Message in PDU Format, terminate with Ctrl-Z
+// SMS Message in PDU Format, terminate with Ctrl-Z.
+// yourphonenumberpdu looks like 2143658709, which represents +1234567890
+// Country Code is mandatory.
 Command:
 0011000A91yourphonenumberpdu0008011C00480065006C006C006F002C005100750065006300740065006C0021<Ctrl-Z>
 
