@@ -6942,13 +6942,13 @@ OK
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L622-L659)
 
-TODO: Why do we get Error 350 sometimes? (Rejected by SMSC)
+_Why do we get Error 350 sometimes? (Rejected by SMSC)_
 
 ```text
 +CMS ERROR: 350
 ```
 
-Maybe because SMS Message must be unique? Or the Modem isn't ready to transmit SMS? Should we retry?
+Maybe the Modem isn't ready to transmit SMS? Should we retry?
 
 ## Send SMS in PDU Mode
 
