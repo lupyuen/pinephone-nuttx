@@ -6907,8 +6907,6 @@ TODO: What does this say: `+QDAI: 1,1,0,1,0,0,1,1`
 
 ## Send SMS in Text Mode
 
-TODO: Send SMS
-
 This is how we send an SMS in Text Mode: [send_sms_text](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L162-L253)
 
 ```text
@@ -6948,9 +6946,7 @@ TODO: SMS Message must be unique or we will get Error 350...
 
 ## Send SMS in PDU Mode
 
-TODO
-
-Send an SMS Message in PDU Mode. Based on...
+Now we send an SMS Message in PDU Mode. Based on...
 
 - Quectel GSM AT Commands Application Note, Section 9.3.2 "Send SMS in PDU mode", Page 26
 
