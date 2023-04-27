@@ -6952,7 +6952,7 @@ _Why do we get Error 350 sometimes? (Rejected by SMSC)_
 +CMS ERROR: 350
 ```
 
-Maybe the Modem isn't ready to transmit SMS? Should we retry?
+Check with the telco. I got this error when the telco blocked my outgoing SMS messages.
 
 ## Send SMS in PDU Mode
 
