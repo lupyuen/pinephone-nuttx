@@ -7260,6 +7260,29 @@ TODO
 AT+CMGS=41
 ```
 
+TODO: Receive messages
+
+```text
+// Select Message Service 3GPP TS 23.040 and 3GPP TS 23.041
+AT+CSMS=1
++CSMS: 1,1,1
+OK
+
+// Set SMS Event Reporting Configuration
+AT+CNMI=1,2,0,0,0
+OK
+
+// Message is dumped directly when an SMS is received
++CMT: "+8615021012496",,"13/03/18,17:07:21+32",145,4,0,0,"+8613800551500",145,28
+This is a test from Quectel.
+
+// Send ACK to the network
+AT+CNMA
+OK
+```
+
+[(EG25-G AT Commands, Page 167)](https://wiki.pine64.org/wiki/File:Quectel_EC2x%26EG9x%26EG2x-G%26EM05_Series_AT_Commands_Manual_V2.0.pdf)
+
 # Compile NuttX on Android with Termux
 
 _Can we compile NuttX on an Android Phone (or Tablet) with Termux?_
