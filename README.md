@@ -6692,6 +6692,8 @@ Read the articles...
 
 -   ["NuttX RTOS for PinePhone: 4G LTE Modem"](https://lupyuen.github.io/articles/lte)
 
+-   ["NuttX RTOS for PinePhone: Phone Calls and Text Messages"](https://lupyuen.github.io/articles/lte2)
+
 _What NuttX Drivers would we need to turn PinePhone into a Feature Phone? (Voice Calls and SMS only)_
 
 We need a NuttX Driver for the PinePhone's __Quectel LTE Modem__...
@@ -6846,13 +6848,13 @@ usb@1c1b400 {
 
 # 4G LTE Modem
 
-Read the article...
-
--   ["NuttX RTOS for PinePhone: 4G LTE Modem"](https://lupyuen.github.io/articles/lte)
-
 Let's make a Phone Call and send a Text Message...
 
 ## Outgoing Phone Call
+
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: Phone Calls and Text Messages"](https://lupyuen.github.io/articles/lte2)
 
 This is the NuttX App that makes a Phone Call on PinePhone: [dial_number](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L343-L432)
 
@@ -6911,6 +6913,10 @@ TODO: What does this say: `+QDAI: 1,1,0,1,0,0,1,1`
 
 ## Send SMS in Text Mode
 
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: Phone Calls and Text Messages"](https://lupyuen.github.io/articles/lte2)
+
 This is how we send an SMS in Text Mode: [send_sms_text](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L162-L253)
 
 Here's the log...
@@ -6955,6 +6961,10 @@ _Why do we get Error 350 sometimes? (Rejected by SMSC)_
 Check with the telco. I got this error when the telco blocked my outgoing SMS messages.
 
 ## Send SMS in PDU Mode
+
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: Phone Calls and Text Messages"](https://lupyuen.github.io/articles/lte2)
 
 Now we send an SMS Message in PDU Mode. Based on...
 
@@ -7048,6 +7058,10 @@ OK
 Let's talk about the SMS PDU...
 
 ## SMS PDU Format
+
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: Phone Calls and Text Messages"](https://lupyuen.github.io/articles/lte2)
 
 _What's the PDU Length?_
 
@@ -7242,46 +7256,41 @@ Comes from the [Unicode UTF-16 Encoding](https://en.wikipedia.org/wiki/UTF-16) o
 
 ## SMS Text Mode vs PDU Mode
 
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: Phone Calls and Text Messages"](https://lupyuen.github.io/articles/lte2)
+
 _Why send SMS in PDU Mode instead of Text Mode?_
 
-Sending SMS Messages in Text Mode looks easier. But we should use PDU Mode instead. Here's why...
+Sending SMS Messages in Text Mode looks easier. But we __should use PDU Mode__ instead. Here's why...
 
-TODO PDU Mode works more reliably (304 Invalid PDU)
+__In Text Mode:__ This is how we send an SMS...
 
 ```text
 // Text Mode: How many characters in this SMS?
-AT+CMGS="yourphonenumber"
+AT+CMGS="+1234567890"
 ```
 
-TODO
+__In PDU Mode:__ We do it like so...
 
 ```text
 // PDU Mode: 41 bytes in this SMS (excluding SMSC)
 AT+CMGS=41
 ```
 
-TODO: Receive messages
+See the difference? __PDU Mode is more precise__ because we state exactly how many bytes there are in the SMS.
+
+With Text Mode, there's a risk of garbled messages when characters are dropped during UART Transmission. (Which happens!)
+
+_But what if characters are dropped in PDU Mode?_
+
+The LTE Modem will say it's an __Invalid PDU__...
 
 ```text
-// Select Message Service 3GPP TS 23.040 and 3GPP TS 23.041
-AT+CSMS=1
-+CSMS: 1,1,1
-OK
-
-// Set SMS Event Reporting Configuration
-AT+CNMI=1,2,0,0,0
-OK
-
-// Message is dumped directly when an SMS is received
-+CMT: "+8615021012496",,"13/03/18,17:07:21+32",145,4,0,0,"+8613800551500",145,28
-This is a test from Quectel.
-
-// Send ACK to the network
-AT+CNMA
-OK
++CMS ERROR: 304
 ```
 
-[(EG25-G AT Commands, Page 167)](https://wiki.pine64.org/wiki/File:Quectel_EC2x%26EG9x%26EG2x-G%26EM05_Series_AT_Commands_Manual_V2.0.pdf)
+Our app should catch this error and resend.
 
 # Compile NuttX on Android with Termux
 
