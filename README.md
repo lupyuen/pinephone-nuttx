@@ -6909,7 +6909,41 @@ Response: OK
 
 [(See the Complete Log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/8ea4208cbd4758a0f1443c61bffa7ec4a8390695/examples/hello/hello_main.c#L562-L737)
 
-TODO: What does this say: `+QDAI: 1,1,0,1,0,0,1,1`
+_What does this say: `+QDAI: 1,1,0,1,0,0,1,1`_
+
+The above __PCM Digital Audio Configuration__ for the LTE Modem says...
+
+- __io = 1__
+
+  Digital PCM Output 
+
+- __mode = 1__
+
+  Slave Mode
+
+- __fsync = 0__
+
+  Primary Mode (short-synchronization)
+
+- __clock = 1__
+
+  Clock Frequency is 256 kHz
+
+- __format = 0__
+
+  Data Format is 16-bit linear
+
+- __sample = 0__
+
+  Sampling Rate is 8 kHz
+
+- __num_slots = 1__
+
+  Number of Slot is 1
+
+- __slot_mapping = 1__
+
+  Slot Mapping Value is 1
 
 ## Send SMS in Text Mode
 
