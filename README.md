@@ -1107,19 +1107,33 @@ To support multiple UART Ports, we copied the following functions from the [Allw
 
 - [`arm64_earlyserialinit`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/uart3/arch/arm64/src/a64/a64_serial.c#L1323-L1398)
 
+  (Init the UART Ports)
+
 - [`a64_uart_init`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/uart3/arch/arm64/src/a64/a64_serial.c#L944-L996)
+
+  (Init the UART Pins. Called by [`arm64_earlyserialinit`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/uart3/arch/arm64/src/a64/a64_serial.c#L1323-L1398))
 
 - [`a64_uart_setup`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/uart3/arch/arm64/src/a64/a64_serial.c#L453-L582)
 
+  (Configure the UART Port. Called when the UART Port is opened)
+
 - [`a64_uart_irq_handler`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/uart3/arch/arm64/src/a64/a64_serial.c#L301-L415)
+
+  (UART Interrupt Handler)
 
 - [`a64_uart_receive`](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/uart3/arch/arm64/src/a64/a64_serial.c#L727-L753)
 
-[(Here's the log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/e5aa2baba64c8d904d6c16b7c5dbc68cd5c8f1e1/examples/hello/hello_main.c#L72-L270)
+  (Receive UART Data)
 
-Inside the UART Driver, be careful when logging to the UART Port! If the UART Port is busy doing logging, it won't allow us to the Baud Rate...
+  [(Here's the log)](https://github.com/lupyuen2/wip-pinephone-nuttx-apps/blob/e5aa2baba64c8d904d6c16b7c5dbc68cd5c8f1e1/examples/hello/hello_main.c#L72-L270)
+
+Inside the UART Driver, be careful when logging to the UART Port!
+
+If the UART Port is busy doing logging, it won't allow us to the Baud Rate...
 
 > "This register may only be accessed when the DLAB bit (UART_LCR[7]) is set and the UART is not busy (UART_USR[0] is zero)"
+
+[(Allwinner A64 User Manual, Page 564)](https://lupyuen.github.io/images/Allwinner_A64_User_Manual_V1.1.pdf)
 
 That's why we always wait for UART Not Busy before setting the Baud Rate. [(Like this)](https://github.com/lupyuen2/wip-pinephone-nuttx/blob/uart3/arch/arm64/src/a64/a64_serial.c#L417-L451)
 
