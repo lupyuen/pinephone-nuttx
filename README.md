@@ -1191,7 +1191,7 @@ To configure the Baud Rate, Parity and Stop Bits...
 
 - Device Drivers > Serial Driver Support > UART3 Configuration
 
-(The default Baud Rate / Parity / Stop Bits work OK with the PinePhone LTE Modem on UART3)
+(The default Baud Rate / Bits / Parity / Stop Bits work OK with the PinePhone LTE Modem on UART3: 115.2 kbps / 8 Bits / No Parity / 1 Stop Bit)
 
 Let's test the PinePhone LTE Modem on UART3...
 
