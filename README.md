@@ -6884,7 +6884,15 @@ usb@1c1b400 {
 
 # 4G LTE Modem
 
-Let's make a Phone Call and send a Text Message...
+Read the article...
+
+-   ["NuttX RTOS for PinePhone: Phone Calls and Text Messages"](https://lupyuen.github.io/articles/lte2)
+
+We're now upstreaming the driver for 4G LTE Modem to NuttX Mainline...
+
+-   [arm64/pinephone: Add driver for PinePhone LTE Modem (Quectel EG25-G)](https://github.com/lupyuen2/wip-pinephone-nuttx/pull/30)
+
+This is how we make a Phone Call and send a Text Message...
 
 ## Outgoing Phone Call
 
