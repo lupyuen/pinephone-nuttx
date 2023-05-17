@@ -28,6 +28,10 @@ __LVGL Graphics__
 
 -   ["NuttX RTOS for PinePhone: LVGL Terminal for NSH Shell"](https://lupyuen.github.io/articles/terminal)
 
+__Accelerometer and Gyroscope__
+
+-   ["Inside a Smartphone Accelerometer: PinePhone with NuttX RTOS"](https://www.hackster.io/lupyuen/inside-a-smartphone-accelerometer-pinephone-with-nuttx-rtos-b92b58)
+
 __4G LTE Modem__
 
 -   ["NuttX RTOS for PinePhone: 4G LTE Modem"](https://lupyuen.github.io/articles/lte)
