@@ -6896,6 +6896,8 @@ We're now upstreaming the driver for 4G LTE Modem to NuttX Mainline...
 
 -   [arm64/pinephone: Add driver for PinePhone LTE Modem (Quectel EG25-G)](https://github.com/apache/nuttx/pull/9304)
 
+TODO: Disable UART2 and /dev/ttyS2 so that UART3 maps neatly to /dev/ttyS3. [(See this)](https://github.com/apache/nuttx/pull/9304#discussion_r1195862416)
+
 This is how we make a Phone Call and send a Text Message...
 
 ## Outgoing Phone Call
