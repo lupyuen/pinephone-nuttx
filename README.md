@@ -7376,6 +7376,10 @@ The LTE Modem will say it's an __Invalid PDU__...
 
 Our app should catch this error and resend.
 
+# PinePhone Accelerometer and Gyroscope
+
+TODO
+
 # Compile NuttX on Android with Termux
 
 _Can we compile NuttX on an Android Phone (or Tablet) with Termux?_
