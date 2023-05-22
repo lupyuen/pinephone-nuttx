@@ -7412,7 +7412,25 @@ Read the articles...
 
 # Simulate PinePhone UI with Zig, LVGL and WebAssembly
 
-TODO
+We're now building a __Feature Phone UI__ for NuttX on PinePhone...
+
+Can we simulate the Feature Phone UI with __Zig, LVGL and WebAssembly__ in a Web Browser? To make the UI Coding a little easier?
+
+Zig natively supports __WebAssembly__...
+
+- [WebAssembly on Zig](https://ziglang.org/documentation/master/#WebAssembly)
+
+So we might run __Zig + JavaScript__ in a Web Browser like so...
+
+- [WebAssembly With Zig in a Web Browser](https://dev.to/sleibrock/webassembly-with-zig-pt-ii-ei7)
+
+But LVGL doesn't work with JavaScript yet. LVGL runs in a Web Browser by compiling with Emscripten and SDL...
+
+- [LVGL with Emscripten and SDL](https://github.com/lvgl/lv_web_emscripten)
+
+TODO: Use Zig to compile LVGL for WebAssembly
+
+TODO: Use Zig to connect the JavaScript UI (canvas rendering + input events) to LVGL
 
 # Test Logs
 
