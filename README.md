@@ -218,6 +218,7 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
   - [Send SMS in PDU Mode](#send-sms-in-pdu-mode)
   - [SMS PDU Format](#sms-pdu-format)
   - [SMS Text Mode vs PDU Mode](#sms-text-mode-vs-pdu-mode)
+- [PinePhone Accelerometer and Gyroscope](#pinephone-accelerometer-and-gyroscope)
 - [Compile NuttX on Android with Termux](#compile-nuttx-on-android-with-termux)
 - [Emulate PinePhone with Unicorn Emulator](#emulate-pinephone-with-unicorn-emulator)
 - [Test Logs](#test-logs)
