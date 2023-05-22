@@ -7379,7 +7379,9 @@ Our app should catch this error and resend.
 
 # PinePhone Accelerometer and Gyroscope
 
-TODO
+To read PinePhone's InvenSense MPU-6050 Accelerometer and Gyroscope, check out this article...
+
+-   ["Inside a Smartphone Accelerometer: PinePhone with NuttX RTOS"](https://www.hackster.io/lupyuen/inside-a-smartphone-accelerometer-pinephone-with-nuttx-rtos-b92b58)
 
 # Compile NuttX on Android with Termux
 
