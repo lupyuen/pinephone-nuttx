@@ -7432,9 +7432,9 @@ But LVGL doesn't work with JavaScript yet. LVGL runs in a Web Browser by compili
 
 - [LVGL with Emscripten and SDL](https://github.com/lvgl/lv_web_emscripten)
 
-TODO: Use Zig to compile LVGL for WebAssembly
+TODO: Use Zig to compile LVGL for WebAssembly (`zig cc`)
 
-TODO: Use Zig to connect the JavaScript UI (canvas rendering + input events) to LVGL
+TODO: Use Zig to connect the JavaScript UI (canvas rendering + input events) to LVGL [(Like this)](https://dev.to/sleibrock/webassembly-with-zig-pt-ii-ei7)
 
 # Test Logs
 
