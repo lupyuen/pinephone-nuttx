@@ -7416,6 +7416,10 @@ We're now building a __Feature Phone UI__ for NuttX on PinePhone...
 
 Can we simulate the Feature Phone UI with __Zig, LVGL and WebAssembly__ in a Web Browser? To make the UI Coding a little easier?
 
+We have previously created a simple __LVGL App with Zig__ for PinePhone...
+
+- [pinephone-lvgl-zig](https://github.com/lupyuen/pinephone-lvgl-zig)
+
 Zig natively supports __WebAssembly__...
 
 - [WebAssembly on Zig](https://ziglang.org/documentation/master/#WebAssembly)
