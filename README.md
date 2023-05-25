@@ -2661,6 +2661,10 @@ Read the article...
 
 -   ["PinePhone Boots NuttX"](https://lupyuen.github.io/articles/unicorn2#pinephone-boots-nuttx)
 
+-   ["PinePhone Continues Booting NuttX"](https://lupyuen.github.io/articles/unicorn2#pinephone-continues-booting-nuttx)
+
+-   ["Start NSH Shell"](https://lupyuen.github.io/articles/unicorn2#appendix-start-nsh-shell)
+
 This section describes the Boot Sequence for NuttX on PinePhone...
 
 1.  [Startup Code](https://github.com/lupyuen/incubator-nuttx/blob/pinephone/arch/arm64/src/common/arm64_head.S#L117-L176) (in Arm64 Assembly) inits the Arm64 System Registers and UART Port.
