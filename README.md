@@ -28,6 +28,8 @@ __LVGL Graphics__
 
 -   ["NuttX RTOS for PinePhone: LVGL Terminal for NSH Shell"](https://lupyuen.github.io/articles/terminal)
 
+-   ["(Possibly) LVGL in WebAssembly with Zig Compiler"](https://lupyuen.github.io/articles/lvgl3)
+
 __Accelerometer and Gyroscope__
 
 -   ["Inside a Smartphone Accelerometer: PinePhone with NuttX RTOS"](https://www.hackster.io/lupyuen/inside-a-smartphone-accelerometer-pinephone-with-nuttx-rtos-b92b58)
@@ -7415,6 +7417,10 @@ Read the articles...
 ![Emulate Arm64 Machine Code](https://lupyuen.github.io/images/unicorn-code.png)
 
 # Simulate PinePhone UI with Zig, LVGL and WebAssembly
+
+Read the article...
+
+-   ["(Possibly) LVGL in WebAssembly with Zig Compiler"](https://lupyuen.github.io/articles/lvgl3)
 
 We're now building a __Feature Phone UI__ for NuttX on PinePhone...
 
