@@ -30,6 +30,8 @@ __LVGL Graphics__
 
 -   ["(Possibly) LVGL in WebAssembly with Zig Compiler"](https://lupyuen.github.io/articles/lvgl3)
 
+-   ["NuttX RTOS for PinePhone: Feature Phone UI in LVGL, Zig and WebAssembly"](https://lupyuen.github.io/articles/lvgl4)
+
 __Accelerometer and Gyroscope__
 
 -   ["Inside a Smartphone Accelerometer: PinePhone with NuttX RTOS"](https://www.hackster.io/lupyuen/inside-a-smartphone-accelerometer-pinephone-with-nuttx-rtos-b92b58)
@@ -7418,7 +7420,9 @@ Read the articles...
 
 # Simulate PinePhone UI with Zig, LVGL and WebAssembly
 
-Read the article...
+Read the articles...
+
+-   ["NuttX RTOS for PinePhone: Feature Phone UI in LVGL, Zig and WebAssembly"](https://lupyuen.github.io/articles/lvgl4)
 
 -   ["(Possibly) LVGL in WebAssembly with Zig Compiler"](https://lupyuen.github.io/articles/lvgl3)
 
