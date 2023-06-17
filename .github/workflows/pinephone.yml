@@ -1,0 +1,101 @@
+## Build Mainline NuttX every day for PinePhone
+
+name: Build PinePhone
+
+on:
+
+  ## Run every day at 0:00 UTC
+  schedule:
+    - cron: '0 0 * * *'
+
+  ## Run on every commit to this branch
+  ## push:
+  ##   branches: [ build ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: Install Build Tools
+      run:  |
+        sudo apt -y update
+        sudo apt -y install \
+        bison flex gettext texinfo libncurses5-dev libncursesw5-dev \
+        gperf automake libtool pkg-config build-essential gperf genromfs \
+        libgmp-dev libmpc-dev libmpfr-dev libisl-dev binutils-dev libelf-dev \
+        libexpat-dev gcc-multilib g++-multilib u-boot-tools util-linux \
+        kconfig-frontends \
+        wget
+
+    - name: Install Toolchain
+      run:  |
+        ## AArch64 Bare-Metal Target (aarch64-none-elf) for x86_64 Linux
+        ## From https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
+        wget --no-check-certificate https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-elf.tar.xz
+        tar -xf arm-gnu-toolchain-*.tar.xz
+
+    - name: Checkout Source Files
+      run:  |
+        mkdir nuttx
+        cd nuttx
+        git clone https://github.com/apache/nuttx nuttx
+        git clone https://github.com/apache/nuttx-apps apps
+          
+    - name: Build
+      run: |
+        ## Add toolchain to PATH
+        export PATH=$PATH:$PWD/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-elf/bin
+        cd nuttx/nuttx
+        
+        ## Configure the build
+        ./tools/configure.sh pinephone:lvgl
+
+        ## Preserve the build config
+        cp .config nuttx.config
+        
+        ## Run the build
+        make
+        
+        ## Show the size
+        aarch64-none-elf-size nuttx
+
+        ## Dump the disassembly to nuttx.S
+        aarch64-none-elf-objdump \
+          -t -S --demangle --line-numbers --wide \
+          nuttx \
+          >nuttx.S \
+          2>&1
+
+        ## Compress the NuttX Image to Image.gz
+        cp nuttx.bin Image
+        rm -f Image.gz
+        gzip Image
+
+    - name: Upload Build Outputs as Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: nuttx.zip
+        path: |
+          nuttx/nuttx/nuttx*
+          nuttx/nuttx/Image.gz
+
+    - name: Zip Build Outputs for GitHub Release
+      run: |
+        cd nuttx/nuttx
+        zip nuttx.zip nuttx* Image.gz
+
+    - name: Get Current Date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        
+    - name: Publish the GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: pinephone-nuttx-${{ steps.date.outputs.date }}
+        files: nuttx/nuttx/nuttx.zip
+        draft: false
+        prerelease: false
+        generate_release_notes: false
