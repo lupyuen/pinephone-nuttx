@@ -58,6 +58,10 @@ __USB__
 
 -   ["NuttX RTOS for PinePhone: Exploring USB"](https://lupyuen.github.io/articles/usb2)
 
+__Power Management Integrated Circuit__
+
+-   ["Power Management Integrated Circuit (PMIC)"](https://lupyuen.github.io/articles/lcd#power-on-lcd-panel)
+
 __Interrupts__
 
 -   ["NuttX RTOS for PinePhone: Fixing the Interrupts"](https://lupyuen.github.io/articles/interrupt)
