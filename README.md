@@ -10,6 +10,8 @@ Apache NuttX is a lightweight __Real-Time Operating System (RTOS)__ that runs on
 
 -   ["NuttX RTOS for PinePhone: The First Year"](https://lupyuen.github.io/articles/pinephone2)
 
+    [(Watch the Presentation on Google Drive)](https://drive.google.com/file/d/1WL-6HVjhtqktHRmZiDbPCOs6934fQlEQ/view?usp=drive_link)
+
 __PinePhone Display__
 
 -   ["NuttX RTOS for PinePhone: MIPI Display Serial Interface"](https://lupyuen.github.io/articles/dsi3)
