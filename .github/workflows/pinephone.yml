@@ -2,6 +2,10 @@
 
 name: Build PinePhone
 
+permissions:
+  ## Allow publishing of GitHub Release
+  contents: write
+  
 on:
 
   ## Run every day at 0:00 UTC
@@ -107,7 +111,17 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: pinephone-nuttx-${{ steps.date.outputs.date }}
-        files: nuttx/nuttx/nuttx.zip
         draft: false
         prerelease: false
         generate_release_notes: false
+        files: |
+          nuttx/nuttx/nuttx.zip
+          nuttx/nuttx/nuttx
+          nuttx/nuttx/nuttx.S
+          nuttx/nuttx/nuttx.bin
+          nuttx/nuttx/nuttx.map
+          nuttx/nuttx/nuttx.hex          
+          nuttx/nuttx/nuttx.config          
+          nuttx/nuttx/nuttx.manifest
+          nuttx/nuttx/nuttx.hash          
+          nuttx/nuttx/Image.gz
