@@ -57,6 +57,7 @@ jobs:
         popd
         echo NuttX Source: https://github.com/apache/nuttx/tree/$hash1 >nuttx.hash
         echo NuttX Apps: https://github.com/apache/nuttx-apps/tree/$hash2 >>nuttx.hash
+        cat nuttx.hash
 
         ## Configure the build
         ./tools/configure.sh pinephone:lvgl
