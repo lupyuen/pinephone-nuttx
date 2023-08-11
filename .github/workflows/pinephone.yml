@@ -51,9 +51,9 @@ jobs:
         cd nuttx/nuttx
 
         ## Dump the git hash
-        git status && hash1=`git rev-parse HEAD`
+        hash1=`git rev-parse HEAD`
         pushd ../apps
-        git status && hash2=`git rev-parse HEAD`
+        hash2=`git rev-parse HEAD`
         popd
         echo NuttX Source: https://github.com/apache/nuttx/tree/$hash1 >nuttx.hash
         echo NuttX Apps: https://github.com/apache/nuttx-apps/tree/$hash2 >>nuttx.hash
