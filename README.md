@@ -7464,6 +7464,105 @@ Check out the updates here...
 
 - ["Simulate PinePhone UI with Zig, LVGL and WebAssembly"](https://github.com/lupyuen/pinephone-lvgl-zig#simulate-pinephone-ui-with-zig-lvgl-and-webassembly)
 
+# Apache NuttX RTOS for PinePhone Pro
+
+TODO: WIP port of NuttX to PinePhone Pro
+
+(1) Would be good to provide the __Arm64 Disassembly__.
+
+(So that I can locate the addresses, also peek at the code snippets)
+
+```bash
+## Dump the disassembly to nuttx.S
+aarch64-none-elf-objdump \
+  -t -S --demangle --line-numbers --wide \
+  nuttx \
+  >nuttx.S \
+  2>&1
+```
+
+(2) What's the __Boot Address kernel_addr_r__ for PinePhone Pro?
+
+I can't find it in the docs, so I assume that this value is correct:
+
+```c
+/* U-Boot loads NuttX at this address (kernel_addr_r) */
+#define CONFIG_LOAD_BASE          0x02080000
+```
+
+Here's how we get kernel_addr_r from U-Boot (is it the same for Tow-Boot?):
+
+https://lupyuen.github.io/articles/uboot#boot-address
+
+(3) Change the __Memory Map (RAM and I/O)__ to this, based on the Address Mapping from RK3399 Tech Ref Manual (Part 1) Page 560:
+
+https://github.com/apache/nuttx/blob/master/arch/arm64/include/a64/chip.h#L45-L51
+
+```c
+// RAM Base Address: I'm guessing this based on CONFIG_LOAD_BASE (kernel_addr_r)
+#define CONFIG_RAMBANK1_ADDR      0x02000000
+// RAM Size: Let's keep this for now, we'll expand later
+#define CONFIG_RAMBANK1_SIZE      MB(512)
+// I/O Addresses begin at F800_0000
+#define CONFIG_DEVICEIO_BASEADDR  0xF8000000
+// Up to FFFF_FFFF
+#define CONFIG_DEVICEIO_SIZE      MB(128)
+```
+
+(4) __Arm64 Generic Interrupt Controller (GIC)__ is Version 3 (instead of PinePhone's Version 2)
+
+According to RK3399 Tech Ref Manual (Part 1) Page 560, RK3399 uses GIC-500, which is based on GIC v3. (PinePhone uses GIC v2)
+
+To change GIC from v2 to v3:
+
+```bash
+make menuconfig
+## Go to System Type > GIC version
+## Change from 2 to 3
+## Save and exit menuconfig
+
+## Verify that GIC version is now 3:
+grep ARM_GIC_VERSION .config
+```
+
+More about GIC: https://lupyuen.github.io/articles/interrupt#generic-interrupt-controller
+
+More about ARM_GIC_VERSION: https://github.com/apache/nuttx/blob/master/arch/arm64/Kconfig#L200-L209
+
+(5) Next we need to fill in the __GIC Base Address__:
+
+https://github.com/apache/nuttx/blob/master/arch/arm64/include/a64/chip.h
+
+```c
+/* Allwinner A64 Generic Interrupt Controller v2: Distributor and Redist */
+#define CONFIG_GICD_BASE          0x1C81000
+#define CONFIG_GICR_BASE          0x1C82000
+```
+
+But GIC v3 requires an additional field CONFIG_GICR_OFFSET, like this code from NuttX QEMU:
+
+https://github.com/apache/nuttx/blob/master/arch/arm64/include/qemu/chip.h#L47-L51
+
+```c
+#define CONFIG_GICD_BASE          0x8000000
+#define CONFIG_GICR_BASE          0x80a0000
+#define CONFIG_GICR_OFFSET        0x20000
+```
+
+We need to hunt for these values in the Tech Ref Manual. Or maybe from the Linux Device Tree for PinePhone Pro.
+
+The IRQs (Interrupt IDs) might need to change:
+
+https://github.com/apache/nuttx/blob/master/arch/arm64/include/a64/irq.h
+
+This should follow RK3399 Tech Ref Manual (Part 1) Page 15.
+
+Eventually the I/O Peripherals will have completely different addresses too:
+
+https://github.com/apache/nuttx/blob/master/arch/arm64/src/a64/hardware/a64_memorymap.h
+
+TODO
+
 # Test Logs
 
 This section contains PinePhone NuttX Logs captured from various tests...
