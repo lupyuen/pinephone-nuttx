@@ -59,6 +59,9 @@ jobs:
         echo NuttX Apps: https://github.com/apache/nuttx-apps/tree/$hash2 >>nuttx.hash
         cat nuttx.hash
 
+        ## Show the GCC version
+        aarch64-none-elf-gcc -v
+
         ## Configure the build
         ./tools/configure.sh pinephone:lvgl
 
