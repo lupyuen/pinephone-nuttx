@@ -120,8 +120,8 @@ jobs:
           nuttx/nuttx/nuttx.S
           nuttx/nuttx/nuttx.bin
           nuttx/nuttx/nuttx.map
-          nuttx/nuttx/nuttx.hex          
-          nuttx/nuttx/nuttx.config          
+          nuttx/nuttx/nuttx.hex
+          nuttx/nuttx/nuttx.config
           nuttx/nuttx/nuttx.manifest
-          nuttx/nuttx/nuttx.hash          
+          nuttx/nuttx/nuttx.hash
           nuttx/nuttx/Image.gz
