@@ -234,6 +234,7 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
 - [Compile NuttX on Android with Termux](#compile-nuttx-on-android-with-termux)
 - [Emulate PinePhone with Unicorn Emulator](#emulate-pinephone-with-unicorn-emulator)
 - [Simulate PinePhone UI with Zig, LVGL and WebAssembly](#simulate-pinephone-ui-with-zig-lvgl-and-webassembly)
+- [Apache NuttX RTOS for PinePhone Pro](#apache-nuttx-rtos-for-pinephone-pro)
 - [Test Logs](#test-logs)
   - [USB Devices on PinePhone](#usb-devices-on-pinephone)
   - [Testing Zig Backlight Driver on PinePhone](#testing-zig-backlight-driver-on-pinephone)
