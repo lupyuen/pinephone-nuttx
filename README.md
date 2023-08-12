@@ -7467,7 +7467,7 @@ Check out the updates here...
 
 # Apache NuttX RTOS for PinePhone Pro
 
-TODO: WIP port of NuttX to PinePhone Pro
+TODO: [WIP port of NuttX to PinePhone Pro](https://github.com/apache/nuttx/pull/10193)
 
 (1) Would be good to provide the __Arm64 Disassembly__.
 
