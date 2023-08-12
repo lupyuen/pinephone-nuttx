@@ -7578,6 +7578,8 @@ But I'm not sure what's [CONFIG_GICR_OFFSET](https://github.com/apache/nuttx/blo
 
 Maybe we stick with the current value and test whether [UART Interrupts](https://lupyuen.github.io/articles/serial#uart-with-interrupts) are OK?
 
+[(See the Linux doc for GIC)](https://www.kernel.org/doc/Documentation/devicetree/bindings/interrupt-controller/arm%2Cgic-v3.txt)
+
 RK3399 UART0 is at [GIC Shared Peripheral Interrupt 99](https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/rockchip/rk3399.dtsi#L695-L706)
 
 RK3399 UART is a [DesignWare APB UART (dw-apb-uart)](https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/rockchip/rk3399.dtsi#L696), which maps to the [Linux DesignWare 8250 Driver (8250_dw.c)](https://github.com/torvalds/linux/blob/master/drivers/tty/serial/8250/8250_dw.c#L804).
