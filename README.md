@@ -126,6 +126,7 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
+- [NuttX Automated Daily Build for PinePhone](#nuttx-automated-daily-build-for-pinephone)
 - [NuttX on QEMU](#nuttx-on-qemu)
   - [Download NuttX](#download-nuttx)
   - [Download Toolchain](#download-toolchain)
