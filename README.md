@@ -7570,7 +7570,19 @@ https://github.com/apache/nuttx/blob/master/arch/arm64/include/qemu/chip.h#L47-L
 #define CONFIG_GICR_OFFSET        0x20000
 ```
 
-We need to hunt for these values in the Tech Ref Manual. Or maybe from the Linux Device Tree for PinePhone Pro.
+According to the [Linux Device Tree for RK3399](https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/rockchip/rk3399.dtsi#L549-L553):
+- GICD = 0xfee00000
+- GICR = 0xfef00000
+
+But I'm not sure what's [CONFIG_GICR_OFFSET](https://github.com/apache/nuttx/blob/master/arch/arm64/src/common/arm64_gicv3.c#L786-L793). (Offset to the GIC Registers for each CPU?)
+
+Maybe we stick with the current value and test whether [UART Interrupts](https://lupyuen.github.io/articles/serial#uart-with-interrupts) are OK?
+
+RK3399 UART0 is at [GIC Shared Peripheral Interrupt 99](https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/rockchip/rk3399.dtsi#L695-L706)
+
+RK3399 UART is a [DesignWare APB UART (dw-apb-uart)](https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/rockchip/rk3399.dtsi#L696), which maps to the [Linux DesignWare 8250 Driver (8250_dw.c)](https://github.com/torvalds/linux/blob/master/drivers/tty/serial/8250/8250_dw.c#L804).
+
+Which is compatible with the [NuttX 16550 UART Driver](https://lupyuen.github.io/articles/plic#appendix-fix-the-spurious-uart-interrupts). So remember to enable 16550_WAIT_LCR, and set 16550_REGINCR=4. [(Because regshift=2)](https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/rockchip/rk3399.dtsi#L701)
 
 The IRQs (Interrupt IDs) might need to change:
 
