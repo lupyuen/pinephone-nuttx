@@ -253,6 +253,25 @@ The following is a journal that documents the porting of NuttX to PinePhone. It 
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+# NuttX Automated Daily Build for PinePhone
+
+NuttX for PinePhone is now built automatically every day via GitHub Actions.
+
+The Daily Releases are available here...
+
+- [pinephone-nuttx/releases](https://github.com/lupyuen/pinephone-nuttx/releases)
+
+[nuttx.hash](https://github.com/lupyuen/pinephone-nuttx/releases/download/pinephone-nuttx-2023-08-12/nuttx.hash) contains the Commit Hash of the NuttX Kernel and NuttX Apps repos...
+
+```text
+NuttX Source: https://github.com/apache/nuttx/tree/4bb30ab0c136dc36182cf43995337fc1d44f0a37
+NuttX Apps: https://github.com/apache/nuttx-apps/tree/5a4e9e4389264522d02dae78bcb3f9813743300f
+```
+
+The GitHub Actions Workflow is here...
+
+- [pinephone.yml](https://github.com/lupyuen/pinephone-nuttx/blob/main/.github/workflows/pinephone.yml)
+
 # NuttX on QEMU
 
 Note: This section is outdated, please check this article for updates...
