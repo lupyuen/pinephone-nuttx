@@ -1,6 +1,6 @@
 ## Build Mainline NuttX every day for PinePhone
 
-name: Build PinePhone
+name: Daily Build of NuttX for PinePhone
 
 permissions:
   ## Allow publishing of GitHub Release
