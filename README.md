@@ -2,6 +2,8 @@
 
 # Apache NuttX RTOS for PinePhone
 
+[![Daily Build of NuttX for PinePhone](https://github.com/lupyuen/pinephone-nuttx/actions/workflows/pinephone.yml/badge.svg)](https://github.com/lupyuen/pinephone-nuttx/actions/workflows/pinephone.yml)
+
 Apache NuttX is a lightweight __Real-Time Operating System (RTOS)__ that runs on PINE64 PinePhone. Read the articles...
 
 -   ["NuttX RTOS for PinePhone: What is it?"](https://lupyuen.github.io/articles/what)
